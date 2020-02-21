@@ -19,16 +19,16 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION
-#define CGAL_SHAPE_REGULARIZATION
+#ifndef CGAL_SHAPE_REGULARIZATION_QP_REGULARIZATION_H
+#define CGAL_SHAPE_REGULARIZATION_QP_REGULARIZATION_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
 // STL includes.
-#include <vector>
-#include <utility>
 #include <set>
 #include <map>
+#include <vector>
+#include <utility>
 
 // Eigen includes.
 #include <Eigen/Sparse>
@@ -40,7 +40,7 @@
 namespace CGAL {
 namespace Shape_regularization {
 
-    /*!
+  /*!
     \ingroup PkgShape_regularization
     
     \brief Main class/entry point for running the shape regularization algorithm.
@@ -62,9 +62,7 @@ namespace Shape_regularization {
 
     \tparam RegularizationType
     must be a model of `RegularizationType`.
-
   */
-
   template<
     typename GeomTraits,
     typename InputRange,
@@ -345,4 +343,4 @@ namespace Shape_regularization {
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION
+#endif // CGAL_SHAPE_REGULARIZATION_QP_REGULARIZATION_H

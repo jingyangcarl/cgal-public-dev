@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_OSQP_SOLVER
-#define CGAL_SHAPE_REGULARIZATION_INTERNAL_OSQP_SOLVER
+#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_OSQP_SOLVER_H
+#define CGAL_SHAPE_REGULARIZATION_INTERNAL_OSQP_SOLVER_H
 
 // #include <CGAL/license/Shape_regularization.h>
 // #include <iostream>
@@ -38,8 +38,7 @@ namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  template<
-    typename GeomTraits>
+  template<typename GeomTraits>
   class OSQP_solver { 
 
   public:
@@ -84,7 +83,6 @@ namespace internal {
       c_float u[m];
       build_vectors(n, m, q_v, l_v, u_v, q, l, u);
 
-
       // Problem settings
       OSQPSettings *settings = (OSQPSettings *)c_malloc(sizeof(OSQPSettings));
 
@@ -125,10 +123,7 @@ namespace internal {
       c_free(data->P);
       c_free(data);
       c_free(settings);
-
     }
-
-    
 
   private:
 
@@ -185,14 +180,11 @@ namespace internal {
         l[i] = CGAL::to_double(l_v[i]);
         u[i] = CGAL::to_double(u_v[i]);
       }
-
     }
-    
   };
-
 
 } // namespace internal
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_OSQP_SOLVER
+#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_OSQP_SOLVER_H

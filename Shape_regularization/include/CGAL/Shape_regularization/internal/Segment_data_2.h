@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2
-#define CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2
+#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2_H
+#define CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -30,8 +30,7 @@ namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  template<
-    typename GeomTraits>
+  template<typename GeomTraits>
   struct Segment_data_2 {
 
   public:
@@ -52,7 +51,6 @@ namespace internal {
     FT      m_b;
     FT      m_c;
 
-
     Segment_data_2(
       const Segment& segment,
       const std::size_t index):
@@ -69,11 +67,10 @@ namespace internal {
       m_b =  static_cast<FT>(cos(CGAL::to_double(m_orientation * static_cast<FT>(CGAL_PI) / FT(180))));
       m_c = -m_a * m_barycentre.x() - m_b * m_barycentre.y();
     }
-
   };
 
 } // namespace internal
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2
+#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2_H

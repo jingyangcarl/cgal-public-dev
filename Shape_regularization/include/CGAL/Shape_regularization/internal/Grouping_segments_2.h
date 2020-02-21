@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_GROUPING_SEGMENTS_2
-#define CGAL_SHAPE_REGULARIZATION_INTERNAL_GROUPING_SEGMENTS_2
+#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_GROUPING_SEGMENTS_2_H
+#define CGAL_SHAPE_REGULARIZATION_INTERNAL_GROUPING_SEGMENTS_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -35,8 +35,8 @@ namespace Shape_regularization {
 namespace internal {
 
   template<
-    typename GeomTraits,
-    typename Conditions>
+  typename GeomTraits,
+  typename Conditions>
   class Grouping_segments_2 {
   public:
     using Traits = GeomTraits;
@@ -249,11 +249,10 @@ namespace internal {
       }
       m_groups[g_j].clear(); 
     }
-
   };
 
 } // namespace internal
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_GROUPING_SEGMENTS_2
+#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_GROUPING_SEGMENTS_2_H

@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2
-#define CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2
+#ifndef CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2_H
+#define CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -33,7 +33,6 @@
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Conditions_ordinates_2.h>
-
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -57,9 +56,9 @@ namespace Shape_regularization {
     \cgalModels `RegularizationType`
   */
   template<
-    typename GeomTraits, 
-    typename InputRange,
-    typename SegmentMap>
+  typename GeomTraits, 
+  typename InputRange,
+  typename SegmentMap>
   class Ordinate_regularization_2 {
   public:
 
@@ -258,7 +257,6 @@ namespace Shape_regularization {
     std::vector <std::vector <std::size_t>> m_parallel_groups;
     std::size_t m_modified_segments_counter;
 
-
     void build_segment_data_map(const std::vector<std::size_t> & paral_gr) {
       if (paral_gr.size() < 2) return;
 
@@ -276,7 +274,7 @@ namespace Shape_regularization {
         if (i == 0)
           frame_origin = seg_data.m_barycentre;
 
-        seg_data.m_reference_coordinates = internal::transform_coordinates(
+        seg_data.m_reference_coordinates = internal::transform_coordinates_2(
                 seg_data.m_barycentre, frame_origin, seg_data.m_orientation);
         m_segments.emplace(seg_index, seg_data);
       } 
@@ -416,10 +414,9 @@ namespace Shape_regularization {
 
       ++m_modified_segments_counter;
     }
-
   };
 
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2
+#endif // CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2_H

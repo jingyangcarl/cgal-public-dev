@@ -29,7 +29,9 @@ namespace Shape_regularization {
 namespace internal {
 
   template<typename Point_2>
-  Point_2 compute_middle_point(const Point_2& source, const Point_2& target) {
+  Point_2 middle_point_2(
+    const Point_2& source, const Point_2& target) {
+    
     using Traits = typename Kernel_traits<Point_2>::Kernel;
     using FT = typename Traits::FT;
 
@@ -51,46 +53,59 @@ namespace internal {
 
   template<typename Segment_2>
   typename Kernel_traits<Segment_2>::Kernel::Vector_2
-  compute_direction(const Segment_2& segment) { 
+  direction_2(const Segment_2& segment) { 
+    
     using Traits = typename Kernel_traits<Segment_2>::Kernel;
     using FT = typename Traits::FT;
-    using Vector = typename Traits::Vector_2;
+    using Vector_2 = typename Traits::Vector_2;
 
-    Vector v = segment.to_vector(); 
+    Vector_2 v = segment.to_vector();
     if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0))) 
       v = -v;
     normalize(v);
     return v;
   }
   
-  template<typename Vector>
-  typename Kernel_traits<Vector>::Kernel::FT
-  compute_orientation(const Vector& v) {
-    using Traits = typename Kernel_traits<Vector>::Kernel;
+  template<typename Vector_2>
+  typename Kernel_traits<Vector_2>::Kernel::FT
+  orientation_2(const Vector_2& v) {
+    
+    using Traits = typename Kernel_traits<Vector_2>::Kernel;
     using FT = typename Traits::FT;
 
-    const FT atan = static_cast<FT>(std::atan2(CGAL::to_double(v.y()), CGAL::to_double(v.x())));
+    const FT atan = static_cast<FT>(
+      std::atan2(CGAL::to_double(v.y()), CGAL::to_double(v.x())));
     FT orientation = atan * FT(180) / static_cast<FT>(CGAL_PI);
     if (orientation < FT(0)) 
       orientation += FT(180);
     return orientation;
   }
 
-  template<typename Point_2, typename FT>
-  Point_2 transform_coordinates(const Point_2 & barycentre, const Point_2 & frame_origin, const FT angle) {
+  template<
+  typename Point_2, 
+  typename FT>
+  Point_2 transform_coordinates_2(
+    const Point_2& barycenter, 
+    const Point_2& frame_origin, 
+    const FT angle) {
 
-    const FT cos_val = static_cast<FT>(cos(CGAL_PI * CGAL::to_double(angle) / 180.0));
-    const FT sin_val = static_cast<FT>(sin(CGAL_PI * CGAL::to_double(angle) / 180.0));
+    const FT cos_val = static_cast<FT>(
+      cos(CGAL_PI * CGAL::to_double(angle) / 180.0));
+    const FT sin_val = static_cast<FT>(
+      sin(CGAL_PI * CGAL::to_double(angle) / 180.0));
 
-    const FT x = (barycentre.x() - frame_origin.x()) * cos_val + (barycentre.y() - frame_origin.y()) * sin_val;
-    const FT y = (barycentre.y() - frame_origin.y()) * cos_val - (barycentre.x() - frame_origin.x()) * sin_val;
+    const FT x = 
+      (barycenter.x() - frame_origin.x()) * cos_val + 
+      (barycenter.y() - frame_origin.y()) * sin_val;
+    const FT y = 
+      (barycenter.y() - frame_origin.y()) * cos_val - 
+      (barycenter.x() - frame_origin.x()) * sin_val;
 
     return Point_2(x, y);
   }
-
 
 } // internal
 } // Shape_regularization
 } // CGAL
 
-#endif // CGAL_LEVELS_OF_DETAIL_INTERNAL_UTILS_H
+#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_UTILS_H

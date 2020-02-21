@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_HEADERS
-#define CGAL_SHAPE_REGULARIZATION_HEADERS
+#ifndef CGAL_SHAPE_REGULARIZATION_HEADERS_H
+#define CGAL_SHAPE_REGULARIZATION_HEADERS_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -34,4 +34,4 @@
 
 #include <CGAL/Shape_regularization/regularize_planes.h>
 
-#endif // CGAL_SHAPE_REGULARIZATION_HEADERS
+#endif // CGAL_SHAPE_REGULARIZATION_HEADERS_H

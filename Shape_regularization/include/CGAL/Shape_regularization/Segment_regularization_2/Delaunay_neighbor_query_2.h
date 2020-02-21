@@ -19,29 +19,34 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_DELAUNEY_NEIGHBOR_QUERY_2
-#define CGAL_SHAPE_REGULARIZATION_DELAUNEY_NEIGHBOR_QUERY_2
+#ifndef CGAL_SHAPE_REGULARIZATION_DELAUNEY_NEIGHBOR_QUERY_2_H
+#define CGAL_SHAPE_REGULARIZATION_DELAUNEY_NEIGHBOR_QUERY_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// STL includes.
+#include <vector>
+
+// CGAL includes.
+#include <CGAL/assertions.h>
+#include <CGAL/property_map.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/assertions.h>
-#include <CGAL/Shape_regularization/internal/utils.h>
-#include <CGAL/property_map.h>
 
-#include <vector>
+// Internal includes.
+#include <CGAL/Shape_regularization/internal/utils.h>
 
 namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShape_regularization2D_regularization
+    \ingroup PkgShapeRegularization2DReg
 
-    \brief Neighbor query builds the Delaunay triangulation to find the nearest neighbors 
-    in a set of `Kernel::Segment_2`.
+    \brief A neighbor query based on a Delaunay triangulation, which enables to 
+    find the nearest neighbors in a set of `GeomTraits::Segment_2`.
 
-    This class returns indices of the nearest neighbors of a query segment in a segment set.
+    This class returns indices of the nearest neighbors of a query segment 
+    in a set of 2D segments.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -51,15 +56,14 @@ namespace Shape_regularization {
 
     \tparam SegmentMap 
     must be an `LvaluePropertyMap` whose key type is the value type of the input 
-    range and value type is `Kernel::Segment_2`.
+    range and value type is `GeomTraits::Segment_2`.
 
     \cgalModels `NeighborQuery`
   */
-
   template<
     typename GeomTraits, 
     typename InputRange, 
-    typename SegmentMap>
+    typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
   class Delaunay_neighbor_query_2 {
 
   public:
@@ -67,15 +71,17 @@ namespace Shape_regularization {
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Segment_map = SegmentMap;
-    using Point = typename GeomTraits::Point_2;
-    using Segment = typename GeomTraits::Segment_2;
+    using Point_2 = typename Traits::Point_2;
+    using Segment_2 = typename Traits::Segment_2;
 
-    using VB = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, GeomTraits>;
+    using VB = CGAL::Triangulation_vertex_base_with_info_2<std::size_t, Traits>;
     using DS = CGAL::Triangulation_data_structure_2<VB>;
-    using DT = CGAL::Delaunay_triangulation_2<GeomTraits, DS>;
+    using DT = CGAL::Delaunay_triangulation_2<Traits, DS>;
 
+    using Delaunay_triangulation = DT;
+    using Indices = std::vector<std::size_t>;
     using Vertex_circulator = typename DT::Vertex_circulator;
-    using Indices_map = std::vector <std::vector <std::size_t>>;
+    using Indices_map = std::vector<Indices>;
     /// \endcond
 
     /// \name Initialization
@@ -85,21 +91,20 @@ namespace Shape_regularization {
       \brief initializes all internal data structures.
 
       \param input_range 
-      an instance of `InputRange` with 2D segments.
+      an instance of `InputRange` with 2D segments
 
       \param segment_map
       an instance of `SegmentMap` that maps an item from `input_range` 
       to `Kernel::Segment_2`
-
-      \pre `input_range.size() > 1`
-
     */
-
     Delaunay_neighbor_query_2(
       InputRange& input_range, 
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
-    m_segment_map(segment_map) {}
+    m_segment_map(segment_map) { 
+      m_neighbor_map.resize(
+        m_input_range.size());
+    }
 
     /// @}
 
@@ -109,23 +114,28 @@ namespace Shape_regularization {
     /*!
       \brief implements `NeighborQuery::operator()()`.
 
-      This operator returns indices of neighbors of the query item.
+      This operator returns indices of segments, which are direct neighbors of 
+      the query segment.
 
       \param query_index
-      index of the query segment
+      an index of the query segment
 
       \param neighbors
-      indices of segments, which are neighbors of the query segment
+      indices of segments, which are direct neighbors of the query segment
 
       \pre `query_index >= 0 && query_index < input_range.size()`
     */
+    void operator()(
+      const std::size_t query_index, 
+      std::vector<std::size_t> & neighbors) { 
 
-    void operator()(const std::size_t query_index, std::vector<std::size_t> & neighbors) { 
       neighbors.clear();
-      if(m_map_of_neighbors.size() == 0)
-        return;
-      CGAL_precondition(query_index >= 0 && query_index < m_map_of_neighbors.size());
-      neighbors = m_map_of_neighbors[query_index];
+      if (m_input_range.size() <= 1) return;
+      CGAL_precondition(
+        m_neighbor_map.size() == m_input_range.size());      
+      CGAL_precondition(
+        query_index >= 0 && query_index < m_input_range.size());
+      neighbors = m_neighbor_map[query_index];
     }
 
     /// @}
@@ -134,37 +144,40 @@ namespace Shape_regularization {
     /// @{ 
 
     /*!
-      \brief adds a group of items to construct the Delaunay triangulation and
-      finds neighbors for each segment.
+      \brief adds a group of items with segments and then updates internal Delaunay 
+      triangulation and neighbors of each inserted segment.
 
-      \tparam Range 
+      \tparam ItemRange 
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
       \tparam IndexMap 
-      must be an `LvaluePropertyMap` whose key type is the value type of the input 
-      range and value type is `std::size_t`.
+      must be an `LvaluePropertyMap` whose key type is the value type of item range
+      and value type is `std::size_t`.
 
-      \param group
-      Must be a type of Range
+      \param item_range
+      an instance of ItemRange
 
       \param index_map
-      Must be a type of IndexMap
-
-      \pre `group.size() > 1`
+      an instance of IndexMap that returns the index of a segment stored in the
+      `item_range` with respect to the total `input_range`
     */
-
-    template<typename Range, typename IndexMap = CGAL::Identity_property_map<std::size_t>>
-  	void add_group(const Range& group, const IndexMap index_map = IndexMap()) { 
-      std::vector<std::size_t> gr;
-      for (const auto & item : group) {
+    template<
+    typename ItemRange, 
+    typename IndexMap = CGAL::Identity_property_map<std::size_t> >
+  	void add_group(
+      const ItemRange& item_range, 
+      const IndexMap index_map = IndexMap()) { 
+        
+      Indices group;
+      for (const auto& item : item_range) {
         const std::size_t seg_index = get(index_map, item);
-        gr.push_back(seg_index);
+        group.push_back(seg_index);
       }
+      if (group.size() == 0) return;
 
-      if (gr.size() > 1) {
-        build_delaunay_triangulation(gr);
-        find_neighbors(); 
-      }
+      update_delaunay_triangulation(group);
+      if (m_delaunay.number_of_vertices() > 1)
+        update_neighbors();
     }
 
     /// @}
@@ -177,46 +190,55 @@ namespace Shape_regularization {
     */
 
     void clear() {
-      m_map_of_neighbors.clear();
+      m_delaunay.clear();
+      m_neighbor_map.clear();
+      m_neighbor_map.resize(m_input_range.size());
     }
 
     /// @}
 
   private:
-    Input_range& m_input_range;
-    const Segment_map  m_segment_map;
-    DT                 m_dt;
-    Indices_map m_map_of_neighbors;
+    const Input_range& m_input_range;
+    const Segment_map m_segment_map;
+    Delaunay_triangulation m_delaunay;
+    Indices_map m_neighbor_map;
 
-
-    void build_delaunay_triangulation(const std::vector<std::size_t> & v) {
-      m_dt.clear();
-      for (std::size_t i = 0; i < v.size(); ++i) {
-        const Segment& seg = get(m_segment_map, *(m_input_range.begin() + v[i]));
-        const Point& source = seg.source();
-        const Point& target = seg.target();
-        const Point middle_point = internal::compute_middle_point(source, target);
-
-        auto vh = m_dt.insert(middle_point);
-        vh->info() = v[i];
+    void update_delaunay_triangulation(
+      const Indices& group) {
+      
+      for (const std::size_t idx : group) {
+        const auto& segment = get(
+          m_segment_map, *(m_input_range.begin() + idx));
+        const auto& source = segment.source();
+        const auto& target = segment.target();
+        const auto  middle = internal::middle_point_2(source, target);
+        auto vh = m_delaunay.insert(middle);
+        vh->info() = idx;
       }
     }
 
-    void find_neighbors() {
-      if(m_map_of_neighbors.size() < m_input_range.size()) {
-        m_map_of_neighbors.clear();
-        m_map_of_neighbors.resize(m_input_range.size());
-      }
-      for (auto vit = m_dt.finite_vertices_begin(); vit != m_dt.finite_vertices_end(); ++vit) {
-        Vertex_circulator vc(vit);
+    void update_neighbors() {
+      
+      for (auto vit = m_delaunay.finite_vertices_begin(); 
+      vit != m_delaunay.finite_vertices_end(); ++vit) {
+
+        const std::size_t seg_index_1 = vit->info();
+        CGAL_precondition(
+          seg_index_1 >= 0 && seg_index_1 < m_input_range.size());
+        auto& seg_indices = m_neighbor_map[seg_index_1];
+        seg_indices.clear();
+
+        auto vc = m_delaunay.incident_vertices(vit);
+        const auto start = vc;
         do {
-          if(!m_dt.is_infinite(vc)) {
-            CGAL_precondition(vit->info() >= 0 && vit->info() < m_input_range.size() 
-              && vc->info() >= 0 && vc->info() < m_input_range.size());
-            m_map_of_neighbors[vit->info()].push_back(vc->info());
+          if (!m_delaunay.is_infinite(vc)) {
+            const std::size_t seg_index_2 = vc->info();
+            CGAL_precondition( 
+              seg_index_2 >= 0 && seg_index_2 < m_input_range.size());
+            seg_indices.push_back(seg_index_2);
           }
-          --vc;
-        } while (vc != m_dt.incident_vertices(vit));
+          ++vc;
+        } while (vc != start);
       } 
     }
   };
@@ -224,4 +246,4 @@ namespace Shape_regularization {
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_DELAUNEY_NEIGHBOR_QUERY_2
+#endif // CGAL_SHAPE_REGULARIZATION_DELAUNEY_NEIGHBOR_QUERY_2_H

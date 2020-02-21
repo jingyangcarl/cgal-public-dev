@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ANGLES_2
-#define CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ANGLES_2
+#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ANGLES_2_H
+#define CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ANGLES_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -31,8 +31,7 @@ namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  template<
-    typename GeomTraits>
+  template<typename GeomTraits>
   class Conditions_angles_2 {
 
     public:
@@ -42,7 +41,6 @@ namespace internal {
 
       Conditions_angles_2() :
       m_moe(FT(1) / FT(4)) {}
-
 
      FT reference(const Segment_data & seg_data, const FT suffix) const {
       FT val = seg_data.m_orientation + suffix; 
@@ -75,11 +73,10 @@ namespace internal {
 
     private:
       FT m_moe;
-
     };
 
 } // namespace internal
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ANGLES_2
+#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ANGLES_2_H

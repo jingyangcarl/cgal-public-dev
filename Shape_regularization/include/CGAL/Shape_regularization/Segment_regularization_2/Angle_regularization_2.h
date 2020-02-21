@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2
-#define CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2
+#ifndef CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2_H
+#define CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -34,7 +34,6 @@
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Conditions_angles_2.h>
-
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -57,7 +56,6 @@ namespace Shape_regularization {
 
     \cgalModels `RegularizationType`
   */
-
   template<
     typename GeomTraits, 
     typename InputRange,
@@ -421,10 +419,9 @@ namespace Shape_regularization {
       m_input_range[i] = Segment(source, target);
       ++m_modified_segments_counter;
     } 
-
   };
 
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2
+#endif // CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2_H

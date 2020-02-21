@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2
-#define CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2
+#ifndef CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2_H
+#define CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -48,9 +48,9 @@ namespace Shape_regularization {
 
   */
   template<
-    typename GeomTraits,
-    typename InputRange,
-    typename SegmentMap>
+  typename GeomTraits,
+  typename InputRange,
+  typename SegmentMap>
   struct Parallel_groups_2 {
 
   public:
@@ -153,10 +153,9 @@ namespace Shape_regularization {
         m_parallel_groups_angle_map[angle].push_back(seg_index);
       }
     }
-
   };
 
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2
+#endif // CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2_H
