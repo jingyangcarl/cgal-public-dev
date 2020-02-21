@@ -179,7 +179,7 @@ namespace Barycentric_coordinates {
       An output iterator that stores the computed weights.
     */
     template<typename OutputIterator>
-    boost::optional<OutputIterator> operator()(
+    OutputIterator operator()(
       const Polygon&,
       const Point_2& query, 
       OutputIterator weights,
@@ -211,7 +211,7 @@ namespace Barycentric_coordinates {
           return max_precision_weights(query, weights);
         }
       }
-      return boost::none;
+      return weights;
     }
 
     /*! 
@@ -230,7 +230,7 @@ namespace Barycentric_coordinates {
       An output iterator that stores the computed weights.
     */
     template<typename OutputIterator>
-    boost::optional<OutputIterator> operator()(
+    OutputIterator operator()(
       const Point_2& query, 
       OutputIterator weights) {
       
@@ -294,7 +294,7 @@ namespace Barycentric_coordinates {
     }
 
     template<typename OutputIterator>
-    boost::optional<OutputIterator> max_precision_weights(
+    OutputIterator max_precision_weights(
       const Point_2& query,
       OutputIterator weights) {
 
@@ -364,7 +364,7 @@ namespace Barycentric_coordinates {
     }
 
     template<typename OutputIterator>
-    boost::optional<OutputIterator> max_speed_weights(
+    OutputIterator max_speed_weights(
       const Point_2& query,
       OutputIterator weights) {
 

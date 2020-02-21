@@ -58,12 +58,14 @@ namespace Barycentric_coordinates {
     \param traits
     An instance of `GeomTraits`.
 
-    \return an optional output iterator.
+    \return an output iterator.
+
+    \pre `source != target`
   */
   template< 
   typename OutputIterator,
   typename GeomTraits>
-  boost::optional<OutputIterator> segment_coordinates_2(
+  OutputIterator segment_coordinates_2(
     const typename GeomTraits::Point_2& source, 
     const typename GeomTraits::Point_2& target, 
     const typename GeomTraits::Point_2& query, 
@@ -100,12 +102,14 @@ namespace Barycentric_coordinates {
     \param coordinates 
     An output iterator that stores the computed segment coordinates.
 
-    \return an optional output iterator.
+    \return an output iterator.
+
+    \pre `source != target`
   */
   template<
   typename Point_2, 
   typename OutputIterator>
-  boost::optional<OutputIterator> segment_coordinates_2(
+  OutputIterator segment_coordinates_2(
     const Point_2& source, 
     const Point_2& target, 
     const Point_2& query, 
@@ -145,12 +149,14 @@ namespace Barycentric_coordinates {
     \param traits
     An instance of `GeomTraits`.
 
-    \return an optional output iterator.
+    \return an output iterator.
+
+    \pre `area_2(p0, p1, p2) != 0`
   */
   template<
   typename OutputIterator,
   typename GeomTraits>
-  boost::optional<OutputIterator> triangle_coordinates_2(
+  OutputIterator triangle_coordinates_2(
     const typename GeomTraits::Point_2& p0, 
     const typename GeomTraits::Point_2& p1, 
     const typename GeomTraits::Point_2& p2, 
@@ -191,12 +197,14 @@ namespace Barycentric_coordinates {
     \param coordinates 
     An output iterator that stores the computed triangle coordinates.
 
-    \return an optional output iterator.
+    \return an output iterator.
+
+    \pre `area_2(p0, p1, p2) != 0`
   */
   template<
   typename Point_2, 
   typename OutputIterator>
-  boost::optional<OutputIterator> triangle_coordinates_2(
+  OutputIterator triangle_coordinates_2(
     const Point_2& p0, 
     const Point_2& p1, 
     const Point_2& p2, 
@@ -249,7 +257,7 @@ namespace Barycentric_coordinates {
     An instance of `VertexMap` that maps a vertex from `polygon` 
     to `GeomTraits::Point_2`.
 
-    \return an optional output iterator with the tag indicating if `query` 
+    \return an output iterator with the tag indicating if `query` 
     belongs to the polygon's boundary.
   */
   template<
@@ -257,7 +265,7 @@ namespace Barycentric_coordinates {
   typename OutputIterator,
   typename GeomTraits,
   typename VertexMap>
-  boost::optional< std::pair<OutputIterator, bool> > boundary_coordinates_2(
+  std::pair<OutputIterator, bool> boundary_coordinates_2(
     const Polygon& polygon,
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
@@ -317,7 +325,7 @@ namespace Barycentric_coordinates {
     \param vertex_map
     An instance of `VertexMap` that maps a vertex from `polygon` to `Point_2`.
 
-    \return an optional output iterator with the tag indicating if `query` 
+    \return an output iterator with the tag indicating if `query` 
     belongs to the polygon's boundary.
   */
   template<
@@ -325,7 +333,7 @@ namespace Barycentric_coordinates {
   typename Point_2,
   typename OutputIterator,
   typename VertexMap>
-  boost::optional< std::pair<OutputIterator, bool> > boundary_coordinates_2(
+  std::pair<OutputIterator, bool> boundary_coordinates_2(
     const Polygon& polygon,
     const Point_2& query,
     OutputIterator coordinates,
@@ -384,7 +392,7 @@ namespace Barycentric_coordinates {
     An instance of `PointMap` that maps an item from `queries` 
     to `GeomTraits::Point_2`.
 
-    \return an optional output iterator.
+    \return an output iterator.
   */
   template<
   typename Polygon,
@@ -393,7 +401,7 @@ namespace Barycentric_coordinates {
   typename GeomTraits,
   typename VertexMap,
   typename PointMap>
-  boost::optional<OutputIterator> boundary_coordinates_2(
+  OutputIterator boundary_coordinates_2(
     const Polygon& polygon,
     const QueryRange& queries,
     OutputIterator coordinates,
@@ -477,7 +485,7 @@ namespace Barycentric_coordinates {
     An instance of `PointMap` that maps an item from `queries` 
     to `GeomTraits::Point_2`.
 
-    \return an optional output iterator.
+    \return an output iterator.
   */
   template<
   typename VertexRange,
@@ -486,7 +494,7 @@ namespace Barycentric_coordinates {
   typename OutputIterator,
   typename GeomTraits,
   typename PointMap>
-  boost::optional<OutputIterator> analytic_weights_2(
+  OutputIterator analytic_weights_2(
     const VertexRange& vertices,
     const QueryRange& queries,
     Weights& weights,
@@ -544,7 +552,7 @@ namespace Barycentric_coordinates {
     \param traits
     An instance of `GeomTraits`.
 
-    \return an optional output iterator.
+    \return an output iterator.
   */
   template<
   typename VertexRange,
@@ -552,7 +560,7 @@ namespace Barycentric_coordinates {
   typename Weights,
   typename OutputIterator,
   typename GeomTraits>
-  boost::optional<OutputIterator> analytic_coordinates_2(
+  OutputIterator analytic_coordinates_2(
     const VertexRange& vertices,
     const Point_2& query,
     Weights& weights,
@@ -604,14 +612,14 @@ namespace Barycentric_coordinates {
     \param coordinates 
     An output iterator that stores the computed coordinates.
 
-    \return an optional output iterator.
+    \return an output iterator.
   */
   template<
   typename VertexRange,
   typename Point_2,
   typename Weights,
   typename OutputIterator>
-  boost::optional<OutputIterator> analytic_coordinates_2(
+  OutputIterator analytic_coordinates_2(
     const VertexRange& vertices,
     const Point_2& query,
     Weights& weights,
@@ -666,7 +674,7 @@ namespace Barycentric_coordinates {
     An instance of `PointMap` that maps an item from `queries` 
     to `GeomTraits::Point_2`.
 
-    \return an optional output iterator.
+    \return an output iterator.
   */
   template<
   typename VertexRange,
@@ -675,7 +683,7 @@ namespace Barycentric_coordinates {
   typename OutputIterator,
   typename GeomTraits,
   typename PointMap>
-  boost::optional<OutputIterator> analytic_coordinates_2(
+  OutputIterator analytic_coordinates_2(
     const VertexRange& vertices,
     const QueryRange& queries,
     Weights& weights,

@@ -141,15 +141,16 @@ namespace internal {
   template< 
   typename OutputIterator,
   typename GeomTraits>
-  boost::optional<OutputIterator> linear_coordinates_2(
+  OutputIterator linear_coordinates_2(
     const typename GeomTraits::Point_2& source, 
     const typename GeomTraits::Point_2& target, 
     const typename GeomTraits::Point_2& query, 
     OutputIterator coordinates,
     const GeomTraits traits) {
 
+    CGAL_precondition(source != target);
     if (source == target)
-      return boost::none;
+      return coordinates;
 
     // Number type.
     using FT = typename GeomTraits::FT;
@@ -176,7 +177,7 @@ namespace internal {
   template<
   typename OutputIterator,
   typename GeomTraits>
-  boost::optional<OutputIterator> planar_coordinates_2(
+  OutputIterator planar_coordinates_2(
     const typename GeomTraits::Point_2& p0, 
     const typename GeomTraits::Point_2& p1, 
     const typename GeomTraits::Point_2& p2, 
@@ -189,16 +190,18 @@ namespace internal {
 
     // Functions.
     const auto area_2 = traits.compute_area_2_object();
+    const FT total_area = area_2(p0, p1, p2);
 
-    if (area_2(p0, p1, p2) == FT(0))
-      return boost::none;
+    CGAL_precondition(total_area != FT(0));
+    if (total_area == FT(0))
+      return coordinates;
 
     // Compute some related sub-areas.
     const FT A1 = area_2(p1, p2, query);
     const FT A2 = area_2(p2, p0, query);
 
     // Compute the inverted total area of the triangle.
-    const FT inverted_total_area = FT(1) / area_2(p0, p1, p2);
+    const FT inverted_total_area = FT(1) / total_area;
 
     // Compute coordinates.
     const FT b0 = A1 * inverted_total_area;
@@ -338,7 +341,7 @@ namespace internal {
   template<
   typename OutputIterator,
   typename GeomTraits>
-  boost::optional< std::pair<OutputIterator, bool> > coordinates_on_last_edge_2(
+  std::pair<OutputIterator, bool> coordinates_on_last_edge_2(
     const std::vector<typename GeomTraits::Point_2>& polygon,
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
@@ -366,7 +369,7 @@ namespace internal {
   template<
   typename OutputIterator,
   typename GeomTraits>
-  boost::optional< std::pair<OutputIterator, bool> > boundary_coordinates_2(
+  std::pair<OutputIterator, bool> boundary_coordinates_2(
     const std::vector<typename GeomTraits::Point_2>& polygon,
     const typename GeomTraits::Point_2& query,
     const Query_point_location location,
@@ -417,7 +420,7 @@ namespace internal {
         return std::make_pair(coordinates, false);
       }
     } 
-    return boost::none;
+    return std::make_pair(coordinates, false);
   }
 
   enum class Edge_case {

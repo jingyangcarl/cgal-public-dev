@@ -43,9 +43,9 @@ int main() {
 
   for (const auto& query : interior_points) {
     coordinates.clear();
-    const auto result = CGAL::Barycentric_coordinates::analytic_coordinates_2(
+    CGAL::Barycentric_coordinates::analytic_coordinates_2(
     star_shaped, query, mean_value, std::back_inserter(coordinates));
-    if (!result) continue;
+    if (coordinates.size() == 0) continue;
 
     // Output mean value coordinates.
     for (std::size_t i = 0; i < coordinates.size() - 1; ++i)

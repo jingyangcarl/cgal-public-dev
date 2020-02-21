@@ -159,20 +159,14 @@ int main() {
 
   // Compute discrete harmonic coordinates for all the exterior points one by one.
   coordinates.clear();
-  auto result = CGAL::Barycentric_coordinates::analytic_coordinates_2(
+  CGAL::Barycentric_coordinates::analytic_coordinates_2(
     square, l, discrete_harmonic, std::back_inserter(coordinates));
-  result = CGAL::Barycentric_coordinates::analytic_coordinates_2(
+  CGAL::Barycentric_coordinates::analytic_coordinates_2(
     square, r, discrete_harmonic, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (exterior): ";
   for (const FT coordinate : coordinates) std::cout << coordinate << " ";
-  std::cout << std::endl;
-
-  // Return status of the last computation.
-  const std::string status = (result ? "SUCCESS." : "FAILURE.");
-  std::cout << std::endl << 
-    "status of the last computation: " 
-  << status << std::endl << std::endl;
+  std::cout << std::endl << std::endl;
 
   return EXIT_SUCCESS;
 }

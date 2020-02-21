@@ -200,7 +200,7 @@ namespace Barycentric_coordinates {
       \warning `compute()` should be called before calling this method!
     */
     template<typename OutputIterator>
-    boost::optional<OutputIterator> operator()(
+    OutputIterator operator()(
       const Polygon&,
       const Point_2& query, 
       OutputIterator coordinates,
@@ -264,7 +264,7 @@ namespace Barycentric_coordinates {
       \warning `compute()` should be called before calling this method!
     */
     template<typename OutputIterator>
-    boost::optional<OutputIterator> operator()(
+    OutputIterator operator()(
       const Point_2& query, 
       OutputIterator coordinates) {
       
@@ -289,7 +289,7 @@ namespace Barycentric_coordinates {
       \warning `compute()` should be called before calling this method!
     */
     template<typename OutputIterator>
-    boost::optional<OutputIterator> coordinates(
+    OutputIterator coordinates(
       const std::size_t query, 
       OutputIterator coordinates) const {
 
@@ -317,7 +317,7 @@ namespace Barycentric_coordinates {
       \warning `compute()` should be called before calling this method!
     */
     template<typename OutputIterator>
-    boost::optional<OutputIterator> coordinates(
+    OutputIterator coordinates(
       OutputIterator coordinates) const {
 
       CGAL_assertion(

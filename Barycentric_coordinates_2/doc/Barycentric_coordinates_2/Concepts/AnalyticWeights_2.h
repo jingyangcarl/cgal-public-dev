@@ -29,7 +29,7 @@ public:
   typename Point_2,
   typename OutputIterator,
   typename GeomTraits>
-  boost::optional<OutputIterator> operator()(
+  OutputIterator operator()(
     const VertexRange& vertices,
     const Point_2& query, 
     OutputIterator weights,
