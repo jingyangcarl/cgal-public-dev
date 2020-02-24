@@ -14,24 +14,23 @@ using Segment_2 = typename Kernel::Segment_2;
 using Indices   = std::vector<std::size_t>;
 
 using Input_range = std::vector<Segment_2>;
+
 using Neighbor_query = 
   CGAL::Shape_regularization::Delaunay_neighbor_query_2<Kernel, Input_range>;
-
-/*
-using Angle_regularizer = 
+using Angle_regularization = 
   CGAL::Shape_regularization::Angle_regularization_2<Kernel, Input_range>;
-using Ordinate_regularizer = 
+/*
+using Ordinate_regularization = 
   CGAL::Shape_regularization::Ordinate_regularization_2<Kernel, Input_range>; */
 
-/*
-using QP_regularizer_angles = CGAL::Shape_regularization::QP_regularization
-  <Kernel, Input_range, Neighbor_query, Angle_regularizer>;
-using QP_regularizer_ordinates = CGAL::Shape_regularization::QP_regularization
-  <Kernel, Input_range, Neighbor_query, Ordinate_regularizer>; */
+using QP_solver = CGAL::Shape_regularization::OSQP_solver<Kernel>;
 
+using QP_angle_regularizer = CGAL::Shape_regularization::QP_regularization
+  <Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
 /*
-using Parallel_groups = 
-  CGAL::Shape_regularization::Parallel_groups_2<Kernel, Input_range>; */
+using QP_ordinate_regularizer = CGAL::Shape_regularization::QP_regularization
+  <Kernel, Input_range, Neighbor_query, Ordinate_regularization>; */
+
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
@@ -97,23 +96,32 @@ int main(int argc, char *argv[]) {
   // Regularize.
   timer.start();
 
+  // Create a solver.
+  QP_solver qp_solver;
+
+  // Angle regularization.
+  const FT max_angle = FT(385) / FT(100);
   Neighbor_query neighbor_query(input_range);
+  Angle_regularization angle_regularization(
+    input_range, max_angle);
+
   for (const auto& group : groups) {
-    
-    // Create a neighbor query.
-    neighbor_query.clear();
     neighbor_query.add_group(group);
-
-    // Regularize angles.
-
-    // Regularize ordinates.
+    angle_regularization.add_group(group);
   }
-  
+
+  QP_angle_regularizer qp_angle_regularizer(
+    input_range, neighbor_query, angle_regularization, qp_solver);
+  qp_angle_regularizer.regularize();
+
   timer.stop();
   std::cout << 
-    "* number of modified segments = " << 0 << 
+    "* number of modified segments (angles) = " << 
+    angle_regularization.number_of_modified_segments() << 
     " in time = " << timer.time() << " sec." 
   << std::endl;
+
+  // Ordinate regularization.
 
   // Save regularized segments.
   if (path != "") {

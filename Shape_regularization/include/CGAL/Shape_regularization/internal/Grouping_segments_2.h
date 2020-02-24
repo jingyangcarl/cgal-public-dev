@@ -68,7 +68,7 @@ namespace internal {
       m_values.clear();
 
       for (const auto & it : segments) {
-        std::size_t seg_index = it.second.m_index;
+        std::size_t seg_index = it.second.index;
         m_segments_to_groups_hashmap[seg_index] = -1;
       }
 

@@ -19,11 +19,12 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ORDINATES_2_H
-#define CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ORDINATES_2_H
+#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_ORDINATE_CONDITIONS_2_H
+#define CGAL_SHAPE_REGULARIZATION_INTERNAL_ORDINATE_CONDITIONS_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 
 namespace CGAL {
@@ -31,30 +32,37 @@ namespace Shape_regularization {
 namespace internal {
 
   template<typename GeomTraits>
-  class Conditions_ordinates_2 {
+  class Ordinate_conditions_2 {
 
-    public:
-      using Traits = GeomTraits;
-      using FT = typename GeomTraits::FT;
-      using Segment_data = typename internal::Segment_data_2<Traits>;
+  public:
+    using Traits = GeomTraits;
+    using FT = typename Traits::FT;
+    using Segment_data = typename internal::Segment_data_2<Traits>;
 
-      Conditions_ordinates_2() :
-      m_moe(FT(1)) {}
+    Ordinate_conditions_2() :
+    m_moe(FT(1)) 
+    { }
 
+    FT reference(
+      const Segment_data& seg_data, 
+      const FT suffix) const {
 
-     FT reference(const Segment_data & seg_data, const FT suffix) const {
-      FT val = seg_data.m_reference_coordinates.y() + suffix;
+      FT val = seg_data.reference_coordinates.y() + suffix;
       return val;
-     }
+    }
 
-    int group_index(const FT val, const FT val_j, const int g_index) const {
+    int group_index(
+      const FT in, const FT val_j, const int g_index) const {
+      
       int g_j = -1;
-      if (CGAL::abs(val_j - val) < m_moe)  
+      const FT tr = val_j - in;
+      if (CGAL::abs(tr) < m_moe) 
         g_j = g_index;
       return g_j;
      }
 
     FT get_margin_of_error() const {
+      CGAL_precondition(m_moe > 0);
       return m_moe;
     }
 
@@ -63,12 +71,12 @@ namespace internal {
       m_moe = max_bound / FT(100);
     }
 
-    private:
-      FT m_moe;
-    };
+  private:
+    FT m_moe;
+  };
 
 } // namespace internal
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_CONDITIONS_ORDINATES_2_H
+#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_ORDINATE_CONDITIONS_2_H

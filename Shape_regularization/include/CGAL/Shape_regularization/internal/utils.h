@@ -24,6 +24,14 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// STL includes.
+#include <cmath>
+
+// CGAL includes.
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/property_map.h>
+
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
@@ -39,6 +47,17 @@ namespace internal {
     const FT x = half * (source.x() + target.x());
     const FT y = half * (source.y() + target.y());
     return Point_2(x, y);
+  }
+
+  template<typename Segment_2>
+  typename Kernel_traits<Segment_2>::Kernel::FT
+  length_2(const Segment_2& segment) { 
+    
+    using Traits = typename Kernel_traits<Segment_2>::Kernel;
+    using FT = typename Traits::FT;
+    
+    return static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(segment.squared_length())));
   }
 
   template<typename Vector>
@@ -65,7 +84,7 @@ namespace internal {
     normalize(v);
     return v;
   }
-  
+
   template<typename Vector_2>
   typename Kernel_traits<Vector_2>::Kernel::FT
   orientation_2(const Vector_2& v) {
@@ -73,12 +92,12 @@ namespace internal {
     using Traits = typename Kernel_traits<Vector_2>::Kernel;
     using FT = typename Traits::FT;
 
-    const FT atan = static_cast<FT>(
+    const FT atan_rad = static_cast<FT>(
       std::atan2(CGAL::to_double(v.y()), CGAL::to_double(v.x())));
-    FT orientation = atan * FT(180) / static_cast<FT>(CGAL_PI);
-    if (orientation < FT(0)) 
-      orientation += FT(180);
-    return orientation;
+    FT angle_deg = atan_rad * FT(180) / static_cast<FT>(CGAL_PI);
+    if (angle_deg < FT(0)) 
+      angle_deg += FT(180);
+    return angle_deg;
   }
 
   template<
@@ -87,19 +106,19 @@ namespace internal {
   Point_2 transform_coordinates_2(
     const Point_2& barycenter, 
     const Point_2& frame_origin, 
-    const FT angle) {
+    const FT angle_deg) {
 
-    const FT cos_val = static_cast<FT>(
-      cos(CGAL_PI * CGAL::to_double(angle) / 180.0));
-    const FT sin_val = static_cast<FT>(
-      sin(CGAL_PI * CGAL::to_double(angle) / 180.0));
+    const double angle_rad = 
+      CGAL_PI * CGAL::to_double(angle_deg) / 180.0;
 
-    const FT x = 
-      (barycenter.x() - frame_origin.x()) * cos_val + 
-      (barycenter.y() - frame_origin.y()) * sin_val;
-    const FT y = 
-      (barycenter.y() - frame_origin.y()) * cos_val - 
-      (barycenter.x() - frame_origin.x()) * sin_val;
+    const FT cos_val = static_cast<FT>(std::cos(angle_rad));
+    const FT sin_val = static_cast<FT>(std::sin(angle_rad));
+
+    const FT diff_x = barycenter.x() - frame_origin.x();
+    const FT diff_y = barycenter.y() - frame_origin.y();
+
+    const FT x = diff_x * cos_val + diff_y * sin_val;
+    const FT y = diff_y * cos_val - diff_x * sin_val;
 
     return Point_2(x, y);
   }

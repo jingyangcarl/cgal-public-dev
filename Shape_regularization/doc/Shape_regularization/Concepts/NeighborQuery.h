@@ -1,12 +1,12 @@
 /*!
-\ingroup PkgShape_regularizationConcepts
+\ingroup PkgShapeRegularizationConcepts
 \cgalConcept
 
-A concept that describes the set of methods used by the `CGAL::Regularization::Shape_regularization` 
+A concept that describes the set of methods used by the `CGAL::Shape_regularization::QP_regularization` 
 to access the neighbors of an item.
 
 \cgalHasModel 
-- `CGAL::Regularization::Delaunay_neighbor_query_2`
+- `CGAL::Shape_regularization::Delaunay_neighbor_query_2`
 */
 class NeighborQuery {
 
@@ -16,7 +16,7 @@ public:
     fills `neighbors` with the indices of all items, which are connected to the 
     item with the index `query_index`.
 
-    `CGAL::Regularization::Shape_regularization` calls this function once per each item.
+    `CGAL::Shape_regularization::QP_regularization` calls this function once per each item.
   */
   void operator()(
     const std::size_t query_index, 

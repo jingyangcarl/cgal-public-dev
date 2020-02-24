@@ -24,15 +24,18 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// STL includes.
 #include <map>
-#include <utility>
+#include <cmath>
 #include <vector>
+#include <utility>
 #include <iostream>
 
+// Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
-#include <CGAL/Shape_regularization/internal/Conditions_ordinates_2.h>
+#include <CGAL/Shape_regularization/internal/Ordinate_conditions_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -78,7 +81,7 @@ namespace Shape_regularization {
     using Segment = typename GeomTraits::Segment_2;
     using Point = typename GeomTraits::Point_2;
     using Segment_data = typename internal::Segment_data_2<Traits>;
-    using Conditions = typename internal::Conditions_ordinates_2<Traits>;
+    using Conditions = typename internal::Ordinate_conditions_2<Traits>;
     using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
     using Vector  = typename GeomTraits::Vector_2;
     using Targets_map = std::map <std::pair<std::size_t, std::size_t>, std::pair<FT, std::size_t>>;

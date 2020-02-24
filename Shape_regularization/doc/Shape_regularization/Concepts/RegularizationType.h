@@ -1,13 +1,13 @@
 /*!
-\ingroup PkgShape_regularizationConcepts
+\ingroup PkgShapeRegularizationConcepts
 \cgalConcept
 
-A concept that describes the set of methods used by the `CGAL::Regularization::Shape_regularization` 
+A concept that describes the set of methods used by the `CGAL::Shape_regularization::QP_regularization` 
 to apply regularization.
 
 \cgalHasModel 
-- `CGAL::Regularization::Angle_regularization_2`, 
-- `CGAL::Regularization::Ordinate_regularization_2`
+- `CGAL::Shape_regularization::Angle_regularization_2`, 
+- `CGAL::Shape_regularization::Ordinate_regularization_2`
 */
 class RegularizationType {
 
@@ -16,27 +16,30 @@ public:
   /*!  
   returns the max bound on an item value that is regularized.
 
-  `CGAL::Regularization::Shape_regularization` calls this function for each item 
-  with the index `i` that participates in the regularization process.
+  `CGAL::Shape_regularization::QP_regularization` calls this function for each item 
+  with the index `query_index` that participates in the regularization process.
   */
-  typename GeomTraits::FT bound(const std::size_t i) const { 
+  typename GeomTraits::FT bound(
+    const std::size_t query_index) const { 
 
   }
 
   /*!  
     returns an objective function value between two items, which are direct neighbors.
 
-    `CGAL::Regularization::Shape_regularization` calls this function for each neighbor pair 
-    `i <-> j` that participates in the regularization process.
+    `CGAL::Shape_regularization::QP_regularization` calls this function for each neighbor pair 
+    `query_index_i <-> query_index_j` that participates in the regularization process.
   */
-  typename GeomTraits::FT target_value(const std::size_t i, const std::size_t j) {
+  typename GeomTraits::FT target_value(
+    const std::size_t query_index_i, 
+    const std::size_t query_index_j) {
 
   }
 
   /*!
     applies the results from the QP solver to the initial items.
 
-    `CGAL::Regularization::Shape_regularization` calls this function one time, after
+    `CGAL::Shape_regularization::QP_regularization` calls this function once, after
     the QP problem has been solved during the regularization process.
   */
   void update(

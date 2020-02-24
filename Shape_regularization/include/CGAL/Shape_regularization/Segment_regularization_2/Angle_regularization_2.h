@@ -24,25 +24,27 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// STL includes.
 #include <map>
-#include <utility>
+#include <cmath>
 #include <vector>
+#include <utility>
 #include <iostream>
 
-#include <CGAL/property_map.h>
+// Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
-#include <CGAL/Shape_regularization/internal/Conditions_angles_2.h>
+#include <CGAL/Shape_regularization/internal/Angle_conditions_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShape_regularization2D_regularization
+    \ingroup PkgShapeRegularization2DReg
 
-    \brief %Regularization type is based on the angle regularization on a set of
-    2D segments to preserve parallelism and orthogonality relationships.
+    \brief An angle-based regularization type on a set of 2D segments that preserves 
+    parallelism and orthogonality relationships.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -52,14 +54,14 @@ namespace Shape_regularization {
 
     \tparam SegmentMap 
     must be an `LvaluePropertyMap` whose key type is the value type of the input 
-    range and value type is `Kernel::Segment_2`.
+    range and value type is `GeomTraits::Segment_2`.
 
     \cgalModels `RegularizationType`
   */
   template<
-    typename GeomTraits, 
-    typename InputRange,
-    typename SegmentMap>
+  typename GeomTraits, 
+  typename InputRange,
+  typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
   class Angle_regularization_2 {
   public:
 
@@ -76,14 +78,21 @@ namespace Shape_regularization {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
-    using Segment = typename GeomTraits::Segment_2;
-    using Point = typename GeomTraits::Point_2;
+    using Point_2 = typename Traits::Point_2;
+    using Vector_2 = typename Traits::Vector_2;
+    using Segment_2 = typename Traits::Segment_2;
+
     using Segment_data = typename internal::Segment_data_2<Traits>;
-    using Conditions = typename internal::Conditions_angles_2<Traits>;
+    using Conditions = typename internal::Angle_conditions_2<Traits>;
     using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
-    using Vector  = typename GeomTraits::Vector_2;
-    using Targets_map = std::map <std::pair<std::size_t, std::size_t>, std::pair<FT, std::size_t>>;
-    using Relations_map = std::map <std::pair<std::size_t, std::size_t>, std::pair<int, std::size_t>>;
+    
+    using Indices = std::vector<std::size_t>;
+    using Size_pair = std::pair<std::size_t, std::size_t>;
+    
+    using Targets_map = 
+      std::map<Size_pair, std::pair< FT, std::size_t> >;
+    using Relations_map = 
+      std::map<Size_pair, std::pair<int, std::size_t> >;
     /// \endcond
 
     /// @}
@@ -92,30 +101,40 @@ namespace Shape_regularization {
     /// @{
 
     /*!
-      \brief initializes all internal data structures and sets up the bound value.
+      \brief initializes all internal data structures.
 
       \param input_range 
-      an instance of `InputRange` with 2D segments.
+      an instance of `InputRange` with 2D segments
 
       \param theta_max
-      a bound value for angles.
+      max angle value in degrees
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` 
-      to `GeomTraits::Segment_2`
+      an instance of `SegmentMap` that maps an item 
+      from `input_range` to `GeomTraits::Segment_2`
 
       \pre `input_range.size() > 1`
-      \pre `theta_max >= 0 && theta_max < 90`
-
+      \pre `theta_max >= 0 && theta_max <= 90`
     */
-    Angle_regularization_2 (
+    Angle_regularization_2(
       InputRange& input_range, 
       const FT theta_max = FT(25),
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
     m_theta_max(CGAL::abs(theta_max)),
     m_segment_map(segment_map),
-    m_modified_segments_counter(0) {}
+    m_num_modified_segments(0) { 
+      
+      CGAL_precondition(input_range.size() > 1);
+      CGAL_precondition(theta_max >= FT(0) && theta_max <= FT(90));
+
+      if (theta_max < FT(0) || theta_max > FT(90)) {
+        std::cout << 
+          "WARNING: The max angle bound has to be within [0, 90]! Setting to 0." 
+        << std::endl;
+        m_theta_max = FT(0);
+      }
+    }
 
     /// @}
 
@@ -125,106 +144,100 @@ namespace Shape_regularization {
     /*!
       \brief implements `RegularizationType::target_value()`.
 
-      This function calculates the target value between 2 neighboring segments.
+      This function calculates the target value between 2 segments, which are
+      direct neighbors to each other.
 
-      \param i
-      Index of the first neighbor segment.
+      \param query_index_i
+      index of the first segment
 
-      \param j
-      Index of the second neighbor segment.
+      \param query_index_j
+      index of the second segment
 
-      \return GeomTraits::FT 
-
-      \pre `i >= 0 && i < input_range.size()`
-      \pre `j >= 0 && j < input_range.size()`
-
+      \pre `query_index_i >= 0 && query_index_i < input_range.size()`
+      \pre `query_index_j >= 0 && query_index_j < input_range.size()`
     */
-    FT target_value(const std::size_t i, const std::size_t j) {
- 
-      CGAL_precondition(m_segments.size() > 0);
-      CGAL_precondition(m_segments.find(i) != m_segments.end());
-      CGAL_precondition(m_segments.find(j) != m_segments.end());
+    FT target_value(
+      const std::size_t query_index_i, 
+      const std::size_t query_index_j) {
 
-      const Segment_data & s_i = m_segments.at(i);
-      const Segment_data & s_j = m_segments.at(j);
+      CGAL_precondition(m_segments.size() > 1);
+      CGAL_precondition(m_segments.find(query_index_i) != m_segments.end());
+      CGAL_precondition(m_segments.find(query_index_j) != m_segments.end());
 
-      const FT mes_ij = s_i.m_orientation - s_j.m_orientation;
-      const double mes90 = std::floor(CGAL::to_double(mes_ij / FT(90)));
+      const std::size_t i = query_index_i;
+      const std::size_t j = query_index_j;
 
-      const FT to_lower = FT(90) *  static_cast<FT>(mes90)          - mes_ij;
-      const FT to_upper = FT(90) * (static_cast<FT>(mes90) + FT(1)) - mes_ij;
+      const auto& s_i = m_segments.at(i);
+      const auto& s_j = m_segments.at(j);
 
-      const FT tar_val = CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
+      const FT mes_ij = s_i.orientation - s_j.orientation;
+      const double mes_90 = std::floor(CGAL::to_double(mes_ij / FT(90)));
+
+      const FT to_lower = FT(90) *  static_cast<FT>(mes_90)          - mes_ij;
+      const FT to_upper = FT(90) * (static_cast<FT>(mes_90) + FT(1)) - mes_ij;
+
+      const FT tar_val = 
+        CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
+
       if (CGAL::abs(tar_val) < bound(i) + bound(j)) {
         m_targets[std::make_pair(i, j)] = tar_val;
  
         int rel_val;
         if (CGAL::abs(to_lower) < CGAL::abs(to_upper))
-            rel_val = ((90 * static_cast<int>(mes90)) % 180 == 0 ? 0 : 1);
+          rel_val = ((90 * static_cast<int>(mes_90)) % 180 == 0 ? 0 : 1);
         else
-            rel_val = ((90 * static_cast<int>(mes90 + 1.0)) % 180 == 0 ? 0 : 1);
+          rel_val = ((90 * static_cast<int>(mes_90 + 1.0)) % 180 == 0 ? 0 : 1);
         
         m_relations[std::make_pair(i, j)] = rel_val;
       } 
-  
       return tar_val;
     }
 
     /*!
       \brief implements `RegularizationType::bound()`.
 
-      This function returns the bound of the query item.
-
-      \param i
-      Index of the query item
-
-      \pre `i >= 0 && i < input_range.size()`
-      
+      This function returns `theta_max`.
     */
-    FT bound(const std::size_t i) const {
-      CGAL_precondition(i >= 0 && i < m_input_range.size());
-      if (m_theta_max > FT(90)) {
-        std::cerr << "The bound for angles has to be within the range of 0 <= bound < 90!" << std::endl;
-        return FT(0);
-      }
+    FT bound(const std::size_t) const {
       return m_theta_max;
     }
 
     /*!
       \brief implements `RegularizationType::update()`.
 
-      This functions applies the results from the QP solver to the initial segments.
+      This function applies new orientations computed by the QP solver 
+      to the initial segments.
 
       \param result
-      A vector with the results from the QP solver.
+      a vector with updated segment orientations.
 
       \pre `result.size() > 0`
-
     */
-    void update(const std::vector<FT> & result) {
-
+    void update(const std::vector<FT>& result) {
       CGAL_precondition(result.size() > 0);
-      const std::size_t n = m_input_range.size();
+
       Targets_map targets;
       Relations_map relations;
-      std::map <std::size_t, Segment_data> segments;
-      std::map <FT, std::vector<std::size_t>> parallel_groups_angle_map;
+      std::map<std::size_t, Segment_data> segments;
+      std::map<FT, Indices> parallel_groups;
 
       CGAL_precondition(m_targets.size() > 0);
       CGAL_precondition(m_targets.size() == m_relations.size());
 
-      for (const auto & group : m_groups) {
-        if (group.size() < 2) continue; 
+      for (const auto& group : m_groups) {
+        if (group.size() < 2) continue;
 
-        parallel_groups_angle_map.clear();
-        segments.clear();
-        targets.clear();
-        relations.clear();
+        segments.clear(); targets.clear(); relations.clear();
         build_grouping_data(group, segments, targets, relations);
 
-        if(segments.size() > 0) {
-          m_grouping.make_groups(m_theta_max, n, segments, result, parallel_groups_angle_map, targets, relations);
-          rotate_parallel_segments(parallel_groups_angle_map);
+        parallel_groups.clear();
+        if (segments.size() > 0) {
+          const std::size_t n = m_input_range.size();
+
+          m_grouping.make_groups(
+            m_theta_max, n, segments, result, 
+            parallel_groups, targets, relations);
+          rotate_parallel_segments(parallel_groups);
         }
       }
     }
@@ -235,189 +248,201 @@ namespace Shape_regularization {
     /// @{ 
 
     /*!
-      \brief returns groups of indices of parallel segments.
+      \brief returns indices of parallel segments organized into groups.
 
       \param groups
-      Must be a type of OutputIterator
+      an instance of OutputIterator
     */
     template<typename OutputIterator>
     OutputIterator parallel_groups(OutputIterator groups) {
-      for(const auto & mi : m_parallel_groups_angle_map) {
-        const std::vector <std::size_t> & group = mi.second;
+      for(const auto& parallel_group : m_parallel_groups) {
+        const auto& group = parallel_group.second;
         *(groups++) = group;
       }
       return groups;
     }
 
     /*!
-      \brief adds a group of items for regularization.
+      \brief inserts a group of segments from `input_range`.
 
-      \tparam Range 
+      \tparam ItemRange 
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
       \tparam IndexMap 
-      must be an `LvaluePropertyMap` whose key type is the value type of the input 
-      range and value type is `std::size_t`.
+      must be an `LvaluePropertyMap` whose key type is the value type of `ItemRange`
+      and value type is `std::size_t`.
 
-      \param group
-      Must be a type of Range
+      \param item_range
+      an instance of ItemRange
 
       \param index_map
-      Must be a type of IndexMap
+      an instance of IndexMap that returns an index stored in the `item_range` 
+      of the segment in the `input_range`
 
-      \pre `group.size() > 1`
+      \pre `item_range.size() > 1`
     */
-    template<typename Range, typename IndexMap = CGAL::Identity_property_map<std::size_t>>
-  	void add_group(const Range& group, const IndexMap index_map = IndexMap()) { 
-      std::vector<std::size_t> gr;
-      for (const auto & item : group) {
+    template<
+    typename ItemRange, 
+    typename IndexMap = CGAL::Identity_property_map<std::size_t> >
+  	void add_group(
+      const ItemRange& item_range, 
+      const IndexMap index_map = IndexMap()) { 
+      
+      CGAL_precondition(item_range.size() > 1);
+      if (item_range.size() < 2) return;
+      
+      Indices group;
+      group.reserve(item_range.size());
+      for (const auto& item : item_range) {
         const std::size_t seg_index = get(index_map, item);
-        gr.push_back(seg_index);
+        group.push_back(seg_index);
       }
-
-      if (gr.size() > 1) {
-        m_groups.push_back(gr);
-        build_segment_data_map(gr);
-      }
+      
+      m_groups.push_back(group);
+      update_segment_data(group);
     }
 
-    /// \cond SKIP_IN_MANUAL
+    /*!
+      \brief returns number of modifed segments`.
+    */
     std::size_t number_of_modified_segments() const {
-      return m_modified_segments_counter;
+      return m_num_modified_segments;
     }
-    /// \endcond
 
     /// @}
 
   private:
     Input_range& m_input_range;
-    const FT m_theta_max;
-    const Segment_map  m_segment_map;
-    std::map <std::size_t, Segment_data> m_segments;
-    std::map <std::pair<std::size_t, std::size_t>, FT> m_targets;
-    std::map <std::pair<std::size_t, std::size_t>, int> m_relations;
+    FT m_theta_max;
+    const Segment_map m_segment_map;
+    std::map<std::size_t, Segment_data> m_segments;
+    std::map<Size_pair, FT> m_targets;
+    std::map<Size_pair, int> m_relations;
     Grouping m_grouping;
-    std::map <FT, std::vector<std::size_t>> m_parallel_groups_angle_map;
-    std::vector <std::vector<std::size_t>> m_groups;
-    std::size_t m_modified_segments_counter;
+    std::map<FT, Indices> m_parallel_groups;
+    std::vector<Indices> m_groups;
+    std::size_t m_num_modified_segments;
 
-    void build_segment_data_map(const std::vector<std::size_t> & group) {
+    void update_segment_data(
+      const Indices& group) {
       if (group.size() < 2) return;
 
-      for(std::size_t i = 0; i < group.size(); ++i) {
-        const std::size_t seg_index = group[i];
-
-        CGAL_precondition(m_segments.find(seg_index) == m_segments.end());
+      for(const std::size_t seg_index : group) {
         if(m_segments.find(seg_index) != m_segments.end())
           continue;
 
-        const Segment& seg = get(m_segment_map, *(m_input_range.begin() + seg_index));
-        const Segment_data seg_data(seg, seg_index);
-
+        const auto& segment = get(m_segment_map, 
+          *(m_input_range.begin() + seg_index));
+        const Segment_data seg_data(segment, seg_index);
         m_segments.emplace(seg_index, seg_data);
       }
     }
 
-    void build_grouping_data (const std::vector <std::size_t> & group,
-                              std::map <std::size_t, Segment_data> & segments,
-                              Targets_map & targets,
-                              Relations_map & relations) {
-      for (const std::size_t it : group) {
-        const std::size_t seg_index = it;
-
+    void build_grouping_data(
+      const Indices& group,
+      std::map<std::size_t, Segment_data>& segments,
+      Targets_map& targets,
+      Relations_map& relations) {
+      
+      for (const std::size_t seg_index : group) {
         CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
-        const Segment_data& seg_data = m_segments.at(seg_index);
+        const auto& seg_data = m_segments.at(seg_index);
 
         segments.emplace(seg_index, seg_data);
         std::size_t tar_index = 0;
 
-        auto ri = m_relations.begin();
-        for (const auto & ti : m_targets) {
-          const std::size_t seg_index_tar_i = ti.first.first;
-          const std::size_t seg_index_tar_j = ti.first.second;
-          const FT tar_val = ti.second;
+        auto rit = m_relations.begin();
+        for (const auto& target : m_targets) {
+          const std::size_t seg_index_tar_i = target.first.first;
+          const std::size_t seg_index_tar_j = target.first.second;
+          const FT tar_val = target.second;
 
-          const std::size_t seg_index_rel_i = ri->first.first;
-          const std::size_t seg_index_rel_j = ri->first.second;
-          const int rel_val = ri->second;
+          auto& relation = *rit;
+          const std::size_t seg_index_rel_i = relation.first.first;
+          const std::size_t seg_index_rel_j = relation.first.second;
+          const int rel_val = relation.second;
 
           CGAL_precondition(seg_index_tar_i == seg_index_rel_i);
           CGAL_precondition(seg_index_tar_j == seg_index_rel_j);
 
           if (seg_index_tar_i == seg_index && seg_index_rel_i == seg_index) {
-            targets[std::make_pair(seg_index_tar_i, seg_index_tar_j)] = std::make_pair(tar_val, tar_index);
-            relations[std::make_pair(seg_index_rel_i, seg_index_rel_j)] = std::make_pair(rel_val, tar_index);
+            targets[std::make_pair(seg_index_tar_i, seg_index_tar_j)] = 
+              std::make_pair(tar_val, tar_index);
+            relations[std::make_pair(seg_index_rel_i, seg_index_rel_j)] = 
+              std::make_pair(rel_val, tar_index);
           }
-
-          ++ri;
-          ++tar_index;
+          ++rit; ++tar_index;
         }
       }
       CGAL_postcondition(targets.size() == relations.size());
     }
 
-    void rotate_parallel_segments(const std::map <FT, std::vector<std::size_t>> & parallel_groups_angle_map) {
-      for (const auto & mi : parallel_groups_angle_map) {
-        const FT theta = mi.first;
-        const std::vector<std::size_t> & group = mi.second;
-        if(m_parallel_groups_angle_map.find(theta) == m_parallel_groups_angle_map.end()) {
-          m_parallel_groups_angle_map[theta] = group;
-        }
+    void rotate_parallel_segments(
+      const std::map<FT, Indices>& parallel_groups) {
+      
+      for (const auto& parallel_group : parallel_groups) {
+        const FT angle = parallel_group.first;
+        const auto& group = parallel_group.second;
 
-        // Each group of parallel segments has a normal vector that we compute with alpha.
-        const FT x = static_cast<FT>(cos(CGAL::to_double(theta * static_cast<FT>(CGAL_PI) / FT(180))));
-        const FT y = static_cast<FT>(sin(CGAL::to_double(theta * static_cast<FT>(CGAL_PI) / FT(180))));
+        if (m_parallel_groups.find(angle) == m_parallel_groups.end())
+          m_parallel_groups[angle] = group;
 
-        Vector v_dir = Vector(x, y);
-        const Vector v_ort = Vector(-v_dir.y(), v_dir.x());
-        
-        const FT a = v_ort.x();
-        const FT b = v_ort.y();
+        // Each group of parallel segments has a normal vector 
+        // that we compute with alpha.
+        const double angle_rad = 
+          CGAL::to_double(angle * static_cast<FT>(CGAL_PI) / FT(180));
+        const FT x = static_cast<FT>(std::cos(angle_rad));
+        const FT y = static_cast<FT>(std::sin(angle_rad));
+
+        Vector_2 direction = Vector_2(x, y);
+        const Vector_2 orth = Vector_2(-direction.y(), direction.x());
+        const FT a = orth.x();
+        const FT b = orth.y();
 
         // Rotate segments with precision.
-        for (std::size_t i = 0; i < group.size(); ++i) {
-
-          std::size_t seg_index = group[i];
-
-          // Compute equation of the supporting line of the rotated segment.
+        // Compute equation of the supporting line of the rotated segment.
+        for (const std::size_t seg_index : group) {
           CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
-          const Segment_data & seg_data = m_segments.at(seg_index);
-          const Point & barycentre = seg_data.m_barycentre;
-          const FT c = -a * barycentre.x() - b * barycentre.y();
 
-          set_orientation(seg_index, a, b, c, v_dir);
+          const auto& seg_data = m_segments.at(seg_index);
+          const auto& barycenter = seg_data.barycenter;
+          const FT c = -a * barycenter.x() - b * barycenter.y();
+          set_orientation(seg_index, a, b, c, direction);
         }
       }
     }
 
-    void set_orientation(const std::size_t i, const FT a, const FT b, const FT c, const Vector &direction) {
-      Vector l_direction = direction;
+    void set_orientation(
+      const std::size_t seg_index, 
+      const FT a, const FT b, const FT c, 
+      Vector_2 direction) {
       
-      if (l_direction.y() < FT(0) || (l_direction.y() == FT(0) && l_direction.x() < FT(0))) 
-        l_direction = -l_direction;
-      FT x1, y1, x2, y2;
-      const Segment_data & seg_data = m_segments.at(i);
-      const Point barycentre = seg_data.m_barycentre;
-      const FT length = seg_data.m_length;
-      if (CGAL::abs(l_direction.x()) > CGAL::abs(l_direction.y())) { 
-        x1 = barycentre.x() - length * l_direction.x() / FT(2);
-        x2 = barycentre.x() + length * l_direction.x() / FT(2);
+      if (
+        direction.y() < FT(0) || (
+        direction.y() == FT(0) && direction.x() < FT(0))) 
+        direction = -direction;
 
+      FT x1, y1, x2, y2;
+      const auto& seg_data = m_segments.at(seg_index);
+      const auto& barycenter = seg_data.barycenter;
+      const FT length = seg_data.length;
+
+      if (CGAL::abs(direction.x()) > CGAL::abs(direction.y())) { 
+        x1 = barycenter.x() - length * direction.x() / FT(2);
+        x2 = barycenter.x() + length * direction.x() / FT(2);
         y1 = (-c - a * x1) / b;
         y2 = (-c - a * x2) / b;
-      } 
-      else {
-        y1 = barycentre.y() - length * l_direction.y() / FT(2);
-        y2 = barycentre.y() + length * l_direction.y() / FT(2);
-
+      }  else {
+        y1 = barycenter.y() - length * direction.y() / FT(2);
+        y2 = barycenter.y() + length * direction.y() / FT(2);
         x1 = (-c - b * y1) / a;
         x2 = (-c - b * y2) / a;
       }
-      const Point source = Point(x1, y1);
-      const Point target = Point(x2, y2);
+      const Point_2 source = Point_2(x1, y1);
+      const Point_2 target = Point_2(x2, y2);
 
-      m_input_range[i] = Segment(source, target);
-      ++m_modified_segments_counter;
+      m_input_range[seg_index] = Segment_2(source, target);
+      ++m_num_modified_segments;
     } 
   };
 
