@@ -196,6 +196,7 @@ namespace Shape_regularization {
     */
     void clear() {
       m_groups.clear();
+      m_groups.resize(m_input_range.size());
     }
 
     /// @}

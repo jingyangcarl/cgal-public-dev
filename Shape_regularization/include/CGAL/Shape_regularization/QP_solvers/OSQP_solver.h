@@ -25,8 +25,6 @@
 // #include <CGAL/license/Shape_regularization.h>
 
 // STL includes.
-#include <map>
-#include <set>
 #include <vector>
 #include <utility>
 

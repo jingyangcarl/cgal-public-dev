@@ -41,10 +41,10 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShape_regularization2D_regularization
+    \ingroup PkgShapeRegularization2DReg
 
-    \brief %Regularization type is based on the ordinate regularization on a set of
-    2D segments to preserve collinearity relationships.
+    \brief An ordinate-based regularization type on a set of 2D segments that preserves 
+    collinearity relationship.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -53,15 +53,15 @@ namespace Shape_regularization {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
-    range and value type is `Kernel::Segment_2`.
+    must be an `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
+    and value type is `GeomTraits::Segment_2`.
 
     \cgalModels `RegularizationType`
   */
   template<
   typename GeomTraits, 
   typename InputRange,
-  typename SegmentMap>
+  typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
   class Ordinate_regularization_2 {
   public:
 
@@ -78,13 +78,19 @@ namespace Shape_regularization {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
-    using Segment = typename GeomTraits::Segment_2;
-    using Point = typename GeomTraits::Point_2;
+    using Point_2 = typename Traits::Point_2;
+    using Vector_2  = typename Traits::Vector_2;
+    using Segment_2 = typename Traits::Segment_2;
+
     using Segment_data = typename internal::Segment_data_2<Traits>;
     using Conditions = typename internal::Ordinate_conditions_2<Traits>;
     using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
-    using Vector  = typename GeomTraits::Vector_2;
-    using Targets_map = std::map <std::pair<std::size_t, std::size_t>, std::pair<FT, std::size_t>>;
+
+    using Indices = std::vector<std::size_t>;
+    using Size_pair = std::pair<std::size_t, std::size_t>;
+
+    using Targets_map = 
+      std::map<Size_pair, std::pair<FT, std::size_t> >;
     /// \endcond
 
     /// @}
@@ -93,30 +99,40 @@ namespace Shape_regularization {
     /// @{
 
     /*!
-      \brief initializes all internal data structures and sets up the bound value.
+      \brief initializes all internal data structures.
 
       \param input_range 
-      an instance of `InputRange` with 2D segments.
+      an instance of `InputRange` with 2D segments
 
       \param d_max
-      a bound value for ordinates.
+      max distance value in meters
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` 
-      to `GeomTraits::Segment_2`
+      an instance of `SegmentMap` that maps an item 
+      from `input_range` to `GeomTraits::Segment_2`
 
       \pre `input_range.size() > 1`
       \pre `d_max >= 0`
-
     */
     Ordinate_regularization_2 (
       InputRange& input_range,
-      const FT d_max = FT(0.1),
+      const FT d_max = FT(1) / FT(10),
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
     m_d_max(CGAL::abs(d_max)),
     m_segment_map(segment_map),
-    m_modified_segments_counter(0) {}
+    m_num_modified_segments(0) { 
+
+      CGAL_precondition(input_range.size() > 1);
+      CGAL_precondition(d_max >= FT(0));
+
+      if (d_max < FT(0)) {
+        std::cout << 
+          "WARNING: The max ordinate bound has to be within [0, +inf)! Setting to 0." 
+        << std::endl;
+        m_d_max = FT(0);
+      }
+    }
     /// @}
 
     /// \name Access
@@ -125,83 +141,85 @@ namespace Shape_regularization {
     /*!
       \brief implements `RegularizationType::target_value()`.
 
-      This function calculates the target value between 2 neighboring segments.
+      This function calculates the target value between 2 segments, which are
+      direct neighbors to each other.
 
-      \param i
-      Index of the first neighbor segment.
+      \param query_index_i
+      index of the first segment
 
-      \param j
-      Index of the second neighbor segment.
+      \param query_index_j
+      index of the second segment
 
-      \return GeomTraits::FT 
-
-      \pre `i >= 0 && i < input_range.size()`
-      \pre `j >= 0 && j < input_range.size()`
-
+      \pre `query_index_i >= 0 && query_index_i < input_range.size()`
+      \pre `query_index_j >= 0 && query_index_j < input_range.size()`
     */
-    FT target_value(const std::size_t i, const std::size_t j) {
-      if(m_segments.size() == 0) return FT(0);
-      CGAL_precondition(m_segments.size() > 0);
-      CGAL_precondition(m_segments.find(i) != m_segments.end());
-      CGAL_precondition(m_segments.find(j) != m_segments.end());
 
-      const Segment_data & s_i = m_segments.at(i);
-      const Segment_data & s_j = m_segments.at(j);
+    FT target_value(
+      const std::size_t query_index_i, 
+      const std::size_t query_index_j) {
 
-      const FT tar_val = s_i.m_reference_coordinates.y() - s_j.m_reference_coordinates.y();
-      if (CGAL::abs(tar_val) < bound(i) + bound(j)) {
+      if( m_segments.size() == 0) 
+        return FT(0);
+
+      CGAL_precondition(m_segments.size() > 1);
+      CGAL_precondition(m_segments.find(query_index_i) != m_segments.end());
+      CGAL_precondition(m_segments.find(query_index_j) != m_segments.end());
+
+      const std::size_t i = query_index_i;
+      const std::size_t j = query_index_j;
+
+      const auto& s_i = m_segments.at(i);
+      const auto& s_j = m_segments.at(j);
+
+      const FT tar_val = 
+        s_i.ref_coords.y() - s_j.ref_coords.y();
+      if (CGAL::abs(tar_val) < bound(i) + bound(j))
         m_targets[std::make_pair(i, j)] = tar_val;
-      }
-  
       return tar_val;
     }
 
     /*!
       \brief implements `RegularizationType::bound()`.
 
-      This function returns the bound of the query item.
-
-      \param i
-      Index of the query item
-
-      \pre `i >= 0 && i < input_range.size()`
-      
+      This function returns `theta_max`.
     */
-    FT bound(const std::size_t i) const {
-      CGAL_precondition(i >= 0 && i < m_input_range.size());
+    FT bound(const std::size_t) const {
       return m_d_max;
     }
 
     /*!
       \brief implements `RegularizationType::update()`.
 
-      This functions applies the results from the QP solver to the initial segments.
+      This function applies new positions computed by the QP solver 
+      to the initial segments.
 
       \param result
-      A vector with the results from the QP solver.
+      a vector with updated segment positions.
 
       \pre `result.size() > 0`
-
     */
-    void update(const std::vector<FT> & result) {
+    void update(const std::vector<FT>& result) {
       CGAL_precondition(result.size() > 0);
-      const std::size_t n = m_input_range.size();
-      std::map <FT, std::vector<std::size_t>> collinear_groups_by_ordinates;
-      std::map <std::size_t, Segment_data> segments;
-      Targets_map targets;
 
-      for (const auto & group : m_parallel_groups) {
+      Targets_map targets;
+      std::map<FT, Indices> collinear_groups;
+      std::map<std::size_t, Segment_data> segments;
+
+      CGAL_precondition(m_targets.size() > 0);
+      for (const auto& group : m_groups) {
         if (group.size() < 2) continue; 
 
-        collinear_groups_by_ordinates.clear();
-        segments.clear();
-        targets.clear();
-
+        targets.clear(); segments.clear();
         build_grouping_data(group, segments, targets);
 
+        collinear_groups.clear();
         if (segments.size() > 0) {
-          m_grouping.make_groups(m_d_max, n, segments, result, collinear_groups_by_ordinates, targets);
-          translate_collinear_segments(collinear_groups_by_ordinates);
+          const std::size_t n = m_input_range.size();
+
+          m_grouping.make_groups(
+            m_d_max, n, segments, result, 
+            collinear_groups, targets);
+          translate_collinear_segments(collinear_groups);
         }
       }
     }
@@ -211,59 +229,69 @@ namespace Shape_regularization {
     /// @{ 
 
     /*!
-      \brief adds a group of items for regularization.
+      \brief inserts a group of segments from `input_range`.
 
-      \tparam Range 
+      \tparam ItemRange 
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
       \tparam IndexMap 
-      must be an `LvaluePropertyMap` whose key type is the value type of the input 
-      range and value type is `std::size_t`.
+      must be an `LvaluePropertyMap` whose key type is the value type of `ItemRange`
+      and value type is `std::size_t`.
 
-      \param group
-      Must be a type of Range
+      \param item_range
+      an instance of ItemRange
 
       \param index_map
-      Must be a type of IndexMap
+      an instance of IndexMap that returns an index stored in the `item_range` 
+      of the segment in the `input_range`
 
-      \pre `group.size() > 1`
+      \pre `item_range.size() > 1`
     */
-    template<typename Range, typename IndexMap = CGAL::Identity_property_map<std::size_t>>
-  	void add_group(const Range& group, const IndexMap index_map = IndexMap()) { 
-      std::vector<std::size_t> gr;
-      for (const auto & item : group) {
+    template<
+    typename ItemRange, 
+    typename IndexMap = CGAL::Identity_property_map<std::size_t> >
+  	void add_group(
+      const ItemRange& item_range, 
+      const IndexMap index_map = IndexMap()) { 
+      
+      CGAL_precondition(item_range.size() > 1);
+      if (item_range.size() < 2) return;
+      
+      Indices group;
+      group.reserve(item_range.size());
+      for (const auto& item : item_range) {
         const std::size_t seg_index = get(index_map, item);
-        gr.push_back(seg_index);
+        group.push_back(seg_index);
       }
-
-      if (gr.size() > 1) {
-        m_parallel_groups.push_back(gr);
-        build_segment_data_map(gr);
-      }
+      
+      m_groups.push_back(group);
+      update_segment_data(group);
     }
 
-    /// \cond SKIP_IN_MANUAL
+    /*!
+      \brief returns number of modifed segments`.
+    */
     std::size_t number_of_modified_segments() const {
-      return m_modified_segments_counter;
+      return m_num_modified_segments;
     }
-    /// \endcond
 
     /// @}
 
   private:
     Input_range& m_input_range;
-    const FT m_d_max;
-    const Segment_map  m_segment_map;
-    std::map <std::size_t, Segment_data> m_segments;
-    std::map <std::pair<std::size_t, std::size_t>, FT> m_targets;
+    FT m_d_max;
+    const Segment_map m_segment_map;
+    std::map<std::size_t, Segment_data> m_segments;
+    std::map<Size_pair, FT> m_targets;
     Grouping m_grouping;
-    std::vector <std::vector <std::size_t>> m_parallel_groups;
-    std::size_t m_modified_segments_counter;
+    std::vector<Indices> m_groups;
+    std::size_t m_num_modified_segments;
 
-    void build_segment_data_map(const std::vector<std::size_t> & paral_gr) {
+    void update_segment_data(
+      const Indices& paral_gr) {
       if (paral_gr.size() < 2) return;
 
-      Point frame_origin;
+      Point_2 frame_origin;
       for(std::size_t i = 0; i < paral_gr.size(); ++i) {
         const std::size_t seg_index = paral_gr[i];
 
@@ -271,21 +299,23 @@ namespace Shape_regularization {
         if(m_segments.find(seg_index) != m_segments.end())
           continue;
 
-        const Segment& seg = get(m_segment_map, *(m_input_range.begin() + seg_index));
+        const auto& seg = get(m_segment_map, *(m_input_range.begin() + seg_index));
         Segment_data seg_data(seg, seg_index);
 
         if (i == 0)
-          frame_origin = seg_data.m_barycentre;
+          frame_origin = seg_data.barycenter;
 
-        seg_data.m_reference_coordinates = internal::transform_coordinates_2(
-                seg_data.m_barycentre, frame_origin, seg_data.m_orientation);
+        seg_data.ref_coords = internal::transform_coordinates_2(
+                seg_data.barycenter, frame_origin, seg_data.orientation);
         m_segments.emplace(seg_index, seg_data);
       } 
     }
 
-    void build_grouping_data(const std::vector <std::size_t> & group,
-                             std::map <std::size_t, Segment_data> & segments,
-                             Targets_map & targets) {
+    void build_grouping_data(
+      const std::vector <std::size_t> & group,
+      std::map <std::size_t, Segment_data> & segments,
+      Targets_map & targets) {
+      
       for (const std::size_t it : group) {
         const std::size_t seg_index = it;
 
@@ -309,7 +339,8 @@ namespace Shape_regularization {
       }
     }
 
-    void translate_collinear_segments(const std::map <FT, std::vector<std::size_t>> & collinear_groups_by_ordinates) {
+    void translate_collinear_segments(
+      const std::map <FT, std::vector<std::size_t>> & collinear_groups_by_ordinates) {
       for (const auto & mi : collinear_groups_by_ordinates) {
         const FT dt = mi.first;
         const std::vector<std::size_t> & group = mi.second;
@@ -321,15 +352,15 @@ namespace Shape_regularization {
         }
 
         CGAL_precondition(m_segments.find(l_index) != m_segments.end());
-        const Segment_data & l_data = m_segments.at(l_index);
+        const auto& l_data = m_segments.at(l_index);
 
-        FT new_difference = dt - l_data.m_reference_coordinates.y();
+        FT new_difference = dt - l_data.ref_coords.y();
         set_difference(l_index, new_difference);
 
-        const FT l_a = l_data.m_a;
-        const FT l_b = l_data.m_b;
-        const FT l_c = l_data.m_c;
-        const Vector & l_direction = l_data.m_direction;
+        const FT l_a = l_data.a;
+        const FT l_b = l_data.b;
+        const FT l_c = l_data.c;
+        const auto & l_direction = l_data.direction;
 
         // Translate the other segments, so that they rest upon the line ax + by + c = 0.
         for (const std::size_t it : group) {
@@ -337,19 +368,20 @@ namespace Shape_regularization {
             CGAL_precondition(m_segments.find(it) != m_segments.end());
             const Segment_data & seg_data = m_segments.at(it);
 
-            new_difference = dt - seg_data.m_reference_coordinates.y();
+            new_difference = dt - seg_data.ref_coords.y();
             set_difference(it, new_difference, l_a, l_b, l_c, l_direction);
           }
         }
       }
     }
 
-    int find_longest_segment(const std::vector<std::size_t> & group) const {
+    int find_longest_segment(
+      const std::vector<std::size_t> & group) const {
       FT l_max = -FT(1000000000000);
       int l_index = -1;
 
       for (const std::size_t it : group) {
-        const FT seg_length = m_segments.at(it).m_length;
+        const FT seg_length = m_segments.at(it).length;
 
         if (l_max < seg_length) {
           l_max = seg_length;
@@ -360,43 +392,45 @@ namespace Shape_regularization {
       return l_index;
     }
 
-    void set_difference(const int i, const FT new_difference) {
+    void set_difference(
+      const int i, const FT new_difference) {
       const FT difference = new_difference;
       Segment_data & seg_data = m_segments.at(i);
 
-      const Vector & direction = seg_data.m_direction;
-      const Vector final_normal = Vector(-direction.y(), direction.x());
+      const auto & direction = seg_data.direction;
+      const Vector_2 final_normal = Vector_2(-direction.y(), direction.x());
 
-      const Point &source = seg_data.m_segment.source();
-      const Point &target = seg_data.m_segment.target();
+      const auto &source = seg_data.segment.source();
+      const auto &target = seg_data.segment.target();
 
-      Point new_source = Point(source.x() + difference * final_normal.x(), source.y() + difference * final_normal.y());
-      Point new_target = Point(target.x() + difference * final_normal.x(), target.y() + difference * final_normal.y());
+      Point_2 new_source = Point_2(source.x() + difference * final_normal.x(), source.y() + difference * final_normal.y());
+      Point_2 new_target = Point_2(target.x() + difference * final_normal.x(), target.y() + difference * final_normal.y());
       
       const FT bx = (new_source.x() + new_target.x()) / FT(2);
       const FT by = (new_source.y() + new_target.y()) / FT(2);
 
-      m_input_range[i] = Segment(new_source, new_target);
-      seg_data.m_c = -seg_data.m_a * bx - seg_data.m_b * by;
+      m_input_range[i] = Segment_2(new_source, new_target);
+      seg_data.c = -seg_data.a * bx - seg_data.b * by;
 
-      ++m_modified_segments_counter;
+      ++m_num_modified_segments;
     }
 
-    void set_difference(const int i, const FT new_difference, const FT a, const FT b, const FT c, const Vector &direction) {
+    void set_difference(
+      const int i, const FT new_difference, const FT a, const FT b, const FT c, const Vector_2 &direction) {
       FT difference = new_difference;
-      Segment_data & seg_data = m_segments.at(i);
+      auto & seg_data = m_segments.at(i);
 
-      seg_data.m_direction = direction;
-      if (seg_data.m_direction.y() < FT(0) || (seg_data.m_direction.y() == FT(0) && seg_data.m_direction.x() < FT(0))) 
-        seg_data.m_direction = -seg_data.m_direction;
+      seg_data.direction = direction;
+      if (seg_data.direction.y() < FT(0) || (seg_data.direction.y() == FT(0) && seg_data.direction.x() < FT(0))) 
+        seg_data.direction = -seg_data.direction;
 
-      Vector final_normal = Vector(-seg_data.m_direction.y(), seg_data.m_direction.x());
+      Vector_2 final_normal = Vector_2(-seg_data.direction.y(), seg_data.direction.x());
       FT x1, x2, y1, y2;
 
-      const Point &source = seg_data.m_segment.source();
-      const Point &target = seg_data.m_segment.target();
+      const auto &source = seg_data.segment.source();
+      const auto &target = seg_data.segment.target();
 
-      if (CGAL::abs(seg_data.m_direction.x()) > CGAL::abs(seg_data.m_direction.y())) {
+      if (CGAL::abs(seg_data.direction.x()) > CGAL::abs(seg_data.direction.y())) {
         x1 = source.x() + difference * final_normal.x();
         x2 = target.x() + difference * final_normal.x(); 
 
@@ -411,11 +445,11 @@ namespace Shape_regularization {
         x2 = (-c - b * y2) / a;
       }
 
-      const Point new_source = Point(x1, y1);
-      const Point new_target = Point(x2, y2);
-      m_input_range[i] = Segment(new_source, new_target);
+      const Point_2 new_source = Point_2(x1, y1);
+      const Point_2 new_target = Point_2(x2, y2);
+      m_input_range[i] = Segment_2(new_source, new_target);
 
-      ++m_modified_segments_counter;
+      ++m_num_modified_segments;
     }
   };
 

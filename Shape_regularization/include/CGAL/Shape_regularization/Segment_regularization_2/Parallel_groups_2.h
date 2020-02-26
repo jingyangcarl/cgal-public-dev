@@ -24,17 +24,22 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// STL includes.
 #include <map>
+#include <cmath>
 #include <vector>
+
+// Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShape_regularization_utilities
+    \ingroup PkgShapeRegularizationUtilities
 
-    \brief Groups segments that have a similar angle value into groups of parallel segments
+    \brief Organizes segments with a similar orientation into groups of 
+    parallel segments.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -43,15 +48,14 @@ namespace Shape_regularization {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
-    range and value type is `Kernel::Segment_2`.
-
+    must be an `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
+    and value type is `GeomTraits::Segment_2`.
   */
   template<
   typename GeomTraits,
   typename InputRange,
   typename SegmentMap>
-  struct Parallel_groups_2 {
+  class Parallel_groups_2 {
 
   public:
 
@@ -68,8 +72,9 @@ namespace Shape_regularization {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
-    using Segment = typename GeomTraits::Segment_2;
+    using Segment_2 = typename Traits::Segment_2;
     using Segment_data = typename internal::Segment_data_2<Traits>;
+    using Indices = std::vector<std::size_t>;
     /// \endcond
 
     /// @}
@@ -77,32 +82,31 @@ namespace Shape_regularization {
     /// \name Initialization
     /// @{
     /*!
-      \brief initializes all internal data structures and sets up the tolerance value.
+      \brief initializes all internal data structures.
 
       \param input_range 
-      an instance of `InputRange` with 2D segments.
+      an instance of `InputRange` with 2D segments
 
       \param tolerance
-      a tolerance value for angles. `tolerance`\f$^{-1}\f$ is the angle bound value.
+      maximum angle deviation between two segments
 
       \param segment_map
       an instance of `SegmentMap` that maps an item from `input_range` 
-      to `Kernel::Segment_2`
+      to `GeomTraits::Segment_2`
 
       \pre `input_range.size() > 0`
       \pre `tolerance > 0`
-
     */
     Parallel_groups_2 (
       const InputRange& input_range, 
       const FT tolerance = FT(1000000),
-      const SegmentMap segment_map = SegmentMap()) :
+      const SegmentMap segment_map = SegmentMap()) : 
     m_input_range(input_range),
     m_segment_map(segment_map),
     m_tolerance(CGAL::abs(tolerance)) {
 
-      CGAL_precondition(m_input_range.size() > 0);
-      CGAL_precondition(m_tolerance > FT(0));
+      CGAL_precondition(input_range.size() > 0);
+      CGAL_precondition(tolerance > FT(0));
 
       build_segment_data();
       make_parallel_groups();
@@ -113,44 +117,46 @@ namespace Shape_regularization {
     /// @{ 
 
     /*!
-      \brief returns groups of indices of parallel segments.
+      \brief returns indices of parallel segments organized into groups.
 
       \param groups
-      Must be a type of OutputIterator
+      an instance of OutputIterator
     */
     template<typename OutputIterator>
     OutputIterator parallel_groups(OutputIterator groups) {
-      CGAL_precondition(m_parallel_groups_angle_map.size() > 0);
-
-      for(const auto & mi : m_parallel_groups_angle_map) {
-        const std::vector <std::size_t> & group = mi.second;
+      
+      CGAL_precondition(m_parallel_groups.size() > 0);
+      for(const auto& parallel_group : m_parallel_groups) {
+        const auto& group = parallel_group.second;
         *(groups++) = group;
       }
       return groups;
     }
-     /// @}
+    /// @}
 
   private:
     const Input_range& m_input_range;
-    const Segment_map  m_segment_map;
+    const Segment_map m_segment_map;
     std::vector<Segment_data> m_segments;
     const FT m_tolerance;
-    std::map <FT, std::vector<std::size_t>> m_parallel_groups_angle_map;
+    std::map<FT, Indices> m_parallel_groups;
 
     void build_segment_data() {
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        const Segment& seg = get(m_segment_map, *(m_input_range.begin() + i));
-        const Segment_data seg_data(seg, i);
+        const auto& segment = 
+          get(m_segment_map, *(m_input_range.begin() + i));
+        const Segment_data seg_data(segment, i);
         m_segments.push_back(seg_data);
       }
-      CGAL_postcondition(m_segments.size() > 0);
+      CGAL_assertion(m_segments.size() > 0);
     }
 
     void make_parallel_groups() {
-      for (const auto & seg : m_segments) {
-        const FT angle = static_cast<FT> (floor(CGAL::to_double(seg.m_orientation * m_tolerance))) / m_tolerance;
-        const std::size_t seg_index = seg.m_index;
-        m_parallel_groups_angle_map[angle].push_back(seg_index);
+      for (const auto& seg_data : m_segments) {
+        const FT angle = static_cast<FT>(floor(
+          CGAL::to_double(seg_data.orientation * m_tolerance))) / m_tolerance;
+        const std::size_t seg_index = seg_data.index;
+        m_parallel_groups[angle].push_back(seg_index);
       }
     }
   };

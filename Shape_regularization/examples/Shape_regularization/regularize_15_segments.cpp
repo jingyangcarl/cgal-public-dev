@@ -19,17 +19,15 @@ using Neighbor_query =
   CGAL::Shape_regularization::Delaunay_neighbor_query_2<Kernel, Input_range>;
 using Angle_regularization = 
   CGAL::Shape_regularization::Angle_regularization_2<Kernel, Input_range>;
-/*
 using Ordinate_regularization = 
-  CGAL::Shape_regularization::Ordinate_regularization_2<Kernel, Input_range>; */
+  CGAL::Shape_regularization::Ordinate_regularization_2<Kernel, Input_range>;
 
 using QP_solver = CGAL::Shape_regularization::OSQP_solver<Kernel>;
 
 using QP_angle_regularizer = CGAL::Shape_regularization::QP_regularization
   <Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
-/*
 using QP_ordinate_regularizer = CGAL::Shape_regularization::QP_regularization
-  <Kernel, Input_range, Neighbor_query, Ordinate_regularization>; */
+  <Kernel, Input_range, Neighbor_query, Ordinate_regularization, QP_solver>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -99,9 +97,11 @@ int main(int argc, char *argv[]) {
   // Create a solver.
   QP_solver qp_solver;
 
+  // Create a neighbor query.
+  Neighbor_query neighbor_query(input_range);
+
   // Angle regularization.
   const FT max_angle = FT(385) / FT(100);
-  Neighbor_query neighbor_query(input_range);
   Angle_regularization angle_regularization(
     input_range, max_angle);
 
@@ -122,6 +122,36 @@ int main(int argc, char *argv[]) {
   << std::endl;
 
   // Ordinate regularization.
+  timer.reset(); timer.start();
+  std::vector<Indices> parallel_groups;
+  angle_regularization.parallel_groups(
+    std::back_inserter(parallel_groups));
+
+  std::cout << 
+    "* number of parallel_groups = " << parallel_groups.size() 
+  << std::endl;
+
+  const FT max_distance = FT(1) / FT(10);
+  Ordinate_regularization ordinate_regularization(
+    input_range, max_distance);
+
+  neighbor_query.clear();
+  for (const auto& group : parallel_groups) {
+    if (group.size() < 2) continue;
+    neighbor_query.add_group(group);
+    ordinate_regularization.add_group(group);
+  }
+
+  QP_ordinate_regularizer qp_ordinate_regularizer(
+    input_range, neighbor_query, ordinate_regularization, qp_solver);
+  qp_ordinate_regularizer.regularize();
+
+  timer.stop();
+  std::cout << 
+    "* number of modified segments (ordinates) = " << 
+    ordinate_regularization.number_of_modified_segments() << 
+    " in time = " << timer.time() << " sec." 
+  << std::endl;
 
   // Save regularized segments.
   if (path != "") {

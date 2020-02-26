@@ -40,14 +40,14 @@ namespace internal {
     using Segment_data = typename internal::Segment_data_2<Traits>;
 
     Ordinate_conditions_2() :
-    m_moe(FT(1)) 
+    m_margin_of_error(FT(1)) 
     { }
 
     FT reference(
       const Segment_data& seg_data, 
       const FT suffix) const {
 
-      FT val = seg_data.reference_coordinates.y() + suffix;
+      FT val = seg_data.ref_coords.y() + suffix;
       return val;
     }
 
@@ -56,23 +56,24 @@ namespace internal {
       
       int g_j = -1;
       const FT tr = val_j - in;
-      if (CGAL::abs(tr) < m_moe) 
+      if (CGAL::abs(tr) < m_margin_of_error) 
         g_j = g_index;
       return g_j;
      }
 
     FT get_margin_of_error() const {
-      CGAL_precondition(m_moe > 0);
-      return m_moe;
+      CGAL_precondition(
+        m_margin_of_error > 0);
+      return m_margin_of_error;
     }
 
     void set_margin_of_error(const FT max_bound) {
       CGAL_precondition(max_bound > 0);
-      m_moe = max_bound / FT(100);
+      m_margin_of_error = max_bound / FT(100);
     }
 
   private:
-    FT m_moe;
+    FT m_margin_of_error;
   };
 
 } // namespace internal

@@ -75,7 +75,8 @@ namespace internal {
       build_initial_groups(n, targets, relations, qp_result);
       build_map_of_values(qp_result, segments);
 
-      // Try to assign segments whose orientation has not been optimized thanks to the regularization process, to an existing group.
+      // Try to assign segments whose orientation has not been optimized 
+      // thanks to the regularization process, to an existing group.
       assign_segments_to_groups(segments);
       build_groups_by_value(groups_by_value);
     } 
@@ -139,8 +140,10 @@ namespace internal {
       }
     }
 
-    void build_map_of_values(const std::vector<FT> & qp_result,
-                             const std::map <std::size_t, Segment_data> & segments) {
+    void build_map_of_values(
+      const std::vector<FT> & qp_result,
+      const std::map <std::size_t, Segment_data> & segments) {
+      
       for (const auto & sm_i : m_segments_to_groups_hashmap) {
         int g_i = sm_i.second;
 
@@ -149,7 +152,8 @@ namespace internal {
           const Segment_data & seg_data = segments.at(seg_index);
           const FT val = m_cond.reference(seg_data, qp_result[seg_index]);
           
-          // Check if the angle that seems to be associated to this group of segments is not too close to another value.
+          // Check if the angle that seems to be associated to this group 
+          // of segments is not too close to another value.
           int g_j = -1;
           for (const auto & it_m : m_values) {
             if (CGAL::abs(it_m.second - val) < m_moe) 
