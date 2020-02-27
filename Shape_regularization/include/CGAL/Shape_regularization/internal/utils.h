@@ -25,12 +25,18 @@
 // #include <CGAL/license/Shape_regularization.h>
 
 // STL includes.
+#include <map>
 #include <cmath>
+#include <vector>
+#include <string>
+#include <utility>
+#include <iostream>
 
 // CGAL includes.
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Shape_regularization {

@@ -16,8 +16,15 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// CGAL includes.
+#include <CGAL/utils.h>
 #include <CGAL/centroid.h>
+#include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_3.h>
+#include <CGAL/property_map.h>
+#include <CGAL/assertions.h>
+
+// Shape detection includes.
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 
 namespace CGAL {

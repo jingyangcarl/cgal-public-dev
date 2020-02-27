@@ -24,15 +24,7 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <map>
-#include <cmath>
-#include <vector>
-#include <utility>
-#include <iostream>
-
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Angle_conditions_2.h>
@@ -41,7 +33,7 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularization2DReg
+    \ingroup PkgShapeRegularizationRef_2D
 
     \brief An angle-based regularization type on a set of 2D segments that preserves 
     parallelism and orthogonality relationships.

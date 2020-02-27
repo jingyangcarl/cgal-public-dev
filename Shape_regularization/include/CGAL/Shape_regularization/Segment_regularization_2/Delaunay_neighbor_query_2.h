@@ -24,12 +24,7 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <vector>
-
 // CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/property_map.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 
@@ -40,7 +35,7 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularization2DReg
+    \ingroup PkgShapeRegularizationRef_2D
 
     \brief A neighbor query based on a Delaunay triangulation, which enables to 
     find the nearest neighbors in a set of `GeomTraits::Segment_2`.
@@ -183,8 +178,6 @@ namespace Shape_regularization {
       build_delaunay_triangulation(group);
       add_neighbors();
     }
-
-    /// @}
 
     /// @}
 

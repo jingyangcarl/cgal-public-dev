@@ -24,15 +24,7 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <map>
-#include <cmath>
-#include <vector>
-#include <utility>
-#include <iostream>
-
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Ordinate_conditions_2.h>
@@ -41,7 +33,7 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularization2DReg
+    \ingroup PkgShapeRegularizationRef_2D
 
     \brief An ordinate-based regularization type on a set of 2D segments that preserves 
     collinearity relationship.
@@ -287,168 +279,167 @@ namespace Shape_regularization {
     std::vector<Indices> m_groups;
     std::size_t m_num_modified_segments;
 
-    void update_segment_data(
-      const Indices& paral_gr) {
-      if (paral_gr.size() < 2) return;
+    void update_segment_data(const Indices& group) {
+      if (group.size() < 2) return;
 
       Point_2 frame_origin;
-      for(std::size_t i = 0; i < paral_gr.size(); ++i) {
-        const std::size_t seg_index = paral_gr[i];
-
+      for (std::size_t i = 0; i < group.size(); ++i) {
+        const std::size_t seg_index = group[i];
         CGAL_precondition(m_segments.find(seg_index) == m_segments.end());
-        if(m_segments.find(seg_index) != m_segments.end())
+        if (m_segments.find(seg_index) != m_segments.end())
           continue;
 
-        const auto& seg = get(m_segment_map, *(m_input_range.begin() + seg_index));
-        Segment_data seg_data(seg, seg_index);
+        const auto& segment = 
+          get(m_segment_map, *(m_input_range.begin() + seg_index));
+        Segment_data seg_data(segment, seg_index);
 
         if (i == 0)
           frame_origin = seg_data.barycenter;
 
         seg_data.ref_coords = internal::transform_coordinates_2(
-                seg_data.barycenter, frame_origin, seg_data.orientation);
-        m_segments.emplace(seg_index, seg_data);
+          seg_data.barycenter, frame_origin, seg_data.orientation);
+        m_segments.emplace(
+          seg_index, seg_data);
       } 
     }
 
     void build_grouping_data(
-      const std::vector <std::size_t> & group,
-      std::map <std::size_t, Segment_data> & segments,
-      Targets_map & targets) {
+      const Indices& group,
+      std::map<std::size_t, Segment_data>& segments,
+      Targets_map& targets) {
       
-      for (const std::size_t it : group) {
-        const std::size_t seg_index = it;
-
+      for (const std::size_t seg_index : group) {
         CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
-        const Segment_data& seg_data = m_segments.at(seg_index);
+        const auto& seg_data = m_segments.at(seg_index);
 
         segments.emplace(seg_index, seg_data);
         std::size_t tar_index = 0;
 
-        for(const auto & ti : m_targets) {
-          const std::size_t seg_index_tar_i = ti.first.first;
-          const std::size_t seg_index_tar_j = ti.first.second;
-          const FT tar_val = ti.second;
+        for(const auto& target : m_targets) {
+          const std::size_t seg_index_tar_i = target.first.first;
+          const std::size_t seg_index_tar_j = target.first.second;
+          const FT tar_value = target.second;
 
-          if (seg_index_tar_i == seg_index) {
-            targets[std::make_pair(seg_index_tar_i, seg_index_tar_j)] = std::make_pair(tar_val, tar_index);
-          }
-
+          if (seg_index_tar_i == seg_index)
+            targets[std::make_pair(seg_index_tar_i, seg_index_tar_j)] = 
+              std::make_pair(tar_value, tar_index);
           ++tar_index;
         }
       }
     }
 
     void translate_collinear_segments(
-      const std::map <FT, std::vector<std::size_t>> & collinear_groups_by_ordinates) {
-      for (const auto & mi : collinear_groups_by_ordinates) {
-        const FT dt = mi.first;
-        const std::vector<std::size_t> & group = mi.second;
-        int l_index = find_longest_segment(group);
-        CGAL_postcondition(l_index >= 0);
-        if(l_index < 0) {
-          std::cerr << "Cannot translate collinear segments! Cannot find the longest segment!" << std::endl;
-          return;
-        }
+      const std::map<FT, Indices>& collinear_groups) {
+      
+      for (const auto& collinear_group : collinear_groups) {
+        const FT dt = collinear_group.first;
+        const auto& group = collinear_group.second;
 
-        CGAL_precondition(m_segments.find(l_index) != m_segments.end());
-        const auto& l_data = m_segments.at(l_index);
+        const std::size_t longest = find_longest_segment(group);
+        CGAL_assertion(m_segments.find(longest) != m_segments.end());
+        const auto& longest_data = m_segments.at(longest);
 
-        FT new_difference = dt - l_data.ref_coords.y();
-        set_difference(l_index, new_difference);
+        FT new_difference = dt - longest_data.ref_coords.y();
+        set_difference(longest, new_difference);
 
-        const FT l_a = l_data.a;
-        const FT l_b = l_data.b;
-        const FT l_c = l_data.c;
-        const auto & l_direction = l_data.direction;
+        const FT la = longest_data.a;
+        const FT lb = longest_data.b;
+        const FT lc = longest_data.c;
+        const auto& ldirection = longest_data.direction;
 
-        // Translate the other segments, so that they rest upon the line ax + by + c = 0.
-        for (const std::size_t it : group) {
-          if (it != static_cast<std::size_t>(l_index)) {
-            CGAL_precondition(m_segments.find(it) != m_segments.end());
-            const Segment_data & seg_data = m_segments.at(it);
+        // Translate the other segments, so that they rest 
+        // upon the line ax + by + c = 0.
+        for (const std::size_t seg_index : group) {
+          if (seg_index != longest) {
+            CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
+            const auto& seg_data = m_segments.at(seg_index);
 
             new_difference = dt - seg_data.ref_coords.y();
-            set_difference(it, new_difference, l_a, l_b, l_c, l_direction);
+            set_difference(seg_index, new_difference, la, lb, lc, ldirection);
           }
         }
       }
     }
 
-    int find_longest_segment(
-      const std::vector<std::size_t> & group) const {
-      FT l_max = -FT(1000000000000);
-      int l_index = -1;
-
-      for (const std::size_t it : group) {
-        const FT seg_length = m_segments.at(it).length;
-
-        if (l_max < seg_length) {
-          l_max = seg_length;
-          l_index = it;
+    std::size_t find_longest_segment(
+      const Indices& group) const {
+      
+      FT max_length = -FT(1);
+      std::size_t longest = std::size_t(-1);
+      for (const std::size_t seg_index : group) {
+        const FT seg_length = m_segments.at(seg_index).length;
+        if (max_length < seg_length) {
+          longest = seg_index;
+          max_length = seg_length; 
         }
       }
-
-      return l_index;
+      return longest;
     }
 
     void set_difference(
-      const int i, const FT new_difference) {
-      const FT difference = new_difference;
-      Segment_data & seg_data = m_segments.at(i);
+      const std::size_t seg_index, 
+      const FT new_difference) {
 
-      const auto & direction = seg_data.direction;
+      const FT difference = new_difference;
+      auto& seg_data = m_segments.at(seg_index);
+
+      const auto& direction = seg_data.direction;
       const Vector_2 final_normal = Vector_2(-direction.y(), direction.x());
 
-      const auto &source = seg_data.segment.source();
-      const auto &target = seg_data.segment.target();
+      const auto& source = seg_data.segment.source();
+      const auto& target = seg_data.segment.target();
 
-      Point_2 new_source = Point_2(source.x() + difference * final_normal.x(), source.y() + difference * final_normal.y());
-      Point_2 new_target = Point_2(target.x() + difference * final_normal.x(), target.y() + difference * final_normal.y());
+      Point_2 new_source = Point_2(
+        source.x() + difference * final_normal.x(), 
+        source.y() + difference * final_normal.y());
+      Point_2 new_target = Point_2(
+        target.x() + difference * final_normal.x(), 
+        target.y() + difference * final_normal.y());
       
       const FT bx = (new_source.x() + new_target.x()) / FT(2);
       const FT by = (new_source.y() + new_target.y()) / FT(2);
 
-      m_input_range[i] = Segment_2(new_source, new_target);
+      m_input_range[seg_index] = Segment_2(new_source, new_target);
       seg_data.c = -seg_data.a * bx - seg_data.b * by;
-
       ++m_num_modified_segments;
     }
 
     void set_difference(
-      const int i, const FT new_difference, const FT a, const FT b, const FT c, const Vector_2 &direction) {
+      const std::size_t seg_index, 
+      const FT new_difference, 
+      const FT a, const FT b, const FT c, 
+      const Vector_2& direction) {
+      
       FT difference = new_difference;
-      auto & seg_data = m_segments.at(i);
+      auto& seg_data = m_segments.at(seg_index);
 
       seg_data.direction = direction;
-      if (seg_data.direction.y() < FT(0) || (seg_data.direction.y() == FT(0) && seg_data.direction.x() < FT(0))) 
+      if (seg_data.direction.y() < FT(0) || 
+      (seg_data.direction.y() == FT(0) && seg_data.direction.x() < FT(0))) 
         seg_data.direction = -seg_data.direction;
 
-      Vector_2 final_normal = Vector_2(-seg_data.direction.y(), seg_data.direction.x());
+      Vector_2 final_normal = Vector_2(
+        -seg_data.direction.y(), seg_data.direction.x());
+
+      const auto& source = seg_data.segment.source();
+      const auto& target = seg_data.segment.target();
+
       FT x1, x2, y1, y2;
-
-      const auto &source = seg_data.segment.source();
-      const auto &target = seg_data.segment.target();
-
       if (CGAL::abs(seg_data.direction.x()) > CGAL::abs(seg_data.direction.y())) {
         x1 = source.x() + difference * final_normal.x();
         x2 = target.x() + difference * final_normal.x(); 
-
         y1 = (-c - a * x1) / b;
         y2 = (-c - a * x2) / b;
-      } 
-      else {    
+      } else {    
         y1 = source.y() + difference * final_normal.y();
         y2 = target.y() + difference * final_normal.y();
-
         x1 = (-c - b * y1) / a;
         x2 = (-c - b * y2) / a;
       }
 
       const Point_2 new_source = Point_2(x1, y1);
       const Point_2 new_target = Point_2(x2, y2);
-      m_input_range[i] = Segment_2(new_source, new_target);
-
+      m_input_range[seg_index] = Segment_2(new_source, new_target);
       ++m_num_modified_segments;
     }
   };

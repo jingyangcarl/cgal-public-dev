@@ -39,7 +39,7 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularization
+    \ingroup PkgShapeRegularizationRef_Solvers
     
     \brief Quadratic programming solver
 
@@ -109,6 +109,9 @@ namespace Shape_regularization {
 
       \param u
       upper bounds
+
+      \param result
+      stores the optimization results
 
       \pre `P.nonZeros() == number_of_items + number_of_edges`
       \pre `A.nonZeros() == 6 * number_of_edges + n`

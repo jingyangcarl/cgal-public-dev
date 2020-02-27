@@ -34,11 +34,17 @@
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 
+// CGAL includes.
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/property_map.h>
+#include <CGAL/assertions.h>
+
 namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularization
+    \ingroup PkgShapeRegularizationRef
     
     \brief Main class/entry point to the shape regularization algorithm
     based on the quadratic programming global optimization.

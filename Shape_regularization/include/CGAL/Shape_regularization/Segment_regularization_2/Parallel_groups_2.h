@@ -24,11 +24,6 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <map>
-#include <cmath>
-#include <vector>
-
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 
@@ -36,7 +31,7 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularizationUtilities
+    \ingroup PkgShapeRegularizationRef_Utilities
 
     \brief Organizes segments with a similar orientation into groups of 
     parallel segments.
@@ -54,7 +49,7 @@ namespace Shape_regularization {
   template<
   typename GeomTraits,
   typename InputRange,
-  typename SegmentMap>
+  typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
   class Parallel_groups_2 {
 
   public:

@@ -1,31 +1,43 @@
 /*!
 \defgroup PkgShapeRegularizationRef Shape Regularization Reference
 
-\defgroup PkgShape_regularizationConcepts Concepts
+
+\defgroup PkgShapeRegularizationRef_Concepts Concepts
 \ingroup PkgShapeRegularizationRef
 
-Concepts used for the parameters of the `CGAL::Regularization::Shape_regularization`.
+Concepts used for the parameters of the `CGAL::Shape_regularization::QP_regularization`.
 
-\defgroup PkgShape_regularization2D_regularization 2D Regularization
+
+\defgroup PkgShapeRegularizationRef_Solvers QP Solvers
 \ingroup PkgShapeRegularizationRef
 
-Models that can be used with the `CGAL::Regularization::Shape_regularization`
+Models that can be used with the `CGAL::Shape_regularization::QP_regularization`
 for shape regularization in a segment set.
 
-\defgroup PkgShape_regularization3D_regularization 3D Regularization
+
+\defgroup PkgShapeRegularizationRef_2D 2D Regularization
+\ingroup PkgShapeRegularizationRef
+
+Models that can be used with the `CGAL::Shape_regularization::QP_regularization`
+for shape regularization in a segment set.
+
+
+\defgroup PkgShapeRegularizationRef_3D 3D Regularization
 \ingroup PkgShapeRegularizationRef
 
 Here will be a section on the 3D regularization.
 
-\defgroup PkgShape_regularization_utilities Utilities
+
+\defgroup PkgShapeRegularizationRef_Utilities Utilities
 \ingroup PkgShapeRegularizationRef
 
 Utility classes that can be used with the `CGAL::Regularization::Shape_regularization`.
 
 \addtogroup PkgShapeRegularizationRef
 
+
 \cgalPkgDescriptionBegin{Shape Regularization, PkgShapeRegularizationRef}
-\cgalPkgPicture{example_angles_100_segments_120x120.png}
+\cgalPkgPicture{regularize_100_segments_angles_120x120.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov}
@@ -51,15 +63,26 @@ CGAL provides two particular regularization types: angle regularization of 2D se
 ### Concepts ###
 - `NeighborQuery`
 - `RegularizationType`
+- `QPSolver`
 
-### Algorithm ###
-- `CGAL::Regularization::Shape_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType>`
+### Algorithms ###
+- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>`
+- `CGAL::Shape_regularization::Contour_regularization_2<GeomTraits, InputRange>`
+
+### QP Solvers ###
+- `CGAL::Shape_regularization::CGAL_solver<GeomTraits>`
+- `CGAL::Shape_regularization::OSQP_solver<GeomTraits>`
 
 ### 2D regularization ###
-- `CGAL::Regularization::Delaunay_neighbor_query_2<GeomTraits, InputRange, Segment_map>`
-- `CGAL::Regularization::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
-- `CGAL::Regularization::Ordinate_regularization_2<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_regularization::Delaunay_neighbor_query_2<GeomTraits, InputRange, Segment_map>`
+- `CGAL::Shape_regularization::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_regularization::Ordinate_regularization_2<GeomTraits, InputRange, SegmentMap>`
+
+### 3D regularization ###
 
 ### Utilities ###
-- `CGAL::Regularization::Parallel_groups_2<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_regularization::Parallel_groups_2<GeomTraits, InputRange, SegmentMap>`
+
+### Functions ###
+- `CGAL::Shape_regularization::regularize_planes()`
 */

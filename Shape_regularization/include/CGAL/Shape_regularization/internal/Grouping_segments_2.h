@@ -24,10 +24,7 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-#include <vector>
-#include <map>
-#include <utility>
-
+// Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 
 namespace CGAL {
@@ -40,40 +37,54 @@ namespace internal {
   class Grouping_segments_2 {
   public:
     using Traits = GeomTraits;
-    using FT = typename GeomTraits::FT;
+    using FT = typename Traits::FT;
+
+    using Indices = std::vector<std::size_t>;
+    using Size_pair = std::pair<std::size_t, std::size_t>;
+
     using Segment_data = typename internal::Segment_data_2<Traits>;
-    using Targets_map = std::map <std::pair<std::size_t, std::size_t>, std::pair<FT, std::size_t>>;
-    using Relations_map = std::map <std::pair<std::size_t, std::size_t>, std::pair<int, std::size_t>>;
+    using Targets_map = 
+      std::map<Size_pair, std::pair<FT, std::size_t> >;
+    using Relations_map = 
+      std::map<Size_pair, std::pair<int, std::size_t> >;
 
     Grouping_segments_2() :
     m_tolerance(FT(1) / FT(1000000)),
-    m_moe(FT(0)) {}
+    m_margin_of_error(FT(0)) 
+    { }
 
-      void make_groups(const FT max_bound, const std::size_t n, 
-                       const std::map <std::size_t, Segment_data> & segments,
-                       const std::vector<FT> & qp_result,
-                       std::map<FT, std::vector<std::size_t>> & groups_by_value,
-                       const Targets_map & targets, const Relations_map & relations = Relations_map()) { 
+    void make_groups(
+      const FT max_bound, 
+      const std::size_t n, 
+      const std::map<std::size_t, Segment_data>& segments,
+      const std::vector<FT>& qp_result,
+      std::map<FT, Indices>& groups_by_value,
+      const Targets_map& targets, 
+      const Relations_map& relations = Relations_map()) { 
+      
       CGAL_precondition(n > 0);
-      CGAL_precondition(max_bound > 0);
+      CGAL_precondition(max_bound > FT(0));
       CGAL_precondition(qp_result.size() > 0);
 
-      m_cond.set_margin_of_error(max_bound);
-      m_moe = m_cond.get_margin_of_error();
-      CGAL_postcondition(m_moe > 0);
+      m_conditions.set_margin_of_error(max_bound);
+      m_margin_of_error = m_conditions.get_margin_of_error();
+      CGAL_assertion(m_margin_of_error > FT(0));
       
-      groups_by_value.clear();
       m_groups.clear();
-      m_segments_to_groups_hashmap.clear();
+      groups_by_value.clear();
+      m_segments_to_groups.clear();
       m_values.clear();
 
-      for (const auto & it : segments) {
-        std::size_t seg_index = it.second.index;
-        m_segments_to_groups_hashmap[seg_index] = -1;
+      for (const auto& pair : segments) {
+        const auto& seg_data = pair.second;
+        const std::size_t seg_index = seg_data.index;
+        m_segments_to_groups[seg_index] = -1;
       }
 
-      build_initial_groups(n, targets, relations, qp_result);
-      build_map_of_values(qp_result, segments);
+      build_initial_groups(
+        n, targets, relations, qp_result);
+      build_map_of_values(
+        qp_result, segments);
 
       // Try to assign segments whose orientation has not been optimized 
       // thanks to the regularization process, to an existing group.
@@ -83,133 +94,141 @@ namespace internal {
 
   private:
     const FT m_tolerance;
-    FT m_moe;
-    Conditions m_cond;
-    std::map<std::size_t, int> m_segments_to_groups_hashmap;
-    std::map <std::size_t, std::vector<std::size_t>> m_groups;
+    FT m_margin_of_error;
+    Conditions m_conditions;
+    std::map<std::size_t, int> m_segments_to_groups;
+    std::map<std::size_t, Indices> m_groups;
     std::map<int, FT> m_values;
     
-    void build_initial_groups(const std::size_t n,
-                              const Targets_map & targets, const Relations_map & relations,
-                              const std::vector<FT> & qp_result) {
+    void build_initial_groups(
+      const std::size_t n,
+      const Targets_map& targets, 
+      const Relations_map& relations,
+      const std::vector<FT>& qp_result) {
+      
       std::size_t g = 0;
       auto rel_it = relations.begin();
 
-      for (const auto & tar_it : targets) {
-        const std::size_t i = tar_it.first.first;
-        const std::size_t j = tar_it.first.second;
-        const std::size_t p = tar_it.second.second;
+      for (const auto& target : targets) {
+        const std::size_t i = target.first.first;
+        const std::size_t j = target.first.second;
+        const std::size_t p = target.second.second;
 
         int r = 0;
         if (rel_it != relations.end()) {
-          CGAL_precondition(rel_it->second.second == p);
+          CGAL_assertion(rel_it->second.second == p);
           r = rel_it->second.first;
         }
-        CGAL_postcondition(r == 0 || r == 1);
+        CGAL_assertion(r == 0 || r == 1);
 
         if (CGAL::abs(qp_result[n + p]) >= m_tolerance) { 
-          if(rel_it != relations.end()) ++rel_it;
+          if (rel_it != relations.end()) ++rel_it;
           continue;
         }
 
-        const int g_i = m_segments_to_groups_hashmap[i];
-        const int g_j = m_segments_to_groups_hashmap[j];
-        const int groups_status = check_group_status(g_i, g_j);
+        const int g_i = m_segments_to_groups[i];
+        const int g_j = m_segments_to_groups[j];
+        const int status = check_group_status(g_i, g_j);
 
-        switch (groups_status) {
-          case -1: break;
-
-          case 1:
-            r == 0 ? create_single_group(i, j, g) : create_separate_groups(i, j, g);
+        switch (status) {
+          case -1: 
             break;
-
-          case 2:
-            r == 0 ? assign_segment_to_group(i, j) : create_new_group(i, g);
+          case 1: {
+            if (r == 0) create_single_group(i, j, g);
+            else create_separate_groups(i, j, g); 
             break;
-
-          case 3:
-            r == 0 ? assign_segment_to_group(j, i) : create_new_group(j, g);
-            break;
-
-          case 4:
-            if (r == 0) merge_two_groups(g_i, g_j);
-            break;
+          }
+          case 2: {
+            if (r == 0) assign_segment_to_group(i, j);
+            else create_new_group(i, g);
+            break; 
+          }
+          case 3: {
+            if (r == 0) assign_segment_to_group(j, i);
+            else create_new_group(j, g); 
+            break; 
+          }
+          case 4: {
+            if (r == 0) merge_two_groups(g_i, g_j); 
+            break; 
+          }
         }
-  
-        if(rel_it != relations.end()) ++rel_it;
+        if (rel_it != relations.end()) 
+          ++rel_it;
       }
     }
 
     void build_map_of_values(
-      const std::vector<FT> & qp_result,
-      const std::map <std::size_t, Segment_data> & segments) {
+      const std::vector<FT>& qp_result,
+      const std::map<std::size_t, Segment_data>& segments) {
       
-      for (const auto & sm_i : m_segments_to_groups_hashmap) {
-        int g_i = sm_i.second;
-
+      for (const auto& segment_to_group : m_segments_to_groups) {
+        int g_i = segment_to_group.second;
         if (g_i != -1 && (m_values.find(g_i) == m_values.end())) {
-          const std::size_t seg_index = sm_i.first;
-          const Segment_data & seg_data = segments.at(seg_index);
-          const FT val = m_cond.reference(seg_data, qp_result[seg_index]);
+          const std::size_t seg_index = segment_to_group.first;
+
+          const auto& seg_data = segments.at(seg_index);
+          const FT value = m_conditions.reference(
+            seg_data, qp_result[seg_index]);
           
           // Check if the angle that seems to be associated to this group 
           // of segments is not too close to another value.
           int g_j = -1;
-          for (const auto & it_m : m_values) {
-            if (CGAL::abs(it_m.second - val) < m_moe) 
-              g_j = it_m.first;
+          for (const auto& pair : m_values) {
+            if (CGAL::abs(pair.second - value) < m_margin_of_error) 
+              g_j = pair.first;
           }
 
-          if (g_j == -1) 
-            m_values[g_i] = val;
-          else                       
-            merge_two_groups(g_j, g_i);
+          if (g_j == -1) m_values[g_i] = value;
+          else merge_two_groups(g_j, g_i);
         }
       }
     }
 
-    void assign_segments_to_groups(const std::map <std::size_t, Segment_data> & segments) {
-      for (const auto & sm_i : m_segments_to_groups_hashmap) {
-        int g_i = sm_i.second;
-
+    void assign_segments_to_groups(
+      const std::map<std::size_t, Segment_data>& segments) {
+      
+      for (const auto& segment_to_group : m_segments_to_groups) {
+        int g_i = segment_to_group.second;
         if (g_i == -1) {
-          const std::size_t seg_index = sm_i.first;
-          const Segment_data & seg_data = segments.at(seg_index);
-          const FT val = m_cond.reference(seg_data, 0);
+          const std::size_t seg_index = segment_to_group.first;
+
+          const auto& seg_data = segments.at(seg_index);
+          const FT value = m_conditions.reference(seg_data, 0);
+          
           int g_j = -1;
+          for (const auto& pair : m_values) {
+            const FT value_j = pair.second;
+            const int g_index = pair.first;
 
-          for (const auto & it_m : m_values) {
-            const FT val_j = it_m.second;
-            const int g_index = it_m.first;
-
-            g_j = m_cond.group_index(val, val_j, g_index);
+            g_j = m_conditions.group_index(
+              value, value_j, g_index);
             if (g_j != -1) break;
           }
 
-          if (g_j == -1) {   
+          if (g_j == -1) { 
             m_values.size() > 0 ? g_i = m_values.rbegin()->first + 1 : g_i = 0;
-            m_values[g_i] = val;
-          } 
-          else 
-            g_i = g_j;
+            m_values[g_i] = value;
+          } else g_i = g_j;
 
-          m_segments_to_groups_hashmap[seg_index] = g_i;
+          m_segments_to_groups[seg_index] = g_i;
           m_groups[g_i].push_back(seg_index);
         }
       }
     }
 
-    void build_groups_by_value(std::map <FT, std::vector<std::size_t>> & groups_by_value) {
-      for (const auto & it_m : m_values) {
-        const FT val = it_m.second;
-        if (groups_by_value.find(val) == groups_by_value.end()) 
-          groups_by_value[val] = std::vector<std::size_t>();
+    void build_groups_by_value(
+      std::map<FT, Indices>& groups_by_value) {
+      for (const auto& pair : m_values) {
+        const FT value = pair.second;
+        if (groups_by_value.find(value) == groups_by_value.end()) 
+          groups_by_value[value] = Indices();
       }
 
-      for (const auto & sm_i : m_segments_to_groups_hashmap) {
-        const FT val = m_values.at(sm_i.second);     
-        if (groups_by_value.find(val) != groups_by_value.end()) 
-          groups_by_value[val].push_back(sm_i.first);
+      for (const auto& segment_to_group : m_segments_to_groups) {
+        const FT value = m_values.at(segment_to_group.second);     
+        if (groups_by_value.find(value) != groups_by_value.end()) 
+          groups_by_value[value].push_back(segment_to_group.first);
       }
     } 
 
@@ -221,37 +240,50 @@ namespace internal {
       return -1;
     }
 
-    void create_single_group (const std::size_t i, const std::size_t j, std::size_t & g) {
-      m_segments_to_groups_hashmap[i] = g;
-      m_segments_to_groups_hashmap[j] = g;
+    void create_single_group(
+      const std::size_t i, const std::size_t j, 
+      std::size_t& g) {
+
+      m_segments_to_groups[i] = g;
+      m_segments_to_groups[j] = g;
       m_groups[g].push_back(i);
       m_groups[g].push_back(j); 
       ++g;
     }
 
-    void create_separate_groups(const std::size_t i, const std::size_t j, std::size_t & g) {
+    void create_separate_groups(
+      const std::size_t i, const std::size_t j, 
+      std::size_t& g) {
+      
       create_new_group(i, g);
       create_new_group(j, g);
     }
 
-    void assign_segment_to_group(const std::size_t i, const std::size_t j) {
-      const int g_j = m_segments_to_groups_hashmap[j];
-      m_segments_to_groups_hashmap[i] = g_j;
+    void assign_segment_to_group(
+      const std::size_t i, const std::size_t j) {
+      
+      const int g_j = m_segments_to_groups[j];
+      m_segments_to_groups[i] = g_j;
       m_groups[g_j].push_back(i);
     }
 
-    void create_new_group(const std::size_t i, std::size_t & g) {
-      m_segments_to_groups_hashmap[i] = g;
+    void create_new_group(
+      const std::size_t i, 
+      std::size_t& g) {
+      
+      m_segments_to_groups[i] = g;
       m_groups[g].push_back(i);
       ++g;
     }
 
-    void merge_two_groups(const int g_i, const int g_j) {
-      for (const auto gr : m_groups[g_j]) {
-        m_segments_to_groups_hashmap[gr] = g_i;
-        m_groups[g_i].push_back(gr);
+    void merge_two_groups(
+      const int g_i, const int g_j) {
+      
+      for (const std::size_t index : m_groups[g_j]) {
+        m_segments_to_groups[index] = g_i;
+        m_groups[g_i].push_back(index);
       }
-      m_groups[g_j].clear(); 
+      m_groups[g_j].clear();
     }
   };
 
