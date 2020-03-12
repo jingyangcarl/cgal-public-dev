@@ -66,31 +66,50 @@ namespace Shape_regularization {
     /*!
       \brief initializes all internal data structures.
       
-      \param input_range 
-      an input range with contour points
-
-      \pre `input_range.size() > 1`
+      \param params
+      input parameters
     */
     Contour_regularization_2(
-      InputRange& input_range) :
-    m_input_range(input_range) { 
-      CGAL_precondition(input_range.size() > 1);
+      CGAL::Parameters parameters) :
+    m_parameters(parameters) { 
+      
     }
 
     /// @}
 
-    /// \name Access 
+    /// \name Functions
     /// @{
+
+    /*!
+      \brief sets principal directions of the contour.
+    */
+    void set_principal_directions(
+      const InputRange& input_range,
+      const std::vector<std::size_t>& directions) {
+
+      CGAL_precondition(input_range.size() > 1);
+    }
+
+    /*!
+      \brief estimates principal directions of the contour.
+    */
+    void estimate_principal_directions(
+      const InputRange& input_range) {
+      
+      CGAL_precondition(input_range.size() > 1);
+    }
 
     /*!
       \brief executes the contour regularization algorithm.
     */
-    void regularize() {
-
+    void regularize(
+      InputRange& input_range) {
+      
+      CGAL_precondition(input_range.size() > 1);
     }
 
   private:
-    Input_range& m_input_range;
+    CGAL::Parameters m_parameters;
   };
 
 } // namespace Shape_regularization
