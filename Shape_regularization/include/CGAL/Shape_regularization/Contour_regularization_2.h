@@ -66,7 +66,7 @@ namespace Shape_regularization {
     /*!
       \brief initializes all internal data structures.
       
-      \param params
+      \param parameters
       input parameters
     */
     Contour_regularization_2(
