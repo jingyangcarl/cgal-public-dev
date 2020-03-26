@@ -48,16 +48,22 @@ namespace Shape_regularization {
     
     \tparam InputRange 
     must be a model of `ConstRange`.
+
+    \tparam SegmentMap 
+    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    range and value type is `GeomTraits::Segment_2`.
   */
   template<
   typename GeomTraits,
-  typename InputRange>
+  typename InputRange,
+  typename SegmentMap>
   class Contour_regularization_2 {
 
   public:
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
+    using Segment_map = SegmentMap;
     /// \endcond
 
     /// \name Initialization
@@ -70,7 +76,7 @@ namespace Shape_regularization {
       input parameters
     */
     Contour_regularization_2(
-      CGAL::Parameters parameters) :
+      std::string parameters) :
     m_parameters(parameters) { 
       
     }
@@ -82,34 +88,78 @@ namespace Shape_regularization {
 
     /*!
       \brief sets principal directions of the contour.
+
+      This method sets the user-defined principal contour directions.
+
+      \param input_range
+      a range of input segments
+
+      \param segment_map
+      an instance of `SegmentMap` that maps an item from `input_range` 
+      to `GeomTraits::Segment_2`
+
+      \param directions 
+      a set of indices where each index represents a segment from the `input_range` 
+      that is chosen as one of the principal directions
+
+      \pre `input_range.size() > 1`
+      \pre `directions.size() == input_range.size()`
     */
     void set_principal_directions(
       const InputRange& input_range,
+      const SegmentMap segment_map,
       const std::vector<std::size_t>& directions) {
 
       CGAL_precondition(input_range.size() > 1);
+      CGAL_precondition(directions.size() == input_range.size());
     }
 
     /*!
       \brief estimates principal directions of the contour.
+
+      This method estimates the principal contour directions automatically.
+
+      \param input_range
+      a range of input segments
+
+      \param segment_map
+      an instance of `SegmentMap` that maps an item from `input_range` 
+      to `GeomTraits::Segment_2`
+
+      \pre `input_range.size() > 1`
     */
     void estimate_principal_directions(
-      const InputRange& input_range) {
+      const InputRange& input_range,
+      const SegmentMap segment_map) {
       
       CGAL_precondition(input_range.size() > 1);
     }
 
     /*!
       \brief executes the contour regularization algorithm.
+
+      This method regularizes the contour with respect to the defined principal directions.
+      That is it sets all other not principal segments either orthogonal or collinear 
+      to the chosen directions.
+
+      \param input_range
+      a range of input segments
+
+      \param segment_map
+      an instance of `SegmentMap` that maps an item from `input_range` 
+      to `GeomTraits::Segment_2`
+
+      \pre `input_range.size() > 1`
     */
     void regularize(
-      InputRange& input_range) {
+      InputRange& input_range,
+      SegmentMap segment_map) {
       
       CGAL_precondition(input_range.size() > 1);
     }
 
   private:
-    CGAL::Parameters m_parameters;
+    std::string m_parameters;
   };
 
 } // namespace Shape_regularization

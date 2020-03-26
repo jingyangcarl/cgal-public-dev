@@ -10,7 +10,7 @@ namespace CGAL {
 Shape regularization example on 100 segments. See \ref QP_regularization_2D_Angles.
 \cgalFigureEnd
 
-\authors Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
+\authors Jean-Philippe Bauchet, Florent Lafarge, Simon Giraudot, Gennadii Sytov, Dmitry Anisimov
 
 
 \section Introduction
@@ -33,7 +33,7 @@ The shape regularization algorithm works as follows:
 
 Two particular instances of this algorithm are provided:
 - \ref QP_regularization_2D "2D" regularization of segments;
-- \ref QP_regularization_3D "3D" regularization of planes;
+- \ref QP_regularization_3D "3D" regularization of planes.
 
 Other instances can be added by the user, as explained below.
 
@@ -44,7 +44,7 @@ The main class `CGAL::Shape_regularization::QP_regularization` is parameterized 
 - GeomTraits that specifes the Kernel type;
 - InputRange that stores a range of user-defined input items;
 - NeighborQuery that provides the means for accessing neighbors of an item;
-- RegularizationType that determines which regularization type to apply;
+- RegularizationType that determines which regularization type to apply.
 
 The `CGAL::Shape_regularization::QP_regularization` uses the 
 <a href="https://osqp.org/docs/">Operator Splitting Quadratic Program (OSQP) solver</a> 
@@ -325,7 +325,7 @@ which are subgroups of axis-symmetric and orthogonal clusters) as described by V
 
 \section Contour_regularization Contour Regularization 
 
-The text is here.
+Introduction is here.
 
 
 \subsection Contour_regularization_Open Open Contours

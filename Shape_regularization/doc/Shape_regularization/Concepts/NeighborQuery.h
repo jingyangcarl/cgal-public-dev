@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgShapeRegularization_Concepts
+\ingroup PkgShapeRegularizationRef_Concepts
 \cgalConcept
 
 A concept that describes the set of methods used by the `CGAL::Shape_regularization::QP_regularization` 

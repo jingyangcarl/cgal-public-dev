@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgShapeRegularization_Concepts
+\ingroup PkgShapeRegularizationRef_Concepts
 \cgalConcept
 
 A concept that describes the set of methods used by the `CGAL::Shape_regularization::QP_regularization` 
@@ -18,7 +18,7 @@ public:
     
     1/2x^{T}Px + q^{T}x subject to the constraints
 
-    l <= Ax <= u where x in R^{n} is the optimization variable.
+    l <= Ax <= u, where x in R^{n} is the optimization variable.
 
     `CGAL::Shape_regularization::QP_regularization` calls this function once per
     each data set.
