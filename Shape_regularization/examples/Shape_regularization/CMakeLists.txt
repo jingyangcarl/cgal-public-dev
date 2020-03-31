@@ -24,13 +24,13 @@ if(CGAL_FOUND)
       message(STATUS "Found OSQP")
 
       set(targets 
-      regularize_15_segments 
-      regularize_100_segments_angles
-      regularize_100_segments_ordinates
-      # regularize_closed_contour
+      # regularize_15_segments 
+      # regularize_100_segments_angles
+      # regularize_100_segments_ordinates
+      regularize_closed_contour
       # regularize_open_contour
       # regularize_planes
-      regularize_real_data_2
+      # regularize_real_data_2
       )
       
       foreach(target ${targets})

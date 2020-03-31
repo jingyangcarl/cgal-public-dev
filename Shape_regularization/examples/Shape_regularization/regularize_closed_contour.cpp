@@ -13,6 +13,10 @@ using Point_2 = typename Kernel::Point_2;
 using Indices = std::vector<std::size_t>;
 
 using Input_range = std::vector<Point_2>;
+using Point_map = CGAL::Identity_property_map<Point_2>;
+
+using Contour_regularization_2 = CGAL::Shape_regularization::
+  Contour_regularization_2<Kernel, Input_range, Point_map>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -32,8 +36,9 @@ int main(int argc, char *argv[]) {
 
   // Initialize input range.
   Input_range input_range;
+  Point_map point_map;
 
-  /// here
+  
 
   // Save input contour.
   if (path != "") {
@@ -45,11 +50,15 @@ int main(int argc, char *argv[]) {
   // Regularize.
   timer.start();
 
-  /// here
+  Contour_regularization_2 regularizer(
+    input_range, point_map, true);
+  regularizer.estimate_principal_directions();
+  regularizer.regularize();
 
   timer.stop();
   std::cout << 
-    "* number of principal directions = " << 0 << 
+    "* number of principal directions = " << 
+    regularizer.number_of_principal_directions() << 
     " in time = " << timer.time() << " sec." 
   << std::endl;
 

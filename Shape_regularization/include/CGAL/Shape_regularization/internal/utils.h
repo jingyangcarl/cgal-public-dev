@@ -129,6 +129,67 @@ namespace internal {
     return Point_2(x, y);
   }
 
+  template<typename Segment_2>
+  typename Kernel_traits<Segment_2>::Kernel::FT
+  compute_angle_2(
+    const Segment_2& longest, 
+    const Segment_2& segment) {
+
+    using Traits = typename Kernel_traits<Segment_2>::Kernel;
+    using FT = typename Traits::FT;
+
+    const auto v1 =  segment.to_vector();
+    const auto v2 = -longest.to_vector();
+
+    const FT det = CGAL::determinant(v1, v2);
+    const FT dot = CGAL::scalar_product(v1, v2);
+    const FT angle_rad = static_cast<FT>(
+      std::atan2(CGAL::to_double(det), CGAL::to_double(dot)));
+    const FT angle_deg = angle_rad * FT(180) / static_cast<FT>(CGAL_PI); 
+    return angle_deg;
+  }
+
+  template<typename FT>
+  FT convert_angle_2(const FT angle) {
+    
+    FT angle_2 = angle;
+    if (angle_2 > FT(90)) angle_2 = FT(180) - angle_2;
+    else if (angle_2 < -FT(90)) angle_2 = FT(180) + angle_2;
+    return angle_2;
+  }
+
+  template<typename Segment_2>
+  typename Kernel_traits<Segment_2>::Kernel::FT
+  angle_2_degrees(
+    const Segment_2& longest,
+    const Segment_2& segment) {
+
+    const auto angle_2 = compute_angle_2(
+      longest, segment);
+    return convert_angle_2(angle_2);
+  }
+
+  template<
+  typename FT,
+  typename Point_2>
+  void rotate_point_2(
+    const FT angle, 
+    const Point_2& barycenter, 
+    Point_2& p) {
+
+		FT x = p.x(); x -= barycenter.x();
+		FT y = p.y(); y -= barycenter.y();
+		
+    p = Point_2(x, y);
+    const double tmp_angle = CGAL::to_double(angle);
+    const FT c = static_cast<FT>(std::cos(tmp_angle));
+		const FT s = static_cast<FT>(std::sin(tmp_angle));
+
+		x = p.x() * c - p.y() * s; x += barycenter.x();
+		y = p.y() * c + p.x() * s; y += barycenter.y();
+		p = Point_2(x, y);
+	} 
+
 } // internal
 } // Shape_regularization
 } // CGAL
