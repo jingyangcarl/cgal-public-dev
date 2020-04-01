@@ -35,6 +35,7 @@
 #include <CGAL/Shape_regularization/Segment_regularization_2/Ordinate_regularization_2.h>
 #include <CGAL/Shape_regularization/Segment_regularization_2/Parallel_groups_2.h>
 
+#include <CGAL/Shape_regularization/enum.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
 
 #endif // CGAL_SHAPE_REGULARIZATION_HEADERS_H

@@ -42,6 +42,16 @@ namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
+  template<typename FT>
+  static FT tolerance() {
+    return FT(1) / FT(100000);
+  }
+
+  template<typename FT>
+  static FT max_value() {
+    return FT(1000000000000);
+  }
+
   template<typename Point_2>
   Point_2 middle_point_2(
     const Point_2& source, const Point_2& target) {
@@ -189,6 +199,24 @@ namespace internal {
 		y = p.y() * c + p.x() * s; y += barycenter.y();
 		p = Point_2(x, y);
 	} 
+
+  template<typename Point_2>
+  Point_2 barycenter_2(
+    const std::vector<Point_2>& points) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    using FT = typename Traits::FT;
+
+    CGAL_assertion(points.size() > 0);
+    FT x = FT(0), y = FT(0);
+    for (const auto& p : points) {
+      x += p.x();
+      y += p.y();
+    }
+    x /= static_cast<FT>(points.size());
+    y /= static_cast<FT>(points.size());
+    return Point_2(x, y);
+  }
 
 } // internal
 } // Shape_regularization

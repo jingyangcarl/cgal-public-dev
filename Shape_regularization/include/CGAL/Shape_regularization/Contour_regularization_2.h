@@ -182,13 +182,20 @@ namespace Shape_regularization {
       This method regularizes the contour with respect to the defined principal directions.
       That is it sets all other not principal segments either orthogonal or collinear 
       to the chosen directions.
+
+      \param max_ordinate_2
+      a max distance in meters between two collinear segments that defines if these segments 
+      should be merged or not, the default is half a meter.
     */
-    void regularize() {
+    template<typename OutputIterator>
+    void regularize(
+      OutputIterator contour,
+      const FT max_ordinate_2 = FT(1) / FT(2)) {
       
       if (m_is_closed_contour)
-        m_closed_contour.regularize();
+        m_closed_contour.regularize(contour, max_ordinate_2);
       else
-        m_open_contour.regularize();
+        m_open_contour.regularize(contour, max_ordinate_2);
     }
 
     /*!

@@ -27,8 +27,8 @@ if(CGAL_FOUND)
       # regularize_15_segments 
       # regularize_100_segments_angles
       # regularize_100_segments_ordinates
-      regularize_closed_contour
-      # regularize_open_contour
+      # regularize_closed_contour
+      regularize_open_contour
       # regularize_planes
       # regularize_real_data_2
       )
