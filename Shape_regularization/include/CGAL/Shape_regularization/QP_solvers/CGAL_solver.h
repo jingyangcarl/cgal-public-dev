@@ -33,7 +33,8 @@
 #include <Eigen/Dense> 
 
 // CGAL includes.
-//
+#include <CGAL/QP_models.h>
+#include <CGAL/QP_functions.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -73,6 +74,7 @@ namespace Shape_regularization {
 
     /// \cond SKIP_IN_MANUAL
     using Sparse_matrix_iterator = typename Sparse_matrix::InnerIterator;
+    using QP_problem = CGAL::Quadratic_program<int>;
     /// \endcond
 
     /// @}
@@ -110,11 +112,8 @@ namespace Shape_regularization {
       \param result
       stores the optimization results
 
-      \pre `P.nonZeros() == number_of_items + number_of_edges`
-      \pre `A.nonZeros() == 6 * number_of_edges + n`
-      \pre `q.nonZeros() == number_of_items + number_of_edges`
-      \pre `l.nonZeros() == 2 * number_of_edges + n`
-      \pre `u.nonZeros() == 2 * number_of_edges + n`
+      \pre `P.nonZeros() == q.nonZeros()`
+      \pre `l.nonZeros() == u.nonZeros()`
     */
     void solve(
       const std::size_t number_of_items,
@@ -126,21 +125,89 @@ namespace Shape_regularization {
       const Dense_vector& u,
       std::vector<FT>& result) {
 
-      const std::size_t n = number_of_items + number_of_edges; // number of variables
-      const std::size_t m = 2 * number_of_edges + n; // number of constraints
-      const std::size_t P_nnz = n;
-      const std::size_t A_nnz = 6 * number_of_edges + n;
+      const std::size_t n = static_cast<std::size_t>(P.nonZeros());
+      const std::size_t m = static_cast<std::size_t>(l.nonZeros());
+      const std::size_t k = m - n;
 
-      CGAL_precondition(P.nonZeros() == n);
-      CGAL_precondition(A.nonZeros() == A_nnz);
-      CGAL_precondition(q.nonZeros() == n);
-      CGAL_precondition(l.nonZeros() == m);
-      CGAL_precondition(u.nonZeros() == m);
+      CGAL_precondition(P.nonZeros() == q.nonZeros());
+      CGAL_precondition(l.nonZeros() == u.nonZeros());
 
+      const FT neg_inf = -internal::max_value<FT>();
+      const FT pos_inf = +internal::max_value<FT>();
+
+      QP_problem qp(
+        CGAL::SMALLER, true, neg_inf, true, pos_inf);
+      build_P_data(
+        P, qp);
+      build_A_data(
+        k, A, qp);
+      build_vectors(
+        k, number_of_items, q, l, u, qp);
+
+      auto solution = CGAL::solve_quadratic_program(qp, FT());
+      CGAL_assertion(solution.solves_quadratic_program(qp));
+
+      result.clear();
+      result.reserve(n);
+      
+      std::size_t i = 0;
+      for (auto x = solution.variable_values_begin(); 
+      x != solution.variable_values_end(); ++x, ++i)
+        if (i < n) result.push_back(static_cast<FT>(
+          CGAL::to_double(*x)));
     }
 
   private:
+    void build_P_data(
+      const Sparse_matrix& P,
+      QP_problem& qp) const {
 
+      for (std::size_t i = 0; i < P.rows(); ++i)
+        qp.set_d(i, i, P.coeff(i, i));
+    }
+
+    void build_A_data(
+      const std::size_t k, 
+      const Sparse_matrix& A,
+      QP_problem& qp) const {
+
+      for (std::size_t i = 0; i < A.rows(); ++i) {
+        if (i < k) {
+          for (std::size_t j = 0; j < A.cols(); ++j)
+            qp.set_a(i, j, A.coeff(i, j));
+        }
+      }
+    }
+
+    void build_vectors(
+      const std::size_t k,
+      const std::size_t num,
+      const Dense_vector& q,
+      const Dense_vector& l,
+      const Dense_vector& u,
+      QP_problem& qp) const {
+
+      for (std::size_t i = 0; i < q.rows(); ++i)
+        qp.set_c(i, q[i]);
+      qp.set_c0(0.0);
+
+      CGAL_assertion(l.rows() == u.rows());
+      for (std::size_t i = 0; i < l.rows(); ++i) {
+        if (i < k) {
+          qp.set_b(i, u[i]);
+        } else {
+
+          const std::size_t idx = i - k;
+          if (idx < num) {
+            qp.set_l(idx, true, l[i]);
+            qp.set_u(idx, true, u[i]);
+          } else {
+            qp.set_l(idx, false, l[i]);
+            qp.set_u(idx, false, u[i]);
+          }
+        }
+      }
+    }
   };
 
 } // namespace Shape_regularization

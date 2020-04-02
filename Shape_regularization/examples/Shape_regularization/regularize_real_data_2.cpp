@@ -92,6 +92,7 @@ int main(int argc, char *argv[]) {
     in >> p >> stub >> region_index;
     point_map[region_index].push_back(p);
   }
+  in.close();
 
   Line_2 line;
   std::vector<Line_2> lines;

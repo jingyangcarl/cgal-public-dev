@@ -9,6 +9,11 @@ to solve the quadratic programming problem.
 - `CGAL::Shape_regularization::CGAL_solver`
 - `CGAL::Shape_regularization::OSQP_solver`
 */
+
+// TODO:
+// Split this concept into equality and inequality constraints, better to merge them 
+// in the OSQP solver rather than split in the CGAL solver.
+
 class QPSolver {
 
 public:

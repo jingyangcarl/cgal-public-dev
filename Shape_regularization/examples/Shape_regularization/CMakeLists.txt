@@ -24,6 +24,7 @@ if(CGAL_FOUND)
       message(STATUS "Found OSQP")
 
       set(targets 
+      regularize_with_cgal 
       regularize_15_segments 
       regularize_100_segments_angles
       regularize_100_segments_ordinates

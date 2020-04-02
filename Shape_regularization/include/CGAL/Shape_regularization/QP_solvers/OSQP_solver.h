@@ -113,11 +113,8 @@ namespace Shape_regularization {
       \param result
       stores the optimization results
 
-      \pre `P.nonZeros() == number_of_items + number_of_edges`
-      \pre `A.nonZeros() == 6 * number_of_edges + n`
-      \pre `q.nonZeros() == number_of_items + number_of_edges`
-      \pre `l.nonZeros() == 2 * number_of_edges + n`
-      \pre `u.nonZeros() == 2 * number_of_edges + n`
+      \pre `P.nonZeros() == q.nonZeros()`
+      \pre `l.nonZeros() == u.nonZeros()`
     */
     void solve(
       const std::size_t number_of_items,
@@ -129,30 +126,32 @@ namespace Shape_regularization {
       const Dense_vector& u,
       std::vector<FT>& result) {
 
-      const c_int n = number_of_items + number_of_edges; // number of variables
-      const c_int m = 2 * number_of_edges + n; // number of constraints
-      const c_int P_nnz = n;
-      const c_int A_nnz = 6 * number_of_edges + n;
+      const c_int n = static_cast<c_int>(P.nonZeros());
+      const c_int m = static_cast<c_int>(l.nonZeros());
 
-      CGAL_precondition(P.nonZeros() == n);
-      CGAL_precondition(A.nonZeros() == A_nnz);
-      CGAL_precondition(q.nonZeros() == n);
-      CGAL_precondition(l.nonZeros() == m);
-      CGAL_precondition(u.nonZeros() == m);
+      const c_int P_nnz = static_cast<c_int>(P.nonZeros());
+      const c_int q_nnz = static_cast<c_int>(q.nonZeros());
 
-      c_float P_x[n];
-      c_int   P_i[n];
-      c_int   P_p[n+1];
-      build_P_data(n, P, P_x, P_i, P_p);
+      const c_int A_nnz = static_cast<c_int>(A.nonZeros());
+      const c_int l_nnz = static_cast<c_int>(l.nonZeros());
+      const c_int u_nnz = static_cast<c_int>(u.nonZeros());
+
+      CGAL_precondition(P.nonZeros() == q.nonZeros());
+      CGAL_precondition(l.nonZeros() == u.nonZeros());
+
+      c_float P_x[P_nnz];
+      c_int   P_i[P_nnz];
+      c_int   P_p[P_nnz + 1];
+      build_P_data(P_nnz, P, P_x, P_i, P_p);
 
       c_float A_x[A_nnz];
       c_int   A_i[A_nnz];
-      c_int   A_p[n+1];
+      c_int   A_p[P_nnz + 1];
       build_A_data(A, A_x, A_i, A_p);
 
-      c_float q_x[n];
-      c_float l_x[m];
-      c_float u_x[m];
+      c_float q_x[q_nnz];
+      c_float l_x[l_nnz];
+      c_float u_x[u_nnz];
       build_vectors(n, m, q, l, u, q_x, l_x, u_x);
 
       // Problem settings.
@@ -184,6 +183,8 @@ namespace Shape_regularization {
       osqp_solve(work);
 
       result.clear();
+      result.reserve(n);
+      
       c_float *x = work->solution->x;
       for(int i = 0; i < n; ++i)
         result.push_back(static_cast<FT>(x[i]));
@@ -204,7 +205,7 @@ namespace Shape_regularization {
       const Sparse_matrix& P,
       c_float *P_x, 
       c_int   *P_i, 
-      c_int   *P_p) {
+      c_int   *P_p) const {
 
       std::size_t it = 0;
       for (int i = 0; i < P.outerSize(); ++i) {
@@ -225,7 +226,7 @@ namespace Shape_regularization {
       const Sparse_matrix& A,
       c_float *A_x, 
       c_int   *A_i, 
-      c_int   *A_p) {
+      c_int   *A_p) const {
 
       std::size_t it = 0;
       for (int i = 0; i < A.outerSize(); ++i) {
@@ -251,7 +252,7 @@ namespace Shape_regularization {
       const Dense_vector& u,
       c_float *q_x, 
       c_float *l_x, 
-      c_float *u_x) {
+      c_float *u_x) const {
 
       for (int i = 0; i < m; ++i) {
         if (i < n) q_x[i] = CGAL::to_double(q[i]);

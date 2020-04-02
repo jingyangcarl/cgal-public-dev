@@ -40,6 +40,9 @@
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
 
+// Internal includes.
+#include <CGAL/Shape_regularization/internal/utils.h>
+
 namespace CGAL {
 namespace Shape_regularization {
 
@@ -91,8 +94,8 @@ namespace Shape_regularization {
       Parameters():
       weight(FT(100000)), 
       lambda(FT(4) / FT(5)), 
-      neg_inf(FT(-10000000000)),
-      pos_inf(FT(+10000000000)),
+      neg_inf(-internal::max_value<FT>()),
+      pos_inf(+internal::max_value<FT>()),
       val_pos(FT(+2) * lambda),
       val_neg(FT(-2) * lambda) 
       { }
