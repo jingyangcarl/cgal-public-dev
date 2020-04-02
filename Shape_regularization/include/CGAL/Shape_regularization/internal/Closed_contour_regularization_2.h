@@ -50,6 +50,8 @@
 // are too far away from the correct place since they are placed in the middle of
 // the segment.
 // 5. Do we actually need make_segments_collienar() in the contour connection?
+// 6. Improve intersection.
+// 7. Can I merge this class with the open version?
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -131,6 +133,7 @@ namespace internal {
       OutputIterator contour,
       const FT max_ordinate_2) {
 
+      if (m_wraps.size() < 4) return;
       Examples::Saver<Traits> saver;
 
       bool success = false;
@@ -627,22 +630,6 @@ namespace internal {
       }
     }
 
-    void create_segments_from_groups(
-      std::vector<Segment_wrappers_2>& groups,
-      std::vector<Segment_wrapper_2>& wraps) const {
-
-      std::size_t count = 0;
-      wraps.clear();
-      for (auto& group : groups) {
-        for (auto& wrap : group) {
-          wrap.index = count;
-          wrap.is_used = false;
-          wraps.push_back(wrap);
-          ++count;
-        }
-      }
-    }
-
     void optimize_group(
       const FT max_ordinate_2,
       std::vector<Segment_wrapper_2>& wraps) const {
@@ -944,6 +931,22 @@ namespace internal {
       wraps = updated;
     }
 
+    void create_segments_from_groups(
+      std::vector<Segment_wrappers_2>& groups,
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      std::size_t count = 0;
+      wraps.clear();
+      for (auto& group : groups) {
+        for (auto& wrap : group) {
+          wrap.index = count;
+          wrap.is_used = false;
+          wraps.push_back(wrap);
+          ++count;
+        }
+      }
+    }
+
     bool connect_contour(
       const FT max_ordinate_2) {
 
@@ -985,20 +988,14 @@ namespace internal {
       std::vector<Segment_wrapper_2> parallel;
       do {
 
-        const std::size_t prev = i;
         const bool success = get_parallel_segments(
           wraps, parallel, i);
         CGAL_assertion(parallel.size() != 0);
         if (!success) return;
-        const std::size_t curr = i;
 
         Segment_2 segment;
         const FT sum_length = 
           parallel_segments_to_segment(parallel, segment);
-        
-        const auto& prev_wrap = wraps[prev];
-        const auto& curr_wrap = wraps[curr];
-
         if (parallel.size() > 1) {
           
           Segment_wrapper_2 wrap;
