@@ -22,12 +22,6 @@ Models that can be used with the `CGAL::Shape_regularization::QP_regularization`
 for shape regularization in a segment set.
 
 
-\defgroup PkgShapeRegularizationRef_3D 3D Regularization
-\ingroup PkgShapeRegularizationRef
-
-Here will be a section on the 3D regularization.
-
-
 \defgroup PkgShapeRegularizationRef_Utilities Utilities
 \ingroup PkgShapeRegularizationRef
 
@@ -41,10 +35,8 @@ Utility classes that can be used with the `CGAL::Regularization::Shape_regulariz
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Jean-Philippe Bauchet, Florent Lafarge, Simon Giraudot, Gennadii Sytov, Dmitry Anisimov}
-\cgalPkgDesc{This CGAL package implements a global regularization algorithm from the "KIPPI: Kinetic Polygonal Partitioning of Images" article
-written by Jean-Philippe Bauchet and Florent Lafarge at Inria. The shape regularization algorithm
-works with a set of 2 and 3 dimensional items to preserve parallelism, orthogonality and collinearity relationships. 
-CGAL provides two particular regularization types: angle regularization of 2D segments and ordinate regularization of 2D segments.}
+\cgalPkgDesc{This CGAL package enables to regularize a set of 2D segments in the plane, both open 
+and closed contours, and a set of planes in 3D.}
 \cgalPkgManuals{Chapter_Shape_regularization, PkgShapeRegularizationRef}
 \cgalPkgSummaryEnd
 
@@ -78,10 +70,11 @@ CGAL provides two particular regularization types: angle regularization of 2D se
 - `CGAL::Shape_regularization::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
 - `CGAL::Shape_regularization::Ordinate_regularization_2<GeomTraits, InputRange, SegmentMap>`
 
-### 3D regularization ###
-
 ### Utilities ###
 - `CGAL::Shape_regularization::Parallel_groups_2<GeomTraits, InputRange, SegmentMap>`
+
+### Enum ###
+- `CGAL::Shape_regularization::Direction_type`
 
 ### Functions ###
 - `CGAL::Shape_regularization::regularize_planes()`

@@ -43,6 +43,10 @@
 // 1. Use named parameters.
 // 2. Simplify the design.
 // 3. Should I change position of the GeomTraits?
+// 4. Should it return the same number of segments as input? Now it is not.
+// 5. I think I should let users set arbitrary directions by filling in the m_longest 
+// instead of setting indices of other contour edges.
+// 6. I think I should let users stop right after the rotation step if they want.
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -182,6 +186,12 @@ namespace Shape_regularization {
       This method regularizes the contour with respect to the defined principal directions.
       That is it sets all other not principal segments either orthogonal or collinear 
       to the chosen directions.
+
+      \tparam OutputIterator 
+      must be an output iterator whose value type is `GeomTraits::Point_2`.
+
+      \param contour
+      an `OutputIterator` with contour points
 
       \param max_ordinate_2
       a max distance in meters between two collinear segments that defines if these segments 
