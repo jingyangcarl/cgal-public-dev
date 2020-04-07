@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -24,145 +24,128 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <set>
-#include <vector>
-#include <utility>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/property_map.h>
-#include <CGAL/number_utils.h>
-
 // Internal includes.
-#include <CGAL/Shape_regularization/enum.h>
+#include <CGAL/Shape_regularization/internal/Contour_regularization_base_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  template<
-  typename GeomTraits,
-  typename InputRange,
-  typename PointMap>
+  template<typename GeomTraits>
   class Open_contour_regularization_2 {
 
   public:
     using Traits = GeomTraits;
-    using Input_range = InputRange;
-    using Point_map = PointMap;
 
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
     using Vector_2 = typename Traits::Vector_2;
+    using Direction_2 = typename Traits::Direction_2;
     using Segment_2 = typename Traits::Segment_2;
     using Line_2 = typename Traits::Line_2;
-    using Intersect_2 = typename Traits::Intersect_2;
 
-    struct Segment_wrapper_2 {
-
-      Segment_2 segment;
-      std::size_t index = std::size_t(-1);
-      std::size_t object_index = std::size_t(-1);
-      bool is_valid_direction = false;
-      bool is_used = false;
-    };
+    using Base = internal::Contour_regularization_base_2<Traits>;
 
     using FT_pair = std::pair<FT, FT>;
     using Segments_2 = std::vector<Segment_2>;
-    using Segment_wrappers_2 = std::vector<Segment_wrapper_2>;
+    
+    using Segment_wrapper_2 = typename Base::Segment_wrapper_2;
+    using Segment_wrappers_2 = typename Base::Segment_wrappers_2;
 
     Open_contour_regularization_2(
-      Input_range& input_range,
-      Point_map point_map,
-      const FT angle_threshold_2 = FT(5),
-      const bool verbose = true) :
-    m_input_range(input_range),
-    m_point_map(point_map),
-    m_angle_threshold_2(angle_threshold_2),
-    m_verbose(verbose) { 
-      
-      CGAL_precondition(input_range.size() >= 2);
+      const FT min_length_2,
+      const FT max_angle_2,
+      const FT max_offset_2) :
+    m_base(
+      min_length_2, 
+      max_angle_2, 
+      max_offset_2) 
+    { }
+
+    // Optimize this one. It doubles input points.
+    template<
+    typename Input_range,
+    typename Point_map>
+    void initialize(
+      const Input_range& input_range,
+      const Point_map point_map) {
+
     }
 
+    template<
+    typename DirectionRange,
+    typename DirectionMap>
     void set_principal_directions(
-      const std::vector<std::size_t>& directions) {
+      const DirectionRange& direction_range,
+      const DirectionMap direction_map) {
 
-      CGAL_precondition(
-        directions.size() == m_input_range.size() - 1);
-      m_group = directions;
+      // CGAL_precondition(
+      //   directions.size() == m_input_range.size() - 1);
+      // m_group = directions;
     }
 
     void estimate_principal_directions(
-      const Direction_type direction_type,
-      const FT min_length_2,
-      const FT max_angle_2) {
+      const Direction_type direction_type) {
 
-      switch (direction_type) {
-        case Direction_type::LONGEST:
-          set_longest_direction();
-          break;
-        case Direction_type::MULTIPLE:
-          set_multiple_directions(
-            min_length_2, max_angle_2);
-          break;
-        default:
-          set_longest_direction();
-          break;
-      };
+      // switch (direction_type) {
+      //   case Direction_type::LONGEST:
+      //     set_longest_direction();
+      //     break;
+      //   case Direction_type::LENGTH_AND_ANGLE:
+      //     set_multiple_directions(
+      //       min_length_2, max_angle_2);
+      //     break;
+      //   default:
+      //     set_longest_direction();
+      //     break;
+      // };
     }
 
     template<typename OutputIterator>
     void regularize(
-      OutputIterator contour,
-      const FT max_ordinate_2) {
+      OutputIterator contour) {
       
-      if (m_wraps.size() < 2) return;
-      Examples::Saver<Traits> saver;
+      // if (m_wraps.size() < 2) return;
+      // Examples::Saver<Traits> saver;
 
-      bool success = false;
-      rotate_contour();
-      if (m_verbose)
-        saver.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
+      // bool success = false;
+      // rotate_contour();
+      // if (m_verbose)
+      //   saver.export_polylines(
+      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
 
-      success = optimize_contour(max_ordinate_2);
-      if (!success) return;
-      if (m_verbose)
-        saver.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
+      // success = optimize_contour(max_ordinate_2);
+      // if (!success) return;
+      // if (m_verbose)
+      //   saver.export_polylines(
+      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
 
-      success = connect_contour(max_ordinate_2);
-      if (!success) return;
-      if (m_verbose)
-        saver.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
+      // success = connect_contour(max_ordinate_2);
+      // if (!success) return;
+      // if (m_verbose)
+      //   saver.export_polylines(
+      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
 
-      update_input(contour);
+      // update_input(contour);
     }
 
     std::size_t number_of_principal_directions() const {
+      return m_directions.size();
+    }
 
-      std::set<std::size_t> unique;
-      for (std::size_t index : m_group)
-        if (index != std::size_t(-1))
-          unique.insert(index);
-      return unique.size();
+    const bool verbose() const {
+      return m_base.verbose();
     }
 
   private:
-    Input_range& m_input_range;
-    Point_map m_point_map;
-
-    const FT m_angle_threshold_2;
-    const bool m_verbose;
-
-    std::vector<FT_pair> m_bounds;
-    std::vector<Segment_2> m_longest;
-    std::vector<std::size_t> m_group;
-
+    const Base m_base;
     std::vector<Segment_wrapper_2> m_wraps;
 
+    std::vector<FT_pair> m_bounds;
+    std::vector<Direction_2> m_directions;
+    std::vector<std::size_t> m_assigned;
+
+    /*
     void set_longest_direction() {
 
       m_bounds.clear(); m_bounds.resize(1);
@@ -643,10 +626,9 @@ namespace internal {
       create_collinear_groups(
         max_ordinate_2, wraps, longest_to_short, groups);
 
-      /*
-      if (m_verbose)
-        std::cout << 
-          "* number of collinear groups = " << groups.size() << std::endl; */
+      // if (m_verbose)
+      //   std::cout << 
+      //     "* number of collinear groups = " << groups.size() << std::endl;
 
       const std::size_t before = wraps.size();
       std::vector<Line_2> lines;
@@ -656,10 +638,9 @@ namespace internal {
       const std::size_t after = wraps.size();
       CGAL_assertion(after >= before);
 
-      /*
-      if (m_verbose)
-        std::cout << 
-          "* segments before/after = " << before << "/" << after << std::endl; */
+      // if (m_verbose)
+      //   std::cout << 
+      //     "* segments before/after = " << before << "/" << after << std::endl;
     }
 
     void create_collinear_groups(
@@ -960,7 +941,7 @@ namespace internal {
       if (m_verbose)
         std::cout << "* number of clean segments = " << m_wraps.size() << std::endl;
 
-      /* make_segments_collinear(max_ordinate_2, m_wraps); */
+      // make_segments_collinear(max_ordinate_2, m_wraps);
       intersect_segments(m_wraps);
       return success;
     }
@@ -1254,7 +1235,7 @@ namespace internal {
         *(++contour) = wrap.segment.source();
       }
       *(++contour) = m_wraps[n - 1].segment.target();
-    }
+    } */
   };
 
 } // internal

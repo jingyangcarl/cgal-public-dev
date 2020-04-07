@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -29,6 +29,10 @@
 #include <vector>
 #include <utility>
 
+// Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
 // CGAL includes.
 #include <CGAL/assertions.h>
 #include <CGAL/property_map.h>
@@ -40,16 +44,53 @@
 #include <CGAL/Shape_regularization/internal/Open_contour_regularization_2.h>
 
 // TODO:
-// 1. Use named parameters.
-// 2. Simplify the design.
-// 3. Should I change position of the GeomTraits?
-// 4. Should it return the same number of segments as input? Now it is not.
-// 5. I think I should let users set arbitrary directions by filling in the m_longest 
-// instead of setting indices of other contour edges.
-// 6. I think I should let users stop right after the rotation step if they want.
+// * What about parameterizing this class by the Direction_estimator class: we have one 
+// for the longest directions, one for the multiple, and one for the user-defined.
+// All these estimators should return m_directions, m_assigned, and m_bounds.
 
 namespace CGAL {
 namespace Shape_regularization {
+
+  struct OPEN { };
+  struct CLOSED { };
+
+  namespace internal {
+    BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_iterator, iterator, false)
+  }
+
+  template<
+  typename InputRange, 
+  typename NamedParameters,
+  bool has_nested_iterator=internal::Has_nested_type_iterator<InputRange>::value>
+  class GetPointMap {
+    
+    typedef typename std::iterator_traits<typename InputRange::iterator>::value_type Point;
+    typedef typename CGAL::Identity_property_map<Point> DefaultPMap;
+
+  public:
+    typedef typename internal_np::Lookup_named_param_def<
+    internal_np::point_t,
+    NamedParameters,
+    DefaultPMap
+    > ::type  type;
+
+    typedef typename internal_np::Lookup_named_param_def<
+    internal_np::point_t,
+    NamedParameters,
+    DefaultPMap
+    > ::type  const_type;
+  };
+
+  // To please compiler instantiating non valid overloads.
+  template<
+  typename InputRange, 
+  typename NamedParameters>
+  class GetPointMap<InputRange, NamedParameters, false> {
+    struct Dummy_point { };
+  public:
+    typedef typename CGAL::Identity_property_map<Dummy_point> type;
+    typedef typename CGAL::Identity_property_map<Dummy_point> const_type;
+  };
 
   /*!
     \ingroup PkgShapeRegularizationRef
@@ -71,21 +112,21 @@ namespace Shape_regularization {
   template<
   typename GeomTraits,
   typename InputRange,
-  typename PointMap>
+  typename Tag>
   class Contour_regularization_2 {
 
   public:
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
-    using Point_map = PointMap;
-
+    
     using FT = typename Traits::FT;
 
-    using Closed_contour = internal::Closed_contour_regularization_2<
-      Traits, Input_range, Point_map>;
-    using Open_contour = internal::Open_contour_regularization_2<
-      Traits, Input_range, Point_map>;
+    using Regularization = typename std::conditional<
+      std::is_same<Tag, CLOSED>::value,
+      internal::Closed_contour_regularization_2<Traits>,
+      internal::Open_contour_regularization_2<Traits> >::type;
+
     /// \endcond
 
     /// \name Initialization
@@ -94,30 +135,45 @@ namespace Shape_regularization {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam
+      a sequence of \ref pmp_namedparameters "Named Parameters"
+
       \param input_range
       a range of points, which form a contour
 
-      \param point_map
-      an instance of `PointMap` that maps an item from `input_range` 
-      to `GeomTraits::Point_2`
+      \param np
+      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      among the ones listed below
 
-      \param is_closed_contour
-      indicates weather the contour is closed or not, 
-      the default is `true`
-
-      \pre `input_range.size() >= 3` for closed contour
-      \pre `input_range.size() >= 2` for open contour
+      \pre `input_range.size() >= 3` for closed contours
+      \pre `input_range.size() >= 2` for open contours
     */
+    template<typename NamedParameters>
     Contour_regularization_2(
       Input_range& input_range,
-      Point_map point_map,
-      const bool is_closed_contour = true) :
-    m_input_range(input_range),
-    m_point_map(point_map),
-    m_is_closed_contour(is_closed_contour),
-    m_closed_contour(input_range, point_map),
-    m_open_contour(input_range, point_map)
-    { }
+      const NamedParameters& np) { 
+
+      using Point_map = typename GetPointMap<InputRange, NamedParameters>::type;
+      const Point_map point_map = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::point_map), Point_map());
+      const FT min_length_2 = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::min_length), FT(3));
+      const FT max_angle_2 = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_angle), FT(25));
+      const FT max_offset_2 = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));
+
+      m_regularization = std::make_shared<Regularization>(
+        min_length_2, max_angle_2, max_offset_2);
+      m_regularization->initialize(input_range, point_map);
+
+      if (m_regularization->verbose()) {
+        std::cout << "* parameters: " << std::endl;
+        std::cout << "- min length 2: " << min_length_2 << std::endl;
+        std::cout << "- max angle 2: " << max_angle_2 << std::endl;
+        std::cout << "- max offset 2: " << max_offset_2 << std::endl;
+      }
+    }
 
     /// @}
 
@@ -127,24 +183,31 @@ namespace Shape_regularization {
     /*!
       \brief sets principal directions of the contour.
 
-      This method sets the user-defined principal contour directions. If the 
-      direction index is `std::size_t(-1)`, the corresponding contour edge 
-      is not regularized.
+      This method sets the user-defined principal contour directions. All contour 
+      edges will be regularized with respect to these directions.
 
-      \param directions 
-      a set of indices where each index represents a contour edge from the `input_range` 
-      that is chosen as one of the principal directions
+      \tparam DirectionRange
+      must be a model of `ConstRange`.
 
-      \pre `directions.size() == input_range.size()` for closed contour
-      \pre `directions.size() == input_range.size() - 1` for open contour
+      \tparam DirectionMap
+      must be an `LvaluePropertyMap` whose key type is the value type of the `DirectionRange`
+      and value type is `GeomTraits::Direction_2`.
+
+      \param direction_range 
+      a range of user-defined directions
+
+      \param direction_map
+      an instance of `DirectionMap`
     */
+    template<
+    typename DirectionRange,
+    typename DirectionMap>
     void set_principal_directions(
-      const std::vector<std::size_t>& directions) {
+      const DirectionRange& direction_range,
+      const DirectionMap direction_map) {
 
-      if (m_is_closed_contour)
-        m_closed_contour.set_directions(directions);
-      else
-        m_open_contour.set_directions(directions);
+      m_regularization->set_principal_directions(
+        direction_range, direction_map);
     }
 
     /*!
@@ -153,31 +216,13 @@ namespace Shape_regularization {
       This method estimates the principal contour directions automatically.
 
       \param direction_type
-      indicates which type of principal directions should be estimated, 
+      indicates which type of principal directions should be used, 
       the default is `Direction_type::LONGEST`
-
-      \param min_length_2
-      a min length of the contour edge in meters that will be set as a principal direction,
-      the default is three meters
-
-      \param max_angle_2 
-      a max angle difference in degrees between a segment and its collinear or orthogonal orientation,
-      the default is 15 degrees
-
-      \pre `min_length_2 > FT(0)`
-      \pre `max_angle_2 >= FT(0) && max_angle_2 <= FT(90)`
     */
     void estimate_principal_directions(
-      const Direction_type direction_type = Direction_type::LONGEST,
-      const FT min_length_2 = FT(3),
-      const FT max_angle_2 = FT(15)) {
-
-      if (m_is_closed_contour)
-        m_closed_contour.estimate_principal_directions(
-          direction_type, min_length_2, max_angle_2);
-      else
-        m_open_contour.estimate_principal_directions(
-          direction_type, min_length_2, max_angle_2);
+      const Direction_type direction_type = Direction_type::LONGEST) {
+      m_regularization->estimate_principal_directions(
+        direction_type);
     }
 
     /*!
@@ -192,41 +237,23 @@ namespace Shape_regularization {
 
       \param contour
       an `OutputIterator` with contour points
-
-      \param max_ordinate_2
-      a max distance in meters between two collinear segments that defines if these segments 
-      should be merged or not, the default is half a meter.
     */
     template<typename OutputIterator>
     void regularize(
-      OutputIterator contour,
-      const FT max_ordinate_2 = FT(1) / FT(2)) {
-      
-      if (m_is_closed_contour)
-        m_closed_contour.regularize(contour, max_ordinate_2);
-      else
-        m_open_contour.regularize(contour, max_ordinate_2);
+      OutputIterator contour) {
+      m_regularization->regularize(
+        contour);
     }
 
     /*!
       \brief returns the number of principal directions in the contour.
     */
-    std::size_t number_of_principal_directions() const {
-
-      if (m_is_closed_contour)
-        return m_closed_contour.number_of_principal_directions();
-      else
-        return m_open_contour.number_of_principal_directions();
+    const std::size_t number_of_principal_directions() const {
+      return m_regularization->number_of_principal_directions();
     }
 
   private:
-    Input_range& m_input_range;
-    Point_map m_point_map;
-
-    const bool m_is_closed_contour;
-
-    Closed_contour m_closed_contour;
-    Open_contour m_open_contour;
+    std::shared_ptr<Regularization> m_regularization;
   };
 
 } // namespace Shape_regularization

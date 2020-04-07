@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -24,103 +24,94 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <set>
-#include <vector>
-#include <utility>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/property_map.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/squared_distance_2.h>
-
 // Internal includes.
-#include <CGAL/Shape_regularization/enum.h>
-#include <CGAL/Shape_regularization/internal/utils.h>
-
-// Saver.
-#include "../../../../examples/Shape_regularization/include/Saver.h"
-
-// TODO:
-// 1. Can I further simplify this class?
-// 2. Can I use squared distance here instead of distance?
-// 3. Improve find_centra_segment().
-// 4. Improve orth segments, which are added during an optimization step. They 
-// are too far away from the correct place since they are placed in the middle of
-// the segment.
-// 5. Do we actually need make_segments_collienar() in the contour connection?
-// 6. Improve intersection.
-// 7. Can I merge this class with the open version?
+#include <CGAL/Shape_regularization/internal/Contour_regularization_base_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  template<
-  typename GeomTraits,
-  typename InputRange,
-  typename PointMap>
+  template<typename GeomTraits>
   class Closed_contour_regularization_2 {
 
   public:
     using Traits = GeomTraits;
-    using Input_range = InputRange;
-    using Point_map = PointMap;
 
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
     using Vector_2 = typename Traits::Vector_2;
+    using Direction_2 = typename Traits::Direction_2;
     using Segment_2 = typename Traits::Segment_2;
     using Line_2 = typename Traits::Line_2;
-    using Intersect_2 = typename Traits::Intersect_2;
 
-    struct Segment_wrapper_2 {
-
-      Segment_2 segment;
-      std::size_t index = std::size_t(-1);
-      std::size_t object_index = std::size_t(-1);
-      bool is_valid_direction = false;
-      bool is_used = false;
-    };
+    using Base = internal::Contour_regularization_base_2<Traits>;
 
     using FT_pair = std::pair<FT, FT>;
     using Segments_2 = std::vector<Segment_2>;
-    using Segment_wrappers_2 = std::vector<Segment_wrapper_2>;
+    
+    using Segment_wrapper_2 = typename Base::Segment_wrapper_2;
+    using Segment_wrappers_2 = typename Base::Segment_wrappers_2;
 
     Closed_contour_regularization_2(
-      Input_range& input_range,
-      Point_map point_map,
-      const FT angle_threshold_2 = FT(5),
-      const bool verbose = true) :
-    m_input_range(input_range),
-    m_point_map(point_map),
-    m_angle_threshold_2(angle_threshold_2),
-    m_verbose(verbose) { 
+      const FT min_length_2,
+      const FT max_angle_2,
+      const FT max_offset_2) :
+    m_base(
+      min_length_2, 
+      max_angle_2, 
+      max_offset_2) 
+    { }
+
+    // Optimize this one. It doubles input points.
+    template<
+    typename Input_range,
+    typename Point_map>
+    void initialize(
+      const Input_range& input_range,
+      const Point_map point_map) {
+
+      CGAL_assertion(input_range.size() >= 3);
+      if (input_range.size() < 3) return;
+      const std::size_t n = input_range.size();
       
-      CGAL_precondition(input_range.size() >= 3);
+      m_wraps.clear();
+      m_wraps.reserve(n);
+      
+      Segment_wrapper_2 wrap;
+      for (std::size_t i = 0; i < n; ++i) {
+        const std::size_t ip = (i + 1) % n;
+        
+        const auto& source = get(point_map, *(input_range.begin() + i));
+        const auto& target = get(point_map, *(input_range.begin() + ip));
+
+        wrap.index = i;
+        wrap.segment = Segment_2(source, target);
+        m_wraps.push_back(wrap);
+      }
+      CGAL_assertion(m_wraps.size() == input_range.size());
     }
 
+    template<
+    typename DirectionRange,
+    typename DirectionMap>
     void set_principal_directions(
-      const std::vector<std::size_t>& directions) {
+      const DirectionRange& direction_range,
+      const DirectionMap direction_map) {
       
-      CGAL_precondition(
-        directions.size() == m_input_range.size());
-      m_group = directions;
     }
 
     void estimate_principal_directions(
-      const Direction_type direction_type,
-      const FT min_length_2,
-      const FT max_angle_2) {
+      const Direction_type direction_type) {
+
+      CGAL_assertion(m_wraps.size() >= 3);
+      if (m_wraps.size() < 3) return;
 
       switch (direction_type) {
         case Direction_type::LONGEST:
           set_longest_direction();
           break;
-        case Direction_type::MULTIPLE:
-          set_multiple_directions(
-            min_length_2, max_angle_2);
+        case Direction_type::LENGTH_AND_ANGLE:
+          set_length_and_angle_directions();
           break;
         default:
           set_longest_direction();
@@ -130,146 +121,90 @@ namespace internal {
 
     template<typename OutputIterator>
     void regularize(
-      OutputIterator contour,
-      const FT max_ordinate_2) {
+      OutputIterator contour) {
 
-      if (m_wraps.size() < 4) return;
-      Examples::Saver<Traits> saver;
+      CGAL_assertion(m_wraps.size() >= 3);
+      if (m_wraps.size() < 3) return;
 
-      bool success = false;
-      rotate_contour();
-      if (m_verbose)
-        saver.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
-      success = optimize_contour(max_ordinate_2);
-      if (!success) return;
-      if (m_verbose)
-        saver.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
+      // if (m_wraps.size() < 4) return;
+      // Examples::Saver<Traits> saver;
 
-      success = connect_contour(max_ordinate_2);
-      if (!success) return;
-      if (m_verbose)
-        saver.export_polylines(
-          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
+      // bool success = false;
+      // rotate_contour();
+      // if (m_verbose)
+      //   saver.export_polylines(
+      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
+      // success = optimize_contour(max_ordinate_2);
+      // if (!success) return;
+      // if (m_verbose)
+      //   saver.export_polylines(
+      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
 
-      update_input(contour);
+      // success = connect_contour(max_ordinate_2);
+      // if (!success) return;
+      // if (m_verbose)
+      //   saver.export_polylines(
+      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
+
+      // update_input(contour);
     }
 
-    std::size_t number_of_principal_directions() const {
+    const std::size_t number_of_principal_directions() const {
+      return m_directions.size();
+    }
 
-      std::set<std::size_t> unique;
-      for (std::size_t index : m_group)
-        if (index != std::size_t(-1))
-          unique.insert(index);
-      return unique.size();
+    const bool verbose() const {
+      return m_base.verbose();
     }
 
   private:
-    Input_range& m_input_range;
-    Point_map m_point_map;
-
-    const FT m_angle_threshold_2;
-    const bool m_verbose;
-
-    std::vector<FT_pair> m_bounds;
-    std::vector<Segment_2> m_longest;
-    std::vector<std::size_t> m_group;
-
+    const Base m_base;
     std::vector<Segment_wrapper_2> m_wraps;
 
+    std::vector<FT_pair> m_bounds;
+    std::vector<Direction_2> m_directions;
+    std::vector<std::size_t> m_assigned;
+    
     void set_longest_direction() {
 
       m_bounds.clear(); m_bounds.resize(1);
-      m_bounds[0] = std::make_pair(FT(45), FT(45));
+      m_bounds[0] = std::make_pair(FT(45), FT(45)); // I can remove them!
 
-      m_longest.clear(); m_longest.resize(1);
-      m_longest[0] = compute_longest_segment();
+      m_directions.clear(); m_directions.resize(1);
+      m_directions[0] = m_base.compute_longest_direction(m_wraps);
 
-      m_group.clear();
-      m_group.resize(m_input_range.size(), 0); // 0 is the index of the direction in the m_longest
+      // 0 is the index of the direction in the m_directions.
+      m_assigned.clear();
+      m_assigned.resize(m_wraps.size(), 0);
     }
 
-    Segment_2 compute_longest_segment() const {
-
-      FT max_length = -FT(1);
-      std::size_t longest = std::size_t(-1);
-
-      const std::size_t n = m_input_range.size();
-      for (std::size_t i = 0; i < n; ++i) {
-        const std::size_t ip = (i + 1) % n;
-
-        const auto& source = get(m_point_map, *(m_input_range.begin() + i));
-        const auto& target = get(m_point_map, *(m_input_range.begin() + ip));
-
-        const FT length = CGAL::squared_distance(source, target);
-        if (length > max_length) {
-
-          longest = i;
-          max_length = length;
-        }
-      }
-
-      const std::size_t i = longest;
-      const std::size_t ip = (i + 1) % n;
-      const auto& source = get(m_point_map, *(m_input_range.begin() + i));
-      const auto& target = get(m_point_map, *(m_input_range.begin() + ip));
-
-      return Segment_2(source, target);
-    }
-
-    void set_multiple_directions(
-      const FT min_length_2,
-      const FT max_angle_2) {
+    void set_length_and_angle_directions() {
       
-      create_segments_from_input(min_length_2);
-      estimate_initial_directions(max_angle_2);
+      // set_valid_directions();
+      // estimate_initial_directions(max_angle_2);
 
-      if (m_longest.size() == 0) {
-        set_longest_direction();
-      } else {
-        unify_along_contours();
-        correct_directions();
-        readjust_directions();
-      }
+      // if (m_longest.size() == 0) {
+      //   set_longest_direction();
+      // } else {
+      //   unify_along_contours();
+      //   correct_directions();
+      //   readjust_directions();
+      // }
 
-      if (m_verbose) {
-        std::cout << "* groups: ";
-        for (std::size_t group_index : m_group)
-          std::cout << group_index << " ";
-        std::cout << std::endl;
-      }
+      // if (m_verbose) {
+      //   std::cout << "* groups: ";
+      //   for (std::size_t group_index : m_group)
+      //     std::cout << group_index << " ";
+      //   std::cout << std::endl;
+      // }
     }
 
-    void create_segments_from_input(
-      const FT min_length_2) {
+    /*
+    void set_valid_directions() {
 
-      const std::size_t n = m_input_range.size();
-      m_wraps.clear();
-      m_wraps.reserve(n);
-      
-      Segment_wrapper_2 wrap;
-      for (std::size_t i = 0; i < n; ++i) {
-        const std::size_t ip = (i + 1) % n;
-        
-        const auto& source = get(m_point_map, *(m_input_range.begin() + i));
-        const auto& target = get(m_point_map, *(m_input_range.begin() + ip));
-
-        wrap.index = i;
-        wrap.segment = Segment_2(source, target);
+      for (auto& wrap : m_wraps)
         wrap.is_valid_direction = 
-          is_valid_principal_direction(wrap.segment, min_length_2);
-        m_wraps.push_back(wrap);
-      }
-      CGAL_assertion(m_wraps.size() == m_input_range.size());
-    }
-
-    bool is_valid_principal_direction(
-      const Segment_2& segment,
-      const FT min_length_2) const {
-      
-      CGAL_precondition(min_length_2 >= FT(0));
-      return internal::length_2(segment) >= min_length_2 * FT(2);
+          m_base.is_valid_principal_direction(wrap.segment);
     }
 
     void estimate_initial_directions(
@@ -641,10 +576,9 @@ namespace internal {
       create_collinear_groups(
         max_ordinate_2, wraps, longest_to_short, groups);
 
-      /*
-      if (m_verbose)
-        std::cout << 
-          "* number of collinear groups = " << groups.size() << std::endl; */
+      // if (m_verbose)
+      //   std::cout << 
+      //     "* number of collinear groups = " << groups.size() << std::endl;
 
       const std::size_t before = wraps.size();
       std::vector<Line_2> lines;
@@ -654,10 +588,9 @@ namespace internal {
       const std::size_t after = wraps.size();
       CGAL_assertion(after >= before);
 
-      /*
-      if (m_verbose)
-        std::cout << 
-          "* segments before/after = " << before << "/" << after << std::endl; */
+      // if (m_verbose)
+      //   std::cout << 
+      //     "* segments before/after = " << before << "/" << after << std::endl;
     }
 
     void create_collinear_groups(
@@ -957,7 +890,7 @@ namespace internal {
       if (m_verbose)
         std::cout << "* number of clean segments = " << m_wraps.size() << std::endl;
 
-      /* make_segments_collinear(max_ordinate_2, m_wraps); */
+      // make_segments_collinear(max_ordinate_2, m_wraps);
       intersect_segments(m_wraps);
       return success;
     }
@@ -1219,7 +1152,7 @@ namespace internal {
         const auto& wrap = m_wraps[i];
         *(++contour) = wrap.segment.source();
       }
-    }
+    } */
   };
 
 } // internal

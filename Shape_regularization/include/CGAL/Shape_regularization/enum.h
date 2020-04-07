@@ -30,15 +30,17 @@ namespace Shape_regularization {
   /*!
     \ingroup PkgShapeRegularizationRef
       
-    \brief This label represents a type of estimated contour direction.
+    \brief This label represents different options for setting principal directions 
+    in the contour regularization algorithms.
   */
   enum class Direction_type {
     
-    /// The chosen direction is set to the longest segment of the input contour.
+    /// The principal direction is set to the one of the longest edge in the input contour.
     LONGEST = 0,
 
-    /// The chosen directions are estimated and may contain more than one direction.
-    MULTIPLE = 1
+    /// The chosen directions are estimated based on the user-defined tolerance edge length 
+    /// and angle. This option may return more than one principal direction.
+    LENGTH_AND_ANGLE = 1
 
   }; // Direction_type
 

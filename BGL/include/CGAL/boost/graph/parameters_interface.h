@@ -130,6 +130,11 @@ CGAL_add_named_parameter(max_number_of_proxies_t, max_number_of_proxies, max_num
 CGAL_add_named_parameter(min_error_drop_t, min_error_drop, min_error_drop)
 CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_of_relaxations)
 
+// List of named parameters used in Shape_regularization package
+CGAL_add_named_parameter(min_length_t, min_length, min_length)
+CGAL_add_named_parameter(max_angle_t, max_angle, max_angle)
+CGAL_add_named_parameter(max_offset_t, max_offset, max_offset)
+
 // meshing parameters
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
 CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_chord)
