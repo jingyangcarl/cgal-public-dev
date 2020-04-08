@@ -97,8 +97,24 @@ namespace internal {
     Vector_2 v = segment.to_vector();
     if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0))) 
       v = -v;
-    normalize(v);
+    normalize(v); // can I remove the normalize factor here?
     return v;
+  }
+
+  template<typename Segment_2>
+  typename Kernel_traits<Segment_2>::Kernel::Direction_2
+  segment_to_direction_2(const Segment_2& segment) { 
+    
+    using Traits = typename Kernel_traits<Segment_2>::Kernel;
+    using FT = typename Traits::FT;
+    using Vector_2 = typename Traits::Vector_2;
+    using Direction_2 = typename Traits::Direction_2;
+
+    auto v = segment.to_vector();
+    if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0))) 
+      v = -v;
+    normalize(v); // can I remove the normalize factor here?
+    return Direction_2(v);
   }
 
   template<typename Vector_2>
@@ -114,6 +130,62 @@ namespace internal {
     if (angle_deg < FT(0)) 
       angle_deg += FT(180);
     return angle_deg;
+  }
+
+  template<typename Direction_2>
+  typename Kernel_traits<Direction_2>::Kernel::FT
+  orientation_2_degrees(const Direction_2& direction) {
+    
+    using Traits = typename Kernel_traits<Direction_2>::Kernel;
+    using FT = typename Traits::FT;
+
+    const FT atan_rad = static_cast<FT>(std::atan2(
+      CGAL::to_double(direction.dy()), 
+      CGAL::to_double(direction.dx())));
+
+    FT angle_deg = atan_rad * FT(180) / static_cast<FT>(CGAL_PI);
+    if (angle_deg < FT(0)) 
+      angle_deg += FT(180);
+    return angle_deg;
+  }
+
+  template<typename Direction_2>
+  typename Kernel_traits<Direction_2>::Kernel::FT
+  invar90_angle_2_degrees(
+    const Direction_2& di,
+    const Direction_2& dj) {
+    
+    using Traits = typename Kernel_traits<Direction_2>::Kernel;
+    using FT = typename Traits::FT;
+
+    const FT oi = orientation_2_degrees(di);
+    const FT oj = orientation_2_degrees(dj);
+
+    const FT diffij = oi - oj;
+    const double diff90 = std::floor(CGAL::to_double(diffij / FT(90)));
+    const FT to_lower = FT(90) *  static_cast<FT>(diff90)          - diffij;
+    const FT to_upper = FT(90) * (static_cast<FT>(diff90) + FT(1)) - diffij;
+
+    const FT angle_deg = 
+      CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
+    return angle_deg;
+  }
+
+  template<
+  typename FT,
+  typename Direction_2>
+  void rotate(
+    const FT angle_deg,
+    Direction_2& direction) {
+
+    using Traits = typename Kernel_traits<Direction_2>::Kernel;
+    using Transformation_2 = typename Traits::Aff_transformation_2; 
+
+    const FT angle_rad = angle_deg * static_cast<FT>(CGAL_PI) / FT(180);
+    const double sinval = std::sin(CGAL::to_double(angle_rad));
+    const double cosval = std::cos(CGAL::to_double(angle_rad));
+    Transformation_2 rotate(CGAL::ROTATION, sinval, cosval);
+    direction = rotate(direction);
   }
 
   template<

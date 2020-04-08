@@ -31,11 +31,14 @@ namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  template<typename GeomTraits>
+  template<
+  typename GeomTraits,
+  typename ContourDirections>
   class Closed_contour_regularization_2 {
 
   public:
     using Traits = GeomTraits;
+    using Contour_directions = ContourDirections;
 
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
@@ -53,13 +56,9 @@ namespace internal {
     using Segment_wrappers_2 = typename Base::Segment_wrappers_2;
 
     Closed_contour_regularization_2(
-      const FT min_length_2,
-      const FT max_angle_2,
+      const Contour_directions& estimator,
       const FT max_offset_2) :
-    m_base(
-      min_length_2, 
-      max_angle_2, 
-      max_offset_2) 
+    m_estimator(estimator) 
     { }
 
     // Optimize this one. It doubles input points.
@@ -86,37 +85,17 @@ namespace internal {
 
         wrap.index = i;
         wrap.segment = Segment_2(source, target);
+        wrap.direction = internal::segment_to_direction_2(wrap.segment);
         m_wraps.push_back(wrap);
       }
-      CGAL_assertion(m_wraps.size() == input_range.size());
-    }
 
-    template<
-    typename DirectionRange,
-    typename DirectionMap>
-    void set_principal_directions(
-      const DirectionRange& direction_range,
-      const DirectionMap direction_map) {
+      m_bounds.clear(); m_directions.clear(); m_assigned.clear();
+      m_estimator.estimate(true, m_bounds, m_directions, m_assigned);
       
-    }
-
-    void estimate_principal_directions(
-      const Direction_type direction_type) {
-
-      CGAL_assertion(m_wraps.size() >= 3);
-      if (m_wraps.size() < 3) return;
-
-      switch (direction_type) {
-        case Direction_type::LONGEST:
-          set_longest_direction();
-          break;
-        case Direction_type::LENGTH_AND_ANGLE:
-          set_length_and_angle_directions();
-          break;
-        default:
-          set_longest_direction();
-          break;
-      };
+      CGAL_assertion(m_directions.size() > 0);
+      CGAL_assertion(m_bounds.size() == m_directions.size());
+      CGAL_assertion(m_assigned.size() == m_wraps.size());
+      CGAL_assertion(m_wraps.size() == input_range.size());
     }
 
     template<typename OutputIterator>
@@ -126,338 +105,48 @@ namespace internal {
       CGAL_assertion(m_wraps.size() >= 3);
       if (m_wraps.size() < 3) return;
 
-      // if (m_wraps.size() < 4) return;
-      // Examples::Saver<Traits> saver;
+      /*
+      Examples::Saver<Traits> saver;
 
-      // bool success = false;
-      // rotate_contour();
-      // if (m_verbose)
-      //   saver.export_polylines(
-      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
-      // success = optimize_contour(max_ordinate_2);
-      // if (!success) return;
-      // if (m_verbose)
-      //   saver.export_polylines(
-      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
+      bool success = false;
+      rotate_contour();
+      if (m_verbose)
+        saver.export_polylines(
+          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
+      success = optimize_contour(max_ordinate_2);
+      if (!success) return;
+      if (m_verbose)
+        saver.export_polylines(
+          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
 
-      // success = connect_contour(max_ordinate_2);
-      // if (!success) return;
-      // if (m_verbose)
-      //   saver.export_polylines(
-      //     m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
+      success = connect_contour(max_ordinate_2);
+      if (!success) return;
+      if (m_verbose)
+        saver.export_polylines(
+          m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
 
-      // update_input(contour);
-    }
-
-    const std::size_t number_of_principal_directions() const {
-      return m_directions.size();
+      update_input(contour); */
     }
 
     const bool verbose() const {
       return m_base.verbose();
     }
 
+    const std::size_t number_of_principal_directions() const {
+      return m_directions.size();
+    }
+
   private:
+    const Contour_directions& m_estimator;
     const Base m_base;
+
     std::vector<Segment_wrapper_2> m_wraps;
 
     std::vector<FT_pair> m_bounds;
     std::vector<Direction_2> m_directions;
     std::vector<std::size_t> m_assigned;
-    
-    void set_longest_direction() {
-
-      m_bounds.clear(); m_bounds.resize(1);
-      m_bounds[0] = std::make_pair(FT(45), FT(45)); // I can remove them!
-
-      m_directions.clear(); m_directions.resize(1);
-      m_directions[0] = m_base.compute_longest_direction(m_wraps);
-
-      // 0 is the index of the direction in the m_directions.
-      m_assigned.clear();
-      m_assigned.resize(m_wraps.size(), 0);
-    }
-
-    void set_length_and_angle_directions() {
-      
-      // set_valid_directions();
-      // estimate_initial_directions(max_angle_2);
-
-      // if (m_longest.size() == 0) {
-      //   set_longest_direction();
-      // } else {
-      //   unify_along_contours();
-      //   correct_directions();
-      //   readjust_directions();
-      // }
-
-      // if (m_verbose) {
-      //   std::cout << "* groups: ";
-      //   for (std::size_t group_index : m_group)
-      //     std::cout << group_index << " ";
-      //   std::cout << std::endl;
-      // }
-    }
 
     /*
-    void set_valid_directions() {
-
-      for (auto& wrap : m_wraps)
-        wrap.is_valid_direction = 
-          m_base.is_valid_principal_direction(wrap.segment);
-    }
-
-    void estimate_initial_directions(
-      const FT max_angle_2) {
-
-      std::vector<std::size_t> longest_to_short;
-      sort_segments_by_length(m_wraps, longest_to_short);
-
-      m_bounds.clear(); m_longest.clear(); m_group.clear();
-      m_group.resize(longest_to_short.size(), std::size_t(-1));
-
-      std::size_t group_index = 0;
-      std::size_t query_index = std::size_t(-1);
-      do {
-        query_index = find_next_longest_segment(longest_to_short);
-        if (query_index != std::size_t(-1))
-          set_next_longest_direction(
-            max_angle_2, query_index, group_index);
-        ++group_index;
-      } while (query_index != std::size_t(-1));
-    }
-
-    void sort_segments_by_length(
-      const std::vector<Segment_wrapper_2>& wraps,
-      std::vector<std::size_t>& sorted) const {
-
-      sorted.clear();
-      sorted.reserve(wraps.size());
-      for (std::size_t i = 0; i < wraps.size(); ++i)
-        sorted.push_back(i);
-
-      std::sort(sorted.begin(), sorted.end(), 
-      [&wraps](const std::size_t i, const std::size_t j) -> bool { 
-        
-        const FT length_1 = wraps[i].segment.squared_length();
-        const FT length_2 = wraps[j].segment.squared_length();
-        return length_1 > length_2;
-      });
-    }
-
-    std::size_t find_next_longest_segment(
-      const std::vector<std::size_t>& longest_to_short) const {
-
-      std::size_t longest = std::size_t(-1);
-      for (std::size_t i = 0; i < longest_to_short.size(); ++i) {
-        const std::size_t wrap_index = longest_to_short[i];
-        const auto& wrap = m_wraps[wrap_index];
-
-        if (is_valid_wrap(wrap)) {
-          longest = wrap_index; break;
-        }
-      }
-      return longest;
-    }
-
-    bool is_valid_wrap(
-      const Segment_wrapper_2& wrap) const {
-      return !wrap.is_used && wrap.is_valid_direction;
-    }
-
-    void set_next_longest_direction(
-      const FT max_angle_2,
-      const std::size_t query_index,
-      const std::size_t group_index) {
-
-      CGAL_assertion(query_index != std::size_t(-1));
-      CGAL_assertion(group_index != std::size_t(-1));
-      
-      // Set current longest direction.
-      auto& longest = m_wraps[query_index];
-      m_group[query_index] = group_index;
-      longest.is_used = true;
-
-      for (auto& wrap : m_wraps) {
-        if (wrap.index == query_index) // skip longest
-          continue;
-
-        // Check if another wrap satisifes the conditions.
-        if (is_valid_wrap(wrap)) { 
-          if (does_satisify_angle_conditions(
-            max_angle_2, longest.segment, wrap.segment)) {
-            
-            m_group[wrap.index] = group_index;
-            wrap.is_used = true;
-          }
-        }
-      }
-
-      // Set internals.
-      m_longest.push_back(longest.segment);
-      m_bounds.push_back(std::make_pair(FT(45), FT(45)));
-    }
-
-    bool does_satisify_angle_conditions(
-      const FT max_angle_2,
-      const Segment_2& longest,
-      const Segment_2& segment) const {
-
-      CGAL_precondition(
-        max_angle_2 >= FT(0) && max_angle_2 <= FT(90));
-      const FT bound_min = max_angle_2;
-      const FT bound_max = FT(90) - bound_min;
-
-      const FT angle_2 = CGAL::abs(
-        internal::angle_2_degrees(longest, segment));
-      return (angle_2 <= bound_min) || (angle_2 >= bound_max);
-    }
-
-    void unify_along_contours() {
-
-      const std::size_t n = m_wraps.size();
-      for (std::size_t i = 0; i < n; ++i) {
-        auto& wrap = m_wraps[i];
-        if (wrap.is_used) continue;
-        
-        std::size_t im = (i + n - 1) % n;
-        std::size_t ip = (i + 1) % n;
-
-        bool stop = false;
-        std::size_t max_count = 0;
-        do {
-
-          if (m_wraps[im].is_used) {
-            m_group[i] = m_group[im];
-            m_wraps[i].is_used = true;
-            break;
-          }
-
-          if (m_wraps[ip].is_used) {
-            m_group[i] = m_group[ip]; 
-            m_wraps[i].is_used = true;
-            break;
-          }
-
-          im = (im + n - 1) % n;
-          ip = (ip + 1) % n;
-
-          if (im == i || ip == i) 
-            stop = true;
-          ++max_count;
-
-        } while (!stop && max_count < n);
-        if (stop || max_count >= n) {
-          std::cerr << 
-            "Warning: revert back to the first direction!" << std::endl;
-          m_group[i] = 0;
-        }
-      }
-    }
-
-    void correct_directions() {
-
-      const std::size_t n = m_wraps.size();
-      std::vector<std::size_t> clean;
-      clean.reserve(n);
-
-      for (std::size_t i = 0; i < n; ++i) {
-        
-        const std::size_t im = (i + n - 1) % n;
-        const std::size_t ip = (i + 1) % n;
-
-        const std::size_t gm = m_group[im];
-        const std::size_t gi = m_group[i];
-        const std::size_t gp = m_group[ip];
-
-        if (gm != std::size_t(-1) && gm == gp && gi != gm)
-          clean.push_back(gm);
-        else
-          clean.push_back(gi);
-      }
-      m_group = clean;
-    }
-
-    void readjust_directions() {
-
-      std::vector<FT> angles, counts;
-      create_average_angles(angles, counts);
-
-      CGAL_assertion(angles.size() == counts.size());
-      CGAL_assertion(angles.size() == m_longest.size());
-
-      for (std::size_t k = 0; k < angles.size(); ++k) {
-        CGAL_assertion(counts[k] != FT(0));
-        angles[k] /= counts[k];
-
-        const FT angle_deg = angles[k];
-        rotate(angle_deg, FT(0), m_longest[k]);
-      }
-    }
-
-    void create_average_angles(
-      std::vector<FT>& angles,
-      std::vector<FT>& counts) const {
-
-      CGAL_assertion(m_longest.size() > 0);
-
-      angles.clear();
-      angles.resize(m_longest.size(), FT(0));
-
-      counts.clear();
-      counts.resize(m_longest.size(), FT(0));
-
-      for (std::size_t i = 0; i < m_wraps.size(); ++i) {
-        const auto& wrap = m_wraps[i];
-        if (!wrap.is_valid_direction) continue;
-
-        const std::size_t group_index = m_group[i];
-        CGAL_assertion(group_index != std::size_t(-1));
-
-        const auto& si = m_longest[group_index];
-        const auto& sj = wrap.segment;
-
-        const auto di = internal::direction_2(si);
-        const auto dj = internal::direction_2(sj);
-
-        const FT oi = internal::orientation_2(di);
-        const FT oj = internal::orientation_2(dj);
-
-        const FT mes_ij = oi - oj;
-        const double mes90 = std::floor(CGAL::to_double(mes_ij / FT(90)));
-
-        const FT to_lower = FT(90) *  static_cast<FT>(mes90)          - mes_ij;
-        const FT to_upper = FT(90) * (static_cast<FT>(mes90) + FT(1)) - mes_ij;
-
-        const FT angle = 
-          CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
-
-        angles[group_index] += angle;
-        counts[group_index] += FT(1);
-      }
-    }
-
-    void rotate(
-      const FT angle_2, // in degrees
-      const FT ref_angle_2, // in degrees
-      Segment_2& segment) const {
-
-      FT angle = angle_2;
-      if (angle < FT(0)) angle = angle + ref_angle_2;
-      else if (angle > FT(0)) angle = angle - ref_angle_2;
-
-      Point_2 source = segment.source();
-      Point_2 target = segment.target();
-
-      const Point_2 b = internal::middle_point_2(source, target);
-      const FT angle_rad = angle * static_cast<FT>(CGAL_PI) / FT(180);
-
-      internal::rotate_point_2(angle_rad, b, source);
-      internal::rotate_point_2(angle_rad, b, target);
-
-      segment = Segment_2(source, target);
-    }
-
     void rotate_contour() {
 
       CGAL_assertion(m_group.size() == m_wraps.size());

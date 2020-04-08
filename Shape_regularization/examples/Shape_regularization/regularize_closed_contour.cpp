@@ -20,8 +20,10 @@ using Input_range = std::vector<Point_2>;
 using Point_map = CGAL::Identity_property_map<Point_2>;
 
 namespace SR = CGAL::Shape_regularization;
+using Contour_directions_2 = SR::Multiple_principal_directions_2<
+  Kernel, Input_range, Point_map>;
 using Contour_regularization_2 = SR::Contour_regularization_2<
-  Kernel, Input_range, SR::CLOSED>;
+  Kernel, Contour_directions_2, SR::CLOSED>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -76,8 +78,8 @@ int main(int argc, char *argv[]) {
   CGAL::Timer timer;
 
   // Initialize input range.
-  Input_range input_range;
   Point_map point_map;
+  Input_range input_range;
   initialize_segments(in_path, input_range);
   std::cout << "* number of input vertices = " << input_range.size() << std::endl;
 
@@ -91,16 +93,16 @@ int main(int argc, char *argv[]) {
   // Regularize.
   timer.start();
 
-  Contour_regularization_2 regularizer(
-    input_range, 
+  Contour_directions_2 directions(
+    input_range, point_map, 
   CGAL::parameters::
-  point_map(point_map).
-  min_length(min_length_2).
-  max_angle(max_angle_2).
-  max_offset(max_offset_2));
+    min_length(min_length_2).
+    max_angle(max_angle_2));
 
-  regularizer.estimate_principal_directions(
-    SR::Direction_type::LONGEST);
+  Contour_regularization_2 regularizer(
+    directions, input_range, point_map, 
+  CGAL::parameters::
+    max_offset(max_offset_2));
 
   std::vector<Point_2> contour;
   regularizer.regularize(

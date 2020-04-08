@@ -26,6 +26,7 @@
 
 #include <CGAL/Shape_regularization/QP_regularization.h>
 #include <CGAL/Shape_regularization/Contour_regularization_2.h>
+#include <CGAL/Shape_regularization/regularize_planes.h>
 
 #include <CGAL/Shape_regularization/QP_solvers/CGAL_solver.h>
 #include <CGAL/Shape_regularization/QP_solvers/OSQP_solver.h>
@@ -34,8 +35,5 @@
 #include <CGAL/Shape_regularization/Segment_regularization_2/Angle_regularization_2.h>
 #include <CGAL/Shape_regularization/Segment_regularization_2/Ordinate_regularization_2.h>
 #include <CGAL/Shape_regularization/Segment_regularization_2/Parallel_groups_2.h>
-
-#include <CGAL/Shape_regularization/enum.h>
-#include <CGAL/Shape_regularization/regularize_planes.h>
 
 #endif // CGAL_SHAPE_REGULARIZATION_HEADERS_H
