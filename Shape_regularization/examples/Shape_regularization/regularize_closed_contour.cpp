@@ -4,26 +4,24 @@
 
 #include <CGAL/Timer.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Shape_regularization.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Shape_regularization/Contour_regularization_2.h>
 
 #include "include/Saver.h"
 
 // Typedefs.
-using Kernel = CGAL::Exact_predicates_exact_constructions_kernel;
+using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Indices = std::vector<std::size_t>;
 
 using Input_range = std::vector<Point_2>;
-using Point_map = CGAL::Identity_property_map<Point_2>;
-
 namespace SR = CGAL::Shape_regularization;
 using Contour_directions_2 = SR::Multiple_principal_directions_2<
-  Kernel, Input_range, Point_map>;
+  Kernel, Input_range>;
 using Contour_regularization_2 = SR::Contour_regularization_2<
-  Kernel, Contour_directions_2, SR::CLOSED>;
+  Kernel, Input_range, Contour_directions_2, SR::CLOSED>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -78,7 +76,6 @@ int main(int argc, char *argv[]) {
   CGAL::Timer timer;
 
   // Initialize input range.
-  Point_map point_map;
   Input_range input_range;
   initialize_segments(in_path, input_range);
   std::cout << "* number of input vertices = " << input_range.size() << std::endl;
@@ -94,14 +91,12 @@ int main(int argc, char *argv[]) {
   timer.start();
 
   Contour_directions_2 directions(
-    input_range, point_map, 
-  CGAL::parameters::
+    input_range, CGAL::parameters::
     min_length(min_length_2).
     max_angle(max_angle_2));
 
   Contour_regularization_2 regularizer(
-    directions, input_range, point_map, 
-  CGAL::parameters::
+    input_range, directions, CGAL::parameters::
     max_offset(max_offset_2));
 
   std::vector<Point_2> contour;

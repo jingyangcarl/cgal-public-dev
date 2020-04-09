@@ -42,7 +42,6 @@ int main(int argc, char *argv[]) {
   if (path != "") {
     Saver saver;
     const std::string full_path = path + "regularize_planes_before";
-    saver.save_polygons_3(input_range, full_path);
   }
 
   // Regularize.
@@ -60,7 +59,6 @@ int main(int argc, char *argv[]) {
   if (path != "") {
     Saver saver;
     const std::string full_path = path + "regularize_planes_after";
-    saver.save_polygons_3(input_range, full_path);
   }
 
   std::cout << std::endl << 

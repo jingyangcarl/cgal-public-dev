@@ -34,6 +34,28 @@
 namespace CGAL {
 namespace Shape_regularization {
 
+  /*!
+    \ingroup PkgShapeRegularizationRef_Contours
+    
+    \brief Estimates possibly multiple principal directions of the contour 
+    based on the user-defined min length and max angle bounds.
+
+    This algorithm finds the best-fit edges of the contour with respect to the 
+    user-defined conditions and sets them as its principal directions.
+
+    \tparam GeomTraits 
+    must be a model of `Kernel`.
+
+    \tparam InputRange
+    must be a model of `ConstRange`.
+
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    range and value type is `GeomTraits::Point_2`. %Default is the 
+    `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
+
+    \cgalModels `ContourDirections`
+  */
   template<
   typename GeomTraits,
   typename InputRange,
@@ -41,6 +63,7 @@ namespace Shape_regularization {
   class Multiple_principal_directions_2 {
 
   public:
+    /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
@@ -52,12 +75,35 @@ namespace Shape_regularization {
     using FT_pair = std::pair<FT, FT>;
     using Base = internal::Contour_regularization_base_2<Traits>;
     using Segment_wrapper_2 = typename Base::Segment_wrapper_2;
+    /// \endcond
 
+    /// \name Initialization
+    /// @{
+
+    /*!
+      \brief initializes all internal data structures.
+
+      \tparam NamedParameters
+      a sequence of \ref pmp_namedparameters "Named Parameters".
+
+      \param input_range
+      a range of points, which form a contour
+
+      \param point_map
+      an instance of `PointMap`
+
+      \param np
+      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      among the ones listed below
+
+      \pre `input_range.size() >= 3` for closed contours
+      \pre `input_range.size() >= 2` for open contours
+    */
     template<typename NamedParameters>
     Multiple_principal_directions_2(
       const InputRange& input_range,
-      const PointMap point_map = PointMap(),
-      const NamedParameters np = CGAL::parameters::all_default()) :
+      const NamedParameters np = CGAL::parameters::all_default(),
+      const PointMap point_map = PointMap()) :
     m_input_range(input_range),
     m_point_map(point_map) { 
 
@@ -70,6 +116,24 @@ namespace Shape_regularization {
       CGAL_precondition(m_max_angle_2 >= FT(0) && m_max_angle_2 <= FT(90));
     }
 
+    /// @}
+
+    /// \name Directions
+    /// @{
+
+    /*!
+      \brief estimates possibly multiple principal directions of the contour.
+
+      \param is_closed indicates weather the contour is closed or not
+
+      \param bounds an `std::vector` with angle bounds for each estimated 
+      principal direction in `directions`, %default is 45:45 degrees
+
+      \param directions an `std::vector` with the estimated principal directions
+
+      \param assigned an `std::vector` that contains an index of the direction 
+      in `directions` with respect to each edge of the contour
+    */
     void estimate(
       const bool is_closed,
       std::vector<FT_pair>& bounds,
@@ -81,6 +145,8 @@ namespace Shape_regularization {
       else 
         estimate_open(bounds, directions, assigned);
     }
+
+    /// @}
 
   private:
     const Input_range& m_input_range;

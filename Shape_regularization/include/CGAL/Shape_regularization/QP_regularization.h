@@ -57,7 +57,7 @@ namespace Shape_regularization {
     items provided a way
     - to access neighbors of each item via the `NeighborQuery` class; 
     - to obtain a max bound for each item via the `RegularizationType` class;
-    - to obtain a target value for each pair of neighbor items via the `RegularizationType` class;
+    - to obtain a target value for each pair of neighbor items via the `RegularizationType` class.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.

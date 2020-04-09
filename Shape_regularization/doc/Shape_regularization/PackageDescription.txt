@@ -5,7 +5,7 @@
 \defgroup PkgShapeRegularizationRef_Concepts Concepts
 \ingroup PkgShapeRegularizationRef
 
-Concepts used for the parameters of the `CGAL::Shape_regularization::QP_regularization`.
+Concepts used for the parameters of the classes from `CGAL::Shape_regularization`.
 
 
 \defgroup PkgShapeRegularizationRef_Solvers QP Solvers
@@ -22,10 +22,17 @@ Models that can be used with the `CGAL::Shape_regularization::QP_regularization`
 for shape regularization in a segment set.
 
 
+\defgroup PkgShapeRegularizationRef_Contours Contour Regularization
+\ingroup PkgShapeRegularizationRef
+
+Models that can be used with the `CGAL::Shape_regularization::Contour_regularization_2`
+for contour regularization.
+
+
 \defgroup PkgShapeRegularizationRef_Utilities Utilities
 \ingroup PkgShapeRegularizationRef
 
-Utility classes that can be used with the `CGAL::Regularization::Shape_regularization`.
+Utility classes that can be used with the classes from `CGAL::Shape_regularization`.
 
 \addtogroup PkgShapeRegularizationRef
 
@@ -59,7 +66,12 @@ and closed contours, and a set of planes in 3D.}
 
 ### Algorithms ###
 - `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>`
-- `CGAL::Shape_regularization::Contour_regularization_2<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_regularization::Contour_regularization_2<>`
+
+### Principal Directions ###
+- `CGAL::Shape_regularization::Longest_principal_direction_2<>`
+- `CGAL::Shape_regularization::Multiple_principal_directions_2<>`
+- `CGAL::Shape_regularization::User_defined_principal_directions_2<>`
 
 ### QP Solvers ###
 - `CGAL::Shape_regularization::CGAL_solver<GeomTraits>`
@@ -72,9 +84,6 @@ and closed contours, and a set of planes in 3D.}
 
 ### Utilities ###
 - `CGAL::Shape_regularization::Parallel_groups_2<GeomTraits, InputRange, SegmentMap>`
-
-### Enum ###
-- `CGAL::Shape_regularization::Direction_type`
 
 ### Functions ###
 - `CGAL::Shape_regularization::regularize_planes()`

@@ -24,18 +24,9 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <vector>
-#include <utility>
-
 // Boost includes.
 #include <CGAL/boost/graph/named_params_helper.h>
 #include <CGAL/boost/graph/Named_function_parameters.h>
-
-// CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/property_map.h>
-#include <CGAL/number_utils.h>
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Closed_contour_regularization_2.h>
@@ -44,11 +35,14 @@
 namespace CGAL {
 namespace Shape_regularization {
 
+  /// \cond SKIP_IN_MANUAL
   struct CLOSED { };
+  
   struct OPEN { };
+  /// \endcond
 
   /*!
-    \ingroup PkgShapeRegularizationRef
+    \ingroup PkgShapeRegularizationRef_Contours
     
     \brief Contour regularization algorithm.
 
@@ -56,24 +50,27 @@ namespace Shape_regularization {
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
-    
-    \tparam InputRange 
-    must be a model of `ConstRange`.
 
-    \tparam PointMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
-    range and value type is `GeomTraits::Point_2`.
+    \tparam InputRange
+    must be a model of `ConstRange`.
 
     \tparam ContourDirections
     must be a model of `ContourDirections`.
 
     \tparam ContourTag
     must be either `CLOSED` or `OPEN`.
+
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    range and value type is `GeomTraits::Point_2`. %Default is the 
+    `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
   */
   template<
   typename GeomTraits,
+  typename InputRange,
   typename ContourDirections,
-  typename ContourTag>
+  typename ContourTag,
+  typename PointMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
   class Contour_regularization_2 {
 
   public:
@@ -95,21 +92,17 @@ namespace Shape_regularization {
     /*!
       \brief initializes all internal data structures.
 
-      \tparam InputRange
-      must be a model of `ConstRange`.
-
-      \tparam PointMap
-      must be an `LvaluePropertyMap` whose key type is the value type of the input 
-      range and value type is `GeomTraits::Point_2`.
-
       \tparam NamedParameters
       a sequence of \ref pmp_namedparameters "Named Parameters".
+
+      \param directions
+      estimated contour directions 
 
       \param input_range
       a range of points, which form a contour
 
-      \param directions
-      estiamted contour directions  
+      \param point_map
+      an instance of `PointMap`
 
       \param np
       optional sequence of \ref pmp_namedparameters "Named Parameters" 
@@ -118,15 +111,12 @@ namespace Shape_regularization {
       \pre `input_range.size() >= 3` for closed contours
       \pre `input_range.size() >= 2` for open contours
     */
-    template<
-    typename InputRange,
-    typename PointMap,
-    typename NamedParameters>
+    template<typename NamedParameters>
     Contour_regularization_2(
-      const ContourDirections& directions,
       const InputRange& input_range,
-      const PointMap point_map = PointMap(),
-      const NamedParameters np = CGAL::parameters::all_default()) { 
+      const ContourDirections& directions,
+      const NamedParameters np,
+      const PointMap point_map = PointMap()) { 
 
       const FT max_offset_2 = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));

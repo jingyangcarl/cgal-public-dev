@@ -140,13 +140,6 @@ namespace Examples {
       save(file_path + ".polylines");
     }
 
-    void save_polygons_3(
-      const std::vector<Polygon_3>& polygons, 
-      const std::string name) {
-
-      clear();
-    }
-
   private:
     std::stringstream out;
 

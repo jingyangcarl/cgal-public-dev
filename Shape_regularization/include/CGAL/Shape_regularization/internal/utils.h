@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -52,6 +52,29 @@ namespace internal {
     return FT(1000000000000);
   }
 
+  template<
+  typename Point_2, 
+  typename FT>
+  Point_2 transform_coordinates_2(
+    const Point_2& barycenter, 
+    const Point_2& frame_origin, 
+    const FT angle_deg) {
+
+    const double angle_rad = 
+      CGAL_PI * CGAL::to_double(angle_deg) / 180.0;
+
+    const FT cos_val = static_cast<FT>(std::cos(angle_rad));
+    const FT sin_val = static_cast<FT>(std::sin(angle_rad));
+
+    const FT diff_x = barycenter.x() - frame_origin.x();
+    const FT diff_y = barycenter.y() - frame_origin.y();
+
+    const FT x = diff_x * cos_val + diff_y * sin_val;
+    const FT y = diff_y * cos_val - diff_x * sin_val;
+
+    return Point_2(x, y);
+  }
+
   template<typename Point_2>
   Point_2 middle_point_2(
     const Point_2& source, const Point_2& target) {
@@ -86,6 +109,7 @@ namespace internal {
       CGAL::sqrt(CGAL::to_double(v.squared_length())));
   }
 
+  // Merge this function with the function below.
   template<typename Segment_2>
   typename Kernel_traits<Segment_2>::Kernel::Vector_2
   direction_2(const Segment_2& segment) { 
@@ -101,6 +125,8 @@ namespace internal {
     return v;
   }
 
+  // Is it a valid implementation for a contour edge rather than a segment?
+  // If I use angle_2_degrees with this, my consecutive_groups function does not work.
   template<typename Segment_2>
   typename Kernel_traits<Segment_2>::Kernel::Direction_2
   segment_to_direction_2(const Segment_2& segment) { 
@@ -117,6 +143,7 @@ namespace internal {
     return Direction_2(v);
   }
 
+  // Merge this function with the function below.
   template<typename Vector_2>
   typename Kernel_traits<Vector_2>::Kernel::FT
   orientation_2(const Vector_2& v) {
@@ -124,9 +151,11 @@ namespace internal {
     using Traits = typename Kernel_traits<Vector_2>::Kernel;
     using FT = typename Traits::FT;
 
-    const FT atan_rad = static_cast<FT>(
-      std::atan2(CGAL::to_double(v.y()), CGAL::to_double(v.x())));
-    FT angle_deg = atan_rad * FT(180) / static_cast<FT>(CGAL_PI);
+    const FT angle_rad = static_cast<FT>(std::atan2(
+      CGAL::to_double(v.y()), 
+      CGAL::to_double(v.x())));
+
+    FT angle_deg = angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
     if (angle_deg < FT(0)) 
       angle_deg += FT(180);
     return angle_deg;
@@ -139,11 +168,11 @@ namespace internal {
     using Traits = typename Kernel_traits<Direction_2>::Kernel;
     using FT = typename Traits::FT;
 
-    const FT atan_rad = static_cast<FT>(std::atan2(
+    const FT angle_rad = static_cast<FT>(std::atan2(
       CGAL::to_double(direction.dy()), 
       CGAL::to_double(direction.dx())));
 
-    FT angle_deg = atan_rad * FT(180) / static_cast<FT>(CGAL_PI);
+    FT angle_deg = angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
     if (angle_deg < FT(0)) 
       angle_deg += FT(180);
     return angle_deg;
@@ -171,57 +200,17 @@ namespace internal {
     return angle_deg;
   }
 
-  template<
-  typename FT,
-  typename Direction_2>
-  void rotate(
-    const FT angle_deg,
-    Direction_2& direction) {
+  template<typename Direction_2>
+  typename Kernel_traits<Direction_2>::Kernel::FT
+  compute_angle_2(
+    const Direction_2& reference, 
+    const Direction_2& direction) {
 
     using Traits = typename Kernel_traits<Direction_2>::Kernel;
-    using Transformation_2 = typename Traits::Aff_transformation_2; 
-
-    const FT angle_rad = angle_deg * static_cast<FT>(CGAL_PI) / FT(180);
-    const double sinval = std::sin(CGAL::to_double(angle_rad));
-    const double cosval = std::cos(CGAL::to_double(angle_rad));
-    Transformation_2 rotate(CGAL::ROTATION, sinval, cosval);
-    direction = rotate(direction);
-  }
-
-  template<
-  typename Point_2, 
-  typename FT>
-  Point_2 transform_coordinates_2(
-    const Point_2& barycenter, 
-    const Point_2& frame_origin, 
-    const FT angle_deg) {
-
-    const double angle_rad = 
-      CGAL_PI * CGAL::to_double(angle_deg) / 180.0;
-
-    const FT cos_val = static_cast<FT>(std::cos(angle_rad));
-    const FT sin_val = static_cast<FT>(std::sin(angle_rad));
-
-    const FT diff_x = barycenter.x() - frame_origin.x();
-    const FT diff_y = barycenter.y() - frame_origin.y();
-
-    const FT x = diff_x * cos_val + diff_y * sin_val;
-    const FT y = diff_y * cos_val - diff_x * sin_val;
-
-    return Point_2(x, y);
-  }
-
-  template<typename Segment_2>
-  typename Kernel_traits<Segment_2>::Kernel::FT
-  compute_angle_2(
-    const Segment_2& longest, 
-    const Segment_2& segment) {
-
-    using Traits = typename Kernel_traits<Segment_2>::Kernel;
     using FT = typename Traits::FT;
 
-    const auto v1 =  segment.to_vector();
-    const auto v2 = -longest.to_vector();
+    const auto v1 =  direction.to_vector();
+    const auto v2 = -reference.to_vector();
 
     const FT det = CGAL::determinant(v1, v2);
     const FT dot = CGAL::scalar_product(v1, v2);
@@ -232,25 +221,44 @@ namespace internal {
   }
 
   template<typename FT>
-  FT convert_angle_2(const FT angle) {
+  FT convert_angle_2(const FT angle_2) {
     
-    FT angle_2 = angle;
-    if (angle_2 > FT(90)) angle_2 = FT(180) - angle_2;
-    else if (angle_2 < -FT(90)) angle_2 = FT(180) + angle_2;
-    return angle_2;
+    FT angle = angle_2;
+    if (angle > FT(90)) angle = FT(180) - angle;
+    else if (angle < -FT(90)) angle = FT(180) + angle;
+    return angle;
   }
 
-  template<typename Segment_2>
-  typename Kernel_traits<Segment_2>::Kernel::FT
+  template<typename Direction_2>
+  typename Kernel_traits<Direction_2>::Kernel::FT
   angle_2_degrees(
-    const Segment_2& longest,
-    const Segment_2& segment) {
+    const Direction_2& reference,
+    const Direction_2& direction) {
 
     const auto angle_2 = compute_angle_2(
-      longest, segment);
+      reference, direction);
     return convert_angle_2(angle_2);
   }
 
+  template<typename Point_2>
+  Point_2 barycenter_2(
+    const std::vector<Point_2>& points) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    using FT = typename Traits::FT;
+
+    CGAL_assertion(points.size() > 0);
+    FT x = FT(0), y = FT(0);
+    for (const auto& p : points) {
+      x += p.x();
+      y += p.y();
+    }
+    x /= static_cast<FT>(points.size());
+    y /= static_cast<FT>(points.size());
+    return Point_2(x, y);
+  }
+
+  // Redo this function via CGAL affine transform!
   template<
   typename FT,
   typename Point_2>
@@ -272,22 +280,45 @@ namespace internal {
 		p = Point_2(x, y);
 	} 
 
-  template<typename Point_2>
-  Point_2 barycenter_2(
-    const std::vector<Point_2>& points) {
+  // Redo this function via CGAL affine transform!
+  template<
+  typename FT,
+  typename Segment_2>
+  void rotate_segment_2(
+    const FT angle_2_deg,
+    const FT ref_angle_2_deg,
+    Segment_2& segment) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    using FT = typename Traits::FT;
+    FT angle_deg = angle_2_deg;
+    if (angle_deg < FT(0)) angle_deg += ref_angle_2_deg;
+    else if (angle_deg > FT(0)) angle_deg -= ref_angle_2_deg;
 
-    CGAL_assertion(points.size() > 0);
-    FT x = FT(0), y = FT(0);
-    for (const auto& p : points) {
-      x += p.x();
-      y += p.y();
-    }
-    x /= static_cast<FT>(points.size());
-    y /= static_cast<FT>(points.size());
-    return Point_2(x, y);
+    auto source = segment.source();
+    auto target = segment.target();
+    
+    const auto barycenter = internal::middle_point_2(source, target);
+    const FT angle_rad = angle_deg * static_cast<FT>(CGAL_PI) / FT(180);
+
+    rotate_point_2(angle_rad, barycenter, source);
+    rotate_point_2(angle_rad, barycenter, target);
+    segment = Segment_2(source, target);
+  }
+
+  template<
+  typename FT,
+  typename Direction_2>
+  void rotate_direction_2(
+    const FT angle_deg,
+    Direction_2& direction) {
+
+    using Traits = typename Kernel_traits<Direction_2>::Kernel;
+    using Transformation_2 = typename Traits::Aff_transformation_2; 
+
+    const FT angle_rad = angle_deg * static_cast<FT>(CGAL_PI) / FT(180);
+    const double sinval = std::sin(CGAL::to_double(angle_rad));
+    const double cosval = std::cos(CGAL::to_double(angle_rad));
+    const Transformation_2 rotate_2(CGAL::ROTATION, sinval, cosval);
+    direction = rotate_2(direction);
   }
 
 } // internal

@@ -88,7 +88,7 @@ A short example on how to use the framework.
 
 Another example shows how to use a CGAL solver instead of OSQP solver.
 
-\cgalExample{Shape_regularization/regularize_with_cgal.cpp}
+\cgalExample{Shape_regularization/regularize_solvers.cpp}
 
 
 \section QP_regularization_2D Segment Regularization in 2D

@@ -5,7 +5,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Shape_regularization.h>
+#include <CGAL/Shape_regularization/Contour_regularization_2.h>
 
 #include "include/Saver.h"
 
@@ -17,14 +17,14 @@ using Point_2 = typename Kernel::Point_2;
 using Indices = std::vector<std::size_t>;
 
 using Input_range = std::vector<Point_2>;
-using Point_map = CGAL::Identity_property_map<Point_2>;
-
-using Contour_regularization_2 = CGAL::Shape_regularization::
-  Contour_regularization_2<Kernel, Input_range, Point_map>;
+namespace SR = CGAL::Shape_regularization;
+using Contour_directions_2 = SR::Longest_principal_direction_2<
+  Kernel, Input_range>;
+using Contour_regularization_2 = SR::Contour_regularization_2<
+  Kernel, Input_range, Contour_directions_2, SR::OPEN>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
-namespace SR = CGAL::Shape_regularization;
 
 // TODO:
 // 1. Clean up this example, e.g. remove out_path.
@@ -66,19 +66,12 @@ int main(int argc, char *argv[]) {
   std::string in_path = "";
   if (argc > 1) in_path = argv[1];
   const std::string out_path = "/Users/monet/Documents/gsoc/ggr/logs/";
-  
-  // Parameters.
-  const auto type = SR::Direction_type::MULTIPLE;
-  const FT min_length_2 = FT(2);
-  const FT max_angle_2 = FT(20);
-  const FT max_ordinate_2 = FT(1) / FT(2);
 
   // Initialize a timer.
   CGAL::Timer timer;
 
   // Initialize input range.
   Input_range input_range;
-  Point_map point_map;
   initialize_segments(in_path, input_range);
   std::cout << "* number of input vertices = " << input_range.size() << std::endl;
 
@@ -92,14 +85,13 @@ int main(int argc, char *argv[]) {
   // Regularize.
   timer.start();
 
+  Contour_directions_2 directions(input_range);
   Contour_regularization_2 regularizer(
-    input_range, point_map, false);
-  regularizer.estimate_principal_directions(
-    type, min_length_2, max_angle_2);
+    input_range, directions, CGAL::parameters::all_default());
 
   std::vector<Point_2> contour;
   regularizer.regularize(
-    std::back_inserter(contour), max_ordinate_2);
+    std::back_inserter(contour));
 
   timer.stop();
   std::cout << 

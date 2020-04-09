@@ -40,6 +40,27 @@
 namespace CGAL {
 namespace Shape_regularization {
 
+  /*!
+    \ingroup PkgShapeRegularizationRef_Contours
+    
+    \brief Estimates the longest principal direction of the contour.
+
+    This algorithm finds the longest contour edge and sets it as the principal
+    direction of the contour.
+
+    \tparam GeomTraits 
+    must be a model of `Kernel`.
+
+    \tparam InputRange
+    must be a model of `ConstRange`.
+
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    range and value type is `GeomTraits::Point_2`. %Default is the 
+    `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
+
+    \cgalModels `ContourDirections`
+  */
   template<
   typename GeomTraits,
   typename InputRange,
@@ -47,6 +68,7 @@ namespace Shape_regularization {
   class Longest_principal_direction_2 {
 
   public:
+    /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Point_map = PointMap;
@@ -56,7 +78,23 @@ namespace Shape_regularization {
     using Direction_2 = typename Traits::Direction_2;
 
     using FT_pair = std::pair<FT, FT>;
+    /// \endcond
 
+    /// \name Initialization
+    /// @{
+
+    /*!
+      \brief initializes all internal data structures.
+
+      \param input_range
+      a range of points, which form a contour
+
+      \param point_map
+      an instance of `PointMap`
+
+      \pre `input_range.size() >= 3` for closed contours
+      \pre `input_range.size() >= 2` for open contours
+    */
     Longest_principal_direction_2(
       const InputRange& input_range,
       const PointMap point_map = PointMap()) :
@@ -64,6 +102,24 @@ namespace Shape_regularization {
     m_point_map(point_map)
     { }
 
+    /// @}
+
+    /// \name Directions
+    /// @{
+
+    /*!
+      \brief estimates the longest principal direction of the contour.
+
+      \param is_closed indicates weather the contour is closed or not
+
+      \param bounds an `std::vector` with angle bounds for each estimated 
+      principal direction in `directions`, %default is 45:45 degrees
+
+      \param directions an `std::vector` with the estimated principal directions
+
+      \param assigned an `std::vector` that contains an index of the direction 
+      in `directions` with respect to each edge of the contour
+    */
     void estimate(
       const bool is_closed,
       std::vector<FT_pair>& bounds,
@@ -75,6 +131,8 @@ namespace Shape_regularization {
       else 
         estimate_open(bounds, directions, assigned);
     }
+
+    /// @}
 
   private:
     const Input_range& m_input_range;
@@ -101,7 +159,7 @@ namespace Shape_regularization {
       FT max_length = -FT(1);
       std::size_t index = std::size_t(-1);
 
-      CGAL_assertion(m_input_range.size() >= 3);
+      CGAL_precondition(m_input_range.size() >= 3);
       const std::size_t n = m_input_range.size();
       for (std::size_t i = 0; i < n; ++i) {
         const std::size_t ip = (i + 1) % n;
@@ -129,7 +187,7 @@ namespace Shape_regularization {
       std::vector<Direction_2>& directions,
       std::vector<std::size_t>& assigned) const {
 
-      CGAL_assertion(m_input_range.size() >= 2);
+      CGAL_precondition(m_input_range.size() >= 2);
 
       bounds.clear(); bounds.resize(1);
       bounds[0] = std::make_pair(FT(45), FT(45));

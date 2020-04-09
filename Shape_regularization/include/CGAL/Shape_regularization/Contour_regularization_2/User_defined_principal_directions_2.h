@@ -27,9 +27,33 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Contour_regularization_base_2.h>
 
+// TODO:
+// * Should I add readjust_directions() here as in the multiple class?
+
 namespace CGAL {
 namespace Shape_regularization {
 
+  /*!
+    \ingroup PkgShapeRegularizationRef_Contours
+    
+    \brief Sets multiple user-defined principal directions of the contour.
+
+    This algorithm finds the best-fit edges of the contour with respect to the 
+    user-defined principal directions and sets all other necessary data.
+
+    \tparam GeomTraits 
+    must be a model of `Kernel`.
+
+    \tparam InputRange
+    must be a model of `ConstRange`.
+
+    \tparam PointMap
+    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    range and value type is `GeomTraits::Point_2`. %Default is the 
+    `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
+
+    \cgalModels `ContourDirections`
+  */
   template<
   typename GeomTraits,
   typename DirectionRange,
@@ -38,6 +62,7 @@ namespace Shape_regularization {
   class User_defined_principal_directions_2 {
 
   public:
+    /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Direction_range = DirectionRange;
     using Input_range = InputRange;
@@ -50,7 +75,29 @@ namespace Shape_regularization {
     using FT_pair = std::pair<FT, FT>;
     using Base = internal::Contour_regularization_base_2<Traits>;
     using Segment_wrapper_2 = typename Base::Segment_wrapper_2;
+    /// \endcond
 
+    /// \name Initialization
+    /// @{
+
+    /*!
+      \brief initializes all internal data structures.
+
+      \param directions
+      a range with user-defined principal directions
+
+      \param input_range
+      a range of points, which form a contour
+
+      \param point_map
+      an instance of `PointMap`
+
+      \pre `directions.size() > 0`
+      \pre `directions.size() == input_range.size()` for closed contours
+      \pre `directions.size() == input_range.size() - 1` for open contours
+      \pre `input_range.size() >= 3` for closed contours
+      \pre `input_range.size() >= 2` for open contours
+    */
     User_defined_principal_directions_2(
       const DirectionRange& directions,
       const InputRange& input_range,
@@ -61,6 +108,24 @@ namespace Shape_regularization {
       CGAL_precondition(directions.size() > 0);
     }
 
+    /// @}
+
+    /// \name Directions
+    /// @{
+
+    /*!
+      \brief sets user-defined principal directions of the contour.
+
+      \param is_closed indicates weather the contour is closed or not
+
+      \param bounds an `std::vector` with angle bounds for each estimated 
+      principal direction in `directions`, %default is 45:45 degrees
+
+      \param directions an `std::vector` with the estimated principal directions
+
+      \param assigned an `std::vector` that contains an index of the direction 
+      in `directions` with respect to each edge of the contour
+    */
     void estimate(
       const bool is_closed,
       std::vector<FT_pair>& bounds,
@@ -73,13 +138,14 @@ namespace Shape_regularization {
         estimate_open(bounds, directions, assigned);
     }
 
+    /// @}
+
   private:
     const Direction_range& m_directions;
     const Input_range& m_input_range;
     const Point_map m_point_map;
     const Base m_base;
 
-    // Should I add readjust_directions() here as in the multiple class?
     void estimate_closed(
       std::vector<FT_pair>& bounds,
       std::vector<Direction_2>& directions,
@@ -88,7 +154,7 @@ namespace Shape_regularization {
       if (m_directions.size() == 0)
         return;
 
-      CGAL_assertion(
+      CGAL_precondition(
         m_directions.size() == m_input_range.size());
       std::vector<Segment_wrapper_2> wraps;
       const FT max_value = internal::max_value<FT>();
@@ -111,7 +177,6 @@ namespace Shape_regularization {
       }
     }
 
-    // Should I add readjust_directions() here as in the multiple class?
     void estimate_open(
       std::vector<FT_pair>& bounds,
       std::vector<Direction_2>& directions,
@@ -120,7 +185,7 @@ namespace Shape_regularization {
       if (m_directions.size() == 0)
         return;
 
-      CGAL_assertion(
+      CGAL_precondition(
         m_directions.size() == m_input_range.size() - 1);
       std::vector<Segment_wrapper_2> wraps;
       const FT max_value = internal::max_value<FT>();

@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -28,6 +28,9 @@
 #include <set>
 #include <vector>
 #include <utility>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 
 // CGAL includes.
 #include <CGAL/assertions.h>
@@ -39,21 +42,20 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
 
-// Saver.
-#include "../../../../examples/Shape_regularization/include/Saver.h"
-
 // TODO:
 // * Can I further simplify this class?
 // * Can I use squared distance here instead of distance?
 // * Improve find_central_segment().
 // * Improve orth segments, which are added during an optimization step. They 
-// are too far away from the correct place since they are placed in the middle of
-// the segment.
+//   are too far away from the correct place since they are placed in the middle of
+//   the segment.
 // * Do we actually need make_segments_collienar() in the contour connection?
 // * Improve intersection.
 // * I should use affine transform to rotate all segments.
 // * Can I merge closed and open?
 // * Can I put all direction related functions to a separate class?
+// * I need directions/assigned/bounds only in the first rotation step.
+//   Hence can I simplify this step even further? E.g. merge with ContourDirections?
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -67,12 +69,14 @@ namespace internal {
 
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
+    using Point_3 = typename Traits::Point_3;
     using Vector_2 = typename Traits::Vector_2;
     using Segment_2 = typename Traits::Segment_2;
     using Direction_2 = typename Traits::Direction_2;
     using Line_2 = typename Traits::Line_2;
     using Intersect_2 = typename Traits::Intersect_2;
 
+    // Should I change it to the Segment_data_2 class?
     struct Segment_wrapper_2 {
 
       Segment_2 segment;
@@ -86,6 +90,8 @@ namespace internal {
     using FT_pair = std::pair<FT, FT>;
     using Segments_2 = std::vector<Segment_2>;
     using Segment_wrappers_2 = std::vector<Segment_wrapper_2>;
+    using Polyline = std::vector<Point_3>;
+    using Polylines = std::vector<Polyline>;
 
     Contour_regularization_base_2() :
     m_verbose(true),
@@ -110,7 +116,7 @@ namespace internal {
       const Point_map point_map,
       std::vector<Segment_wrapper_2>& wraps) const {
 
-      CGAL_assertion(input_range.size() >= 3);
+      CGAL_precondition(input_range.size() >= 3);
       const std::size_t n = input_range.size();
       
       wraps.clear();
@@ -144,7 +150,7 @@ namespace internal {
       const Point_map point_map,
       std::vector<Segment_wrapper_2>& wraps) const {
 
-      CGAL_assertion(input_range.size() >= 2);
+      CGAL_precondition(input_range.size() >= 2);
       const std::size_t n = input_range.size();
       
       wraps.clear();
@@ -499,7 +505,10 @@ namespace internal {
         angles[k] /= counts[k];
 
         const FT angle_deg = angles[k];
-        internal::rotate(angle_deg, directions[k]);
+        internal::rotate_direction_2(angle_deg, directions[k]);
+        
+        // Stable version but requires a segment.
+        // internal::rotate_segment_2(angle_deg, FT(0), directions[k]);
       }
     }
 
@@ -527,11 +536,561 @@ namespace internal {
 
         const auto& di = directions[direction_index];
         const auto& dj = wrap.direction;
+
+        // Is it necessary here? Can I use angle_2_degrees instead?
         const FT angle = internal::invar90_angle_2_degrees(di, dj);
 
         angles[direction_index] += angle;
         counts[direction_index] += FT(1);
       }
+    }
+
+    void rotate_contour(
+      const std::vector<FT_pair>& bounds,
+      const std::vector<Direction_2>& directions,
+      const std::vector<std::size_t>& assigned,
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      CGAL_assertion(assigned.size() == wraps.size());
+      CGAL_assertion(bounds.size() == directions.size());
+
+      for (std::size_t i = 0; i < wraps.size(); ++i) {
+        const std::size_t direction_index = assigned[i];
+        if (direction_index == std::size_t(-1))
+          continue;
+       
+        CGAL_assertion(
+          direction_index >= 0 && 
+          direction_index < directions.size());
+
+        auto& wrap = wraps[i];
+        const auto& direction = directions[direction_index];
+        const auto& dbounds = bounds[direction_index];
+        rotate_segment(dbounds, direction, wrap);
+      }
+    }
+
+    void rotate_segment(
+      const FT_pair& dbounds,
+      const Direction_2& direction, 
+      Segment_wrapper_2& wrap) const {
+
+      // Can I use a segment here?
+      const FT angle_deg = internal::compute_angle_2(
+        direction, wrap.direction);
+      const FT converted = CGAL::abs(convert_angle_2(angle_deg));
+      if (converted <= dbounds.first)
+        internal::rotate_segment_2(
+          angle_deg, FT(180), wrap.segment); // parallel case
+      if (converted >= dbounds.second)
+        internal::rotate_segment_2(
+          angle_deg, FT(90), wrap.segment); // orthogonal case
+    }
+
+    void remove_zero_length_segments(
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      std::vector<Segment_wrapper_2> clean;
+      for (const auto& wrap : wraps)
+        if (wrap.segment.squared_length() > internal::tolerance<FT>())
+          clean.push_back(wrap);
+      wraps = clean;
+    }
+
+    void optimize_group(
+      const FT max_offset_2,
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      std::vector<std::size_t> longest_to_short;
+      sort_segments_by_length(wraps, longest_to_short);
+
+      // If max_offset_2 = 0 then each segment is in its own group!
+      std::vector<Segment_wrappers_2> groups;
+      create_collinear_groups(
+        max_offset_2, wraps, longest_to_short, groups);
+
+      // if (m_verbose)
+      //   std::cout << 
+      //     "* number of collinear groups = " << groups.size() << std::endl;
+
+      std::vector<Line_2> lines;
+      create_lines(groups, lines);
+      move_segments_toward_lines(lines, wraps);
+    }
+
+    void create_collinear_groups(
+      const FT max_offset_2,
+      std::vector<Segment_wrapper_2>& wraps,
+      const std::vector<std::size_t>& seeds,
+      std::vector<Segment_wrappers_2>& groups) const {
+
+      groups.clear();
+      for (auto& wrap : wraps)
+        wrap.is_used = false;
+      std::vector<Segment_wrapper_2> group;
+
+      std::size_t group_index = 0;
+      const int n = static_cast<int>(wraps.size());
+      for (const std::size_t seed : seeds) {
+        const int i = static_cast<int>(seed);
+
+        auto& wrapi = wraps[i];
+        if (wrapi.is_used) continue;
+        
+        group.clear(); 
+        wrapi.is_used = true;
+        wrapi.group = group_index;
+        group.push_back(wrapi);
+
+        const auto source = internal::middle_point_2(
+          wrapi.segment.source(), wrapi.segment.target());
+
+        // Traverse forward.
+        const int ip = i + 1;
+        if (i < n - 1 && !wraps[ip].is_used) {
+          int j = ip;
+          while (j < n) {
+            auto& wrapj = wraps[j];
+            if (wrapj.is_used) break;
+
+            if (does_satisfy_ordinate_conditions(
+              max_offset_2, source, wrapj.segment)) {
+
+              wrapj.is_used = true;
+              wrapj.group = group_index;
+              group.push_back(wrapj);
+            } else break;
+            ++j;
+          }
+        }
+
+        // Traverse backward.
+        const int im = i - 1;
+        if (i > 0 && !wraps[im].is_used) {
+          int j = im;
+          while (j >= 0) {
+            auto& wrapj = wraps[j];
+            if (wrapj.is_used) break;
+        
+            if (does_satisfy_ordinate_conditions(
+              max_offset_2, source, wrapj.segment)) {
+
+              wrapj.is_used = true;
+              wrapj.group = group_index;
+              group.push_back(wrapj);
+            } else break;
+            --j;
+          }
+        }
+
+        groups.push_back(group);
+        ++group_index;
+      }
+    }
+
+    bool does_satisfy_ordinate_conditions(
+      const FT max_offset_2,
+      const Point_2& source,
+      const Segment_2& segment) const {
+
+      CGAL_assertion(max_offset_2 >= FT(0));
+      const Line_2 line = Line_2(
+        segment.source(), segment.target());
+      const auto target = line.projection(source);
+      const Segment_2 proj = Segment_2(source, target);
+      
+      const FT threshold = max_offset_2;
+      const FT squared_threshold = threshold * threshold;
+      return proj.squared_length() <= squared_threshold;
+    }
+
+    void create_lines(
+      const std::vector<Segment_wrappers_2>& groups,
+      std::vector<Line_2>& lines) const {
+
+      CGAL_assertion(groups.size() > 0);
+      lines.clear();
+      lines.reserve(groups.size());
+
+      for (const auto& group : groups) {
+        const Segment_2 segment = find_weighted_segment(group);
+        const Line_2 line = Line_2(segment.source(), segment.target());
+        lines.push_back(line);
+      }
+    }
+
+    Segment_2 find_weighted_segment(
+      const std::vector<Segment_wrapper_2>& wraps) const {
+
+      std::vector<FT> weights;
+        compute_distance_weights(wraps, weights);
+      const Segment_2 ref_segment = 
+        find_central_segment(wraps);
+      const Segment_2 weighted = 
+        compute_weighted_segment(wraps, weights, ref_segment);
+      if (weighted.source() == weighted.target())
+        return ref_segment;
+      return weighted;
+    }
+
+    void compute_distance_weights(
+      const std::vector<Segment_wrapper_2>& wraps,
+      std::vector<FT>& weights) const {
+
+      CGAL_assertion(wraps.size() > 0);
+      weights.clear();
+      weights.reserve(wraps.size());
+
+      FT sum_distance = FT(0);
+      for (const auto& wrap : wraps) {
+        const FT sq_distance = wrap.segment.squared_length();
+        sum_distance += sq_distance;
+        weights.push_back(sq_distance);
+      }
+
+      CGAL_assertion(sum_distance > FT(0));
+      for (auto& weight : weights)
+        weight /= sum_distance;
+      CGAL_assertion(weights.size() == wraps.size());
+    }
+
+    Segment_2 find_central_segment(
+      const std::vector<Segment_wrapper_2>& wraps) const {
+
+      Point_2 source, target;
+      FT x1 = FT(0), y1 = FT(0);
+      FT x2 = FT(0), y2 = FT(0);
+      for (const auto& wrap : wraps) {
+        x1 += wrap.segment.source().x();
+        x2 += wrap.segment.target().x();
+
+        y1 += wrap.segment.source().y();
+        y2 += wrap.segment.target().y();
+      }
+
+      CGAL_assertion(wraps.size() > 0);
+      const FT size = static_cast<FT>(wraps.size());
+      x1 /= size; y1 /= size;
+      x2 /= size; y2 /= size;
+
+      source = Point_2(x1, y1);
+      target = Point_2(x2, y2);
+
+      if (source == target)
+        return find_longest_segment(wraps);
+      return Segment_2(source, target);
+    }
+
+    Segment_2 find_longest_segment(
+      const std::vector<Segment_wrapper_2>& wraps) const {
+
+      FT max_length = -FT(1);
+      std::size_t longest = std::size_t(-1);
+
+      for (std::size_t i = 0; i < wraps.size(); ++i) {
+        const auto& wrap = wraps[i];
+        const FT length = wrap.segment.squared_length();
+        if (length > max_length) {
+          longest = i;
+          max_length = length;
+        }
+      }
+      return wraps[longest].segment;
+    }
+
+    Segment_2 compute_weighted_segment(
+      const std::vector<Segment_wrapper_2>& wraps,
+      const std::vector<FT>& weights,
+      const Segment_2& ref_segment) const {
+
+      const auto& sref = ref_segment.source();
+      const auto& tref = ref_segment.target();
+
+      const auto center = 
+        internal::middle_point_2(sref, tref);
+
+      CGAL_assertion(weights.size() == wraps.size());
+      Vector_2 dir = Vector_2(FT(0), FT(0));
+      for (std::size_t i = 0; i < weights.size(); ++i) {  
+        const FT weight = weights[i];
+
+        const auto& wrap = wraps[i];
+        const Line_2 line = Line_2(
+          wrap.segment.source(), wrap.segment.target());
+        const Point_2 proj = line.projection(center);
+
+        const Vector_2 v = Vector_2(center, proj);
+        dir += v * weight;
+      }
+
+      const Point_2 source = sref + dir;
+      const Point_2 target = tref + dir;
+      return Segment_2(source, target);
+    }
+
+    void move_segments_toward_lines(
+      const std::vector<Line_2>& lines,
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      Point_2 p, q;
+      for (auto& wrap : wraps) {
+        const std::size_t group_index = wrap.group;
+        CGAL_assertion(group_index >= 0 && group_index < lines.size());
+        const auto& line = lines[group_index];
+
+        const auto& source = wrap.segment.source();
+        const auto& target = wrap.segment.target();
+
+        p = line.projection(source);
+        q = line.projection(target);
+        wrap.segment = Segment_2(p, q);
+      }
+    }
+
+    void create_segments_from_groups(
+      std::vector<Segment_wrappers_2>& groups,
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      std::size_t count = 0;
+      wraps.clear();
+      for (auto& group : groups) {
+        for (auto& wrap : group) {
+          wrap.index = count;
+          wrap.is_used = false;
+          wraps.push_back(wrap);
+          ++count;
+        }
+      }
+    }
+
+    std::pair<bool, bool> is_parallel_segment(
+      const Segment_2& sm, 
+      const Segment_2& si, 
+      const Segment_2& sp) const {
+
+      const FT angle_mi_2 = CGAL::abs(internal::angle_2_degrees(sm, si));
+      const FT angle_pi_2 = CGAL::abs(internal::angle_2_degrees(si, sp));
+
+      const bool source_cond = ( angle_mi_2 <= m_angle_threshold_2 );
+      const bool target_cond = ( angle_pi_2 <= m_angle_threshold_2 );
+
+      return std::make_pair(source_cond, target_cond);
+    }
+
+    bool is_parallel_segment(
+      const Segment_2& si, const Segment_2& sp) const {
+
+      const FT angle_pi_2 = CGAL::abs(internal::angle_2_degrees(si, sp));
+      const bool target_cond = ( angle_pi_2 <= m_angle_threshold_2 );
+      return target_cond;
+    }
+
+    void parallel_segments_to_segment(
+      const std::vector<Segment_wrapper_2>& wraps,
+      Segment_2& result) const {
+
+      Segment_2 ref_segment = find_weighted_segment(wraps);
+      const Line_2 line = Line_2(
+        ref_segment.source(), ref_segment.target());
+      
+      std::vector<Point_2> points;
+      for (const auto& wrap : wraps) {
+        
+        const Point_2 source = line.projection(wrap.segment.source());
+        const Point_2 target = line.projection(wrap.segment.target());
+
+        points.push_back(source);
+        points.push_back(target);
+      }
+      update_segment(points, ref_segment);
+      result = ref_segment;
+    }
+
+    void update_segment(
+      const std::vector<Point_2>& points,
+      Segment_2& segment) const {
+
+      FT min_proj_value =  internal::max_value<FT>();
+      FT max_proj_value = -internal::max_value<FT>();
+
+      const Vector_2 ref_vector = segment.to_vector();
+      const Point_2 ref_point = internal::barycenter_2(points);
+      
+      Point_2 source, target;
+      for (const auto& point : points) {
+        const Vector_2 curr_vector(ref_point, point);
+        const FT value = CGAL::scalar_product(curr_vector, ref_vector);
+        
+        if (value < min_proj_value) {
+          min_proj_value = value;
+          source = point; 
+        }
+        if (value > max_proj_value) {
+          max_proj_value = value;
+          target = point; 
+        }
+      }
+      segment = Segment_2(source, target);
+    }
+
+    // Do we need this function at all? It does not seem to work well!
+    // At least when I call it from the connect_contour().
+    void make_segments_collinear(
+      const FT max_ordinate_2,
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      std::vector<std::size_t> seeds;
+      seeds.reserve(wraps.size());
+      for (std::size_t i = 0; i < wraps.size(); ++i)
+        seeds.push_back(i);
+
+      std::vector<Segment_wrappers_2> groups;
+      create_collinear_groups(max_ordinate_2, wraps, seeds, groups);
+
+      const std::size_t before = wraps.size();
+      std::vector<Line_2> lines;
+      create_lines(groups, lines);
+      move_segments_toward_lines(lines, wraps);
+      const std::size_t after = wraps.size();
+      CGAL_assertion(after >= before);
+
+      if (m_verbose)
+        std::cout << 
+          "* segments before/after = " << before << "/" << after << std::endl;
+    }
+
+    void intersect_segment(
+      const Segment_2& sm, 
+      Segment_2& si) const {
+
+      Point_2 source = si.source();
+      Point_2 target = si.target();
+
+      const Line_2 line_1 = Line_2(sm.source(), sm.target());
+      const Line_2 line_2 = Line_2(si.source(), si.target());
+      const bool success = intersect_2(line_1, line_2, source);
+
+      if (!success) source = si.source();
+      si = Segment_2(source, target);
+    }
+
+    void intersect_segment(
+      const Segment_2& sm, 
+      Segment_2& si, 
+      const Segment_2& sp) const {
+
+      Point_2 source = si.source();
+      Point_2 target = si.target();
+
+      const Line_2 line_1 = Line_2(sm.source(), sm.target());
+      const Line_2 line_2 = Line_2(si.source(), si.target());
+      const Line_2 line_3 = Line_2(sp.source(), sp.target());
+
+      const bool success1 = intersect_2(line_1, line_2, source);
+      const bool success2 = intersect_2(line_2, line_3, target);
+
+      if (!success1) source = si.source();
+      if (!success2) target = si.target();
+
+      si = Segment_2(source, target);
+    } 
+
+    void intersect_segment(
+      Segment_2& si, 
+      const Segment_2& sp) const {
+
+      Point_2 source = si.source();
+      Point_2 target = si.target();
+
+      const Line_2 line_1 = Line_2(si.source(), si.target());
+      const Line_2 line_2 = Line_2(sp.source(), sp.target());
+      const bool success = intersect_2(line_1, line_2, target);
+
+      if (!success) target = si.target();
+      si = Segment_2(source, target);
+    } 
+
+    bool intersect_2(
+      const Line_2& line_1, 
+      const Line_2& line_2,
+      Point_2& in_point) const {
+      
+      typename std::result_of<Intersect_2(Line_2, Line_2)>::type result 
+      = CGAL::intersection(line_1, line_2);
+      if (result) {
+        if (const Line_2* line = boost::get<Line_2>(&*result)) 
+          return false;
+        else {
+          const Point_2* point = boost::get<Point_2>(&*result);
+          in_point = *point; return true;
+        }
+      }
+      return false;
+    }
+
+    void export_polylines(
+      const std::vector<Segment_wrapper_2>& wraps,
+      const std::string file_path) const {
+
+      std::vector<Segment_2> segments;
+      segments.reserve(wraps.size());
+      for (const auto& wrap : wraps)
+        segments.push_back(wrap.segment);
+      export_polylines(segments, file_path);
+    }
+
+    void export_polylines(
+      const std::vector<Segment_2>& segments,
+      const std::string file_path) const {
+      
+      std::vector< std::vector<Point_3> > polylines(segments.size());
+      for (std::size_t i = 0; i < segments.size(); ++i) {
+        const Point_2& s = segments[i].source();
+        const Point_2& t = segments[i].target();
+        
+        polylines[i].push_back(Point_3(s.x(), s.y(), FT(0)));
+        polylines[i].push_back(Point_3(t.x(), t.y(), FT(0)));
+      }
+      export_polylines(polylines, file_path);
+    }
+
+    void export_polylines(
+      const Polylines& polylines,
+      const std::string file_path) const {
+
+      if (polylines.size() == 0)
+        return;
+
+      std::stringstream out;
+      out.precision(20); 
+
+      for (std::size_t i = 0; i < polylines.size(); ++i) {
+        const auto &polyline = polylines[i];
+
+        out << polyline.size() << " ";
+        for (std::size_t j = 0; j < polyline.size(); ++j)
+          out << polyline[j] << " ";
+        out << std::endl;
+      }
+      save(out, file_path + ".polylines");
+    }
+
+    void save(
+      const std::stringstream& out,
+      const std::string path) const {
+      
+      std::ofstream file(path.c_str(), std::ios_base::out);
+      CGAL::set_ascii_mode(file);
+      if (!file) {
+        std::cout << 
+        "Error: cannot save the file: " << path << std::endl; return;
+      }
+      file << out.str() << std::endl;
+      file.close();
+
+      std::cout << 
+        "* segments are saved in " 
+      << path << std::endl;
     }
 
   private:
