@@ -47,7 +47,7 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularizationRef
+    \ingroup PkgShapeRegularizationRefQP
     
     \brief Main class/entry point to the shape regularization algorithm
     based on the quadratic programming global optimization.
@@ -72,7 +72,7 @@ namespace Shape_regularization {
     must be a model of `RegularizationType`.
 
     \tparam QPSolver
-    must be a model of `QPSolver`.
+    must be a model of `Solver_interface`.
   */
   template<
   typename GeomTraits,

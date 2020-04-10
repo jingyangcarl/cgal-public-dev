@@ -1,13 +1,14 @@
 /*!
-\ingroup PkgShapeRegularizationRef_Concepts
+\ingroup PkgShapeRegularizationRefConcepts
 \cgalConcept
 
-A concept that describes the set of methods used by the `CGAL::Shape_regularization::QP_regularization` 
-to apply regularization.
+A concept that describes the set of methods used by the class 
+`CGAL::Shape_regularization::QP_regularization` to access various data 
+required for setting up the the global regularization problem.
 
 \cgalHasModel 
-- `CGAL::Shape_regularization::Angle_regularization_2`, 
-- `CGAL::Shape_regularization::Ordinate_regularization_2`
+- `CGAL::Shape_regularization::Segments::Angle_regularization_2`, 
+- `CGAL::Shape_regularization::Segments::Offset_regularization_2`
 */
 class RegularizationType {
 
@@ -37,10 +38,13 @@ public:
   }
 
   /*!
-    applies the results from the QP solver to the initial items.
+    applies the `result` from the QP solver to the initial items.
 
     `CGAL::Shape_regularization::QP_regularization` calls this function once, after
-    the QP problem has been solved during the regularization process.
+    the global regularization QP problem has been solved.
+
+    The `result` vector contains values, one value per one regularized item. These 
+    values depend on what is being regularized, they could be angles or offsets for example.
   */
   void update(
     const std::vector<GeomTraits::FT>& result) {

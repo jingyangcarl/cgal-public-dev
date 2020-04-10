@@ -1,12 +1,13 @@
 /*!
-\ingroup PkgShapeRegularizationRef_Concepts
+\ingroup PkgShapeRegularizationRefConcepts
 \cgalConcept
 
-A concept that describes the set of methods used by the `CGAL::Shape_regularization::QP_regularization` 
+A concept that describes the set of methods used by the class 
+`CGAL::Shape_regularization::QP_regularization` 
 to access the neighbors of an item.
 
 \cgalHasModel 
-- `CGAL::Shape_regularization::Delaunay_neighbor_query_2`
+- `CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2`
 */
 class NeighborQuery {
 
@@ -21,6 +22,6 @@ public:
   void operator()(
     const std::size_t query_index, 
     std::vector<std::size_t>& neighbors) {
-        
+  
   }
 };

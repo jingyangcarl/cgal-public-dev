@@ -5,4 +5,5 @@ Algebraic_foundations
 Circulator
 Stream_support
 Property_map
+Solver_interface
 BGL

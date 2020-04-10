@@ -33,9 +33,10 @@
 
 namespace CGAL {
 namespace Shape_regularization {
+namespace Segments {
 
   /*!
-    \ingroup PkgShapeRegularizationRef_2D
+    \ingroup PkgShapeRegularizationRefSegments
 
     \brief A neighbor query based on a Delaunay triangulation, which enables to 
     find the nearest neighbors in a set of `GeomTraits::Segment_2`.
@@ -245,6 +246,7 @@ namespace Shape_regularization {
     }
   };
 
+} // namespace Segments
 } // namespace Shape_regularization
 } // namespace CGAL
 

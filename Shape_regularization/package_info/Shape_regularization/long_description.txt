@@ -1,1 +1,2 @@
-Shape regularization with various regularization algorithms.
+This CGAL package enables to regularize a set of 2D segments in the plane, both open 
+and closed contours, and a set of planes in 3D.

@@ -62,7 +62,6 @@ namespace internal {
     m_max_offset_2(max_offset_2) 
     { }
 
-    // Optimize this one. It doubles input points.
     template<
     typename Input_range,
     typename Point_map>
@@ -73,13 +72,6 @@ namespace internal {
       const FT max_value = internal::max_value<FT>();
       m_base.initialize_closed(
         max_value, input_range, point_map, m_wraps);
-
-      m_bounds.clear(); m_directions.clear(); m_assigned.clear();
-      m_estimator.estimate(true, m_bounds, m_directions, m_assigned);
-      
-      CGAL_assertion(m_directions.size() > 0);
-      CGAL_assertion(m_bounds.size() == m_directions.size());
-      CGAL_assertion(m_assigned.size() == m_wraps.size());
       CGAL_assertion(m_wraps.size() == input_range.size());
     }
 
@@ -90,8 +82,7 @@ namespace internal {
       CGAL_assertion(m_wraps.size() >= 3);
       if (m_wraps.size() < 3) return;
 
-      m_base.rotate_contour(
-        m_bounds, m_directions, m_assigned, m_wraps);
+      rotate_contour(m_wraps);
       if (verbose())
         m_base.export_polylines(
           m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
@@ -111,24 +102,25 @@ namespace internal {
       update_input(m_wraps, contour);
     }
 
-    const bool verbose() const {
-      return m_base.verbose();
-    }
-
-    const std::size_t number_of_principal_directions() const {
-      return m_directions.size();
-    }
-
   private:
     const Contour_directions& m_estimator;
     const FT m_max_offset_2;
     const Base m_base;
 
     std::vector<Segment_wrapper_2> m_wraps;
+    
+    const bool verbose() const {
+      return m_base.verbose();
+    }
 
-    std::vector<FT_pair> m_bounds;
-    std::vector<Direction_2> m_directions;
-    std::vector<std::size_t> m_assigned;
+    void rotate_contour(
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      for (std::size_t i = 0; i < wraps.size(); ++i) {
+        auto& wrap = wraps[i];
+        m_estimator.orient(i, wrap.segment);
+      }
+    }
 
     bool optimize_contour(
       const FT max_offset_2,

@@ -156,6 +156,7 @@ namespace Tests {
         std::cout << 
         "Error: cannot save the file: " << path << std::endl; return;
       }
+      
       file << data() << std::endl;
       file.close();
 

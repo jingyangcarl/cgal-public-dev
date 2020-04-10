@@ -1,11 +1,7 @@
-#include <string>
-#include <vector>
-#include <fstream>
-
 #include <CGAL/Timer.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Shape_regularization/Contour_regularization_2.h>
+#include <CGAL/Shape_regularization.h>
 
 #include "include/Saver.h"
 
@@ -17,17 +13,16 @@ using Point_2 = typename Kernel::Point_2;
 using Indices = std::vector<std::size_t>;
 
 using Input_range = std::vector<Point_2>;
-namespace SR = CGAL::Shape_regularization;
-using Contour_directions_2 = SR::Multiple_principal_directions_2<
-  Kernel, Input_range>;
-using Contour_regularization_2 = SR::Contour_regularization_2<
-  Kernel, Input_range, Contour_directions_2, SR::CLOSED>;
+using Contour_directions_2 = CGAL::Shape_regularization::Contours::
+  Multiple_directions_2<Kernel, Input_range>;
+using Contour_regularization_2 = CGAL::Shape_regularization::
+  Contour_regularization_2<Kernel, Input_range, Contour_directions_2, SR::CLOSED>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 // TODO:
-// 1. Clean up this example, e.g. remove out_path.
+// * Clean up this example.
 
 void initialize_segments(
   const std::string path,
@@ -39,7 +34,7 @@ void initialize_segments(
   in.precision(20);
 
   if (!in) {
-    std::cerr << "Error: Error loading file with data!" << std::endl;
+    std::cerr << "Error: cannot read the file with data!" << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -90,8 +85,9 @@ int main(int argc, char *argv[]) {
   // Regularize.
   timer.start();
 
+  const bool is_closed = true;
   Contour_directions_2 directions(
-    input_range, CGAL::parameters::
+    input_range, is_closed, CGAL::parameters::
     min_length(min_length_2).
     max_angle(max_angle_2));
 
@@ -106,7 +102,7 @@ int main(int argc, char *argv[]) {
   timer.stop();
   std::cout << 
     "* number of principal directions = " << 
-    regularizer.number_of_principal_directions() << 
+    directions.number_of_directions() << 
     " in time = " << timer.time() << " sec." 
   << std::endl;
 

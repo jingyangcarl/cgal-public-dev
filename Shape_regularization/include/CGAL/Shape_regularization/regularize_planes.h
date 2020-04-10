@@ -476,6 +476,7 @@ namespace PL {
 } // namespace PL
 } // namespace internal
 
+namespace Planes {
 /// \endcond
 
   /// \ingroup PkgShapeRegularizationRef  
@@ -762,6 +763,7 @@ namespace PL {
 
 /// \endcond
 
+} // namespace Planes
 } // namespace Shape_regularization
 } // namespace CGAL
 

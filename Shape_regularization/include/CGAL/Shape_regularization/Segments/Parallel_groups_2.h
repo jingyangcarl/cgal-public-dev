@@ -29,9 +29,10 @@
 
 namespace CGAL {
 namespace Shape_regularization {
+namespace Segments {
 
   /*!
-    \ingroup PkgShapeRegularizationRef_Utilities
+    \ingroup PkgShapeRegularizationRefSegments
 
     \brief Organizes segments with a similar orientation into groups of 
     parallel segments.
@@ -156,6 +157,7 @@ namespace Shape_regularization {
     }
   };
 
+} // namespace Segments
 } // namespace Shape_regularization
 } // namespace CGAL
 

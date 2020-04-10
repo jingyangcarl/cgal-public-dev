@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_ORDINATE_CONDITIONS_2_H
-#define CGAL_SHAPE_REGULARIZATION_INTERNAL_ORDINATE_CONDITIONS_2_H
+#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_OFFSET_CONDITIONS_2_H
+#define CGAL_SHAPE_REGULARIZATION_INTERNAL_OFFSET_CONDITIONS_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -32,14 +32,14 @@ namespace Shape_regularization {
 namespace internal {
 
   template<typename GeomTraits>
-  class Ordinate_conditions_2 {
+  class Offset_conditions_2 {
 
   public:
     using Traits = GeomTraits;
     using FT = typename Traits::FT;
     using Segment_data = typename internal::Segment_data_2<Traits>;
 
-    Ordinate_conditions_2() :
+    Offset_conditions_2() :
     m_margin_of_error(FT(1)) 
     { }
 
@@ -80,4 +80,4 @@ namespace internal {
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_ORDINATE_CONDITIONS_2_H
+#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_OFFSET_CONDITIONS_2_H

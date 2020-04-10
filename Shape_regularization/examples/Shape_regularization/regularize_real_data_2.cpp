@@ -19,18 +19,21 @@ using Indices   = std::vector<std::size_t>;
 using Input_range = std::vector<Segment_2>;
 
 using Neighbor_query = 
-  CGAL::Shape_regularization::Delaunay_neighbor_query_2<Kernel, Input_range>;
+  CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
 using Angle_regularization = 
-  CGAL::Shape_regularization::Angle_regularization_2<Kernel, Input_range>;
-using Ordinate_regularization = 
-  CGAL::Shape_regularization::Ordinate_regularization_2<Kernel, Input_range>;
+  CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Input_range>;
+using Offset_regularization = 
+  CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Input_range>;
 
-using QP_solver = CGAL::Shape_regularization::OSQP_solver<Kernel>;
+using QP_solver = 
+  CGAL::Shape_regularization::OSQP_solver<Kernel>;
 
-using QP_angle_regularizer = CGAL::Shape_regularization::QP_regularization
-  <Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
-using QP_ordinate_regularizer = CGAL::Shape_regularization::QP_regularization
-  <Kernel, Input_range, Neighbor_query, Ordinate_regularization, QP_solver>;
+using QP_angle_regularizer = 
+  CGAL::Shape_regularization::QP_regularization
+    <Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
+using QP_offset_regularizer = 
+  CGAL::Shape_regularization::QP_regularization
+    <Kernel, Input_range, Neighbor_query, Offset_regularization, QP_solver>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -41,6 +44,7 @@ void boundary_points_on_line_2(
   Point_2 &p, Point_2 &q) {
 
   const FT max_value = FT(1000000000000);
+  
   FT min_proj_value =  max_value;
   FT max_proj_value = -max_value;
 
@@ -147,7 +151,7 @@ int main(int argc, char *argv[]) {
     " in time = " << timer.time() << " sec." 
   << std::endl;
 
-  // Ordinate regularization.
+  // Offset regularization.
   timer.reset(); timer.start();
   std::vector<Indices> parallel_groups;
   angle_regularization.parallel_groups(
@@ -158,24 +162,24 @@ int main(int argc, char *argv[]) {
   << std::endl;
 
   const FT max_distance = FT(95) / FT(100);
-  Ordinate_regularization ordinate_regularization(
+  Offset_regularization offset_regularization(
     input_range, max_distance);
 
   neighbor_query.clear();
   for (const auto& group : parallel_groups) {
     if (group.size() < 2) continue;
     neighbor_query.add_group(group);
-    ordinate_regularization.add_group(group);
+    offset_regularization.add_group(group);
   }
 
-  QP_ordinate_regularizer qp_ordinate_regularizer(
-    input_range, neighbor_query, ordinate_regularization, qp_solver);
-  qp_ordinate_regularizer.regularize();
+  QP_offset_regularizer qp_offset_regularizer(
+    input_range, neighbor_query, offset_regularization, qp_solver);
+  qp_offset_regularizer.regularize();
 
   timer.stop();
   std::cout << 
-    "* number of modified segments (ordinates) = " << 
-    ordinate_regularization.number_of_modified_segments() << 
+    "* number of modified segments (offsets) = " << 
+    offset_regularization.number_of_modified_segments() << 
     " in time = " << timer.time() << " sec." 
   << std::endl;
 

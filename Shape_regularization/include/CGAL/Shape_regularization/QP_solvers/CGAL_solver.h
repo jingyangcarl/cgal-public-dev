@@ -37,10 +37,10 @@
 #include <CGAL/QP_functions.h>
 
 namespace CGAL {
-namespace Shape_regularization {
+namespace Shape_regularization {  
 
   /*!
-    \ingroup PkgShapeRegularizationRef_Solvers
+    \ingroup PkgShapeRegularizationRefSolvers
     
     \brief Quadratic programming solver
 
@@ -50,7 +50,7 @@ namespace Shape_regularization {
     \tparam GeomTraits 
     must be a model of `Kernel`.
 
-    \cgalModels `QPSolver`
+    \cgalModels `Solver_interface`
   */
   template<typename GeomTraits>
   class CGAL_solver { 
@@ -83,7 +83,7 @@ namespace Shape_regularization {
     /// @{ 
 
     /*!
-      \brief implements `QPSolver::solve()`.
+      \brief implements
 
       This function computes the quadratic programming problem given its
       input data.

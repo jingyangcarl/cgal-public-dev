@@ -16,14 +16,14 @@ using Indices   = std::vector<std::size_t>;
 using Input_range = std::vector<Segment_2>;
 
 using Neighbor_query = 
-  CGAL::Shape_regularization::Delaunay_neighbor_query_2<Kernel, Input_range>;
-using Ordinate_regularization = 
-  CGAL::Shape_regularization::Ordinate_regularization_2<Kernel, Input_range>;
+  CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
+using Offset_regularization = 
+  CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Input_range>;
 using QP_solver = 
   CGAL::Shape_regularization::OSQP_solver<Kernel>;
-using QP_ordinate_regularizer = 
+using QP_offset_regularizer = 
   CGAL::Shape_regularization::QP_regularization
-    <Kernel, Input_range, Neighbor_query, Ordinate_regularization, QP_solver>;
+    <Kernel, Input_range, Neighbor_query, Offset_regularization, QP_solver>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -64,7 +64,7 @@ double get_coef_value(
 int main(int argc, char *argv[]) {
 
   std::cout << std::endl << 
-    "regularize 100 segments ordinates example started" 
+    "regularize 100 segments offsets example started" 
   << std::endl << std::endl;
 
   // If we want to save the result in a file, we save it in a path.
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
   // Save input segments.
   if (path != "") {
     Saver saver;
-    const std::string full_path = path + "regularize_100_segments_ordinates_before";
+    const std::string full_path = path + "regularize_100_segments_offsets_before";
     saver.save_segments_2(input_range, full_path);
   }
 
@@ -110,8 +110,7 @@ int main(int argc, char *argv[]) {
 
   // Create parallel groups.
   const FT tolerance = FT(1);
-  Parallel_groups grouping(
-    input_range, tolerance);
+  Parallel_groups grouping(input_range, tolerance);
 
   std::vector<Indices> parallel_groups;
   grouping.parallel_groups(
@@ -127,36 +126,36 @@ int main(int argc, char *argv[]) {
   // Create a neighbor query.
   Neighbor_query neighbor_query(input_range);
 
-  // Ordinate regularization.
+  // Offset regularization.
   const FT max_distance = FT(25) / FT(100);
-  Ordinate_regularization ordinate_regularization(
+  Offset_regularization offset_regularization(
     input_range, max_distance);
 
   for (const auto& group : parallel_groups) {
     if (group.size() < 2) continue;
     neighbor_query.add_group(group);
-    ordinate_regularization.add_group(group);
+    offset_regularization.add_group(group);
   }
 
-  QP_ordinate_regularizer qp_ordinate_regularizer(
-    input_range, neighbor_query, ordinate_regularization, qp_solver);
-  qp_ordinate_regularizer.regularize();
+  QP_offset_regularizer qp_offset_regularizer(
+    input_range, neighbor_query, offset_regularization, qp_solver);
+  qp_offset_regularizer.regularize();
 
   timer.stop();
   std::cout << 
     "* number of modified segments = " << 
-    ordinate_regularization.number_of_modified_segments() << 
+    offset_regularization.number_of_modified_segments() << 
     " in time = " << timer.time() << " sec." 
   << std::endl;
 
   // Save regularized segments.
   if (path != "") {
     Saver saver;
-    const std::string full_path = path + "regularize_100_segments_ordinates_after";
+    const std::string full_path = path + "regularize_100_segments_offsets_after";
     saver.save_segments_2(input_range, full_path);
   }
 
   std::cout << std::endl << 
-    "regularize 100 segments ordinates example finished" 
+    "regularize 100 segments offsets example finished" 
   << std::endl << std::endl;
 }

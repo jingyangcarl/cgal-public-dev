@@ -1,11 +1,7 @@
-#include <string>
-#include <vector>
-#include <fstream>
-
 #include <CGAL/Timer.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Shape_regularization/Contour_regularization_2.h>
+#include <CGAL/Shape_regularization.h>
 
 #include "include/Saver.h"
 
@@ -17,17 +13,18 @@ using Point_2 = typename Kernel::Point_2;
 using Indices = std::vector<std::size_t>;
 
 using Input_range = std::vector<Point_2>;
-namespace SR = CGAL::Shape_regularization;
-using Contour_directions_2 = SR::Longest_principal_direction_2<
-  Kernel, Input_range>;
-using Contour_regularization_2 = SR::Contour_regularization_2<
-  Kernel, Input_range, Contour_directions_2, SR::OPEN>;
+using Point_map = CGAL::Identity_property_map<Point_2>;
+
+using Contour_directions_2 = CGAL::Shape_regularization::Contours::
+  Longest_direction_2<Kernel, Input_range, Point_map>;
+using Contour_regularization_2 = CGAL::Shape_regularization::
+  Contour_regularization_2<Kernel, Input_range, Contour_directions_2, SR::OPEN, Point_map>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 // TODO:
-// 1. Clean up this example, e.g. remove out_path.
+// * Clean up this example.
 
 void initialize_segments(
   const std::string path,
@@ -39,7 +36,7 @@ void initialize_segments(
   in.precision(20);
 
   if (!in) {
-    std::cerr << "Error: Error loading file with data!" << std::endl;
+    std::cerr << "Error: cannot read the file with data!" << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -71,6 +68,7 @@ int main(int argc, char *argv[]) {
   CGAL::Timer timer;
 
   // Initialize input range.
+  Point_map point_map;
   Input_range input_range;
   initialize_segments(in_path, input_range);
   std::cout << "* number of input vertices = " << input_range.size() << std::endl;
@@ -85,9 +83,11 @@ int main(int argc, char *argv[]) {
   // Regularize.
   timer.start();
 
-  Contour_directions_2 directions(input_range);
+  const bool is_closed = false;
+  Contour_directions_2 directions(
+    input_range, is_closed, point_map);
   Contour_regularization_2 regularizer(
-    input_range, directions, CGAL::parameters::all_default());
+    input_range, directions, CGAL::parameters::all_default(), point_map);
 
   std::vector<Point_2> contour;
   regularizer.regularize(
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]) {
   timer.stop();
   std::cout << 
     "* number of principal directions = " << 
-    regularizer.number_of_principal_directions() << 
+    directions.number_of_directions() << 
     " in time = " << timer.time() << " sec." 
   << std::endl;
 

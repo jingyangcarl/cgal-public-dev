@@ -27,14 +27,12 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Contour_regularization_base_2.h>
 
-// TODO:
-// * Should I add readjust_directions() here as in the multiple class?
-
 namespace CGAL {
 namespace Shape_regularization {
+namespace Contours {
 
   /*!
-    \ingroup PkgShapeRegularizationRef_Contours
+    \ingroup PkgShapeRegularizationRefContours
     
     \brief Sets multiple user-defined principal directions of the contour.
 
@@ -56,7 +54,6 @@ namespace Shape_regularization {
   */
   template<
   typename GeomTraits,
-  typename DirectionRange,
   typename InputRange,
   typename PointMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
   class User_defined_principal_directions_2 {
@@ -64,7 +61,6 @@ namespace Shape_regularization {
   public:
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
-    using Direction_range = DirectionRange;
     using Input_range = InputRange;
     using Point_map = PointMap;
 
@@ -83,29 +79,46 @@ namespace Shape_regularization {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam DirectionRange
+      must be a model of `ConstRange`. The value type is `GeomTraits::Direction_2`.
+
       \param directions
       a range with user-defined principal directions
 
       \param input_range
       a range of points, which form a contour
 
+      \param is_closed 
+      indicates weather the contour is closed or open
+
       \param point_map
       an instance of `PointMap`
 
-      \pre `directions.size() > 0`
-      \pre `directions.size() == input_range.size()` for closed contours
-      \pre `directions.size() == input_range.size() - 1` for open contours
+      \pre `direction_range.size() > 0`
+      \pre `direction_range.size() == input_range.size()` for closed contours
+      \pre `direction_range.size() == input_range.size() - 1` for open contours
+
       \pre `input_range.size() >= 3` for closed contours
       \pre `input_range.size() >= 2` for open contours
     */
+    template<typename DirectionRange>
     User_defined_principal_directions_2(
-      const DirectionRange& directions,
+      const DirectionRange& direction_range,
       const InputRange& input_range,
+      const bool is_closed,
       const PointMap point_map = PointMap()) :
-    m_directions(directions),
     m_input_range(input_range),
     m_point_map(point_map) { 
-      CGAL_precondition(directions.size() > 0);
+
+      CGAL_precondition(
+        direction_range.size() > 0);
+
+      if (is_closed)
+        estimate_closed(
+          direction_range, m_bounds, m_directions, m_assigned);
+      else 
+        estimate_open(
+          direction_range, m_bounds, m_directions, m_assigned);
     }
 
     /// @}
@@ -114,54 +127,74 @@ namespace Shape_regularization {
     /// @{
 
     /*!
-      \brief sets user-defined principal directions of the contour.
+      \brief orients a given `segment` with the index `query_index` with respect
+      to the best user-defined principal direction.
 
-      \param is_closed indicates weather the contour is closed or not
+      \param query_index an index of the `segment` in the input contour that is 
+      the segment's source point is the point in the contour with the index `query_index`
 
-      \param bounds an `std::vector` with angle bounds for each estimated 
-      principal direction in `directions`, %default is 45:45 degrees
+      \param segment a segment to be oriented
 
-      \param directions an `std::vector` with the estimated principal directions
-
-      \param assigned an `std::vector` that contains an index of the direction 
-      in `directions` with respect to each edge of the contour
+      \pre `query_index >= 0 && query_index < input_range.size()` for closed contours
+      \pre `query_index >= 0 && query_index < input_range.size() - 1` for open contours
     */
-    void estimate(
-      const bool is_closed,
-      std::vector<FT_pair>& bounds,
-      std::vector<Direction_2>& directions,
-      std::vector<std::size_t>& assigned) const {
+    void orient(
+      const std::size_t query_index,
+      Segment_2& segment) const {
 
-      if (is_closed)
-        estimate_closed(bounds, directions, assigned);
-      else 
-        estimate_open(bounds, directions, assigned);
+      m_base.apply_rotation_to_segment(
+        m_bounds, m_directions, m_assigned,
+        query_index, segment);
+    }
+
+    /// @}
+
+    /// \name Miscellaneous
+    /// @{
+
+    /*!
+      \brief returns the number of principal directions in the contour.
+    */
+    const std::size_t number_of_directions() const {
+      return m_directions.size();
     }
 
     /// @}
 
   private:
-    const Direction_range& m_directions;
     const Input_range& m_input_range;
     const Point_map m_point_map;
     const Base m_base;
 
+    std::vector<FT_pair> m_bounds;
+    std::vector<Direction_2> m_directions;
+    std::vector<std::size_t> m_assigned;
+
+    const bool verbose() const {
+      return m_base.verbose();
+    }
+
+    template<typename DirectionRange>
     void estimate_closed(
+      const DirectionRange& direction_range,
       std::vector<FT_pair>& bounds,
       std::vector<Direction_2>& directions,
       std::vector<std::size_t>& assigned) const {
 
-      if (m_directions.size() == 0)
+      if (direction_range.size() == 0)
         return;
 
       CGAL_precondition(
-        m_directions.size() == m_input_range.size());
+        direction_range.size() == m_input_range.size());
       std::vector<Segment_wrapper_2> wraps;
       const FT max_value = internal::max_value<FT>();
       m_base.initialize_closed(
         max_value, m_input_range, m_point_map, wraps);
 
-      directions = m_directions;
+      directions.clear(); directions.reserve(direction_range.size());
+      for (const auto& direction : direction_range)
+        directions.push_back(direction);
+
       bounds.clear(); bounds.reserve(directions.size());
       for (std::size_t i = 0; i < directions.size(); ++i)
         bounds.push_back(std::make_pair(FT(45), FT(45)));
@@ -169,7 +202,10 @@ namespace Shape_regularization {
       m_base.unify_along_contours_closed(wraps, assigned);
       m_base.correct_directions_closed(wraps, assigned);
 
-      if (m_base.verbose()) {
+      // Do we need that here?
+      // m_base.readjust_directions(wraps, assigned, directions);
+
+      if (verbose()) {
         std::cout << "* assigned directions: ";
         for (std::size_t direction_index : assigned)
           std::cout << direction_index << " ";
@@ -177,22 +213,27 @@ namespace Shape_regularization {
       }
     }
 
+    template<typename DirectionRange>
     void estimate_open(
+      const DirectionRange& direction_range,
       std::vector<FT_pair>& bounds,
       std::vector<Direction_2>& directions,
       std::vector<std::size_t>& assigned) const {
 
-      if (m_directions.size() == 0)
+      if (direction_range.size() == 0)
         return;
 
       CGAL_precondition(
-        m_directions.size() == m_input_range.size() - 1);
+        direction_range.size() == m_input_range.size() - 1);
       std::vector<Segment_wrapper_2> wraps;
       const FT max_value = internal::max_value<FT>();
       m_base.initialize_open(
         max_value, m_input_range, m_point_map, wraps);
 
-      directions = m_directions;
+      directions.clear(); directions.reserve(direction_range.size());
+      for (const auto& direction : direction_range)
+        directions.push_back(direction);
+
       bounds.clear(); bounds.reserve(directions.size());
       for (std::size_t i = 0; i < directions.size(); ++i)
         bounds.push_back(std::make_pair(FT(45), FT(45)));
@@ -200,7 +241,10 @@ namespace Shape_regularization {
       m_base.unify_along_contours_open(wraps, assigned);
       m_base.correct_directions_open(wraps, assigned);
 
-      if (m_base.verbose()) {
+      // Do we need that here?
+      // m_base.readjust_directions(wraps, assigned, directions);
+
+      if (verbose()) {
         std::cout << "* assigned directions: ";
         for (std::size_t direction_index : assigned)
           std::cout << direction_index << " ";
@@ -209,6 +253,7 @@ namespace Shape_regularization {
     }
   };
 
+} // namespace Contours
 } // namespace Shape_regularization
 } // namespace CGAL
 

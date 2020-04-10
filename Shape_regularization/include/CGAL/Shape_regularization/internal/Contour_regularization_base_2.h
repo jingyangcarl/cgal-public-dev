@@ -43,19 +43,12 @@
 #include <CGAL/Shape_regularization/internal/utils.h>
 
 // TODO:
-// * Can I further simplify this class?
-// * Can I use squared distance here instead of distance?
+// * Simplify this class if possible.
+// * Use squared distance here instead of distance.
 // * Improve find_central_segment().
-// * Improve orth segments, which are added during an optimization step. They 
-//   are too far away from the correct place since they are placed in the middle of
-//   the segment.
-// * Do we actually need make_segments_collienar() in the contour connection?
+// * Improve orth segments, they are too far away.
 // * Improve intersection.
-// * I should use affine transform to rotate all segments.
-// * Can I merge closed and open?
-// * Can I put all direction related functions to a separate class?
-// * I need directions/assigned/bounds only in the first rotation step.
-//   Hence can I simplify this step even further? E.g. merge with ContourDirections?
+// * Use affine transform to rotate all segments if possible.
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -247,6 +240,7 @@ namespace internal {
 
     bool is_valid_wrap(
       const Segment_wrapper_2& wrap) const {
+        
       return !wrap.is_used && wrap.is_valid_direction;
     }
 
@@ -545,6 +539,36 @@ namespace internal {
       }
     }
 
+    void apply_rotation_to_segment(
+      const std::vector<FT_pair>& bounds,
+      const std::vector<Direction_2>& directions,
+      const std::vector<std::size_t>& assigned,
+      const std::size_t query_index,
+      Segment_2& segment) const {
+
+      CGAL_assertion(assigned.size() > 0);
+      CGAL_assertion(bounds.size() == directions.size());
+      CGAL_assertion(
+        query_index >= 0 && 
+        query_index < assigned.size());
+
+      const std::size_t direction_index = assigned[query_index];
+      if (direction_index == std::size_t(-1))
+        return;
+       
+      CGAL_assertion(
+        direction_index >= 0 && 
+        direction_index < directions.size());
+
+      const auto& ref_direction = directions[direction_index];
+      const auto& ref_bounds = bounds[direction_index];
+
+      const Direction_2 seg_direction = 
+        internal::segment_to_direction_2(segment);
+      rotate_segment(
+        ref_bounds, ref_direction, seg_direction, segment);
+    }
+
     void rotate_contour(
       const std::vector<FT_pair>& bounds,
       const std::vector<Direction_2>& directions,
@@ -564,27 +588,31 @@ namespace internal {
           direction_index < directions.size());
 
         auto& wrap = wraps[i];
-        const auto& direction = directions[direction_index];
-        const auto& dbounds = bounds[direction_index];
-        rotate_segment(dbounds, direction, wrap);
+        const auto& ref_direction = directions[direction_index];
+        const auto& ref_bounds = bounds[direction_index];
+
+        const auto& seg_direction = wrap.direction;
+        rotate_segment(
+          ref_bounds, ref_direction, seg_direction, wrap.segment);
       }
     }
 
     void rotate_segment(
-      const FT_pair& dbounds,
-      const Direction_2& direction, 
-      Segment_wrapper_2& wrap) const {
+      const FT_pair& bounds,
+      const Direction_2& ref_direction, 
+      const Direction_2& seg_direction,
+      Segment_2& segment) const {
 
       // Can I use a segment here?
       const FT angle_deg = internal::compute_angle_2(
-        direction, wrap.direction);
+        ref_direction, seg_direction);
       const FT converted = CGAL::abs(convert_angle_2(angle_deg));
-      if (converted <= dbounds.first)
+      if (converted <= bounds.first)
         internal::rotate_segment_2(
-          angle_deg, FT(180), wrap.segment); // parallel case
-      if (converted >= dbounds.second)
+          angle_deg, FT(180), segment); // parallel case
+      if (converted >= bounds.second)
         internal::rotate_segment_2(
-          angle_deg, FT(90), wrap.segment); // orthogonal case
+          angle_deg, FT(90), segment); // orthogonal case
     }
 
     void remove_zero_length_segments(

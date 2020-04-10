@@ -1,31 +1,30 @@
 /*!
-\ingroup PkgShapeRegularizationRef_Concepts
+\ingroup PkgShapeRegularizationRefConcepts
 \cgalConcept
 
-A concept that describes the set of methods used by the `CGAL::Shape_regularization::Contour_regularization_2` 
+A concept that describes the set of methods used by the class 
+`CGAL::Shape_regularization::Contour_regularization_2` 
 to estimate principal directions of the contour.
 
 \cgalHasModel 
-- `CGAL::Shape_regularization::Longest_principal_direction_2`,
-- `CGAL::Shape_regularization::Multiple_principal_directions_2`,
-- `CGAL::Shape_regularization::User_defined_principal_directions_2`
+- `CGAL::Shape_regularization::Contours::Longest_direction_2`,
+- `CGAL::Shape_regularization::Contours::Multiple_directions_2`,
+- `CGAL::Shape_regularization::Contours::User_defined_directions_2`
 */
 class ContourDirections {
 
 public:
 
   /*!  
-    estimates principal `directions` of the open/closed contour, sets angle 
-    `bounds` on each found direction, and fills `assigned` that assigns an index of 
-    the direction from `directions` to each contour edge.
+    \brief orients a given `segment` with the index `query_index` with respect 
+    to the best estimated contour direction.
 
-    `CGAL::Shape_regularization::Contour_regularization_2` calls this function once per contour.
+    `CGAL::Shape_regularization::Contour_regularization_2` calls this function once  
+    for each contour edge.
   */
-  void estimate(
-    const bool is_closed, 
-    std::vector< std::pair<FT, FT> >& bounds,
-    std::vector<Direction_2>& directions,
-    std::vector<std::size_t>& assigned) {
-        
+  void orient(
+    const std::size_t query_index, 
+    Segment_2& segment) { 
+
   }
 };

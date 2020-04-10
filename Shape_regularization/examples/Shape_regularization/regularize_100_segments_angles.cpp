@@ -1,5 +1,3 @@
-#include <algorithm>
-
 #include <CGAL/Timer.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Simple_cartesian.h>
@@ -7,7 +5,6 @@
 
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/Counting_iterator.h>
-
 #include <CGAL/function_objects.h>
 #include <CGAL/point_generators_2.h>
 
@@ -24,9 +21,9 @@ using Indices   = std::vector<std::size_t>;
 using Input_range = std::vector<Segment_2>;
 
 using Neighbor_query = 
-  CGAL::Shape_regularization::Delaunay_neighbor_query_2<Kernel, Input_range>;
+  CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
 using Angle_regularization = 
-  CGAL::Shape_regularization::Angle_regularization_2<Kernel, Input_range>;
+  CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Input_range>;
 using QP_solver = 
   CGAL::Shape_regularization::OSQP_solver<Kernel>;
 using QP_angle_regularizer = 

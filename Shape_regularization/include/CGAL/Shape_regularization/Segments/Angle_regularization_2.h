@@ -19,24 +19,25 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2_H
-#define CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2_H
+#ifndef CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2_H
+#define CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
-#include <CGAL/Shape_regularization/internal/Ordinate_conditions_2.h>
+#include <CGAL/Shape_regularization/internal/Angle_conditions_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
+namespace Segments {
 
   /*!
-    \ingroup PkgShapeRegularizationRef_2D
+    \ingroup PkgShapeRegularizationRefSegments
 
-    \brief An ordinate-based regularization type on a set of 2D segments that preserves 
-    collinearity relationship.
+    \brief An angle-based regularization type on a set of 2D segments that preserves 
+    parallelism and orthogonality relationships.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -45,8 +46,8 @@ namespace Shape_regularization {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
-    and value type is `GeomTraits::Segment_2`.
+    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    range and value type is `GeomTraits::Segment_2`.
 
     \cgalModels `RegularizationType`
   */
@@ -54,12 +55,12 @@ namespace Shape_regularization {
   typename GeomTraits, 
   typename InputRange,
   typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
-  class Ordinate_regularization_2 {
+  class Angle_regularization_2 {
   public:
 
     /// \name Types
     /// @{
-    
+  
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
@@ -71,18 +72,20 @@ namespace Shape_regularization {
 
     /// \cond SKIP_IN_MANUAL
     using Point_2 = typename Traits::Point_2;
-    using Vector_2  = typename Traits::Vector_2;
+    using Vector_2 = typename Traits::Vector_2;
     using Segment_2 = typename Traits::Segment_2;
 
     using Segment_data = typename internal::Segment_data_2<Traits>;
-    using Conditions = typename internal::Ordinate_conditions_2<Traits>;
+    using Conditions = typename internal::Angle_conditions_2<Traits>;
     using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
-
+    
     using Indices = std::vector<std::size_t>;
     using Size_pair = std::pair<std::size_t, std::size_t>;
-
+    
     using Targets_map = 
-      std::map<Size_pair, std::pair<FT, std::size_t> >;
+      std::map<Size_pair, std::pair< FT, std::size_t> >;
+    using Relations_map = 
+      std::map<Size_pair, std::pair<int, std::size_t> >;
     /// \endcond
 
     /// @}
@@ -96,35 +99,36 @@ namespace Shape_regularization {
       \param input_range 
       an instance of `InputRange` with 2D segments
 
-      \param d_max
-      max distance value in meters
+      \param theta_max
+      max angle value in degrees
 
       \param segment_map
       an instance of `SegmentMap` that maps an item 
       from `input_range` to `GeomTraits::Segment_2`
 
       \pre `input_range.size() > 1`
-      \pre `d_max >= 0`
+      \pre `theta_max >= 0 && theta_max <= 90`
     */
-    Ordinate_regularization_2 (
-      InputRange& input_range,
-      const FT d_max = FT(1) / FT(10),
+    Angle_regularization_2(
+      InputRange& input_range, 
+      const FT theta_max = FT(25),
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
-    m_d_max(CGAL::abs(d_max)),
+    m_theta_max(CGAL::abs(theta_max)),
     m_segment_map(segment_map),
     m_num_modified_segments(0) { 
-
+      
       CGAL_precondition(input_range.size() > 1);
-      CGAL_precondition(d_max >= FT(0));
+      CGAL_precondition(theta_max >= FT(0) && theta_max <= FT(90));
 
-      if (d_max < FT(0)) {
+      if (theta_max < FT(0) || theta_max > FT(90)) {
         std::cout << 
-          "WARNING: The max ordinate bound has to be within [0, +inf)! Setting to 0." 
+          "WARNING: The max angle bound has to be within [0, 90]! Setting to 0." 
         << std::endl;
-        m_d_max = FT(0);
+        m_theta_max = FT(0);
       }
     }
+
     /// @}
 
     /// \name Access
@@ -145,13 +149,9 @@ namespace Shape_regularization {
       \pre `query_index_i >= 0 && query_index_i < input_range.size()`
       \pre `query_index_j >= 0 && query_index_j < input_range.size()`
     */
-
     FT target_value(
       const std::size_t query_index_i, 
       const std::size_t query_index_j) {
-
-      if( m_segments.size() == 0) 
-        return FT(0);
 
       CGAL_precondition(m_segments.size() > 1);
       CGAL_precondition(m_segments.find(query_index_i) != m_segments.end());
@@ -163,10 +163,26 @@ namespace Shape_regularization {
       const auto& s_i = m_segments.at(i);
       const auto& s_j = m_segments.at(j);
 
+      const FT mes_ij = s_i.orientation - s_j.orientation;
+      const double mes_90 = std::floor(CGAL::to_double(mes_ij / FT(90)));
+
+      const FT to_lower = FT(90) *  static_cast<FT>(mes_90)          - mes_ij;
+      const FT to_upper = FT(90) * (static_cast<FT>(mes_90) + FT(1)) - mes_ij;
+
       const FT tar_val = 
-        s_i.ref_coords.y() - s_j.ref_coords.y();
-      if (CGAL::abs(tar_val) < bound(i) + bound(j))
+        CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
+
+      if (CGAL::abs(tar_val) < bound(i) + bound(j)) {
         m_targets[std::make_pair(i, j)] = tar_val;
+ 
+        int rel_val;
+        if (CGAL::abs(to_lower) < CGAL::abs(to_upper))
+          rel_val = ((90 * static_cast<int>(mes_90)) % 180 == 0 ? 0 : 1);
+        else
+          rel_val = ((90 * static_cast<int>(mes_90 + 1.0)) % 180 == 0 ? 0 : 1);
+        
+        m_relations[std::make_pair(i, j)] = rel_val;
+      } 
       return tar_val;
     }
 
@@ -176,17 +192,17 @@ namespace Shape_regularization {
       This function returns `theta_max`.
     */
     FT bound(const std::size_t) const {
-      return m_d_max;
+      return m_theta_max;
     }
 
     /*!
       \brief implements `RegularizationType::update()`.
 
-      This function applies new positions computed by the QP solver 
+      This function applies new orientations computed by the QP solver 
       to the initial segments.
 
       \param result
-      a vector with updated segment positions.
+      a vector with updated segment orientations.
 
       \pre `result.size() > 0`
     */
@@ -194,31 +210,50 @@ namespace Shape_regularization {
       CGAL_precondition(result.size() > 0);
 
       Targets_map targets;
-      std::map<FT, Indices> collinear_groups;
+      Relations_map relations;
       std::map<std::size_t, Segment_data> segments;
+      std::map<FT, Indices> parallel_groups;
 
       CGAL_precondition(m_targets.size() > 0);
+      CGAL_precondition(m_targets.size() == m_relations.size());
+
       for (const auto& group : m_groups) {
-        if (group.size() < 2) continue; 
+        if (group.size() < 2) continue;
 
-        targets.clear(); segments.clear();
-        build_grouping_data(group, segments, targets);
+        segments.clear(); targets.clear(); relations.clear();
+        build_grouping_data(group, segments, targets, relations);
 
-        collinear_groups.clear();
+        parallel_groups.clear();
         if (segments.size() > 0) {
           const std::size_t n = m_input_range.size();
 
           m_grouping.make_groups(
-            m_d_max, n, segments, result, 
-            collinear_groups, targets);
-          translate_collinear_segments(collinear_groups);
+            m_theta_max, n, segments, result, 
+            parallel_groups, targets, relations);
+          rotate_parallel_segments(parallel_groups);
         }
       }
     }
+
     /// @}
 
     /// \name Utilities
     /// @{ 
+
+    /*!
+      \brief returns indices of parallel segments organized into groups.
+
+      \param groups
+      an instance of OutputIterator
+    */
+    template<typename OutputIterator>
+    OutputIterator parallel_groups(OutputIterator groups) {
+      for(const auto& parallel_group : m_parallel_groups) {
+        const auto& group = parallel_group.second;
+        *(groups++) = group;
+      }
+      return groups;
+    }
 
     /*!
       \brief inserts a group of segments from `input_range`.
@@ -271,42 +306,36 @@ namespace Shape_regularization {
 
   private:
     Input_range& m_input_range;
-    FT m_d_max;
+    FT m_theta_max;
     const Segment_map m_segment_map;
     std::map<std::size_t, Segment_data> m_segments;
     std::map<Size_pair, FT> m_targets;
+    std::map<Size_pair, int> m_relations;
     Grouping m_grouping;
+    std::map<FT, Indices> m_parallel_groups;
     std::vector<Indices> m_groups;
     std::size_t m_num_modified_segments;
 
-    void update_segment_data(const Indices& group) {
+    void update_segment_data(
+      const Indices& group) {
       if (group.size() < 2) return;
 
-      Point_2 frame_origin;
-      for (std::size_t i = 0; i < group.size(); ++i) {
-        const std::size_t seg_index = group[i];
-        CGAL_precondition(m_segments.find(seg_index) == m_segments.end());
-        if (m_segments.find(seg_index) != m_segments.end())
+      for(const std::size_t seg_index : group) {
+        if(m_segments.find(seg_index) != m_segments.end())
           continue;
 
-        const auto& segment = 
-          get(m_segment_map, *(m_input_range.begin() + seg_index));
-        Segment_data seg_data(segment, seg_index);
-
-        if (i == 0)
-          frame_origin = seg_data.barycenter;
-
-        seg_data.ref_coords = internal::transform_coordinates_2(
-          seg_data.barycenter, frame_origin, seg_data.orientation);
-        m_segments.emplace(
-          seg_index, seg_data);
-      } 
+        const auto& segment = get(m_segment_map, 
+          *(m_input_range.begin() + seg_index));
+        const Segment_data seg_data(segment, seg_index);
+        m_segments.emplace(seg_index, seg_data);
+      }
     }
 
     void build_grouping_data(
       const Indices& group,
       std::map<std::size_t, Segment_data>& segments,
-      Targets_map& targets) {
+      Targets_map& targets,
+      Relations_map& relations) {
       
       for (const std::size_t seg_index : group) {
         CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
@@ -315,136 +344,103 @@ namespace Shape_regularization {
         segments.emplace(seg_index, seg_data);
         std::size_t tar_index = 0;
 
-        for(const auto& target : m_targets) {
+        auto rit = m_relations.begin();
+        for (const auto& target : m_targets) {
           const std::size_t seg_index_tar_i = target.first.first;
           const std::size_t seg_index_tar_j = target.first.second;
-          const FT tar_value = target.second;
+          const FT tar_val = target.second;
 
-          if (seg_index_tar_i == seg_index)
+          auto& relation = *rit;
+          const std::size_t seg_index_rel_i = relation.first.first;
+          const std::size_t seg_index_rel_j = relation.first.second;
+          const int rel_val = relation.second;
+
+          CGAL_precondition(seg_index_tar_i == seg_index_rel_i);
+          CGAL_precondition(seg_index_tar_j == seg_index_rel_j);
+
+          if (seg_index_tar_i == seg_index && seg_index_rel_i == seg_index) {
             targets[std::make_pair(seg_index_tar_i, seg_index_tar_j)] = 
-              std::make_pair(tar_value, tar_index);
-          ++tar_index;
-        }
-      }
-    }
-
-    void translate_collinear_segments(
-      const std::map<FT, Indices>& collinear_groups) {
-      
-      for (const auto& collinear_group : collinear_groups) {
-        const FT dt = collinear_group.first;
-        const auto& group = collinear_group.second;
-
-        const std::size_t longest = find_longest_segment(group);
-        CGAL_assertion(m_segments.find(longest) != m_segments.end());
-        const auto& longest_data = m_segments.at(longest);
-
-        FT new_difference = dt - longest_data.ref_coords.y();
-        set_difference(longest, new_difference);
-
-        const FT la = longest_data.a;
-        const FT lb = longest_data.b;
-        const FT lc = longest_data.c;
-        const auto& ldirection = longest_data.direction;
-
-        // Translate the other segments, so that they rest 
-        // upon the line ax + by + c = 0.
-        for (const std::size_t seg_index : group) {
-          if (seg_index != longest) {
-            CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
-            const auto& seg_data = m_segments.at(seg_index);
-
-            new_difference = dt - seg_data.ref_coords.y();
-            set_difference(seg_index, new_difference, la, lb, lc, ldirection);
+              std::make_pair(tar_val, tar_index);
+            relations[std::make_pair(seg_index_rel_i, seg_index_rel_j)] = 
+              std::make_pair(rel_val, tar_index);
           }
+          ++rit; ++tar_index;
+        }
+      }
+      CGAL_postcondition(targets.size() == relations.size());
+    }
+
+    void rotate_parallel_segments(
+      const std::map<FT, Indices>& parallel_groups) {
+      
+      for (const auto& parallel_group : parallel_groups) {
+        const FT angle = parallel_group.first;
+        const auto& group = parallel_group.second;
+
+        if (m_parallel_groups.find(angle) == m_parallel_groups.end())
+          m_parallel_groups[angle] = group;
+
+        // Each group of parallel segments has a normal vector 
+        // that we compute with alpha.
+        const double angle_rad = 
+          CGAL::to_double(angle * static_cast<FT>(CGAL_PI) / FT(180));
+        const FT x = static_cast<FT>(std::cos(angle_rad));
+        const FT y = static_cast<FT>(std::sin(angle_rad));
+
+        Vector_2 direction = Vector_2(x, y);
+        const Vector_2 orth = Vector_2(-direction.y(), direction.x());
+        const FT a = orth.x();
+        const FT b = orth.y();
+
+        // Rotate segments with precision.
+        // Compute equation of the supporting line of the rotated segment.
+        for (const std::size_t seg_index : group) {
+          CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
+
+          const auto& seg_data = m_segments.at(seg_index);
+          const auto& barycenter = seg_data.barycenter;
+          const FT c = -a * barycenter.x() - b * barycenter.y();
+          set_orientation(seg_index, a, b, c, direction);
         }
       }
     }
 
-    std::size_t find_longest_segment(
-      const Indices& group) const {
-      
-      FT max_length = -FT(1);
-      std::size_t longest = std::size_t(-1);
-      for (const std::size_t seg_index : group) {
-        const FT seg_length = m_segments.at(seg_index).length;
-        if (max_length < seg_length) {
-          longest = seg_index;
-          max_length = seg_length; 
-        }
-      }
-      return longest;
-    }
-
-    void set_difference(
+    void set_orientation(
       const std::size_t seg_index, 
-      const FT new_difference) {
-
-      const FT difference = new_difference;
-      auto& seg_data = m_segments.at(seg_index);
-
-      const auto& direction = seg_data.direction;
-      const Vector_2 final_normal = Vector_2(-direction.y(), direction.x());
-
-      const auto& source = seg_data.segment.source();
-      const auto& target = seg_data.segment.target();
-
-      Point_2 new_source = Point_2(
-        source.x() + difference * final_normal.x(), 
-        source.y() + difference * final_normal.y());
-      Point_2 new_target = Point_2(
-        target.x() + difference * final_normal.x(), 
-        target.y() + difference * final_normal.y());
-      
-      const FT bx = (new_source.x() + new_target.x()) / FT(2);
-      const FT by = (new_source.y() + new_target.y()) / FT(2);
-
-      m_input_range[seg_index] = Segment_2(new_source, new_target);
-      seg_data.c = -seg_data.a * bx - seg_data.b * by;
-      ++m_num_modified_segments;
-    }
-
-    void set_difference(
-      const std::size_t seg_index, 
-      const FT new_difference, 
       const FT a, const FT b, const FT c, 
-      const Vector_2& direction) {
+      Vector_2 direction) {
       
-      FT difference = new_difference;
-      auto& seg_data = m_segments.at(seg_index);
+      if (
+        direction.y() < FT(0) || (
+        direction.y() == FT(0) && direction.x() < FT(0))) 
+        direction = -direction;
 
-      seg_data.direction = direction;
-      if (seg_data.direction.y() < FT(0) || 
-      (seg_data.direction.y() == FT(0) && seg_data.direction.x() < FT(0))) 
-        seg_data.direction = -seg_data.direction;
+      FT x1, y1, x2, y2;
+      const auto& seg_data = m_segments.at(seg_index);
+      const auto& barycenter = seg_data.barycenter;
+      const FT length = seg_data.length;
 
-      Vector_2 final_normal = Vector_2(
-        -seg_data.direction.y(), seg_data.direction.x());
-
-      const auto& source = seg_data.segment.source();
-      const auto& target = seg_data.segment.target();
-
-      FT x1, x2, y1, y2;
-      if (CGAL::abs(seg_data.direction.x()) > CGAL::abs(seg_data.direction.y())) {
-        x1 = source.x() + difference * final_normal.x();
-        x2 = target.x() + difference * final_normal.x(); 
+      if (CGAL::abs(direction.x()) > CGAL::abs(direction.y())) { 
+        x1 = barycenter.x() - length * direction.x() / FT(2);
+        x2 = barycenter.x() + length * direction.x() / FT(2);
         y1 = (-c - a * x1) / b;
         y2 = (-c - a * x2) / b;
-      } else {    
-        y1 = source.y() + difference * final_normal.y();
-        y2 = target.y() + difference * final_normal.y();
+      }  else {
+        y1 = barycenter.y() - length * direction.y() / FT(2);
+        y2 = barycenter.y() + length * direction.y() / FT(2);
         x1 = (-c - b * y1) / a;
         x2 = (-c - b * y2) / a;
       }
+      const Point_2 source = Point_2(x1, y1);
+      const Point_2 target = Point_2(x2, y2);
 
-      const Point_2 new_source = Point_2(x1, y1);
-      const Point_2 new_target = Point_2(x2, y2);
-      m_input_range[seg_index] = Segment_2(new_source, new_target);
+      m_input_range[seg_index] = Segment_2(source, target);
       ++m_num_modified_segments;
-    }
+    } 
   };
 
+} // namespace Segments
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_ORDINATE_REGULARIZATION_2_H
+#endif // CGAL_SHAPE_REGULARIZATION_ANGLE_REGULARIZATION_2_H

@@ -16,22 +16,30 @@ using Indices   = std::vector<std::size_t>;
 using Input_range = std::vector<Segment_2>;
 
 using Neighbor_query = 
-  CGAL::Shape_regularization::Delaunay_neighbor_query_2<Kernel, Input_range>;
+  CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
 using Angle_regularization = 
-  CGAL::Shape_regularization::Angle_regularization_2<Kernel, Input_range>;
+  CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Input_range>;
+
+// Choose the type of a solver.
+#define USE_OSQP_SOLVER
+#if defined(USE_OSQP_SOLVER)
+using QP_solver = 
+  CGAL::Shape_regularization::OSQP_solver<Kernel>;
+#else
 using QP_solver = 
   CGAL::Shape_regularization::CGAL_solver<Kernel>;
+#endif
+
 using QP_angle_regularizer = 
   CGAL::Shape_regularization::QP_regularization
     <Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
-
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
 
   std::cout << std::endl << 
-    "regularize with cgal example started" 
+    "regularize solvers example started" 
   << std::endl << std::endl;
 
   // Initialize a timer.
@@ -41,12 +49,12 @@ int main(int argc, char *argv[]) {
   Input_range input_range;
 
   // Load segments either from a local folder or a user-provided file.
-  std::ifstream in(argc > 1 ? argv[1] : "data/cgal.polylines");
+  std::ifstream in(argc > 1 ? argv[1] : "data/solvers.polylines");
   CGAL::set_ascii_mode(in);
 
   if (!in) {
     std::cout << 
-    "Error: cannot read the file cgal.polylines!" << std::endl;
+    "Error: cannot read the file solvers.polylines!" << std::endl;
     std::cout << 
     "You can either create a symlink to the data folder or provide this file by hand." 
     << std::endl << std::endl;
@@ -65,7 +73,7 @@ int main(int argc, char *argv[]) {
   if (argc > 2) {
     Saver saver;
     const std::string full_path = 
-      std::string(argv[2]) + "regularize_with_cgal_before";
+      std::string(argv[2]) + "regularize_solvers_before";
     saver.save_segments_2(input_range, full_path);
   }
 
@@ -103,11 +111,11 @@ int main(int argc, char *argv[]) {
   if (argc > 2) {
     Saver saver;
     const std::string full_path = 
-      std::string(argv[2]) + "regularize_with_cgal_after";
+      std::string(argv[2]) + "regularize_solvers_after";
     saver.save_segments_2(input_range, full_path);
   }
 
   std::cout << std::endl << 
-    "regularize with cgal example finished" 
+    "regularize solvers example finished" 
   << std::endl << std::endl;
 }
