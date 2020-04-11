@@ -56,7 +56,7 @@ namespace Contours {
   typename GeomTraits,
   typename InputRange,
   typename PointMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
-  class User_defined_principal_directions_2 {
+  class User_defined_directions_2 {
 
   public:
     /// \cond SKIP_IN_MANUAL
@@ -82,7 +82,7 @@ namespace Contours {
       \tparam DirectionRange
       must be a model of `ConstRange`. The value type is `GeomTraits::Direction_2`.
 
-      \param directions
+      \param direction_range
       a range with user-defined principal directions
 
       \param input_range
@@ -102,7 +102,7 @@ namespace Contours {
       \pre `input_range.size() >= 2` for open contours
     */
     template<typename DirectionRange>
-    User_defined_principal_directions_2(
+    User_defined_directions_2(
       const DirectionRange& direction_range,
       const InputRange& input_range,
       const bool is_closed,

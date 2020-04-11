@@ -56,7 +56,7 @@ namespace Contours {
   typename GeomTraits,
   typename InputRange,
   typename PointMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
-  class Longest_principal_direction_2 {
+  class Longest_direction_2 {
 
   public:
     /// \cond SKIP_IN_MANUAL
@@ -90,7 +90,7 @@ namespace Contours {
       \pre `input_range.size() >= 3` for closed contours
       \pre `input_range.size() >= 2` for open contours
     */
-    Longest_principal_direction_2(
+    Longest_direction_2(
       const InputRange& input_range,
       const bool is_closed,
       const PointMap point_map = PointMap()) :

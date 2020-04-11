@@ -32,6 +32,10 @@
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
 
+// Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
 // Shape detection includes.
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 
@@ -476,46 +480,53 @@ namespace PL {
 } // namespace PL
 } // namespace internal
 
-namespace Planes {
 /// \endcond
+
+/*
+\tparam PointPMap must be a model of `ReadablePropertyMap` with the value type `Kernel::Point_3`.
+It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
+
+\tparam PlaneMap must be a model of `WritablePropertyMap` with the value type `Kernel::Plane_3`.
+It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
+
+\tparam IndexMap must be a model of `ReadablePropertyMap` with the value type `int`.
+  
+\tparam GeomTraits must be a model of `Kernel`.
+It can be omitted and deduced automatically from the value type of `PointMap`.
+*/
+
+namespace Planes {
 
   /// \ingroup PkgShapeRegularizationRef  
   /*! 
     Given a set of detected planes with their corresponding inlier sets,
     this function enables to regularize the planes: 
+    - %Planes near parallel can be made exactly parallel;
+    - %Planes near orthogonal can be made exactly orthogonal;
+    - %Planes parallel and near coplanar can be made exactly coplanar;
+    - %Planes near symmetrical with a user-defined axis can be made exactly symmetrical.
 
-    - Planes near parallel can be made exactly parallel;
-
-    - Planes near orthogonal can be made exactly orthogonal;
-
-    - Planes parallel and near coplanar can be made exactly coplanar;
-
-    - Planes near symmetrical with a user-defined axis can be made exactly symmetrical.
-
-    Planes are directly modified. Points are left unaltered, as well as their 
+    %Planes are directly modified. Points are left unaltered, as well as their 
     relationships to planes (no transfer of a point from a primitive plane to another).
 
     The implementation follows \cgalCite{cgal:vla-lod-15}.
 
-    \tparam PointRange must be a model of `ConstRange` with points.
-
-    \tparam PointPMap must be a model of `ReadablePropertyMap` with the value type `Kernel::Point_3`.
-    It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
-
     \tparam PlaneRange must be a model of `Range` with planes.
 
-    \tparam PlaneMap must be a model of `WritablePropertyMap` with the value type `Kernel::Plane_3`.
-    It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
+    \tparam PointRange must be a model of `ConstRange` with points.
 
-    \tparam IndexMap must be a model of `ReadablePropertyMap` with the value type `int`.
-      
-    \tparam Kernel must be a geometric traits class.
-    It can be omitted and deduced automatically from the value type of `PointMap`.
+    \tparam NamedParameters
+    a sequence of \ref pmp_namedparameters "Named Parameters".
+
+    \param planes `Range` of planes
 
     \param points `ConstRange` of points
-    \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
-    \param planes `Range` of planes
+
+    \param np optional sequence of \ref pmp_namedparameters "Named Parameters" 
+    among the ones listed below:
+
     \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
+    \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
     \param index_map property map: index of a point `std::size_t` -> index of a plane `int` (-1 if the point is not assigned to a plane)
 
     \param regularize_parallelism selects whether parallelism is regularized or not
@@ -523,45 +534,26 @@ namespace Planes {
     \param regularize_coplanarity selects whether coplanarity is regularized or not
     \param regularize_axis_symmetry selects whether axis symmetry is regularized or not
 
-    \param tolerance_angle tolerance of deviation between normal vectors of planes 
-    (in degrees) used for parallelism, orthogonality, and axis symmetry. %Default value is 25 degrees.
+    \param max_angle max angle between normal vectors of planes (in degrees) 
+    used for parallelism, orthogonality, and axis symmetry. %Default value is 25 degrees.
 
-    \param tolerance_coplanarity maximal distance between two parallel planes such that 
+    \param max_offset max distance between two parallel planes (in meters) such that 
     they are considered coplanar. %Default value is 0.01.
 
     \param symmetry_direction chosen axis for symmetry regularization. 
     %Default value is the Z axis.
   */ 
-
-  // This variant requires all parameters.
   template<
-  typename PointRange,
-  typename PointMap,
   typename PlaneRange,
-  typename PlaneMap,
-  typename IndexMap,
-  typename Kernel>
+  typename PointRange,
+  typename NamedParameters>
   void regularize_planes(
-    const PointRange& points,
-    PointMap point_map,
     PlaneRange& planes,
-    PlaneMap plane_map,
-    IndexMap index_map,
-    const Kernel&,
-    bool regularize_parallelism,
-    bool regularize_orthogonality,
-    bool regularize_coplanarity,
-    bool regularize_axis_symmetry,
-    typename Kernel::FT tolerance_angle = 
-      typename Kernel::FT(25),
-    typename Kernel::FT tolerance_coplanarity = 
-      typename Kernel::FT(1) / typename Kernel::FT(100),
-    typename Kernel::Vector_3 symmetry_direction = 
-      typename Kernel::Vector_3(
-        typename Kernel::FT(0), 
-        typename Kernel::FT(0), 
-        typename Kernel::FT(1))) {
+    const PointRange& points, // do we need them?
+    const NamedParameters& np) {
     
+    /*
+    using Kernel = GeomTraits;
     typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3 Point;
     typedef typename Kernel::Vector_3 Vector;
@@ -569,9 +561,7 @@ namespace Planes {
 
     typedef typename internal::PL::Plane_cluster<Kernel> Plane_cluster;
 
-    /*
-    * Compute centroids and areas.
-    */
+    // Compute centroids and areas.
     std::vector<Point> centroids;
     std::vector<FT> areas;
     internal::PL::compute_centroids_and_areas<Kernel>(
@@ -696,7 +686,7 @@ namespace Planes {
             put(plane_map, *(planes.begin() + index_prim), plane_reg);
         }
       }
-    } 
+    } */
   }
 
 /// \cond SKIP_IN_MANUAL

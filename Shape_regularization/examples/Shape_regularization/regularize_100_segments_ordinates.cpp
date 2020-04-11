@@ -14,6 +14,8 @@ using Segment_2 = typename Kernel::Segment_2;
 using Indices   = std::vector<std::size_t>;
 
 using Input_range = std::vector<Segment_2>;
+using Parallel_groups = 
+  CGAL::Shape_regularization::Segments::Parallel_groups_2<Kernel, Input_range>;
 
 using Neighbor_query = 
   CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
@@ -22,13 +24,10 @@ using Offset_regularization =
 using QP_solver = 
   CGAL::Shape_regularization::OSQP_solver<Kernel>;
 using QP_offset_regularizer = 
-  CGAL::Shape_regularization::QP_regularization
-    <Kernel, Input_range, Neighbor_query, Offset_regularization, QP_solver>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Offset_regularization, QP_solver>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
-using Parallel_groups = 
-  CGAL::Shape_regularization::Parallel_groups_2<Kernel, Input_range>;
 
 double get_coef_value(
   const double theta, double& iterator) {

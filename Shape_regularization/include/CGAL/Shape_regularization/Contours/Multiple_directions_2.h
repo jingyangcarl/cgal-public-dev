@@ -61,7 +61,7 @@ namespace Contours {
   typename GeomTraits,
   typename InputRange,
   typename PointMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
-  class Multiple_principal_directions_2 {
+  class Multiple_directions_2 {
 
   public:
     /// \cond SKIP_IN_MANUAL
@@ -104,7 +104,7 @@ namespace Contours {
       \pre `input_range.size() >= 2` for open contours
     */
     template<typename NamedParameters>
-    Multiple_principal_directions_2(
+    Multiple_directions_2(
       const InputRange& input_range,
       const bool is_closed,
       const NamedParameters np,

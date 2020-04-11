@@ -15,10 +15,10 @@ using Indices = std::vector<std::size_t>;
 using Input_range = std::vector<Point_2>;
 using Point_map = CGAL::Identity_property_map<Point_2>;
 
-using Contour_directions_2 = CGAL::Shape_regularization::Contours::
-  Longest_direction_2<Kernel, Input_range, Point_map>;
-using Contour_regularization_2 = CGAL::Shape_regularization::
-  Contour_regularization_2<Kernel, Input_range, Contour_directions_2, SR::OPEN, Point_map>;
+using Contour_directions_2 = 
+  CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Input_range, Point_map>;
+using Contour_regularization_2 = 
+  CGAL::Shape_regularization::Contour_regularization_2<Kernel, Input_range, Contour_directions_2, CGAL::Shape_regularization::OPEN, Point_map>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;

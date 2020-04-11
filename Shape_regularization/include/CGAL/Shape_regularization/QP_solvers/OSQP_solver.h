@@ -51,7 +51,7 @@ namespace Shape_regularization {
     \tparam GeomTraits 
     must be a model of `Kernel`.
 
-    \cgalModels `Solver_interface`
+    \cgalModels `QuadraticProgramTraits`
   */
   template<typename GeomTraits>
   class OSQP_solver { 

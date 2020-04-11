@@ -26,11 +26,9 @@ using QP_solver =
   CGAL::Shape_regularization::OSQP_solver<Kernel>;
 
 using QP_angle_regularizer = 
-  CGAL::Shape_regularization::QP_regularization
-    <Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
 using QP_offset_regularizer = 
-  CGAL::Shape_regularization::QP_regularization
-    <Kernel, Input_range, Neighbor_query, Offset_regularization, QP_solver>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Offset_regularization, QP_solver>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;

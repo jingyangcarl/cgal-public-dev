@@ -4,6 +4,8 @@ STL_Extension
 Algebraic_foundations
 Circulator
 Stream_support
-Property_map
-Solver_interface
 BGL
+Solver_interface
+Property_map
+Generator
+Shape_detection

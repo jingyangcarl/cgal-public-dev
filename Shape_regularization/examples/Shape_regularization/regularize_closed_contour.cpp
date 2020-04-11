@@ -13,10 +13,10 @@ using Point_2 = typename Kernel::Point_2;
 using Indices = std::vector<std::size_t>;
 
 using Input_range = std::vector<Point_2>;
-using Contour_directions_2 = CGAL::Shape_regularization::Contours::
-  Multiple_directions_2<Kernel, Input_range>;
-using Contour_regularization_2 = CGAL::Shape_regularization::
-  Contour_regularization_2<Kernel, Input_range, Contour_directions_2, SR::CLOSED>;
+using Contour_directions_2 = 
+  CGAL::Shape_regularization::Contours::Multiple_directions_2<Kernel, Input_range>;
+using Contour_regularization_2 = 
+  CGAL::Shape_regularization::Contour_regularization_2<Kernel, Input_range, Contour_directions_2, CGAL::Shape_regularization::CLOSED>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
