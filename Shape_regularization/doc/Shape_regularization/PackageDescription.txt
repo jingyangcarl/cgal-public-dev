@@ -34,7 +34,9 @@ Models that can be used with the class `CGAL::Shape_regularization::Contour_regu
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Florent Lafarge, Simon Giraudot, Jean-Philippe Bauchet, Andreas Fabri, Gennadii Sytov, Dmitry Anisimov}
 \cgalPkgDesc{This \cgal package enables to regularize a set of 2D segments in the plane, both open 
-and closed contours, and a set of planes in 3D. It can also be used in conjunction with the \ref PkgShapeDetection "Shape_detection" package.}
+and closed contours, and a set of planes in 3D such that all input objects are 
+rotated and aligned with respect to the user-specified conditions. This package can also 
+be used in conjunction with the \ref PkgShapeDetection "Shape_detection" package.}
 \cgalPkgManuals{Chapter_Shape_Regularization, PkgShapeRegularizationRef}
 \cgalPkgSummaryEnd
 

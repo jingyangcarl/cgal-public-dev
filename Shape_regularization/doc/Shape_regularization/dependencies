@@ -9,3 +9,5 @@ Solver_interface
 Property_map
 Generator
 Shape_detection
+QP_solver
+Triangulation_2
