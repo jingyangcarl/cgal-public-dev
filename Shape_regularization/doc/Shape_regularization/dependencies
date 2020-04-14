@@ -4,10 +4,10 @@ STL_Extension
 Algebraic_foundations
 Circulator
 Stream_support
+Triangulation_2
+Principal_component_analysis
 BGL
 Solver_interface
 Property_map
 Generator
-Shape_detection
 QP_solver
-Triangulation_2

@@ -51,8 +51,9 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
-    and value type is `GeomTraits::Segment_2`.
+    must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
+    and value type is `GeomTraits::Segment_2`. %Default is the 
+    `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
     \cgalModels `NeighborQuery`
   */
@@ -86,8 +87,8 @@ namespace Segments {
       an instance of `InputRange` with 2D segments
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` 
-      to `GeomTraits::Segment_2`
+      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
+      if not provided, the default is used
 
       \pre `input_range.size() > 1`
     */
@@ -108,9 +109,7 @@ namespace Segments {
     /// @{ 
 
     /*!
-      \brief implements `NeighborQuery::operator()()`.
-
-      This operator returns indices of segments, which are direct neighbors of 
+      \brief returns indices of segments, which are direct neighbors of 
       the query segment.
 
       \param query_index
@@ -143,38 +142,25 @@ namespace Segments {
       \brief inserts a group of segments from `input_range` and computes their 
       neighbors within the group.
 
-      \tparam ItemRange 
+      \tparam IndexRange 
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-      \tparam IndexMap 
-      must be an `LvaluePropertyMap` whose key type is the value type of `ItemRange`
-      and value type is `std::size_t`.
+      \param index_range
+      an instance of `IndexRange`
 
-      \param item_range
-      an instance of ItemRange
-
-      \param index_map
-      an instance of IndexMap that returns an index stored in the `item_range` 
-      of the segment in the `input_range`
-
-      \pre `item_range.size() > 1`
+      \pre `index_range.size() > 1`
     */
-    template<
-    typename ItemRange, 
-    typename IndexMap = CGAL::Identity_property_map<std::size_t> >
+    template<typename IndexRange>
   	void add_group(
-      const ItemRange& item_range, 
-      const IndexMap index_map = IndexMap()) { 
+      const IndexRange& index_range) { 
       
-      CGAL_precondition(item_range.size() > 1);
-      if (item_range.size() < 2) return;
+      CGAL_precondition(index_range.size() > 1);
+      if (index_range.size() < 2) return;
       
       Indices group;
-      group.reserve(item_range.size());
-      for (const auto& item : item_range) {
-        const std::size_t seg_index = get(index_map, item);
+      group.reserve(index_range.size());
+      for (const auto seg_index : index_range)
         group.push_back(seg_index);
-      }
 
       build_delaunay_triangulation(group);
       add_neighbors();

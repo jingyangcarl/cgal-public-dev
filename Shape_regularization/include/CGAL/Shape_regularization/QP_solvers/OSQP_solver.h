@@ -41,12 +41,10 @@ namespace Shape_regularization {
   /*!
     \ingroup PkgShapeRegularizationRefSolvers
     
-    \brief Quadratic programming solver
+    \brief Quadratic programming solver.
 
-    This is the CGAL wrapper for the OSQP library: https://osqp.org/
-
-    It is recommended to use this solver instead of the default
-    `CGAL::Shape_regularization::CGAL_solver`.
+    This model is based on the external \ref thirdpartyOSQP "OSQP library" and 
+    used to solve the quadratic programming problem that arises in `CGAL::Shape_regularization`.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -57,13 +55,8 @@ namespace Shape_regularization {
   class OSQP_solver { 
 
   public:
-
-    /// \name Types
-    /// @{
-
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
-    /// \endcond
     
     // Number type.
     using FT = typename GeomTraits::FT;
@@ -74,11 +67,8 @@ namespace Shape_regularization {
     // Dense vector type.
     using Dense_vector = typename Eigen::Matrix<FT, Eigen::Dynamic, 1>;
 
-    /// \cond SKIP_IN_MANUAL
     using Sparse_matrix_iterator = typename Sparse_matrix::InnerIterator;
     /// \endcond
-
-    /// @}
 
     /// \name Solver
     /// @{ 
@@ -90,10 +80,10 @@ namespace Shape_regularization {
       input data.
 
       \param number_of_items
-      number of input items
+      number of items
 
       \param number_of_edges
-      number of edges in the connectivity graph
+      number of edges
 
       \param P
       quadratic term

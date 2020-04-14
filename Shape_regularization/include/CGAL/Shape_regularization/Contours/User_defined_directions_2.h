@@ -46,7 +46,7 @@ namespace Contours {
     must be a model of `ConstRange`.
 
     \tparam PointMap
-    must be an `LvaluePropertyMap` whose key type is the value type of the input 
+    must be a `ReadablePropertyMap` whose key type is the value type of the input 
     range and value type is `GeomTraits::Point_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
@@ -83,16 +83,16 @@ namespace Contours {
       must be a model of `ConstRange`. The value type is `GeomTraits::Direction_2`.
 
       \param direction_range
-      a range with user-defined principal directions
+      a const range with user-defined principal directions
 
       \param input_range
-      a range of points, which form a contour
+      a const range of points, which form a contour
 
       \param is_closed 
       indicates weather the contour is closed or open
 
       \param point_map
-      an instance of `PointMap`
+      an instance of `PointMap`, if not provided, the default is used
 
       \pre `direction_range.size() > 0`
       \pre `direction_range.size() == input_range.size()` for closed contours
@@ -130,7 +130,7 @@ namespace Contours {
       \brief orients a given `segment` with the index `query_index` with respect
       to the best user-defined principal direction.
 
-      \param query_index an index of the `segment` in the input contour that is 
+      \param query_index an index of the `segment` in the input contour, in other words, 
       the segment's source point is the point in the contour with the index `query_index`
 
       \param segment a segment to be oriented

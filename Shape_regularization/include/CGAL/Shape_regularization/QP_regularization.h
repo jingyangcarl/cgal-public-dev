@@ -52,7 +52,7 @@ namespace Shape_regularization {
     \brief Main class/entry point to the shape regularization algorithm
     based on the quadratic programming global optimization.
 
-    Given a quadratic programming solver via `QPSolver`, this version of the 
+    Given a quadratic programming solver via `QuadraticProgramTraits`, this version of the 
     shape regularization algorithm enables to regularize a set of user-defined 
     items provided a way
     - to access neighbors of each item via the `NeighborQuery` class; 
@@ -72,7 +72,7 @@ namespace Shape_regularization {
     must be a model of `RegularizationType`.
 
     \tparam QPSolver
-    must be a model of `Solver_interface`.
+    must be a model of `QuadraticProgramTraits`.
   */
   template<
   typename GeomTraits,

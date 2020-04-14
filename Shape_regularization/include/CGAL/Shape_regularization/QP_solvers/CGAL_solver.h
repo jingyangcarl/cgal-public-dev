@@ -42,10 +42,10 @@ namespace Shape_regularization {
   /*!
     \ingroup PkgShapeRegularizationRefSolvers
     
-    \brief Quadratic programming solver
+    \brief Quadratic programming solver.
 
-    This is the wrapper for the CGAL QP solver. This solver is the default,
-    but slow. It is recommended to use the `CGAL::Shape_regularization::OSQP_solver`.
+    This model is based on the `CGAL::QP_solver` and used to solve the quadratic 
+    programming problem that arises in `CGAL::Shape_regularization`.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -56,12 +56,8 @@ namespace Shape_regularization {
   class CGAL_solver { 
 
   public:
-    /// \name Types
-    /// @{
-
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
-    /// \endcond
     
     // Number type.
     using FT = typename GeomTraits::FT;
@@ -72,27 +68,24 @@ namespace Shape_regularization {
     // Dense vector type.
     using Dense_vector = typename Eigen::Matrix<FT, Eigen::Dynamic, 1>;
 
-    /// \cond SKIP_IN_MANUAL
     using Sparse_matrix_iterator = typename Sparse_matrix::InnerIterator;
     using QP_problem = CGAL::Quadratic_program<int>;
     /// \endcond
-
-    /// @}
 
     /// \name Solver
     /// @{ 
 
     /*!
-      \brief implements
+      \brief implements ...
 
       This function computes the quadratic programming problem given its
       input data.
 
       \param number_of_items
-      number of input items
+      number of items
 
       \param number_of_edges
-      number of edges in the connectivity graph
+      number of edges
 
       \param P
       quadratic term

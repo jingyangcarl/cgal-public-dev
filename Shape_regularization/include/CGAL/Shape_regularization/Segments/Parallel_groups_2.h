@@ -44,8 +44,9 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
-    and value type is `GeomTraits::Segment_2`.
+    must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
+    and value type is `GeomTraits::Segment_2`. %Default is the 
+    `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
   */
   template<
   typename GeomTraits,
@@ -83,30 +84,31 @@ namespace Segments {
       \param input_range 
       an instance of `InputRange` with 2D segments
 
-      \param tolerance
-      maximum angle deviation between two segments
+      \param max_angle
+      max angle deviation between two segments, the default is 5 degrees
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` 
-      to `GeomTraits::Segment_2`
+      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
+      if not provided, the default is used
 
       \pre `input_range.size() > 0`
-      \pre `tolerance > 0`
+      \pre `max_angle > 0`
     */
     Parallel_groups_2 (
       const InputRange& input_range, 
-      const FT tolerance = FT(1000000),
+      const FT max_angle = FT(1000000),
       const SegmentMap segment_map = SegmentMap()) : 
     m_input_range(input_range),
     m_segment_map(segment_map),
-    m_tolerance(CGAL::abs(tolerance)) {
+    m_tolerance(CGAL::abs(max_angle)) {
 
       CGAL_precondition(input_range.size() > 0);
-      CGAL_precondition(tolerance > FT(0));
+      CGAL_precondition(max_angle > FT(0));
 
       build_segment_data();
       make_parallel_groups();
     }
+
     /// @}
 
     // \name Access

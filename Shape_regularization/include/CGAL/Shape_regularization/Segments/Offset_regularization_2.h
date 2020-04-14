@@ -46,8 +46,9 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
-    and value type is `GeomTraits::Segment_2`.
+    must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
+    and value type is `GeomTraits::Segment_2`. %Default is the 
+    `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
     \cgalModels `RegularizationType`
   */
@@ -97,45 +98,44 @@ namespace Segments {
       \param input_range 
       an instance of `InputRange` with 2D segments
 
-      \param d_max
-      max distance value in meters
+      \param max_offset
+      max distance value in meters, the default is 0.1 meters 
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item 
-      from `input_range` to `GeomTraits::Segment_2`
+      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
+      if not provided, the default is used
 
       \pre `input_range.size() > 1`
-      \pre `d_max >= 0`
+      \pre `max_offset >= 0`
     */
     Offset_regularization_2 (
       InputRange& input_range,
-      const FT d_max = FT(1) / FT(10),
+      const FT max_offset = FT(1) / FT(10),
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
-    m_d_max(CGAL::abs(d_max)),
+    m_d_max(CGAL::abs(max_offset)),
     m_segment_map(segment_map),
     m_num_modified_segments(0) { 
 
       CGAL_precondition(input_range.size() > 1);
-      CGAL_precondition(d_max >= FT(0));
+      CGAL_precondition(max_offset >= FT(0));
 
-      if (d_max < FT(0)) {
+      if (max_offset < FT(0)) {
         std::cout << 
           "WARNING: The max offset bound has to be within [0, +inf)! Setting to 0." 
         << std::endl;
         m_d_max = FT(0);
       }
     }
+    
     /// @}
 
     /// \name Access
     /// @{ 
 
     /*!
-      \brief implements `RegularizationType::target_value()`.
-
-      This function calculates the target value between 2 segments, which are
-      direct neighbors to each other.
+      \brief calculates the target value between 2 segments, which are
+      direct neighbors to each other. The target value is the distance.
 
       \param query_index_i
       index of the first segment
@@ -172,18 +172,14 @@ namespace Segments {
     }
 
     /*!
-      \brief implements `RegularizationType::bound()`.
-
-      This function returns `theta_max`.
+      \brief returns `max_offset`.
     */
     FT bound(const std::size_t) const {
       return m_d_max;
     }
 
     /*!
-      \brief implements `RegularizationType::update()`.
-
-      This function applies new positions computed by the QP solver 
+      \brief applies new positions computed by the QP solver 
       to the initial segments.
 
       \param result
@@ -224,45 +220,32 @@ namespace Segments {
     /*!
       \brief inserts a group of segments from `input_range`.
 
-      \tparam ItemRange 
+      \tparam IndexRange 
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-      \tparam IndexMap 
-      must be an `LvaluePropertyMap` whose key type is the value type of `ItemRange`
-      and value type is `std::size_t`.
+      \param index_range
+      an instance of `IndexRange`
 
-      \param item_range
-      an instance of ItemRange
-
-      \param index_map
-      an instance of IndexMap that returns an index stored in the `item_range` 
-      of the segment in the `input_range`
-
-      \pre `item_range.size() > 1`
+      \pre `index_range.size() > 1`
     */
-    template<
-    typename ItemRange, 
-    typename IndexMap = CGAL::Identity_property_map<std::size_t> >
+    template<typename IndexRange>
   	void add_group(
-      const ItemRange& item_range, 
-      const IndexMap index_map = IndexMap()) { 
+      const IndexRange& index_range) { 
       
-      CGAL_precondition(item_range.size() > 1);
-      if (item_range.size() < 2) return;
+      CGAL_precondition(index_range.size() > 1);
+      if (index_range.size() < 2) return;
       
       Indices group;
-      group.reserve(item_range.size());
-      for (const auto& item : item_range) {
-        const std::size_t seg_index = get(index_map, item);
+      group.reserve(index_range.size());
+      for (const auto seg_index : index_range)
         group.push_back(seg_index);
-      }
       
       m_groups.push_back(group);
       update_segment_data(group);
     }
 
     /*!
-      \brief returns number of modifed segments`.
+      \brief returns the number of modifed segments.
     */
     std::size_t number_of_modified_segments() const {
       return m_num_modified_segments;
