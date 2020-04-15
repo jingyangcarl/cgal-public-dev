@@ -288,9 +288,9 @@ The \sc{SCIP} web site is <A HREF="http://scip.zib.de/">`http://scip.zib.de/`</A
 
 \subsection thirdpartyOSQP OSQP
 
-\sc{OSQP} (Operator Splitting Quadratic Program) is currently one of the fastest open source solvers for convex quadratic programs (QP).
+\sc{OSQP} (Operator Splitting Quadratic Program) is currently one of the fastest open source solvers for convex Quadratic Programs (QP).
 
-In \cgal, \sc{OSQP} provides an optional solver for the QP problems arising in the context of the \ref PkgShapeRegularization.
+In \cgal, \sc{OSQP} provides an optional solver for the QP problems arising in the context of \ref PkgShapeRegularization.
 
 Visit the official website of the solver <A HREF="https://osqp.org">`https://osqp.org`</A> for more information.
 

@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   Point_range points;
   Plane_range planes;
 
-  // to be added later!
+  // To be added later!
 
   // Save input polygons.
   if (path != "") {

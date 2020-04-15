@@ -94,8 +94,14 @@ namespace Contours {
       optional sequence of \ref pmp_namedparameters "Named Parameters" 
       among the ones listed below
 
+      \param min_length
+      the min length of a possible principal direction
+
+      \param max_angle
+      the max angle bound between a contour edge and a possible principal direction
+
       \param is_closed 
-      indicates weather the contour is closed or open
+      indicates wether the contour is closed or open
 
       \param point_map
       an instance of `PointMap`, if not provided, the default is used
@@ -161,7 +167,7 @@ namespace Contours {
     /// @{
 
     /*!
-      \brief returns the number of principal directions in the contour.
+      \brief returns the number of principal directions of the contour.
     */
     const std::size_t number_of_directions() const {
       return m_directions.size();

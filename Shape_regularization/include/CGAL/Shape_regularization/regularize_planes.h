@@ -498,16 +498,18 @@ It can be omitted and deduced automatically from the value type of `PointMap`.
 namespace Planes {
 
   /// \ingroup PkgShapeRegularizationRef  
-  /*! 
+  /*!
+    \brief Hierarchical plane regularization.
+
     Given a set of detected planes with their corresponding inlier sets,
     this function enables to regularize the planes: 
-    - %Planes near parallel can be made exactly parallel;
-    - %Planes near orthogonal can be made exactly orthogonal;
-    - %Planes parallel and near coplanar can be made exactly coplanar;
-    - %Planes near symmetrical with a user-defined axis can be made exactly symmetrical.
+    - %Planes that are near parallel are made parallel.
+    - Parallel planes that are near coplanar are made exactly coplanar.
+    - %Planes that are near orthogonal are made exactly orthogonal.
+    - %Planes that are near symmetrical with respect to a user-defined axis are made exactly symmetrical.
 
     %Planes are directly modified. Points are left unaltered, as well as their 
-    relationships to planes (no transfer of a point from a primitive plane to another).
+    relationship to the planes (no transfer of a point from a primitive plane to another).
 
     The implementation follows \cgalCite{cgal:vla-lod-15}.
 
@@ -538,7 +540,7 @@ namespace Planes {
     used for parallelism, orthogonality, and axis symmetry. %Default value is 25 degrees.
 
     \param max_offset max distance between two parallel planes (in meters) such that 
-    they are considered coplanar. %Default value is 0.01.
+    they are considered coplanar. %Default value is 0.01 meters.
 
     \param symmetry_direction chosen axis for symmetry regularization. 
     %Default value is the Z axis.

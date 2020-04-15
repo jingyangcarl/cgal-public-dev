@@ -87,7 +87,7 @@ namespace Segments {
       an instance of `InputRange` with 2D segments
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
+      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`, 
       if not provided, the default is used
 
       \pre `input_range.size() > 1`
@@ -144,9 +144,10 @@ namespace Segments {
 
       \tparam IndexRange 
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+      The value type is `std::size_t`.
 
       \param index_range
-      an instance of `IndexRange`
+      a const range of segment indices
 
       \pre `index_range.size() > 1`
     */

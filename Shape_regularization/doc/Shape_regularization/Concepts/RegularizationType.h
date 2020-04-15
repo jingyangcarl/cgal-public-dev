@@ -31,7 +31,7 @@ public:
     `CGAL::Shape_regularization::QP_regularization` calls this function for each neighbor pair 
     `query_index_i <-> query_index_j` that participates in the regularization process.
   */
-  typename GeomTraits::FT target_value(
+  typename GeomTraits::FT target(
     const std::size_t query_index_i, 
     const std::size_t query_index_j) {
 
@@ -40,7 +40,7 @@ public:
   /*!
     applies the `result` from the QP solver to the initial items.
 
-    `CGAL::Shape_regularization::QP_regularization` calls this function once, after
+    `CGAL::Shape_regularization::QP_regularization` calls this function once after
     the global regularization QP problem has been solved.
 
     The `result` vector contains values, one value per one regularized item. These 

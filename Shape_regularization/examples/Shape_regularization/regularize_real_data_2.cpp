@@ -3,6 +3,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/Shape_regularization.h>
+#include <CGAL/QP_functions.h>
+#include <CGAL/QP_models.h>
 
 #include "include/Saver.h"
 
@@ -25,13 +27,12 @@ using Angle_regularization =
 using Offset_regularization = 
   CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Input_range>;
 
-using QP_solver = 
-  CGAL::Shape_regularization::OSQP_solver<Kernel>;
+using Quadratic_program = CGAL::OSQP_program<FT>;
 
 using QP_angle_regularizer = 
-  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Angle_regularization, Quadratic_program>;
 using QP_offset_regularizer = 
-  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Offset_regularization, QP_solver>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Offset_regularization, Quadratic_program>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -122,15 +123,14 @@ int main(int argc, char *argv[]) {
   // Regularize.
   timer.start();
 
-  // Create a solver.
-  QP_solver qp_solver;
+  // Angle regularization.
+  Quadratic_program qp_angles(
+    CGAL::SMALLER, true, -FT(1000000), true, +FT(1000000));
 
-  // Create a neighbor query.
   Indices group(input_range.size());
   std::iota(group.begin(), group.end(), 0);
   Neighbor_query neighbor_query(input_range);
-
-  // Angle regularization.
+  
   const FT max_angle = FT(60);
   Angle_regularization angle_regularization(
     input_range, max_angle);
@@ -139,7 +139,7 @@ int main(int argc, char *argv[]) {
   angle_regularization.add_group(group);
 
   QP_angle_regularizer qp_angle_regularizer(
-    input_range, neighbor_query, angle_regularization, qp_solver);
+    input_range, neighbor_query, angle_regularization, qp_angles);
   qp_angle_regularizer.regularize();
 
   timer.stop();
@@ -150,6 +150,9 @@ int main(int argc, char *argv[]) {
   << std::endl;
 
   // Offset regularization.
+  Quadratic_program qp_offsets(
+    CGAL::SMALLER, true, -FT(1000000), true, +FT(1000000));
+
   timer.reset(); timer.start();
   std::vector<Indices> parallel_groups;
   angle_regularization.parallel_groups(
@@ -171,7 +174,7 @@ int main(int argc, char *argv[]) {
   }
 
   QP_offset_regularizer qp_offset_regularizer(
-    input_range, neighbor_query, offset_regularization, qp_solver);
+    input_range, neighbor_query, offset_regularization, qp_offsets);
   qp_offset_regularizer.regularize();
 
   timer.stop();

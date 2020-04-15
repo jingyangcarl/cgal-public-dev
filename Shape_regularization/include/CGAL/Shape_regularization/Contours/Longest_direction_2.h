@@ -82,7 +82,7 @@ namespace Contours {
       a const range of points, which form a contour
 
       \param is_closed 
-      indicates weather the contour is closed or open
+      indicates wether the contour is closed or open
 
       \param point_map
       an instance of `PointMap`, if not provided, the default is used
@@ -135,7 +135,7 @@ namespace Contours {
     /// @{
 
     /*!
-      \brief returns the number of principal directions in the contour.
+      \brief returns the number of principal directions of the contour.
     */
     const std::size_t number_of_directions() const {
       return m_directions.size();

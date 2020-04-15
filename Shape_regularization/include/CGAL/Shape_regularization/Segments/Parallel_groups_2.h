@@ -92,7 +92,7 @@ namespace Segments {
       if not provided, the default is used
 
       \pre `input_range.size() > 0`
-      \pre `max_angle > 0`
+      \pre `max_angle >= 0`
     */
     Parallel_groups_2 (
       const InputRange& input_range, 

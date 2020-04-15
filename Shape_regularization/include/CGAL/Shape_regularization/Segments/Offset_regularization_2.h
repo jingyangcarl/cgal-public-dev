@@ -36,8 +36,8 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief An offset-based regularization type on a set of 2D segments that preserves 
-    collinearity relationship.
+    \brief An offset-based regularization type for 2D segments that preserves 
+    collinearity relationships.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -99,10 +99,10 @@ namespace Segments {
       an instance of `InputRange` with 2D segments
 
       \param max_offset
-      max distance value in meters, the default is 0.1 meters 
+      max offset bound in meters, the default is 0.1 meters 
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
+      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`, 
       if not provided, the default is used
 
       \pre `input_range.size() > 1`
@@ -135,7 +135,7 @@ namespace Segments {
 
     /*!
       \brief calculates the target value between 2 segments, which are
-      direct neighbors to each other. The target value is the distance.
+      direct neighbors to each other. The target value is the offset distance.
 
       \param query_index_i
       index of the first segment
@@ -146,8 +146,7 @@ namespace Segments {
       \pre `query_index_i >= 0 && query_index_i < input_range.size()`
       \pre `query_index_j >= 0 && query_index_j < input_range.size()`
     */
-
-    FT target_value(
+    FT target(
       const std::size_t query_index_i, 
       const std::size_t query_index_j) {
 
@@ -214,7 +213,7 @@ namespace Segments {
     }
     /// @}
 
-    /// \name Utilities
+    /// \name Miscellaneous
     /// @{ 
 
     /*!
@@ -222,9 +221,10 @@ namespace Segments {
 
       \tparam IndexRange 
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+      The value type is `std::size_t`.
 
       \param index_range
-      an instance of `IndexRange`
+      a const range of segment indices
 
       \pre `index_range.size() > 1`
     */

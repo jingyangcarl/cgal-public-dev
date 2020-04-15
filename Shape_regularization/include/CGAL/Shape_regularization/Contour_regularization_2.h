@@ -42,7 +42,7 @@ namespace Shape_regularization {
   /// \endcond
 
   /*!
-    \ingroup PkgShapeRegularizationRefContours
+    \ingroup PkgShapeRegularizationRef
     
     \brief Contour regularization algorithm.
 
@@ -58,7 +58,7 @@ namespace Shape_regularization {
     must be a model of `ContourDirections`.
 
     \tparam ContourTag
-    must be either `CLOSED` or `OPEN`.
+    must be either `CGAL::Shape_regularization::CLOSED` or `CGAL::Shape_regularization::OPEN`.
 
     \tparam PointMap
     must be a `ReadablePropertyMap` whose key type is the value type of the input 
@@ -104,6 +104,9 @@ namespace Shape_regularization {
       \param np
       optional sequence of \ref pmp_namedparameters "Named Parameters" 
       among the ones listed below
+
+      \param max_offset
+      the max offset bound that can be applied to a contour edge
 
       \param point_map
       an instance of `PointMap`, if not provided, the default is used

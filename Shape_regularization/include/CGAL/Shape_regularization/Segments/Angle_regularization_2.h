@@ -36,7 +36,7 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief An angle-based regularization type on a set of 2D segments that preserves 
+    \brief An angle-based regularization type for 2D segments that preserves 
     parallelism and orthogonality relationships.
 
     \tparam GeomTraits 
@@ -101,10 +101,10 @@ namespace Segments {
       an instance of `InputRange` with 2D segments
 
       \param max_angle
-      max angle value in degrees, the default is 25 degrees 
+      max angle bound in degrees, the default is 25 degrees 
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
+      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`, 
       if not provided, the default is used
 
       \pre `input_range.size() > 1`
@@ -148,7 +148,7 @@ namespace Segments {
       \pre `query_index_i >= 0 && query_index_i < input_range.size()`
       \pre `query_index_j >= 0 && query_index_j < input_range.size()`
     */
-    FT target_value(
+    FT target(
       const std::size_t query_index_i, 
       const std::size_t query_index_j) {
 
@@ -232,7 +232,7 @@ namespace Segments {
 
     /// @}
 
-    /// \name Utilities
+    /// \name Miscellaneous
     /// @{ 
 
     /*!
@@ -255,9 +255,10 @@ namespace Segments {
 
       \tparam IndexRange 
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+      The value type is `std::size_t`.
 
       \param index_range
-      an instance of IndexRange
+      a const range of segment indices
 
       \pre `index_range.size() > 1`
     */

@@ -38,76 +38,20 @@
 
 namespace CGAL {
 namespace Shape_regularization {  
+namespace internal {
 
-  /*!
-    \ingroup PkgShapeRegularizationRefSolvers
-    
-    \brief Quadratic programming solver.
-
-    This model is based on the `CGAL::QP_solver` and used to solve the quadratic 
-    programming problem that arises in `CGAL::Shape_regularization`.
-
-    \tparam GeomTraits 
-    must be a model of `Kernel`.
-
-    \cgalModels `QuadraticProgramTraits`
-  */
   template<typename GeomTraits>
   class CGAL_solver { 
 
   public:
-    /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     
-    // Number type.
     using FT = typename GeomTraits::FT;
-
-    // Sparse matrix type.
     using Sparse_matrix = typename Eigen::SparseMatrix<FT, Eigen::ColMajor>;
-
-    // Dense vector type.
     using Dense_vector = typename Eigen::Matrix<FT, Eigen::Dynamic, 1>;
-
     using Sparse_matrix_iterator = typename Sparse_matrix::InnerIterator;
     using QP_problem = CGAL::Quadratic_program<int>;
-    /// \endcond
 
-    /// \name Solver
-    /// @{ 
-
-    /*!
-      \brief implements ...
-
-      This function computes the quadratic programming problem given its
-      input data.
-
-      \param number_of_items
-      number of items
-
-      \param number_of_edges
-      number of edges
-
-      \param P
-      quadratic term
-
-      \param A
-      linear constraints
-
-      \param q
-      linear term
-
-      \param l
-      lower bounds
-
-      \param u
-      upper bounds
-
-      \param result
-      stores the optimization results
-
-      \pre `P.nonZeros() == q.nonZeros()`
-      \pre `l.nonZeros() == u.nonZeros()`
-    */
     void solve(
       const std::size_t number_of_items,
       const std::size_t number_of_edges, 
@@ -203,6 +147,7 @@ namespace Shape_regularization {
     }
   };
 
+} // internal
 } // namespace Shape_regularization
 } // namespace CGAL
 

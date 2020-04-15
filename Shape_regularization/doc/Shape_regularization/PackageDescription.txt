@@ -8,22 +8,18 @@
 Concepts used to parameterize the classes from `CGAL::Shape_regularization`.
 
 
-\defgroup PkgShapeRegularizationRefQP QP Regularization
+\defgroup PkgShapeRegularizationRefSegments Segments
 \ingroup PkgShapeRegularizationRef
 
-Models that can be used with the class `CGAL::Shape_regularization::QP_regularization`.
+Models that can be used with the class `CGAL::Shape_regularization::QP_regularization` 
+to regularize segments.
 
 
-\defgroup PkgShapeRegularizationRefSolvers QP Solvers
+\defgroup PkgShapeRegularizationRefContours Contours
 \ingroup PkgShapeRegularizationRef
 
-Models that can be used to solve a QP problem from `CGAL::Shape_regularization::QP_regularization`.
-
-
-\defgroup PkgShapeRegularizationRefContours Contour Regularization
-\ingroup PkgShapeRegularizationRef
-
-Models that can be used with the class `CGAL::Shape_regularization::Contour_regularization_2`.
+Models that can be used with the class `CGAL::Shape_regularization::Contour_regularization_2`
+to regularize contours.
 
 \addtogroup PkgShapeRegularizationRef
 
@@ -32,18 +28,17 @@ Models that can be used with the class `CGAL::Shape_regularization::Contour_regu
 \cgalPkgPicture{logo_120x120.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Florent Lafarge, Simon Giraudot, Jean-Philippe Bauchet, Andreas Fabri, Gennadii Sytov, Dmitry Anisimov}
-\cgalPkgDesc{This \cgal package enables to regularize a set of 2D segments in the plane, both open 
+\cgalPkgAuthors{Florent Lafarge, Simon Giraudot, Jean-Philippe Bauchet, Andreas Fabri, Gennadii Sytov, and Dmitry Anisimov}
+\cgalPkgDesc{This CGAL package enables to regularize a set of 2D segments in the plane, both open 
 and closed contours, and a set of planes in 3D such that all input objects are 
-rotated and aligned with respect to the user-specified conditions. This package can also 
-be used in conjunction with the \ref PkgShapeDetection "Shape_detection" package.}
+rotated and aligned with respect to the user-specified conditions.}
 \cgalPkgManuals{Chapter_Shape_Regularization, PkgShapeRegularizationRef}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.1}
-\cgalPkgDependsOn{\ref PkgSolverInterface}
-\cgalPkgBib{cgal:as-sr}
+\cgalPkgDependsOn{\ref PkgQPSolver}
+\cgalPkgBib{cgal:lgbfsa-sr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
 \cgalPkgShortInfoEnd
@@ -58,12 +53,8 @@ be used in conjunction with the \ref PkgShapeDetection "Shape_detection" package
 - `ContourDirections`
 
 ### Algorithms ###
-- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>`
+- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QuadraticProgram>`
 - `CGAL::Shape_regularization::Contour_regularization_2<GeomTraits, InputRange, ContourDirections, ContourTag, PointMap>`
-
-### QP Solvers ###
-- `CGAL::Shape_regularization::CGAL_solver<GeomTraits>`
-- `CGAL::Shape_regularization::OSQP_solver<GeomTraits>`
 
 ### Segments ###
 - `CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<GeomTraits, InputRange, Segment_map>`

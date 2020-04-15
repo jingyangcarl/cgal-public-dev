@@ -2,6 +2,8 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization.h>
+#include <CGAL/QP_functions.h>
+#include <CGAL/QP_models.h>
 
 #include "include/Saver.h"
 
@@ -21,10 +23,9 @@ using Neighbor_query =
   CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
 using Offset_regularization = 
   CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Input_range>;
-using QP_solver = 
-  CGAL::Shape_regularization::OSQP_solver<Kernel>;
+using Quadratic_program = CGAL::OSQP_program<FT>;
 using QP_offset_regularizer = 
-  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Offset_regularization, QP_solver>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Offset_regularization, Quadratic_program>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -33,30 +34,30 @@ double get_coef_value(
   const double theta, double& iterator) {
   
   if (
-    theta == 0 || 
-    theta == CGAL_PI / 2 || 
+    theta == 0.0 || 
+    theta == CGAL_PI / 2.0 || 
     theta == CGAL_PI || 
-    theta == 3 * CGAL_PI / 2) {
+    theta == 3.0 * CGAL_PI / 2.0) {
     
-    iterator = 0;
+    iterator = 0.0;
   } else if (
-    theta == CGAL_PI / 4 || 
-    theta == 3 * CGAL_PI / 4 || 
-    theta == 5 * CGAL_PI / 4 || 
-    theta == 7 * CGAL_PI / 4) {
+    theta == CGAL_PI / 4.0 || 
+    theta == 3.0 * CGAL_PI / 4.0 || 
+    theta == 5.0 * CGAL_PI / 4.0 || 
+    theta == 7.0 * CGAL_PI / 4.0) {
     
     iterator = 0.22;
   } else if (
-    (theta > 0 && theta < CGAL_PI / 4) || 
-    (theta > CGAL_PI / 2 && theta < 3 * CGAL_PI / 4) || 
-    (theta > CGAL_PI && theta < 5 * CGAL_PI / 4) || 
-    (theta > 3 * CGAL_PI / 2 && theta < 7 * CGAL_PI / 4)) {
+    (theta > 0.0 && theta < CGAL_PI / 4.0) || 
+    (theta > CGAL_PI / 2.0 && theta < 3.0 * CGAL_PI / 4.0) || 
+    (theta > CGAL_PI && theta < 5.0 * CGAL_PI / 4.0) || 
+    (theta > 3.0 * CGAL_PI / 2.0 && theta < 7.0 * CGAL_PI / 4.0)) {
     
     iterator += 0.02;
   } else
     iterator -= 0.02;
 
-  if (theta < CGAL_PI) return -1 * iterator;
+  if (theta < CGAL_PI) return -1.0 * iterator;
   return iterator;
 }
 
@@ -120,7 +121,8 @@ int main(int argc, char *argv[]) {
   << std::endl;
 
   // Create a solver.
-  QP_solver qp_solver;
+  Quadratic_program qp_offsets(
+    CGAL::SMALLER, true, -FT(1000000), true, +FT(1000000));
 
   // Create a neighbor query.
   Neighbor_query neighbor_query(input_range);
@@ -137,7 +139,7 @@ int main(int argc, char *argv[]) {
   }
 
   QP_offset_regularizer qp_offset_regularizer(
-    input_range, neighbor_query, offset_regularization, qp_solver);
+    input_range, neighbor_query, offset_regularization, qp_offsets);
   qp_offset_regularizer.regularize();
 
   timer.stop();

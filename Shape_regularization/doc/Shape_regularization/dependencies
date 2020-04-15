@@ -6,8 +6,7 @@ Circulator
 Stream_support
 Triangulation_2
 Principal_component_analysis
-BGL
-Solver_interface
 Property_map
 Generator
 QP_solver
+BGL

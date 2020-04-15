@@ -2,6 +2,8 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization.h>
+#include <CGAL/QP_functions.h>
+#include <CGAL/QP_models.h>
 
 #include <CGAL/Join_input_iterator.h>
 #include <CGAL/Counting_iterator.h>
@@ -24,10 +26,9 @@ using Neighbor_query =
   CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
 using Angle_regularization = 
   CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Input_range>;
-using QP_solver = 
-  CGAL::Shape_regularization::OSQP_solver<Kernel>;
+using Quadratic_program = CGAL::OSQP_program<FT>;
 using QP_angle_regularizer = 
-  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Angle_regularization, QP_solver>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Angle_regularization, Quadratic_program>;
 
 using Saver = 
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -87,7 +88,8 @@ int main(int argc, char *argv[]) {
   timer.start();
 
   // Create a solver.
-  QP_solver qp_solver;
+  Quadratic_program qp_angles(
+    CGAL::SMALLER, true, -FT(1000000), true, +FT(1000000));
 
   // Create a neighbor query.
   Indices group(input_range.size());
@@ -103,7 +105,7 @@ int main(int argc, char *argv[]) {
   angle_regularization.add_group(group);
 
   QP_angle_regularizer qp_angle_regularizer(
-    input_range, neighbor_query, angle_regularization, qp_solver);
+    input_range, neighbor_query, angle_regularization, qp_angles);
   qp_angle_regularizer.regularize();
 
   timer.stop();

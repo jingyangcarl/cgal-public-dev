@@ -47,12 +47,12 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularizationRefQP
+    \ingroup PkgShapeRegularizationRef
     
-    \brief Main class/entry point to the shape regularization algorithm
-    based on the quadratic programming global optimization.
+    \brief Shape regularization algorithm based on the quadratic programming 
+    global optimization.
 
-    Given a quadratic programming solver via `QuadraticProgramTraits`, this version of the 
+    Given a quadratic programming solver via the class `QuadraticProgram`, this version of the 
     shape regularization algorithm enables to regularize a set of user-defined 
     items provided a way
     - to access neighbors of each item via the `NeighborQuery` class; 
@@ -71,15 +71,15 @@ namespace Shape_regularization {
     \tparam RegularizationType
     must be a model of `RegularizationType`.
 
-    \tparam QPSolver
-    must be a model of `QuadraticProgramTraits`.
+    \tparam QuadraticProgram
+    must be a model of `QuadraticProgram`.
   */
   template<
   typename GeomTraits,
   typename InputRange,
   typename NeighborQuery, 
   typename RegularizationType,
-  typename QPSolver>
+  typename QuadraticProgram>
   class QP_regularization {
 
   private:
@@ -107,12 +107,12 @@ namespace Shape_regularization {
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Regularization_type = RegularizationType;
-    using QP_solver = QPSolver;
+    using Quadratic_program = QuadraticProgram;
 
     using FT = typename Traits::FT;
     using Triplet = Eigen::Triplet<FT>;
-    using Sparse_matrix = typename QP_solver::Sparse_matrix;
-    using Dense_vector = typename QP_solver::Dense_vector;
+    using Sparse_matrix = typename Eigen::SparseMatrix<FT, Eigen::ColMajor>;
+    using Dense_vector = typename Eigen::Matrix<FT, Eigen::Dynamic, 1>;
 
     using Indices = std::vector<std::size_t>;
     using Size_pair = std::pair<std::size_t, std::size_t>;
@@ -133,10 +133,10 @@ namespace Shape_regularization {
 
       \param regularization_type 
       an instance of `RegularizationType` that is used internally to 
-      obtain bounds and target values of the items.
+      obtain bounds and target values of the items
 
-      \param qp_solver
-      an instance of `QPSolver` to solve the quadratic programming problem.
+      \param quadratic_program
+      an instance of `QuadraticProgram` to solve the quadratic programming problem
 
       \pre `input_range.size() > 1`
     */
@@ -144,11 +144,11 @@ namespace Shape_regularization {
       InputRange& input_range, 
       NeighborQuery& neighbor_query, 
       RegularizationType& regularization_type,
-      QPSolver& qp_solver) :
+      QuadraticProgram& quadratic_program) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_regularization_type(regularization_type),
-    m_qp_solver(qp_solver),
+    m_quadratic_program(quadratic_program),
     m_parameters(Parameters()),
     m_max_bound(-FT(1)) { 
       CGAL_precondition(input_range.size() > 1);
@@ -191,7 +191,7 @@ namespace Shape_regularization {
       std::size_t n = m_input_range.size() + m_targets.size();
       result_qp.reserve(n);
 
-      m_qp_solver.solve(
+      solve_quadratic_program(
         m_input_range.size(), 
         m_targets.size(), 
         m_P_mat, m_A_mat, m_q, m_l, m_u, result_qp);
@@ -206,7 +206,7 @@ namespace Shape_regularization {
     Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     Regularization_type& m_regularization_type;
-    QP_solver& m_qp_solver;
+    Quadratic_program& m_quadratic_program;
 
     std::set<Size_pair> m_graph;
     std::map<Size_pair, FT> m_targets;
@@ -250,7 +250,7 @@ namespace Shape_regularization {
         const std::size_t i = pair.first;
         const std::size_t j = pair.second; 
 
-        const FT tar_val = m_regularization_type.target_value(i, j);
+        const FT tar_val = m_regularization_type.target(i, j);
         if (CGAL::abs(tar_val) < 
           m_regularization_type.bound(i) + m_regularization_type.bound(j)) {
           m_targets[pair] = tar_val;
@@ -374,6 +374,18 @@ namespace Shape_regularization {
       build_linear_part_vactor(n, k);
       build_linear_constraints_matrix(n, m, k, e, A_nnz);
       build_bounds_vectors(m, k, e);
+    }
+
+    void solve_quadratic_program(
+      const std::size_t number_of_items,
+      const std::size_t number_of_edges, 
+      const Sparse_matrix& P, 
+      const Sparse_matrix& A,
+      const Dense_vector& q,
+      const Dense_vector& l,
+      const Dense_vector& u,
+      std::vector<FT>& result) {
+
     }
   };
 
