@@ -21,7 +21,7 @@ using Angle_regularization =
   CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Input_range>;
 
 // Choose the type of a solver.
-#define USE_OSQP_SOLVER
+// #define USE_OSQP_SOLVER
 #if defined(USE_OSQP_SOLVER)
 using Quadratic_program = 
   CGAL::Shape_regularization::OSQP_quadratic_program<FT>; // OSQP sparse solver

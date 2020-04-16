@@ -62,6 +62,7 @@ namespace Shape_regularization {
     public CGAL::Quadratic_program<int> {
 
     using Solution = CGAL::Quadratic_program_solution<FT>;
+    using Triplet = Eigen::Triplet<FT>;
     using Sparse_matrix = typename Eigen::SparseMatrix<FT, Eigen::ColMajor>;
     using Dense_vector = typename Eigen::Matrix<FT, Eigen::Dynamic, 1>;
     using Sparse_matrix_iterator = typename Sparse_matrix::InnerIterator;
@@ -81,34 +82,37 @@ namespace Shape_regularization {
 
     /// \cond SKIP_IN_MANUAL
     void set_d(int i, int j, const FT& val) {
-      
+      P_vec.push_back(Triplet(i, j, val));
     }
 
-    void set_c(int j, const FT& val) {
-      
+    void set_c(int, const FT& val) {
+      q_vec.push_back(val);
     }
 
-    void set_c0(const FT& val) {
-      
+    void set_c0(const FT&) {
+      // empty!
     }
 
-    void set_a(int j, int i, const FT& val) {
-
+    void set_a(int i, int j, const FT& val) {
+      A_vec.push_back(Triplet(i, j, val));
     }
     
-    void set_b(int i, const FT& val) {
-      
+    void set_b(int, const FT& val) {
+      l_vec.push_back(-internal::max_value<FT>());
+      u_vec.push_back(val);
     }
 
-    void set_l(int j, bool is_finite, const FT& val = FT(0)) {
-      
+    void set_l(int, bool, const FT& val) {
+      l_vec.push_back(val);
     }
 
-    void set_u(int j, bool is_finite, const FT& val = FT(0)) {
-      
+    void set_u(int, bool, const FT& val) {
+      u_vec.push_back(val);
     }
 
-    Solution solve() const {
+    Solution solve() {
+
+      finilazie_qp_data();
 
       const c_int n = static_cast<c_int>(P_.nonZeros());
       const c_int m = static_cast<c_int>(l_.nonZeros());
@@ -189,8 +193,64 @@ namespace Shape_regularization {
     /// \endcond
 
   private:
+    std::vector<Triplet> P_vec;
+    std::vector<Triplet> A_vec;
+    std::vector<FT> q_vec, l_vec, u_vec;
+
     Sparse_matrix P_, A_;
     Dense_vector q_, l_, u_;
+
+    void finilazie_qp_data() {
+      
+      // P data.
+      const std::size_t n = P_vec.size();
+      P_.resize(n, n);
+      P_.setFromTriplets(P_vec.begin(), P_vec.end());
+      P_.makeCompressed();
+      
+      // A data.
+      std::size_t s = A_vec.size() / 3;
+      // std::cout << "s: " << s << std::endl;
+      for (std::size_t i = 0; i < n; ++i)
+        A_vec.push_back(Triplet(s + i, i, FT(1)));
+
+      const std::size_t m = s + n;
+      // std::cout << "m: " << m << std::endl;
+      // std::cout << "n: " << n << std::endl;
+      A_.resize(m, n);
+      A_.setFromTriplets(A_vec.begin(), A_vec.end());
+      A_.makeCompressed(); 
+
+      // q data.
+      q_.resize(q_vec.size());
+      for (std::size_t i = 0; i < q_vec.size(); ++i)
+        q_[i] = q_vec[i];
+
+      // l data.
+      l_.resize(l_vec.size());
+      for (std::size_t i = 0; i < l_vec.size(); ++i)
+        l_[i] = l_vec[i];
+
+      // u data.
+      u_.resize(u_vec.size());
+      for (std::size_t i = 0; i < u_vec.size(); ++i)
+        u_[i] = u_vec[i];
+
+      /*
+      std::cout << "P: " << std::endl;
+      std::cout << P_ << std::endl;
+      
+      std::cout << "A: " << std::endl;
+      std::cout << A_ << std::endl;
+
+      std::cout << "q: " << std::endl;
+      for (const auto val : q_vec)
+        std::cout << val << std::endl;
+
+      std::cout << "lu: " << std::endl;
+      for (std::size_t i = 0; i < l_vec.size(); ++i) 
+        std::cout << l_vec[i] << " " << u_vec[i] << std::endl; */
+    }
 
     void set_P_data(
       const c_int n, 
@@ -267,7 +327,7 @@ namespace Shape_regularization {
   */
   template<typename FT>
   CGAL::Quadratic_program_solution<FT> solve_quadratic_program(
-    const CGAL::Shape_regularization::OSQP_quadratic_program<FT>& qp) {
+    CGAL::Shape_regularization::OSQP_quadratic_program<FT>& qp) {
     return qp.solve();
   }
 

@@ -25,7 +25,7 @@ using Neighbor_query =
 using Angle_regularization = 
   CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Input_range>;
 using Quadratic_program = 
-  CGAL::Shape_regularization::CGAL_quadratic_program<FT>;
+  CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
 using QP_angle_regularizer = 
   CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Angle_regularization, Quadratic_program>;
 

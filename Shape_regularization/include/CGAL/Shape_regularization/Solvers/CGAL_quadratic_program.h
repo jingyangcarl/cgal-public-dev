@@ -73,6 +73,12 @@ namespace Shape_regularization {
     { }
 
     /// @}
+
+    /// \cond SKIP_IN_MANUAL
+    void set_a(int i, int j, const FT& val) {
+      Quadratic_program::set_a(j, i, val);
+    }
+    /// \endcond
   };
 
   /*!

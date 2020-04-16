@@ -189,8 +189,9 @@ namespace Shape_regularization {
       if (m_targets.size() == 0) return;
       CGAL_assertion(m_targets.size() > 0);
 
-      // Solver data.
-      build_solver_data(m_P, m_A, m_q, m_l, m_u, m_c0);
+      // QP data.
+      set_qp_data(m_P, m_A, m_q, m_l, m_u,
+        m_quadratic_program);
 
       // Solve.
       std::vector<FT> result_qp;
@@ -200,6 +201,9 @@ namespace Shape_regularization {
       solve_quadratic_program(  
         m_P, m_A, m_q, m_l, m_u, m_c0, 
         m_quadratic_program, result_qp);
+
+      // std::cout << m_input_range.size() << " " << n << " " << result_qp.size() << std::endl;
+      
       CGAL_assertion(result_qp.size() == n);
 
       // Update.
@@ -270,141 +274,147 @@ namespace Shape_regularization {
       }
     }
 
-    void build_solver_data(
-      Sparse_matrix& P, 
+    void set_qp_data(
+      Sparse_matrix& P,
       Sparse_matrix& A,
       Dense_vector& q,
       Dense_vector& l,
       Dense_vector& u,
-      FT& c0) const {
+      Quadratic_program& qp) const {
       
       const std::size_t k = m_input_range.size(); // k segments
-      const std::size_t e = m_targets.size(); // e edges
+      const std::size_t e = m_targets.size(); // e graph edges
       const std::size_t n = k + e; // number of variables
       const std::size_t m = 2 * e + n; // number of constraints
       const std::size_t A_nnz = 6 * e + n;  // number of entries in the constraint matrix
 
-      build_quadratic_term(n, k, P);
-      build_linear_term(n, k, q);
-      build_constant_term(c0);
-
-      build_constraint_matrix(n, m, k, e, A_nnz, A);
-      build_constraint_bounds(m, k, e, l, u);
+      set_quadratic_term(n, k, P, qp);
+      set_linear_term(n, k, q, qp);
+      set_constant_term(qp);
+      set_constraint_matrix(n, k, e, A, qp);
+      set_constraint_bounds(m, k, e, l, u, qp);
     }
 
-    void build_quadratic_term(
+    void set_quadratic_term(
       const std::size_t n, 
       const std::size_t k,
-      Sparse_matrix& P) const {
+      Sparse_matrix& P,
+      Quadratic_program& qp) const {
       
       std::vector<Triplet> vec;
-      vec.reserve(k);
-      for(std::size_t i = 0; i < n; ++i) {
+      for (std::size_t i = 0; i < n; ++i) {
         FT val = FT(0);
         if (i < k) {
           val = FT(2) * m_parameters.weight * (FT(1) - m_parameters.lambda) / 
-          (m_bounds[i] * m_bounds[i] * FT(k));
+            (m_bounds[i] * m_bounds[i] * FT(k));
         }
+        qp.set_d(i, i, val);
         vec.push_back(Triplet(i, i, val));
       }
-      CGAL_assertion(vec.size() == n);
 
       P.resize(n, n);
       P.setFromTriplets(vec.begin(), vec.end());
       P.makeCompressed();
     }
 
-    void build_linear_term(
+    void set_linear_term(
       const std::size_t n, 
       const std::size_t k,
-      Dense_vector& q) const {
+      Dense_vector& q,
+      Quadratic_program& qp) const {
       
       q.resize(n);
       for (std::size_t i = 0; i < n; ++i) {
-        if (i < k) {
-          q[i] = FT(0);
-        } else {
-          q[i] = m_parameters.lambda * m_parameters.weight / 
-          (FT(4) * m_max_bound * FT(n - k));
+        FT val = FT(0);
+        if (i >= k) {
+          val = m_parameters.lambda * m_parameters.weight / 
+            (FT(4) * m_max_bound * FT(n - k));
         }
+        qp.set_c(i, val);
+        q[i] = val;
       }
     }
 
-    void build_constant_term(
-      FT& c0) const {
-      c0 = FT(0);
+    void set_constant_term(
+      Quadratic_program& qp) const {
+      
+      const FT val = FT(0);
+      qp.set_c0(val);
     }
 
-    void build_constraint_matrix(
+    void set_constraint_matrix(
       const std::size_t n, 
-      const std::size_t m, 
       const std::size_t k,
       const std::size_t e,
-      const std::size_t A_nnz,
-      Sparse_matrix& A) const {
+      Sparse_matrix& A,
+      Quadratic_program& qp) const {
       
-      std::vector<Triplet> vec;
-      vec.reserve(A_nnz);
-
       std::size_t it = 0;
       std::size_t ij = k;
 
+      std::vector<Triplet> vec;
       for (const auto& target : m_targets) {
         const std::size_t i = target.first.first;
         const std::size_t j = target.first.second;
 
         vec.push_back(Triplet(it, i, m_parameters.val_neg));
+        qp.set_a(it, i, m_parameters.val_neg);
         vec.push_back(Triplet(it, j, m_parameters.val_pos));
-        vec.push_back(Triplet(it, ij, -1));
+        qp.set_a(it, j, m_parameters.val_pos);
+        vec.push_back(Triplet(it, ij, -FT(1)));
+        qp.set_a(it, ij, -FT(1));
         ++it;
 
         vec.push_back(Triplet(it, i, m_parameters.val_pos));
+        qp.set_a(it, i, m_parameters.val_pos);
         vec.push_back(Triplet(it, j, m_parameters.val_neg));
-        vec.push_back(Triplet(it, ij, -1));
+        qp.set_a(it, j, m_parameters.val_neg);
+        vec.push_back(Triplet(it, ij, -FT(1)));
+        qp.set_a(it, ij, -FT(1));
         ++it; ++ij;
       }
 
-      for (std::size_t i = e * 2; i < m; ++i) {
-        for (std::size_t j = 0; j < n; ++j) {
-          if (j == i - e * 2) {
-            vec.push_back(Triplet(i, j, 1));
-          }
-        }
-      }
-      CGAL_assertion(vec.size() == A_nnz);
-
-      A.resize(m, n);
+      A.resize(2 * e, n);
       A.setFromTriplets(vec.begin(), vec.end());
       A.makeCompressed();
     }
 
-    void build_constraint_bounds(
+    void set_constraint_bounds(
       const std::size_t m, 
       const std::size_t k, 
       const std::size_t e,
       Dense_vector& l,
-      Dense_vector& u) const {
+      Dense_vector& u,
+      Quadratic_program& qp) const {
       
       u.resize(m);
       l.resize(m);
-      auto tit = m_targets.begin();
 
+      auto tit = m_targets.begin();
       for(std::size_t i = 0; i < m; ++i) {
         if (i < 2 * e) {
           const FT val = tit->second;
-          if (i % 2 == 0) 
+          if (i % 2 == 0) {
             u[i] = m_parameters.val_neg * val;
-          else {
+            qp.set_b(i, u[i]);
+          } else {
             u[i] = m_parameters.val_pos * val; ++tit;
+            qp.set_b(i, u[i]);
           }
           l[i] = m_parameters.neg_inf;
-        }
+        } 
         else if (i < 2 * e + k) {
-          l[i] = -1 * m_max_bound;
+          l[i] = -FT(1) * m_max_bound;
           u[i] = m_max_bound;
+          const std::size_t idx = i - 2 * e;
+          qp.set_l(idx, true, l[i]);
+          qp.set_u(idx, true, u[i]);
         } else {
           l[i] = m_parameters.neg_inf;
           u[i] = m_parameters.pos_inf;
+          const std::size_t idx = i - 2 * e;
+          qp.set_l(idx, false, l[i]);
+          qp.set_u(idx, false, u[i]);
         }
       }
     }
@@ -417,37 +427,50 @@ namespace Shape_regularization {
       const Dense_vector& u,
       const FT c0,
       Quadratic_program& qp,
-      std::vector<FT>& result) const {
+      std::vector<FT>& result) {
 
-      const std::size_t n = static_cast<std::size_t>(D.nonZeros());
-      const std::size_t m = static_cast<std::size_t>(l.nonZeros());
-      const std::size_t k = m - n;
+      // const std::size_t n = static_cast<std::size_t>(D.nonZeros());
+      // const std::size_t m = static_cast<std::size_t>(l.nonZeros());
+      // const std::size_t k = m - n;
 
-      CGAL_precondition(D.nonZeros() == c.nonZeros());
-      CGAL_precondition(l.nonZeros() == u.nonZeros());
+      // CGAL_precondition(D.nonZeros() == c.nonZeros());
+      // CGAL_precondition(l.nonZeros() == u.nonZeros());
 
-      set_quadratic_term(D, qp);
-      set_linear_term(c, qp);
-      set_constant_term(c0, qp);
+      // set_quadratic_term(D, qp);
+      // set_linear_term(c, qp);
+      // set_constant_term(c0, qp);
 
-      set_constraint_matrix(k, A, qp);
-      set_constraint_bounds(k, u, qp);
+      // set_constraint_matrix(k, A, qp);
+      // set_constraint_bounds(k, u, qp);
 
-      set_bounds(k, l, u, qp);
+      // set_bounds(k, l, u, qp);
+
+      /*
+      std::cout << "D: " << std::endl;
+      std::cout << D << std::endl;
+      
+      std::cout << "A: " << std::endl;
+      std::cout << A << std::endl;
+
+      std::cout << "c: " << std::endl;
+      for (std::size_t i = 0; i < c.rows(); ++i)
+        std::cout << c[i] << std::endl;
+
+      std::cout << "lu: " << std::endl;
+      for (std::size_t i = 0; i < l.rows(); ++i) 
+        std::cout << l[i] << " " << u[i] << std::endl; */
 
       auto solution = CGAL::Shape_regularization::
         solve_quadratic_program(qp);
-
-      result.clear();
-      result.reserve(n);
       
       std::size_t i = 0;
       for (auto x = solution.variable_values_begin(); 
       x != solution.variable_values_end(); ++x, ++i)
-        if (i < n) result.push_back(static_cast<FT>(
+        result.push_back(static_cast<FT>(
           CGAL::to_double(*x)));
     }
 
+    /*
     void set_quadratic_term(
       const Sparse_matrix& D,
       Quadratic_program& qp) const {
@@ -515,7 +538,7 @@ namespace Shape_regularization {
           }
         }
       }
-    }
+    } */
   };
 
 } // namespace Shape_regularization
