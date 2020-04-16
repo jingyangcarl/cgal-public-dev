@@ -8,6 +8,13 @@
 Concepts used to parameterize the classes from `CGAL::Shape_regularization`.
 
 
+\defgroup PkgShapeRegularizationRefSolvers Solvers
+\ingroup PkgShapeRegularizationRef
+
+Models that can be used with the class `CGAL::Shape_regularization::QP_regularization` 
+to solve the corresponding QP problem.
+
+
 \defgroup PkgShapeRegularizationRefSegments Segments
 \ingroup PkgShapeRegularizationRef
 
@@ -51,6 +58,10 @@ rotated and aligned with respect to the user-specified conditions.}
 - `NeighborQuery`
 - `RegularizationType`
 - `ContourDirections`
+
+### Solvers ###
+- `CGAL::Shape_regularization::CGAL_quadratic_program<FT>`
+- `CGAL::Shape_regularization::OSQP_quadratic_program<FT>`
 
 ### Algorithms ###
 - `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QuadraticProgram>`

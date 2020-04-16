@@ -2,8 +2,6 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_regularization.h>
-#include <CGAL/QP_functions.h>
-#include <CGAL/QP_models.h>
 
 #include "include/Saver.h"
 
@@ -25,9 +23,11 @@ using Angle_regularization =
 // Choose the type of a solver.
 #define USE_OSQP_SOLVER
 #if defined(USE_OSQP_SOLVER)
-using Quadratic_program = CGAL::OSQP_program<FT>; // OSQP solver
+using Quadratic_program = 
+  CGAL::Shape_regularization::OSQP_quadratic_program<FT>; // OSQP sparse solver
 #else
-using Quadratic_program = CGAL::Quadratic_program<FT>; // CGAL dense solver
+using Quadratic_program = 
+  CGAL::Shape_regularization::CGAL_quadratic_program<FT>; // CGAL dense solver
 #endif
 
 using QP_angle_regularizer = 
@@ -80,8 +80,7 @@ int main(int argc, char *argv[]) {
   timer.start();
 
   // Create a solver.
-  Quadratic_program qp_angles(
-    CGAL::SMALLER, true, -FT(1000000), true, +FT(1000000));
+  Quadratic_program qp_angles;
 
   // Create a neighbor query.
   Indices group(input_range.size());

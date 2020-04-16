@@ -39,9 +39,12 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
+#include <CGAL/QP_functions.h>
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
+#include <CGAL/Shape_regularization/Solvers/CGAL_quadratic_program.h>
+#include <CGAL/Shape_regularization/Solvers/OSQP_quadratic_program.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -191,12 +194,9 @@ namespace Shape_regularization {
       std::size_t n = m_input_range.size() + m_targets.size();
       result_qp.reserve(n);
 
-      solve_quadratic_program(
-        m_input_range.size(), 
-        m_targets.size(), 
+      solve_quadratic_program(  
         m_P_mat, m_A_mat, m_q, m_l, m_u, result_qp);
       CGAL_assertion(result_qp.size() == n);
-
       m_regularization_type.update(result_qp);
     }
 
@@ -377,8 +377,6 @@ namespace Shape_regularization {
     }
 
     void solve_quadratic_program(
-      const std::size_t number_of_items,
-      const std::size_t number_of_edges, 
       const Sparse_matrix& P, 
       const Sparse_matrix& A,
       const Dense_vector& q,
@@ -386,6 +384,79 @@ namespace Shape_regularization {
       const Dense_vector& u,
       std::vector<FT>& result) {
 
+      const std::size_t n = static_cast<std::size_t>(P.nonZeros());
+      const std::size_t m = static_cast<std::size_t>(l.nonZeros());
+      const std::size_t k = m - n;
+
+      CGAL_precondition(P.nonZeros() == q.nonZeros());
+      CGAL_precondition(l.nonZeros() == u.nonZeros());
+
+      build_P_data(
+        P);
+      build_A_data(
+        k, A);
+      build_vectors(
+        k, q, l, u);
+
+      auto solution = CGAL::Shape_regularization::solve_quadratic_program(
+        m_quadratic_program);
+
+      result.clear();
+      result.reserve(n);
+      
+      std::size_t i = 0;
+      for (auto x = solution.variable_values_begin(); 
+      x != solution.variable_values_end(); ++x, ++i)
+        if (i < n) result.push_back(static_cast<FT>(
+          CGAL::to_double(*x)));
+    }
+
+    void build_P_data(
+      const Sparse_matrix& P) {
+
+      for (std::size_t i = 0; i < P.rows(); ++i)
+        m_quadratic_program.set_d(i, i, P.coeff(i, i));
+    }
+
+    void build_A_data(
+      const std::size_t k, 
+      const Sparse_matrix& A) {
+
+      for (std::size_t i = 0; i < A.rows(); ++i) {
+        if (i < k) {
+          for (std::size_t j = 0; j < A.cols(); ++j)
+            m_quadratic_program.set_a(i, j, A.coeff(i, j));
+        }
+      }
+    }
+
+    void build_vectors(
+      const std::size_t k,
+      const Dense_vector& q,
+      const Dense_vector& l,
+      const Dense_vector& u) {
+
+      for (std::size_t i = 0; i < q.rows(); ++i)
+        m_quadratic_program.set_c(i, q[i]);
+      m_quadratic_program.set_c0(0.0);
+
+      const std::size_t num = m_input_range.size();
+      CGAL_assertion(l.rows() == u.rows());
+      for (std::size_t i = 0; i < l.rows(); ++i) {
+        if (i < k) {
+          m_quadratic_program.set_b(i, u[i]);
+        } else {
+
+          const std::size_t idx = i - k;
+          if (idx < num) {
+            m_quadratic_program.set_l(idx, true, l[i]);
+            m_quadratic_program.set_u(idx, true, u[i]);
+          } else {
+            m_quadratic_program.set_l(idx, false, l[i]);
+            m_quadratic_program.set_u(idx, false, u[i]);
+          }
+        }
+      }
     }
   };
 

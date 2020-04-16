@@ -2,8 +2,6 @@
 #include <CGAL/property_map.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization.h>
-#include <CGAL/QP_functions.h>
-#include <CGAL/QP_models.h>
 
 #include "include/Saver.h"
 
@@ -23,7 +21,8 @@ using Neighbor_query =
   CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
 using Offset_regularization = 
   CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Input_range>;
-using Quadratic_program = CGAL::OSQP_program<FT>;
+using Quadratic_program = 
+  CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
 using QP_offset_regularizer = 
   CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Offset_regularization, Quadratic_program>;
 
@@ -121,8 +120,7 @@ int main(int argc, char *argv[]) {
   << std::endl;
 
   // Create a solver.
-  Quadratic_program qp_offsets(
-    CGAL::SMALLER, true, -FT(1000000), true, +FT(1000000));
+  Quadratic_program qp_offsets;
 
   // Create a neighbor query.
   Neighbor_query neighbor_query(input_range);

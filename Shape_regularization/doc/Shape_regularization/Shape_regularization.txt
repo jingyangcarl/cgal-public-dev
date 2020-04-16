@@ -87,8 +87,8 @@ the initial input segments. See \ref QP_Regularization_Segments_Angles "this sec
 
 In order to solve the QP problem from the third step of the algorithm above, \cgal provides 
 two particular models of the corresponding QP solver:
-- `CGAL::Quadratic_program` that is a \cgal QP solver, and
-- `CGAL::OSQP_program` that is a wrapper of the external \ref thirdpartyOSQP "OSQP solver".
+- `CGAL::Shape_regularization::CGAL_quadratic_program` that is a \cgal QP solver, and
+- `CGAL::Shape_regularization::OSQP_quadratic_program` that is a wrapper of the external \ref thirdpartyOSQP "OSQP solver".
 
 Since the internal quadratic program that has to be solved is sparse, we recommend using the second
 solver, because the \cgal version will internally convert this problem into a dense one that takes 
@@ -258,7 +258,7 @@ A set of 2D segments after the shape regularization.
 The shape regularization algorithm is very efficient. In the setup phase, it has 
 a linear level of complexity to obtain local neighbors of each item, compute all objective 
 function values, and construct the QP problem data. In the solve phase, when using the 
-`CGAL::OSQP_program`, we exploit and efficiently use the sparse 
+`CGAL::Shape_regularization::OSQP_quadratic_program`, we exploit and efficiently use the sparse 
 nature of the related QP problem that leads to the quick performance in practice 
 (see the table and graph below).
 

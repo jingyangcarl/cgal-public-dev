@@ -37,4 +37,7 @@
 #include <CGAL/Shape_regularization/Contours/Multiple_directions_2.h>
 #include <CGAL/Shape_regularization/Contours/User_defined_directions_2.h>
 
+#include <CGAL/Shape_regularization/Solvers/CGAL_quadratic_program.h>
+#include <CGAL/Shape_regularization/Solvers/OSQP_quadratic_program.h>
+
 #endif // CGAL_SHAPE_REGULARIZATION_HEADERS_H

@@ -22,7 +22,6 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/QP_solver/basic.h>
 #include <CGAL/QP_solver/functors.h>
-#include <CGAL/QP_solver/OSQP_program.h>
 #include <CGAL/IO/io.h>
 #include <vector> 
 #include <map>

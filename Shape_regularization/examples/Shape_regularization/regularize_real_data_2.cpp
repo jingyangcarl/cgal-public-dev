@@ -3,8 +3,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/Shape_regularization.h>
-#include <CGAL/QP_functions.h>
-#include <CGAL/QP_models.h>
 
 #include "include/Saver.h"
 
@@ -27,7 +25,8 @@ using Angle_regularization =
 using Offset_regularization = 
   CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Input_range>;
 
-using Quadratic_program = CGAL::OSQP_program<FT>;
+using Quadratic_program = 
+  CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
 
 using QP_angle_regularizer = 
   CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, Neighbor_query, Angle_regularization, Quadratic_program>;
@@ -124,8 +123,7 @@ int main(int argc, char *argv[]) {
   timer.start();
 
   // Angle regularization.
-  Quadratic_program qp_angles(
-    CGAL::SMALLER, true, -FT(1000000), true, +FT(1000000));
+  Quadratic_program qp_angles;
 
   Indices group(input_range.size());
   std::iota(group.begin(), group.end(), 0);
@@ -150,8 +148,7 @@ int main(int argc, char *argv[]) {
   << std::endl;
 
   // Offset regularization.
-  Quadratic_program qp_offsets(
-    CGAL::SMALLER, true, -FT(1000000), true, +FT(1000000));
+  Quadratic_program qp_offsets;
 
   timer.reset(); timer.start();
   std::vector<Indices> parallel_groups;
