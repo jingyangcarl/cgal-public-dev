@@ -503,10 +503,10 @@ namespace Planes {
 
     Given a set of detected planes with their corresponding inlier sets,
     this function enables to regularize the planes: 
-    - %Planes that are near parallel are made parallel.
-    - Parallel planes that are near coplanar are made exactly coplanar.
-    - %Planes that are near orthogonal are made exactly orthogonal.
-    - %Planes that are near symmetrical with respect to a user-defined axis are made exactly symmetrical.
+    - %Planes, which are near parallel, are made parallel.
+    - %Planes, which are near orthogonal, are made exactly orthogonal.
+    - Parallel planes, which are near coplanar, are made exactly coplanar.
+    - %Planes, which are near symmetrical with respect to a user-defined axis, are made exactly symmetrical.
 
     %Planes are directly modified. Points are left unaltered, as well as their 
     relationship to the planes (no transfer of a point from a primitive plane to another).

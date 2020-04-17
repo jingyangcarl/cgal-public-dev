@@ -27,6 +27,9 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 
+// TODO:
+// * Improve this class, try to clean it up and simplify.
+
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {

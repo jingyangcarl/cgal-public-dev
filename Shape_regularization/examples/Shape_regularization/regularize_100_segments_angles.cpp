@@ -95,9 +95,9 @@ int main(int argc, char *argv[]) {
   Neighbor_query neighbor_query(input_range);
 
   // Angle regularization.
-  const FT max_angle = FT(40);
+  const FT max_angle_2 = FT(40);
   Angle_regularization angle_regularization(
-    input_range, max_angle);
+    input_range, CGAL::parameters::max_angle(max_angle_2));
 
   neighbor_query.add_group(group);
   angle_regularization.add_group(group);

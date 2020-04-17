@@ -24,10 +24,17 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Angle_conditions_2.h>
+
+// TODO:
+// * Clean it up.
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -97,8 +104,15 @@ namespace Segments {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref pmp_namedparameters "Named Parameters".
+
       \param input_range 
       an instance of `InputRange` with 2D segments
+
+      \param np
+      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      among the ones listed below
 
       \param max_angle
       max angle bound in degrees, the default is 25 degrees 
@@ -110,15 +124,19 @@ namespace Segments {
       \pre `input_range.size() > 1`
       \pre `max_angle >= 0 && max_angle <= 90`
     */
+    template<typename NamedParameters>
     Angle_regularization_2(
       InputRange& input_range, 
-      const FT max_angle = FT(25),
+      const NamedParameters np,
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
-    m_theta_max(CGAL::abs(max_angle)),
     m_segment_map(segment_map),
     m_num_modified_segments(0) { 
       
+      FT max_angle = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_angle), FT(25));
+      m_theta_max = max_angle;
+
       CGAL_precondition(input_range.size() > 1);
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
 
@@ -196,13 +214,13 @@ namespace Segments {
       \brief applies new orientations computed by the QP solver 
       to the initial segments.
 
-      \param result
+      \param solution
       a vector with updated segment orientations.
 
-      \pre `result.size() > 0`
+      \pre `solution.size() > 0`
     */
-    void update(const std::vector<FT>& result) {
-      CGAL_precondition(result.size() > 0);
+    void update(const std::vector<FT>& solution) {
+      CGAL_precondition(solution.size() > 0);
 
       Targets_map targets;
       Relations_map relations;
@@ -223,7 +241,7 @@ namespace Segments {
           const std::size_t n = m_input_range.size();
 
           m_grouping.make_groups(
-            m_theta_max, n, segments, result, 
+            m_theta_max, n, segments, solution, 
             parallel_groups, targets, relations);
           rotate_parallel_segments(parallel_groups);
         }
@@ -276,6 +294,19 @@ namespace Segments {
       
       m_groups.push_back(group);
       update_segment_data(group);
+    }
+
+    /*!
+      \brief inserts all input segments from `input_range` as one unique group.
+
+      For more details, 
+      see `CGAL::Shape_regularization::Angle_regularization_2::add_group()`.
+    */
+    void create_unique_group() {
+      
+      Indices group(m_input_range.size());
+      std::iota(group.begin(), group.end(), 0);
+      add_group(group);
     }
 
     /*!

@@ -199,11 +199,8 @@ namespace Shape_regularization {
       result_qp.reserve(n);
 
       solve_quadratic_program(  
-        m_P, m_A, m_q, m_l, m_u, m_c0, 
+        m_P, m_A, m_q, m_l, m_u, 
         m_quadratic_program, result_qp);
-
-      // std::cout << m_input_range.size() << " " << n << " " << result_qp.size() << std::endl;
-      
       CGAL_assertion(result_qp.size() == n);
 
       // Update.
@@ -230,7 +227,6 @@ namespace Shape_regularization {
     Dense_vector m_q;
     Dense_vector m_l;
     Dense_vector m_u;
-    FT m_c0;
 
     void build_graph_of_neighbors(
       std::set<Size_pair>& graph) {
@@ -286,7 +282,6 @@ namespace Shape_regularization {
       const std::size_t e = m_targets.size(); // e graph edges
       const std::size_t n = k + e; // number of variables
       const std::size_t m = 2 * e + n; // number of constraints
-      const std::size_t A_nnz = 6 * e + n;  // number of entries in the constraint matrix
 
       set_quadratic_term(n, k, P, qp);
       set_linear_term(n, k, q, qp);
@@ -358,19 +353,19 @@ namespace Shape_regularization {
         const std::size_t j = target.first.second;
 
         vec.push_back(Triplet(it, i, m_parameters.val_neg));
-        qp.set_a(it, i, m_parameters.val_neg);
+        qp.set_a(i, it, m_parameters.val_neg);
         vec.push_back(Triplet(it, j, m_parameters.val_pos));
-        qp.set_a(it, j, m_parameters.val_pos);
+        qp.set_a(j, it, m_parameters.val_pos);
         vec.push_back(Triplet(it, ij, -FT(1)));
-        qp.set_a(it, ij, -FT(1));
+        qp.set_a(ij, it, -FT(1));
         ++it;
 
         vec.push_back(Triplet(it, i, m_parameters.val_pos));
-        qp.set_a(it, i, m_parameters.val_pos);
+        qp.set_a(i, it, m_parameters.val_pos);
         vec.push_back(Triplet(it, j, m_parameters.val_neg));
-        qp.set_a(it, j, m_parameters.val_neg);
+        qp.set_a(j, it, m_parameters.val_neg);
         vec.push_back(Triplet(it, ij, -FT(1)));
-        qp.set_a(it, ij, -FT(1));
+        qp.set_a(ij, it, -FT(1));
         ++it; ++ij;
       }
 
@@ -425,25 +420,8 @@ namespace Shape_regularization {
       const Dense_vector& c,
       const Dense_vector& l,
       const Dense_vector& u,
-      const FT c0,
       Quadratic_program& qp,
       std::vector<FT>& result) {
-
-      // const std::size_t n = static_cast<std::size_t>(D.nonZeros());
-      // const std::size_t m = static_cast<std::size_t>(l.nonZeros());
-      // const std::size_t k = m - n;
-
-      // CGAL_precondition(D.nonZeros() == c.nonZeros());
-      // CGAL_precondition(l.nonZeros() == u.nonZeros());
-
-      // set_quadratic_term(D, qp);
-      // set_linear_term(c, qp);
-      // set_constant_term(c0, qp);
-
-      // set_constraint_matrix(k, A, qp);
-      // set_constraint_bounds(k, u, qp);
-
-      // set_bounds(k, l, u, qp);
 
       /*
       std::cout << "D: " << std::endl;
@@ -460,85 +438,11 @@ namespace Shape_regularization {
       for (std::size_t i = 0; i < l.rows(); ++i) 
         std::cout << l[i] << " " << u[i] << std::endl; */
 
-      auto solution = CGAL::Shape_regularization::
-        solve_quadratic_program(qp);
-      
-      std::size_t i = 0;
-      for (auto x = solution.variable_values_begin(); 
-      x != solution.variable_values_end(); ++x, ++i)
-        result.push_back(static_cast<FT>(
-          CGAL::to_double(*x)));
+      const auto success = CGAL::Shape_regularization::
+        solve_quadratic_program(qp, result);
+      if (!success)
+        std::cerr << "WARNING: The solver has not converged!" << std::endl;
     }
-
-    /*
-    void set_quadratic_term(
-      const Sparse_matrix& D,
-      Quadratic_program& qp) const {
-      
-      for (std::size_t i = 0; i < D.rows(); ++i)
-        qp.set_d(i, i, D.coeff(i, i));
-    }
-
-    void set_linear_term(
-      const Dense_vector& c,
-      Quadratic_program& qp) const {
-      
-      for (std::size_t i = 0; i < c.rows(); ++i)
-        qp.set_c(i, c[i]);
-    }
-
-    void set_constant_term(
-      const FT c0,
-      Quadratic_program& qp) const {
-      
-      qp.set_c0(c0);
-    }
-
-    void set_constraint_matrix(
-      const std::size_t k, 
-      const Sparse_matrix& A,
-      Quadratic_program& qp) const {
-
-      for (std::size_t i = 0; i < A.rows(); ++i) {
-        if (i < k) {
-          for (std::size_t j = 0; j < A.cols(); ++j)
-            qp.set_a(i, j, A.coeff(i, j));
-        }
-      }
-    }
-
-    void set_constraint_bounds(
-      const std::size_t k,
-      const Dense_vector& u,
-      Quadratic_program& qp) const {
-
-      for (std::size_t i = 0; i < u.rows(); ++i) {
-        if (i < k)
-          qp.set_b(i, u[i]);
-      }
-    }
-
-    void set_bounds(
-      const std::size_t k,
-      const Dense_vector& l,
-      const Dense_vector& u,
-      Quadratic_program& qp) const {
-
-      const std::size_t num = m_input_range.size();
-      CGAL_assertion(l.rows() == u.rows());
-      for (std::size_t i = 0; i < l.rows(); ++i) {
-        if (i >= k) {
-          const std::size_t idx = i - k;
-          if (idx < num) {
-            qp.set_l(idx, true, l[i]);
-            qp.set_u(idx, true, u[i]);
-          } else {
-            qp.set_l(idx, false, l[i]);
-            qp.set_u(idx, false, u[i]);
-          }
-        }
-      }
-    } */
   };
 
 } // namespace Shape_regularization

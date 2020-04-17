@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot
+// Author(s)     : Simon Giraudot, Florent Lafarge
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_PROPERTY_MAP_H

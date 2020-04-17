@@ -108,8 +108,9 @@ int main(int argc, char *argv[]) {
   timer.start();
 
   // Create parallel groups.
-  const FT tolerance = FT(1);
-  Parallel_groups grouping(input_range, tolerance);
+  const FT max_angle_2 = FT(1);
+  Parallel_groups grouping(input_range, 
+  CGAL::parameters::max_angle(max_angle_2));
 
   std::vector<Indices> parallel_groups;
   grouping.parallel_groups(
@@ -126,9 +127,9 @@ int main(int argc, char *argv[]) {
   Neighbor_query neighbor_query(input_range);
 
   // Offset regularization.
-  const FT max_distance = FT(25) / FT(100);
+  const FT max_offset_2 = FT(25) / FT(100);
   Offset_regularization offset_regularization(
-    input_range, max_distance);
+    input_range, CGAL::parameters::max_offset(max_offset_2));
 
   for (const auto& group : parallel_groups) {
     if (group.size() < 2) continue;

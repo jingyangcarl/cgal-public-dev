@@ -56,11 +56,11 @@ namespace internal {
       const std::size_t sindex):
     segment(s), index(sindex) {
 
-      barycenter = middle_point_2(
+      barycenter = internal::middle_point_2(
         segment.source(), segment.target());
-      length = length_2(segment);
-      direction = direction_2(segment);
-      orientation = orientation_2(direction);
+      length = internal::length_2(segment);
+      direction = internal::direction_2(segment);
+      orientation = internal::orientation_2(direction);
 
       const double angle_rad = CGAL::to_double(
         orientation * static_cast<FT>(CGAL_PI) / FT(180));

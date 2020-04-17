@@ -24,10 +24,17 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Offset_conditions_2.h>
+
+// TODO:
+// * Clean it up.
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -95,8 +102,15 @@ namespace Segments {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref pmp_namedparameters "Named Parameters".
+
       \param input_range 
       an instance of `InputRange` with 2D segments
+
+      \param np
+      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      among the ones listed below
 
       \param max_offset
       max offset bound in meters, the default is 0.1 meters 
@@ -108,14 +122,18 @@ namespace Segments {
       \pre `input_range.size() > 1`
       \pre `max_offset >= 0`
     */
-    Offset_regularization_2 (
+    template<typename NamedParameters>
+    Offset_regularization_2(
       InputRange& input_range,
-      const FT max_offset = FT(1) / FT(10),
+      const NamedParameters np,
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
-    m_d_max(CGAL::abs(max_offset)),
     m_segment_map(segment_map),
     m_num_modified_segments(0) { 
+
+      FT max_offset = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(10));
+      m_d_max = max_offset;
 
       CGAL_precondition(input_range.size() > 1);
       CGAL_precondition(max_offset >= FT(0));
@@ -181,13 +199,13 @@ namespace Segments {
       \brief applies new positions computed by the QP solver 
       to the initial segments.
 
-      \param result
+      \param solution
       a vector with updated segment positions.
 
-      \pre `result.size() > 0`
+      \pre `solution.size() > 0`
     */
-    void update(const std::vector<FT>& result) {
-      CGAL_precondition(result.size() > 0);
+    void update(const std::vector<FT>& solution) {
+      CGAL_precondition(solution.size() > 0);
 
       Targets_map targets;
       std::map<FT, Indices> collinear_groups;
@@ -205,7 +223,7 @@ namespace Segments {
           const std::size_t n = m_input_range.size();
 
           m_grouping.make_groups(
-            m_d_max, n, segments, result, 
+            m_d_max, n, segments, solution, 
             collinear_groups, targets);
           translate_collinear_segments(collinear_groups);
         }
@@ -242,6 +260,19 @@ namespace Segments {
       
       m_groups.push_back(group);
       update_segment_data(group);
+    }
+
+    /*!
+      \brief inserts all input segments from `input_range` as one unique group.
+
+      For more details, 
+      see `CGAL::Shape_regularization::Offset_regularization_2::add_group()`.
+    */
+    void create_unique_group() {
+      
+      Indices group(m_input_range.size());
+      std::iota(group.begin(), group.end(), 0);
+      add_group(group);
     }
 
     /*!

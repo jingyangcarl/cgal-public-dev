@@ -38,16 +38,16 @@ public:
   }
 
   /*!
-    applies the `result` from the QP solver to the initial items.
+    applies the `solution` from the QP solver to the initial items.
 
     `CGAL::Shape_regularization::QP_regularization` calls this function once after
     the global regularization QP problem has been solved.
 
-    The `result` vector contains values, one value per one regularized item. These 
+    The `solution` vector contains values, one value per one regularized item. These 
     values depend on what is being regularized, they could be angles or offsets for example.
   */
   void update(
-    const std::vector<GeomTraits::FT>& result) {
+    const std::vector<GeomTraits::FT>& solution) {
     
   }
 };

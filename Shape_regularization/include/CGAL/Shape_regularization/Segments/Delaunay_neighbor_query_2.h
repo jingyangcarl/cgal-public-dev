@@ -167,6 +167,19 @@ namespace Segments {
       add_neighbors();
     }
 
+    /*!
+      \brief inserts all input segments from `input_range` as one unique group.
+
+      For more details, 
+      see `CGAL::Shape_regularization::Delaunay_neighbor_query_2::add_group()`.
+    */
+    void create_unique_group() {
+      
+      Indices group(m_input_range.size());
+      std::iota(group.begin(), group.end(), 0);
+      add_group(group);
+    }
+
     /// @}
 
     /// \name Internal data management

@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
+// Author(s)     : Dmitry Anisimov
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_OSQP_QUADRATIC_PROGRAM_H
@@ -42,6 +42,9 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
+
+// TODO:
+// * Improve speed of this class by adding the reserve() function to the QP concept.
 
 namespace CGAL {
 namespace Shape_regularization {  
@@ -93,7 +96,7 @@ namespace Shape_regularization {
       // empty!
     }
 
-    void set_a(int i, int j, const FT& val) {
+    void set_a(int j, int i, const FT& val) {
       A_vec.push_back(Triplet(i, j, val));
     }
     
@@ -110,8 +113,10 @@ namespace Shape_regularization {
       u_vec.push_back(val);
     }
 
-    Solution solve() {
+    bool solve(
+      std::vector<FT>& solution) {
 
+      solution.clear();
       finilazie_qp_data();
 
       const c_int n = static_cast<c_int>(P_.nonZeros());
@@ -165,21 +170,19 @@ namespace Shape_regularization {
       settings->verbose = false;
 
       // Set workspace.
-      const c_int exitflag = osqp_setup(&work, data, settings);
+      osqp_setup(&work, data, settings);
 
       // Solve problem.
-      osqp_solve(work);
+      const int exitflag = osqp_solve(work);
+      const bool success = exitflag == 0 ? true : false;
 
       // Create solution.
-      Solution solution;
-
-      /*
-      result.clear();
-      result.reserve(n);
-      
+      solution.reserve(n);
       c_float *x = work->solution->x;
-      for(int i = 0; i < n; ++i)
-        result.push_back(static_cast<FT>(x[i])); */
+      for(std::size_t i = 0; i < n; ++i) {
+        const FT val = static_cast<FT>(x[i]);
+        solution.push_back(val);
+      }
 
       // Clean workspace.
       osqp_cleanup(work);
@@ -188,7 +191,7 @@ namespace Shape_regularization {
       c_free(data);
       c_free(settings);
 
-      return solution;
+      return success;
     }
     /// \endcond
 
@@ -324,11 +327,16 @@ namespace Shape_regularization {
 
     \param qp
     a quadratic program to be solved
+
+    \param solution
+    a vector with the solution
   */
   template<typename FT>
-  CGAL::Quadratic_program_solution<FT> solve_quadratic_program(
-    CGAL::Shape_regularization::OSQP_quadratic_program<FT>& qp) {
-    return qp.solve();
+  bool solve_quadratic_program(
+    CGAL::Shape_regularization::OSQP_quadratic_program<FT>& qp,
+    std::vector<FT>& solution) {
+    
+    return qp.solve(solution);
   }
 
 } // namespace Shape_regularization

@@ -1,7 +1,7 @@
 # Created by the script cgal_create_CMakeLists.
 # This is the CMake script for compiling a set of CGAL applications.
 
-project(Shape_regularization_Examples)
+project(Shape_regularization_Benchmarks)
 
 cmake_minimum_required(VERSION 2.8.10)
 set(CMAKE_CXX_STANDARD 11)
@@ -24,12 +24,8 @@ if(CGAL_FOUND)
       message(STATUS "Found OSQP")
 
       set(targets 
-      regularize_framework 
-      regularize_15_segments 
-      regularize_100_segments_angles
-      regularize_100_segments_offsets
-      regularize_simple
-      regularize_real_data_2)
+      benchmark_contours
+      benchmark_qp_segments)
       
       foreach(target ${targets})
         create_single_source_cgal_program("${target}.cpp")
@@ -41,20 +37,10 @@ if(CGAL_FOUND)
     else()
       message(STATUS "NOTICE: OSQP was not found. OSQP examples won't be available.")
     endif()
-
-    create_single_source_cgal_program(
-      "regularize_planes.cpp")
-
   else()
     message(WARNING 
     "This program requires the Eigen3 library, and will not be compiled.")
   endif()
-
-  create_single_source_cgal_program(
-    "regularize_closed_contour.cpp")
-  create_single_source_cgal_program(
-    "regularize_open_contour.cpp")
-
 else()
   message(WARNING 
   "This program requires the CGAL library, and will not be compiled.")

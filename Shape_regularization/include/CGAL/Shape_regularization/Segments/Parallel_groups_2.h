@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
+// Author(s)     : Gennadii Sytov, Dmitry Anisimov
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2_H
@@ -24,8 +24,15 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
+// Boost includes.
+#include <CGAL/boost/graph/named_params_helper.h>
+#include <CGAL/boost/graph/Named_function_parameters.h>
+
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_data_2.h>
+
+// TODO:
+// * Improve this class by fixing the ugly parameter.
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -81,8 +88,15 @@ namespace Segments {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam NamedParameters
+      a sequence of \ref pmp_namedparameters "Named Parameters".
+
       \param input_range 
       an instance of `InputRange` with 2D segments
+
+      \param np
+      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      among the ones listed below
 
       \param max_angle
       max angle deviation between two segments, the default is 5 degrees
@@ -94,16 +108,20 @@ namespace Segments {
       \pre `input_range.size() > 0`
       \pre `max_angle >= 0`
     */
-    Parallel_groups_2 (
-      const InputRange& input_range, 
-      const FT max_angle = FT(1000000),
+    template<typename NamedParameters>
+    Parallel_groups_2(
+      const InputRange& input_range,
+      const NamedParameters np, 
       const SegmentMap segment_map = SegmentMap()) : 
     m_input_range(input_range),
-    m_segment_map(segment_map),
-    m_tolerance(CGAL::abs(max_angle)) {
+    m_segment_map(segment_map) {
+
+      FT max_angle = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_angle), FT(1000000));
+      m_tolerance = max_angle;
 
       CGAL_precondition(input_range.size() > 0);
-      CGAL_precondition(max_angle > FT(0));
+      CGAL_precondition(max_angle >= FT(0));
 
       build_segment_data();
       make_parallel_groups();
@@ -136,7 +154,7 @@ namespace Segments {
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
     std::vector<Segment_data> m_segments;
-    const FT m_tolerance;
+    FT m_tolerance;
     std::map<FT, Indices> m_parallel_groups;
 
     void build_segment_data() {

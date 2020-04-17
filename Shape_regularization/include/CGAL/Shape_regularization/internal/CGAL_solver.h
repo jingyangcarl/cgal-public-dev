@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
+// Author(s)     : Gennadii Sytov, Dmitry Anisimov
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_CGAL_SOLVER_H
@@ -35,6 +35,9 @@
 // CGAL includes.
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
+
+// TODO:
+// * Remove this file!
 
 namespace CGAL {
 namespace Shape_regularization {  

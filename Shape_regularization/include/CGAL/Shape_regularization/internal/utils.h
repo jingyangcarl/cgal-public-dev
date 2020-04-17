@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
+// Author(s)     : Gennadii Sytov, Dmitry Anisimov
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_UTILS_H

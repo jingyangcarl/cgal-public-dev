@@ -129,9 +129,9 @@ int main(int argc, char *argv[]) {
   std::iota(group.begin(), group.end(), 0);
   Neighbor_query neighbor_query(input_range);
   
-  const FT max_angle = FT(60);
+  const FT max_angle_2 = FT(60);
   Angle_regularization angle_regularization(
-    input_range, max_angle);
+    input_range, CGAL::parameters::max_angle(max_angle_2));
 
   neighbor_query.add_group(group);
   angle_regularization.add_group(group);
@@ -159,9 +159,9 @@ int main(int argc, char *argv[]) {
     "* number of parallel_groups = " << parallel_groups.size() 
   << std::endl;
 
-  const FT max_distance = FT(95) / FT(100);
+  const FT max_offset_2 = FT(95) / FT(100);
   Offset_regularization offset_regularization(
-    input_range, max_distance);
+    input_range, CGAL::parameters::max_offset(max_offset_2));
 
   neighbor_query.clear();
   for (const auto& group : parallel_groups) {

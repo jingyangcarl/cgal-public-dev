@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Florent Lafarge, Simon Giraudot, Jean-Philippe Bauchet, Andreas Fabri, Gennadii Sytov, Dmitry Anisimov
+// Author(s)     : Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_HEADERS_H

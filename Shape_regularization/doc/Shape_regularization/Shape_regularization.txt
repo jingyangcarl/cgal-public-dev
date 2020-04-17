@@ -5,8 +5,11 @@ namespace CGAL {
 \anchor Chapter_Shape_Regularization
 
 \cgalAutoToc
-\authors Florent Lafarge, Simon Giraudot, Jean-Philippe Bauchet, Andreas Fabri, Gennadii Sytov, and Dmitry Anisimov
+\authors Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge
 
+\cgalFigureBegin{QP_segments_overview, qp_segments_overview.png}
+A set of 2D segments before and after regularization.
+\cgalFigureEnd
 
 \section Shape_Regularization_Intro Introduction
 
@@ -18,28 +21,27 @@ be used in conjunction with the \ref PkgShapeDetection "Shape Detection" package
 
 \section QP_Regularization QP Regularization
 
-This shape regularization algorithm is based on the global regularization algorithm 
-\cgalCite{cgal:bl-kippi-18} by Bauchet et Lafarge:
-1. Find local neighbors of each item in the data set;
-2. Compute objective function values among these neighbors;
-3. Solve the Quadratic Programming (QP) problem;
-4. Sort items into groups based on the regularized objective function values;
-5. Update items within each regularized group.
+This shape regularization algorithm is based on the Quadratic Programming (QP) 
+global regularization algorithm \cgalCite{cgal:bl-kippi-18} by Bauchet et Lafarge. 
+The algorithm reinforces three types of regularities:
+- Segments, which are new parallel, are made exactly parallel.
+- Segments, which are new orthogonal, are made exactly orthogonal.
+- Parallel segments, which are new collinear, are made exactly collinear. 
 
 Two particular instances of this algorithm are provided:
-- `CGAL::Shape_regularization::Segments::Angle_regularization_2` - reorients a set 
+- `CGAL::Shape_regularization::Segments::Angle_regularization_2` - orients a set 
 of 2D segments with respect to the user-defined max angle value that splits input segments 
 into groups of collinear segments, orthogonal segments, and all other segments, which 
 do not satisfy the input constraints. See \ref QP_Regularization_Segments_Angles 
 "Angle Regularization" for more details.
 
-- `CGAL::Shape_regularization::Segments::Offset_regularization_2` - realigns a set 
+- `CGAL::Shape_regularization::Segments::Offset_regularization_2` - aligns a set 
 of parallel 2D segments with respect to the user-defined max offset value that splits 
 input segments into groups of collinear segments and all other segments, which do 
 not satisfy the input constraints. See \ref QP_Regularization_Segments_Offset 
 "Offset Regularization" for more details.
 
-Other instances can be added by the user, as explained below.
+Other instances can be added by the user, as explained \ref QP_Regularization_Implementation "here".
 
 
 \subsection QP_Regularization_Framework Framework
@@ -71,10 +73,9 @@ is measured. See \ref QP_Regularization_Segments_Delaunay "this section" for mor
 The concept `RegularizationType` determines a type of regularization to be applied.
 To create a model that respects this concept, three functions have to be defined:
 
-- `RegularizationType::target()` a function that computes and returns an objective 
-function value between two neighbors,
-- `RegularizationType::bound()` a function that returns a max bound on an item value that is regularized, and
-- `RegularizationType::update()` a function that updates items with respect to the regularized item values.
+- `RegularizationType::target()` a function that estimates a type of regularity between two neighbors,
+- `RegularizationType::bound()` a function that returns a max bound on the allowed regularity change, and
+- `RegularizationType::update()` a function that updates input items with respect to the modified regularities.
 
 For example, if we want to regularize segment orientations, that is to make segments parallel and orthogonal
 to each other, the first function should return an angle between a query segment and each of its neighbors;
@@ -97,11 +98,27 @@ follow the `QuadraticProgram` concept (see more in \ref PkgQPSolver) and thus us
 to provide their own version of the solver.
 
 
-\subsection QP_Regularization_Examples Examples
+\subsection QP_Regularization_Implementation Implementation
 
-This short example shows how to use the framework with the 
-`CGAL::Exact_predicates_inexact_constructions_kernel` kernel and how to provide 
-different solvers for solving the QP problem.
+If you want to implement your own regularization approach that follows the same 
+framework, for example to reinforce a different type of regularity than is already provided, 
+you have to implement your own model of the \ref QP_Regularization_Type "RegularizationType" 
+concept and possibly a model of the \ref QP_Regularization_Neighborhood "NeighborQuery" concept. 
+These concepts are used to parameterize the main `CGAL::Shape_regularization::QP_regularization` algorithm:
+1. Use `NeighborQuery` to find local neighbors of each input item;
+2. Use `RegularizationType` to estimate current regularities among these neighbors;
+3. Use `RegularizationType` to set max bounds on the allowed regularity changes;
+4. Use `QuadraticProgram` to solve the quadratic programming problem;
+5. Use `RegularizationType` to update input items with respect to the modified regularities.
+
+In addition, the user may also want to change a \ref QP_Regularization_Solvers "QP solver" 
+if one knows how to optimize it for a specific type of input data. To do that, one 
+has to implement a model of the `QuadraticProgram` concept and a global function:
+- `solve_quadratic_program(QuadraticProgram& qp, std::vector<FT>& solution)` that 
+takes an instance of the user-defined QP model and a vector, which stores a solution.
+
+An example below shows how to define your own type of the above concepts and how to
+choose among available solvers.
 
 \cgalExample{Shape_regularization/regularize_framework.cpp}
 
@@ -125,7 +142,7 @@ parallelism and orthogonality among them. See more details
 collinearity among them. See more details 
 \ref QP_Regularization_Segments_Offset "here".
 
-A typical use of the QP regularization algorithm on segments consists of the following steps:
+A typical use of the QP regularization algorithm for segments consists of the following steps:
 1. Define an input range with segments;
 2. Create instances of the classes `NeighborQuery` and `RegularizationType` with the proper parameters;
 3. Define groups of contextually similar segments from input range if any;
@@ -134,6 +151,9 @@ A typical use of the QP regularization algorithm on segments consists of the fol
 6. Regularize segments;
 7. Optional: access the number of modified segments or groups of parallel segments, if they 
 are necessary for the next regularization steps.
+
+The example below shows the most straightforward entry point to the QP framework for segments.
+\cgalExample{Shape_regularization/regularize_simple.cpp}
 
 
 \subsection QP_Regularization_Segments_Delaunay Delaunay Neighbor Query
@@ -278,9 +298,7 @@ This table includes some timings of running several representative examples from
 </table>
 
 We also present a graph (TO BE ADDED LATER) that shows how the QP regularization performance depends on 
-the number of input segments. The presented timings are generated by the below example.
-
-\cgalExample{Shape_regularization/regularize_performance.cpp}
+the number of input segments.
 
 
 \subsection QP_Regularization_Segments_Utils Parallel Groups
@@ -303,7 +321,12 @@ An example on how to use this class can be found \ref QP_Parallel_Groups_Example
 
 The algorithm `CGAL::Shape_regularization::Contour_regularization_2` enables to regularize 
 both closed and open 2D contours. A contour is given as a set of ordered points 
-connected by segments. A typical use of this algorithm consists of three steps:
+connected by segments. The algorithm reinforces three types of regularities:
+- Contour edges, which are new parallel, are made exactly parallel.
+- Contour edges, which are new orthogonal, are made exactly orthogonal.
+- Parallel contour edges, which are new collinear, are made exactly collinear.
+
+A typical use of this algorithm consists of the following steps:
 - specify a type of the contour, open or closed;
 - provide an instance of the type `ContourDirections` to estimate principal directions of the input contour;
 - regularize the contour.
@@ -373,10 +396,10 @@ Here, we provide all available \cgal algorithms that enable to regularize 3D pla
 This component offers a function to reinforce four types of regularities for planes, 
 `CGAL::Shape_regularization::Planes::regularize_planes()`:
 
-- Planes that are near parallel are made parallel.
-- Parallel planes that are near coplanar are made exactly coplanar.
-- Planes that are near orthogonal are made exactly orthogonal.
-- Planes that are near symmetrical with respect to a user-defined axis are made exactly symmetrical.
+- Planes, which are near parallel, are made parallel.
+- Planes, which are near orthogonal, are made exactly orthogonal.
+- Parallel planes, which are near coplanar, are made exactly coplanar.
+- Planes, which are near symmetrical with respect to a user-defined axis, are made exactly symmetrical.
 
 The user can choose to regularize only one or several of these four properties. 
 The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters, 
@@ -394,13 +417,13 @@ that all parameters are provided through the named parameters mechanism. The use
 The shape regularization algorithm for 2D segments was first implemented by Jean-Philippe Bauchet 
 under the supervision of Florent Lafarge and then generalized by Gennadii Sytov during the Google Summer 
 of Code 2019 under the supervision of Dmitry Anisimov. The contour regularization algorithm was 
-developed and implemented by Dmitry Anisimov, Simon Giraudot, and Andreas Fabri. Plane regularization 
+developed and implemented by Dmitry Anisimov and Simon Giraudot. Plane regularization 
 was added by Simon Giraudot based on the prototype version developed by Florent Lafarge.
 
 
 \section Shape_Regularization_Acknowledgements Acknowledgments
 
-Section with acknowledgments will be here.
+We wish to thank Andreas Fabri for useful discussions and reviews.
 
 */
 } /* namespace CGAL */

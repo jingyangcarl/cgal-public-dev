@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Dmitry Anisimov, Simon Giraudot, Andreas Fabri
+// Author(s)     : Dmitry Anisimov, Simon Giraudot
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_REGULARIZATION_2_H

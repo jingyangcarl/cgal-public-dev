@@ -35,7 +35,7 @@ to regularize contours.
 \cgalPkgPicture{logo_120x120.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Florent Lafarge, Simon Giraudot, Jean-Philippe Bauchet, Andreas Fabri, Gennadii Sytov, and Dmitry Anisimov}
+\cgalPkgAuthors{Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge}
 \cgalPkgDesc{This CGAL package enables to regularize a set of 2D segments in the plane, both open 
 and closed contours, and a set of planes in 3D such that all input objects are 
 rotated and aligned with respect to the user-specified conditions.}

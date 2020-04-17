@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
+// Author(s)     : Dmitry Anisimov
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_CGAL_QUADRATIC_PROGRAM_H
@@ -73,12 +73,6 @@ namespace Shape_regularization {
     { }
 
     /// @}
-
-    /// \cond SKIP_IN_MANUAL
-    void set_a(int i, int j, const FT& val) {
-      Quadratic_program::set_a(j, i, val);
-    }
-    /// \endcond
   };
 
   /*!
@@ -91,11 +85,22 @@ namespace Shape_regularization {
 
     \param qp
     a quadratic program to be solved
+
+    \param solution
+    a vector with the solution
   */
   template<typename FT>
-  CGAL::Quadratic_program_solution<FT> solve_quadratic_program(
-    const CGAL::Shape_regularization::CGAL_quadratic_program<FT>& qp) {
-    return CGAL::solve_quadratic_program(qp, FT());
+  bool solve_quadratic_program(
+    const CGAL::Shape_regularization::CGAL_quadratic_program<FT>& qp,
+    std::vector<FT>& solution) {
+    
+    auto s = CGAL::solve_quadratic_program(qp, FT());
+    for (auto x = s.variable_values_begin(); 
+    x != s.variable_values_end(); ++x)
+      solution.push_back(static_cast<FT>(
+        CGAL::to_double(*x)));
+
+    return s.solves_quadratic_program(qp);
   }
 
 } // namespace Shape_regularization
