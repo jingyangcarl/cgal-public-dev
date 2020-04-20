@@ -21,12 +21,8 @@ be used in conjunction with the \ref PkgShapeDetection "Shape Detection" package
 
 \section QP_Regularization QP Regularization
 
-This shape regularization algorithm is based on the Quadratic Programming (QP) 
+The shape regularization component is based on the Quadratic Programming (QP) 
 global regularization algorithm \cgalCite{cgal:bl-kippi-18} by Bauchet et Lafarge. 
-The algorithm reinforces three types of regularities:
-- Segments, which are new parallel, are made exactly parallel.
-- Segments, which are new orthogonal, are made exactly orthogonal.
-- Parallel segments, which are new collinear, are made exactly collinear. 
 
 Two particular instances of this algorithm are provided:
 - `CGAL::Shape_regularization::Segments::Angle_regularization_2` - orients a set 
@@ -86,7 +82,7 @@ the initial input segments. See \ref QP_Regularization_Segments_Angles "this sec
 
 \subsection QP_Regularization_Solvers Solvers
 
-In order to solve the QP problem from the third step of the algorithm above, \cgal provides 
+In order to solve the associated QP problem of the algorithm above, \cgal provides 
 two particular models of the corresponding QP solver:
 - `CGAL::Shape_regularization::CGAL_quadratic_program` that is a \cgal QP solver, and
 - `CGAL::Shape_regularization::OSQP_quadratic_program` that is a wrapper of the external \ref thirdpartyOSQP "OSQP solver".
@@ -141,6 +137,11 @@ parallelism and orthogonality among them. See more details
 - `CGAL::Shape_regularization::Segments::Offset_regularization_2` - aligns segments to preserve 
 collinearity among them. See more details 
 \ref QP_Regularization_Segments_Offset "here".
+
+The algorithm reinforces three types of regularities:
+- Segments, which are new parallel, are made exactly parallel.
+- Segments, which are new orthogonal, are made exactly orthogonal.
+- Parallel segments, which are new collinear, are made exactly collinear. 
 
 A typical use of the QP regularization algorithm for segments consists of the following steps:
 1. Define an input range with segments;
