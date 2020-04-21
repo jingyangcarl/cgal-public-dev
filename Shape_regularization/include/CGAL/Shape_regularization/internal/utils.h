@@ -1,4 +1,4 @@
-// Copyright (c) 2020 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -25,12 +25,15 @@
 // #include <CGAL/license/Shape_regularization.h>
 
 // STL includes.
+#include <set>
 #include <map>
 #include <cmath>
 #include <vector>
 #include <string>
 #include <utility>
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 // CGAL includes.
 #include <CGAL/utils.h>

@@ -24,18 +24,7 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <set>
-#include <vector>
-#include <utility>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
 // CGAL includes.
-#include <CGAL/assertions.h>
-#include <CGAL/property_map.h>
-#include <CGAL/number_utils.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/Aff_transformation_2.h>
 
@@ -84,7 +73,6 @@ namespace internal {
     using Segments_2 = std::vector<Segment_2>;
     using Segment_wrappers_2 = std::vector<Segment_wrapper_2>;
     using Polyline = std::vector<Point_3>;
-    using Polylines = std::vector<Polyline>;
 
     Contour_regularization_base_2() :
     m_verbose(true),
@@ -1071,10 +1059,10 @@ namespace internal {
       const std::vector<Segment_2>& segments,
       const std::string file_path) const {
       
-      std::vector< std::vector<Point_3> > polylines(segments.size());
+      std::vector<Polyline> polylines(segments.size());
       for (std::size_t i = 0; i < segments.size(); ++i) {
-        const Point_2& s = segments[i].source();
-        const Point_2& t = segments[i].target();
+        const auto& s = segments[i].source();
+        const auto& t = segments[i].target();
         
         polylines[i].push_back(Point_3(s.x(), s.y(), FT(0)));
         polylines[i].push_back(Point_3(t.x(), t.y(), FT(0)));
@@ -1083,7 +1071,7 @@ namespace internal {
     }
 
     void export_polylines(
-      const Polylines& polylines,
+      const std::vector<Polyline>& polylines,
       const std::string file_path) const {
 
       if (polylines.size() == 0)
@@ -1113,12 +1101,10 @@ namespace internal {
         std::cout << 
         "Error: cannot save the file: " << path << std::endl; return;
       }
-      file << out.str() << std::endl;
-      file.close();
-
+      
+      file << out.str() << std::endl; file.close();
       std::cout << 
-        "* segments are saved in " 
-      << path << std::endl;
+        "* segments are saved in " << path << std::endl;
     }
 
   private:

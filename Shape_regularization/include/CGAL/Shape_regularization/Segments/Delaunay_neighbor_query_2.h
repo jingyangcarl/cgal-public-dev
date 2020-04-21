@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -73,8 +73,12 @@ namespace Segments {
     using DS = CGAL::Triangulation_data_structure_2<VB>;
     using DT = CGAL::Delaunay_triangulation_2<Traits, DS>;
 
+    using Point_2 = typename Traits::Point_2;
+    using Segment_2 = typename Traits::Segment_2;
+
     using Delaunay_triangulation = DT;
     using Indices = std::vector<std::size_t>;
+    using Size_pair = std::pair<std::size_t, std::size_t>;
     /// \endcond
 
     /// \name Initialization
@@ -93,14 +97,12 @@ namespace Segments {
       \pre `input_range.size() > 1`
     */
     Delaunay_neighbor_query_2(
-      InputRange& input_range, 
+      const InputRange& input_range, 
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
     m_segment_map(segment_map) { 
       
-      CGAL_precondition(
-        input_range.size() > 1);
-      m_groups.resize(m_input_range.size());
+      CGAL_precondition(input_range.size() > 1); clear();
     }
 
     /// @}
@@ -160,11 +162,12 @@ namespace Segments {
       
       Indices group;
       group.reserve(index_range.size());
-      for (const auto seg_index : index_range)
+      for (const std::size_t seg_index : index_range)
         group.push_back(seg_index);
 
       build_delaunay_triangulation(group);
       add_neighbors();
+      m_num_groups += 1;
     }
 
     /*!
@@ -175,6 +178,9 @@ namespace Segments {
     */
     void create_unique_group() {
       
+      CGAL_precondition(m_input_range.size() > 1);
+      if (m_input_range.size() < 2) return;
+
       Indices group(m_input_range.size());
       std::iota(group.begin(), group.end(), 0);
       add_group(group);
@@ -189,11 +195,60 @@ namespace Segments {
       \brief clears all internal data structures.
     */
     void clear() {
+
       m_groups.clear();
+      m_num_groups = 0;
+      CGAL_precondition(m_input_range.size() > 1);
+      if (m_input_range.size() < 2) return;
       m_groups.resize(m_input_range.size());
     }
 
     /// @}
+
+    // EXTRA METHODS TO TEST THE CLASS!
+    /// \cond SKIP_IN_MANUAL
+    const std::size_t number_of_groups() const { 
+      return m_num_groups;
+    }
+
+    const std::size_t number_of_edges() const {
+      std::size_t num_edges = 0;
+      for (const auto& group : m_groups)
+        num_edges += group.size();
+      return num_edges;
+    }
+
+    void get_edges(
+      std::vector<Segment_2>& edges) {
+
+      // Create a graph.
+      Size_pair pair;
+      Indices neighbors;
+      std::set<Size_pair> graph;
+      CGAL_assertion(m_groups.size() == m_input_range.size());
+      for (std::size_t i = 0; i < m_groups.size(); ++i) {
+        operator()(i, neighbors);
+
+        for (const std::size_t neighbor : neighbors) {
+          i < neighbor ? 
+          pair = std::make_pair(i, neighbor) : 
+          pair = std::make_pair(neighbor, i);
+          graph.insert(pair);
+        }
+      }
+
+      // build_graph_of_neighbors();
+
+      // Set graph edges.
+      edges.clear();
+      edges.reserve(graph.size());
+      for (const auto& edge : graph) {
+        const auto p = get_middle_point(edge.first);
+        const auto q = get_middle_point(edge.second);
+        edges.push_back(Segment_2(p, q));
+      }
+    }
+    /// \endcond
 
   private:
     const Input_range& m_input_range;
@@ -201,6 +256,7 @@ namespace Segments {
 
     Delaunay_triangulation m_delaunay;
     std::vector<Indices> m_groups;
+    std::size_t m_num_groups;
 
     void build_delaunay_triangulation(
       const Indices& group) {
@@ -212,37 +268,48 @@ namespace Segments {
           m_segment_map, *(m_input_range.begin() + seg_index));
         const auto& source = segment.source();
         const auto& target = segment.target();
-        
-        const auto middle = internal::middle_point_2(source, target);
-        auto vh = m_delaunay.insert(middle);
+        auto vh = m_delaunay.insert(
+          internal::middle_point_2(source, target));
         vh->info() = seg_index;
       }
     }
 
     void add_neighbors() {
 
-      CGAL_precondition(m_groups.size() == m_input_range.size());
+      CGAL_assertion(m_groups.size() == m_input_range.size());
       for (auto vit = m_delaunay.finite_vertices_begin(); 
       vit != m_delaunay.finite_vertices_end(); ++vit) {
 
         const std::size_t seg_index_1 = vit->info();
-        CGAL_precondition(
+        CGAL_assertion(
           seg_index_1 >= 0 && seg_index_1 < m_groups.size());
         auto& neighbors = m_groups[seg_index_1];
 
         auto vc = m_delaunay.incident_vertices(vit);
+        if (vc.is_empty()) return;
         const auto end = vc;
         do {
           if (!m_delaunay.is_infinite(vc)) {
             const std::size_t seg_index_2 = vc->info();
-            CGAL_precondition( 
-              seg_index_2 >= 0 && seg_index_2 < m_input_range.size());
+            CGAL_assertion( 
+              seg_index_2 >= 0 && seg_index_2 < m_groups.size());
             neighbors.push_back(seg_index_2);
           }
           ++vc;
         } while (vc != end);
       }
       m_delaunay.clear();
+    }
+
+    // ALL BELOW USED ONLY FOR TESTING!
+    const Point_2 get_middle_point(
+      const std::size_t seg_index) const {
+
+      const auto& segment = get(
+        m_segment_map, *(m_input_range.begin() + seg_index));
+      const auto& source = segment.source();
+      const auto& target = segment.target();
+      return internal::middle_point_2(source, target);
     }
   };
 
