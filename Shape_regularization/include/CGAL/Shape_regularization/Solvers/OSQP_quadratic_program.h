@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -24,14 +24,9 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// STL includes.
-#include <vector>
-#include <utility>
-
 // CGAL includes.
 #include <CGAL/QP_models.h>
 #include <CGAL/QP_functions.h>
-#include <CGAL/assertions.h>
 
 // Eigen includes.
 #include <Eigen/Dense>
@@ -42,9 +37,6 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
-
-// TODO:
-// * Improve speed of this class by adding the reserve() function to the QP concept.
 
 namespace CGAL {
 namespace Shape_regularization {  
@@ -84,6 +76,31 @@ namespace Shape_regularization {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
+    void reserve_d(const std::size_t n) {
+      P_vec.reserve(n);
+    }
+
+    void reserve_c(const std::size_t n) {
+      q_vec.reserve(n);
+    }
+
+    void reserve_a(const std::size_t n) {
+      A_vec.reserve(n);
+    }
+
+    void reserve_b(const std::size_t n) {
+      l_vec.reserve(n);
+      u_vec.reserve(n);
+    }
+
+    void reserve_l(const std::size_t n) {
+      l_vec.reserve(l_vec.size() + n);
+    }
+
+    void reserve_u(const std::size_t n) {
+      u_vec.reserve(u_vec.size() + n);
+    }
+
     void set_d(int i, int j, const FT& val) {
       P_vec.push_back(Triplet(i, j, val));
     }
@@ -116,9 +133,7 @@ namespace Shape_regularization {
     bool solve(
       std::vector<FT>& solution) {
 
-      solution.clear();
-      finilazie_qp_data();
-
+      finalize_qp_data();
       const c_int n = static_cast<c_int>(P_.nonZeros());
       const c_int m = static_cast<c_int>(l_.nonZeros());
 
@@ -177,9 +192,8 @@ namespace Shape_regularization {
       const bool success = exitflag == 0 ? true : false;
 
       // Create solution.
-      solution.reserve(n);
       c_float *x = work->solution->x;
-      for(std::size_t i = 0; i < n; ++i) {
+      for (std::size_t i = 0; i < n; ++i) {
         const FT val = static_cast<FT>(x[i]);
         solution.push_back(val);
       }
@@ -203,7 +217,7 @@ namespace Shape_regularization {
     Sparse_matrix P_, A_;
     Dense_vector q_, l_, u_;
 
-    void finilazie_qp_data() {
+    void finalize_qp_data() {
       
       // P data.
       const std::size_t n = P_vec.size();
@@ -213,13 +227,11 @@ namespace Shape_regularization {
       
       // A data.
       std::size_t s = A_vec.size() / 3;
-      // std::cout << "s: " << s << std::endl;
+      A_vec.reserve(A_vec.size() + n);
       for (std::size_t i = 0; i < n; ++i)
         A_vec.push_back(Triplet(s + i, i, FT(1)));
 
       const std::size_t m = s + n;
-      // std::cout << "m: " << m << std::endl;
-      // std::cout << "n: " << n << std::endl;
       A_.resize(m, n);
       A_.setFromTriplets(A_vec.begin(), A_vec.end());
       A_.makeCompressed(); 
@@ -238,21 +250,6 @@ namespace Shape_regularization {
       u_.resize(u_vec.size());
       for (std::size_t i = 0; i < u_vec.size(); ++i)
         u_[i] = u_vec[i];
-
-      /*
-      std::cout << "P: " << std::endl;
-      std::cout << P_ << std::endl;
-      
-      std::cout << "A: " << std::endl;
-      std::cout << A_ << std::endl;
-
-      std::cout << "q: " << std::endl;
-      for (const auto val : q_vec)
-        std::cout << val << std::endl;
-
-      std::cout << "lu: " << std::endl;
-      for (std::size_t i = 0; i < l_vec.size(); ++i) 
-        std::cout << l_vec[i] << " " << u_vec[i] << std::endl; */
     }
 
     void set_P_data(

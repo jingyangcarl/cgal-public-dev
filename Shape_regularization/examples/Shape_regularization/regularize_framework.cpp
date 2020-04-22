@@ -8,7 +8,10 @@ using Point_2 = typename Kernel::Point_2;
 using Segment_2 = typename Kernel::Segment_2;
 using Input_range = std::vector<Segment_2>;
 
-struct User_neighbor_query_2 {
+namespace CGAL {
+namespace Shape_regularization {
+
+struct Custom_neighbor_query_2 {
   void operator()(
     const std::size_t query_index,
     std::vector<std::size_t>& neighbors) {
@@ -17,7 +20,7 @@ struct User_neighbor_query_2 {
   }
 };
 
-struct User_regularization_2 {
+struct Custom_regularization_2 {
   FT bound(
     const std::size_t query_index) const { 
     // Add your code here!
@@ -36,24 +39,36 @@ struct User_regularization_2 {
 };
 
 template<typename NT>
-class User_quadratic_program : 
+class USER_quadratic_program : 
   public CGAL::Quadratic_program<int> {
   using Quadratic_program = CGAL::Quadratic_program<int>;
   
   public:
-    User_quadratic_program() : 
+    USER_quadratic_program() : 
       Quadratic_program(
         CGAL::SMALLER, true, -NT(100000), true, +NT(100000))
     { }
+
+    void reserve_d(const std::size_t) { }
+    void reserve_c(const std::size_t) { }
+    void reserve_a(const std::size_t) { }
+    void reserve_b(const std::size_t) { }
+    void reserve_l(const std::size_t) { }
+    void reserve_u(const std::size_t) { }
 };
 
+template<typename NT>
 bool solve_quadratic_program(
-  User_quadratic_program<FT>& qp,
-  std::vector<FT>& solution) {
+  CGAL::Shape_regularization::USER_quadratic_program<NT>& qp,
+  std::vector<NT>& solution) {
+  
   // Add your code here!
   solution.clear();
   return false; // return status of the computation
 }
+
+} // namespace Shape_regularization
+} // namespace CGAL
 
 // Choose a type of a solver.
 #define OSQP_SOLVER
@@ -73,8 +88,8 @@ using Quadratic_program =
   CGAL::Shape_regularization::USER_quadratic_program<FT>; // USER custom solver
 #endif
 
-using NQ = User_neighbor_query_2;
-using RT = User_regularization_2;
+using NQ = CGAL::Shape_regularization::Custom_neighbor_query_2;
+using RT = CGAL::Shape_regularization::Custom_regularization_2;
 using QP = Quadratic_program;
 using Regularizer = 
   CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, NQ, RT, QP>;

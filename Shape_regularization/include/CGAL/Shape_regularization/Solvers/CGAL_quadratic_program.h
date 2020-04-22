@@ -1,4 +1,4 @@
-// Copyright (c) 2019 GeometryFactory Sarl (France).
+// Copyright (c) 2020 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -23,10 +23,6 @@
 #define CGAL_SHAPE_REGULARIZATION_CGAL_QUADRATIC_PROGRAM_H
 
 // #include <CGAL/license/Shape_regularization.h>
-
-// STL includes.
-#include <vector>
-#include <utility>
 
 // CGAL includes.
 #include <CGAL/QP_models.h>
@@ -73,6 +69,26 @@ namespace Shape_regularization {
     { }
 
     /// @}
+
+    /// \cond SKIP_IN_MANUAL
+    void reserve_d(const std::size_t) {
+    }
+
+    void reserve_c(const std::size_t) {
+    }
+
+    void reserve_a(const std::size_t) {
+    }
+
+    void reserve_b(const std::size_t) {
+    }
+
+    void reserve_l(const std::size_t) {
+    }
+
+    void reserve_u(const std::size_t) {
+    }
+    /// \endcond
   };
 
   /*!

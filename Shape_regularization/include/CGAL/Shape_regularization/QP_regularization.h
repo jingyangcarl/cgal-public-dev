@@ -166,16 +166,14 @@ namespace Shape_regularization {
         m_quadratic_program);
 
       // Solve.
-      std::vector<FT> solution_qp;
-      std::size_t n = m_input_range.size() + m_targets.size();
-      solution_qp.reserve(n);
-
+      std::vector<FT> solution;
       solve_quadratic_program( 
-        m_quadratic_program, solution_qp);
-      CGAL_assertion(solution_qp.size() == n);
+        m_quadratic_program, solution);
+      if (solution.size() != m_input_range.size() + m_targets.size()) 
+        return;
 
       // Update.
-      m_regularization_type.update(solution_qp);
+      m_regularization_type.update(solution);
     }
 
     /// @}
@@ -254,7 +252,7 @@ namespace Shape_regularization {
       set_quadratic_term(n, k, qp);
       set_linear_term(n, k, qp);
       set_constant_term(qp);
-      set_constraint_matrix(k, qp);
+      set_constraint_matrix(n, k, qp);
       set_constraint_bounds(m, k, e, qp);
     }
 
@@ -263,6 +261,7 @@ namespace Shape_regularization {
       const std::size_t k,
       Quadratic_program& qp) const {
       
+      qp.reserve_d(n);
       for (std::size_t i = 0; i < n; ++i) {
         FT val = FT(0);
         if (i < k) {
@@ -278,6 +277,7 @@ namespace Shape_regularization {
       const std::size_t k,
       Quadratic_program& qp) const {
       
+      qp.reserve_c(n);
       for (std::size_t i = 0; i < n; ++i) {
         FT val = FT(0);
         if (i >= k) {
@@ -296,12 +296,15 @@ namespace Shape_regularization {
     }
 
     void set_constraint_matrix( 
+      const std::size_t n, 
       const std::size_t k,
       Quadratic_program& qp) const {
       
+      if (n < k) return;
       std::size_t it = 0;
       std::size_t ij = k;
 
+      qp.reserve_a(m_targets.size() * 6);
       for (const auto& target : m_targets) {
         const std::size_t i = target.first.first;
         const std::size_t j = target.first.second;
@@ -323,6 +326,10 @@ namespace Shape_regularization {
       const std::size_t k, 
       const std::size_t e,
       Quadratic_program& qp) const {
+
+      qp.reserve_b(2 * e);
+      qp.reserve_l(k);
+      qp.reserve_u(k);
 
       auto tit = m_targets.begin();
       for(std::size_t i = 0; i < m; ++i) {
@@ -348,12 +355,18 @@ namespace Shape_regularization {
 
     void solve_quadratic_program(
       Quadratic_program& qp,
-      std::vector<FT>& result) {
+      std::vector<FT>& solution) {
+
+      std::size_t n = m_input_range.size() + m_targets.size();
+      
+      solution.clear();
+      solution.reserve(n);
 
       const auto success = CGAL::Shape_regularization::
-        solve_quadratic_program(qp, result);
+        solve_quadratic_program(qp, solution);
       if (!success)
         std::cerr << "WARNING: The solver has not converged!" << std::endl;
+      CGAL_assertion(solution.size() == n);
     }
   };
 

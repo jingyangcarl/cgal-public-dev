@@ -1,0 +1,2 @@
+1. Refactor the solvers. Now when adding a custom user-defined solver, the QP main class does not see an overload of the solve() function.
+Moreover, the solver concept anyway requires the reserve() function to be efficient for the OSQP solver.
