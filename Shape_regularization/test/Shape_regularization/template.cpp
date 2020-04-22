@@ -1,3 +1,5 @@
+#include <list>
+#include <vector>
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -14,12 +16,12 @@ void test_with_name() {
   using Saver     = SR::Tests::Saver<Traits>;
 
   // To be added!
+  
 }
 
 int main() {
   test_neighbor_query< CGAL::Simple_cartesian<double> >();
   test_neighbor_query< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_neighbor_query< CGAL::Exact_predicates_exact_constructions_kernel >();
-
   return EXIT_SUCCESS;
 }

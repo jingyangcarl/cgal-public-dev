@@ -1,3 +1,5 @@
+#include <list>
+#include <vector>
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -8,7 +10,6 @@ namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
 void test_neighbor_query() { 
-  using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using Indices   = std::vector<std::size_t>;
@@ -29,7 +30,8 @@ void test_neighbor_query() {
     Segment_2(Point_2(3, 3), Point_2(1, 3)),
     Segment_2(Point_2(1, 3), Point_2(1, 1))
   };
-  saver.export_polylines(segments, "/Users/monet/Documents/gsoc/ggr/logs/input");
+  // saver.export_polylines(segments, 
+    // "/Users/monet/Documents/gsoc/ggr/logs/input");
 
   std::vector<Indices> groups(2);
   groups[0] = {0, 1, 2, 3}; // external square
@@ -38,45 +40,58 @@ void test_neighbor_query() {
   NQ neighbor_query(segments);
   neighbor_query.create_unique_group();
   
+  // Check unique group.
   Segments edges;
   neighbor_query.get_edges(edges);
-  saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph0");
+  assert(edges.size() == 17);
   assert(neighbor_query.number_of_groups() == 1);
-  // assert(neighbor_query.number_of_edges() == 15);
+  assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
 
+  // Check clear.
   neighbor_query.clear();
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph1");
+  assert(edges.size() == 0);
   assert(neighbor_query.number_of_groups() == 0);
-  assert(neighbor_query.number_of_edges() == 0);
+  assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
 
+  // Add first group.
   neighbor_query.clear();
   neighbor_query.add_group(groups[0]);
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph2");
+  assert(edges.size() == 5);
   assert(neighbor_query.number_of_groups() == 1);
-  assert(neighbor_query.number_of_edges() == 5);
+  assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
 
+  // Add second group.
   neighbor_query.clear();
   neighbor_query.add_group(groups[1]);
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph3");
+  assert(edges.size() == 5);
   assert(neighbor_query.number_of_groups() == 1);
-  assert(neighbor_query.number_of_edges() == 5);
-
+  assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
+  
+  // Add groups consequently.
   neighbor_query.clear();
   neighbor_query.add_group(groups[0]);
   neighbor_query.add_group(groups[1]);
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph4");
+  assert(edges.size() == 10);
   assert(neighbor_query.number_of_groups() == 2);
-  assert(neighbor_query.number_of_edges() == 10);
+  assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
+
+  // Check list with minimum 2 items.
+  neighbor_query.clear();
+  const std::list<std::size_t> mini = {0, 1};
+  neighbor_query.add_group(mini);
+  neighbor_query.get_edges(edges);
+  assert(edges.size() == 1);
+  assert(neighbor_query.number_of_groups() == 1);
+  assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
 }
 
 int main() {
   test_neighbor_query< CGAL::Simple_cartesian<double> >();
-  // test_neighbor_query< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  // test_neighbor_query< CGAL::Exact_predicates_exact_constructions_kernel >();
-
+  test_neighbor_query< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_neighbor_query< CGAL::Exact_predicates_exact_constructions_kernel >();
   return EXIT_SUCCESS;
 }

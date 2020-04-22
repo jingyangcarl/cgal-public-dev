@@ -211,33 +211,19 @@ namespace Segments {
       return m_num_groups;
     }
 
-    const std::size_t number_of_edges() const {
-      std::size_t num_edges = 0;
+    const std::size_t number_of_neighbors() const {
+      std::size_t num_neighbors = 0;
       for (const auto& group : m_groups)
-        num_edges += group.size();
-      return num_edges;
+        num_neighbors += group.size();
+      return num_neighbors;
     }
 
     void get_edges(
       std::vector<Segment_2>& edges) {
 
       // Create a graph.
-      Size_pair pair;
-      Indices neighbors;
       std::set<Size_pair> graph;
-      CGAL_assertion(m_groups.size() == m_input_range.size());
-      for (std::size_t i = 0; i < m_groups.size(); ++i) {
-        operator()(i, neighbors);
-
-        for (const std::size_t neighbor : neighbors) {
-          i < neighbor ? 
-          pair = std::make_pair(i, neighbor) : 
-          pair = std::make_pair(neighbor, i);
-          graph.insert(pair);
-        }
-      }
-
-      // build_graph_of_neighbors();
+      build_graph_of_neighbors(graph);
 
       // Set graph edges.
       edges.clear();
@@ -302,6 +288,25 @@ namespace Segments {
     }
 
     // ALL BELOW USED ONLY FOR TESTING!
+    void build_graph_of_neighbors(
+      std::set<Size_pair>& graph) {
+      
+      Size_pair pair;
+      Indices neighbors;
+      graph.clear();
+
+      CGAL_assertion(m_groups.size() == m_input_range.size());
+      for (std::size_t i = 0; i < m_groups.size(); ++i) {
+        operator()(i, neighbors);
+        for (const std::size_t neighbor : neighbors) {
+          i < neighbor ? 
+          pair = std::make_pair(i, neighbor) : 
+          pair = std::make_pair(neighbor, i);
+          graph.insert(pair);
+        }
+      }
+    }
+
     const Point_2 get_middle_point(
       const std::size_t seg_index) const {
 
