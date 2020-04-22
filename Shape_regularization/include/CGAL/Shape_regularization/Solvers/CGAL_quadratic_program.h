@@ -71,23 +71,12 @@ namespace Shape_regularization {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
-    void reserve_d(const std::size_t) {
-    }
-
-    void reserve_c(const std::size_t) {
-    }
-
-    void reserve_a(const std::size_t) {
-    }
-
-    void reserve_b(const std::size_t) {
-    }
-
-    void reserve_l(const std::size_t) {
-    }
-
-    void reserve_u(const std::size_t) {
-    }
+    void reserve_d(const std::size_t) { }
+    void reserve_c(const std::size_t) { }
+    void reserve_a(const std::size_t) { }
+    void reserve_b(const std::size_t) { }
+    void reserve_l(const std::size_t) { }
+    void reserve_u(const std::size_t) { }
     /// \endcond
   };
 

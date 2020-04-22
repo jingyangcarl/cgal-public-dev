@@ -101,8 +101,8 @@ namespace Shape_regularization {
       u_vec.reserve(u_vec.size() + n);
     }
 
-    void set_d(int i, int j, const FT& val) {
-      P_vec.push_back(Triplet(i, j, val));
+    void set_d(int, int, const FT& val) {
+      P_vec.push_back(val);
     }
 
     void set_c(int, const FT& val) {
@@ -110,7 +110,7 @@ namespace Shape_regularization {
     }
 
     void set_c0(const FT&) {
-      // empty!
+      // It is not used by OSQP.
     }
 
     void set_a(int j, int i, const FT& val) {
@@ -134,33 +134,29 @@ namespace Shape_regularization {
       std::vector<FT>& solution) {
 
       finalize_qp_data();
-      const c_int n = static_cast<c_int>(P_.nonZeros());
-      const c_int m = static_cast<c_int>(l_.nonZeros());
+      CGAL_precondition(P_vec.size() == q_vec.size());
+      CGAL_precondition(l_vec.size() == u_vec.size());
 
-      const c_int P_nnz = static_cast<c_int>(P_.nonZeros());
-      const c_int q_nnz = static_cast<c_int>(q_.nonZeros());
-
-      const c_int A_nnz = static_cast<c_int>(A_.nonZeros());
-      const c_int l_nnz = static_cast<c_int>(l_.nonZeros());
-      const c_int u_nnz = static_cast<c_int>(u_.nonZeros());
-
-      CGAL_precondition(P_.nonZeros() == q_.nonZeros());
-      CGAL_precondition(l_.nonZeros() == u_.nonZeros());
-
+      const c_int P_nnz = static_cast<c_int>(P_vec.size());
       c_float P_x[P_nnz];
       c_int   P_i[P_nnz];
       c_int   P_p[P_nnz + 1];
-      set_P_data(P_nnz, P_, P_x, P_i, P_p);
+      set_P_data(P_x, P_i, P_p);
 
+      const c_int A_nnz = static_cast<c_int>(A_.nonZeros());
       c_float A_x[A_nnz];
       c_int   A_i[A_nnz];
       c_int   A_p[P_nnz + 1];
       set_A_data(A_, A_x, A_i, A_p);
 
+      const c_int q_nnz = static_cast<c_int>(q_vec.size());
+      const c_int l_nnz = static_cast<c_int>(l_vec.size());
+      const c_int u_nnz = static_cast<c_int>(u_vec.size());
+
       c_float q_x[q_nnz];
       c_float l_x[l_nnz];
       c_float u_x[u_nnz];
-      set_qlu_data(n, m, q_, l_, u_, q_x, l_x, u_x);
+      set_qlu_data(q_x, l_x, u_x);
 
       // Problem settings.
       OSQPSettings *settings = (OSQPSettings *)c_malloc(sizeof(OSQPSettings));
@@ -170,12 +166,15 @@ namespace Shape_regularization {
       OSQPData *data;
 
       // Populate data.
+      const c_int n = P_nnz;
+      const c_int m = l_nnz;
+
       data = (OSQPData *)c_malloc(sizeof(OSQPData));
       data->n = n;
       data->m = m;
-      data->P = csc_matrix(data->n, data->n, P_nnz, P_x, P_i, P_p);
+      data->P = csc_matrix(n, n, P_nnz, P_x, P_i, P_p);
       data->q = q_x;
-      data->A = csc_matrix(data->m, data->n, A_nnz, A_x, A_i, A_p);
+      data->A = csc_matrix(m, n, A_nnz, A_x, A_i, A_p);
       data->l = l_x;
       data->u = u_x;
 
@@ -210,22 +209,13 @@ namespace Shape_regularization {
     /// \endcond
 
   private:
-    std::vector<Triplet> P_vec;
     std::vector<Triplet> A_vec;
-    std::vector<FT> q_vec, l_vec, u_vec;
-
-    Sparse_matrix P_, A_;
-    Dense_vector q_, l_, u_;
+    std::vector<FT> P_vec, q_vec, l_vec, u_vec;
+    Sparse_matrix A_;
 
     void finalize_qp_data() {
       
-      // P data.
       const std::size_t n = P_vec.size();
-      P_.resize(n, n);
-      P_.setFromTriplets(P_vec.begin(), P_vec.end());
-      P_.makeCompressed();
-      
-      // A data.
       std::size_t s = A_vec.size() / 3;
       A_vec.reserve(A_vec.size() + n);
       for (std::size_t i = 0; i < n; ++i)
@@ -235,39 +225,19 @@ namespace Shape_regularization {
       A_.resize(m, n);
       A_.setFromTriplets(A_vec.begin(), A_vec.end());
       A_.makeCompressed(); 
-
-      // q data.
-      q_.resize(q_vec.size());
-      for (std::size_t i = 0; i < q_vec.size(); ++i)
-        q_[i] = q_vec[i];
-
-      // l data.
-      l_.resize(l_vec.size());
-      for (std::size_t i = 0; i < l_vec.size(); ++i)
-        l_[i] = l_vec[i];
-
-      // u data.
-      u_.resize(u_vec.size());
-      for (std::size_t i = 0; i < u_vec.size(); ++i)
-        u_[i] = u_vec[i];
     }
 
     void set_P_data(
-      const c_int n, 
-      const Sparse_matrix& P,
       c_float *P_x, 
       c_int   *P_i, 
       c_int   *P_p) const {
 
-      std::size_t it = 0;
-      for (int i = 0; i < P.outerSize(); ++i) {
-        for (Sparse_matrix_iterator m_i(P, i); m_i; ++m_i) {
-          const double val = CGAL::to_double(m_i.value());
-          P_x[it] = val; ++it;
-        }
-      }
+      const std::size_t n = P_vec.size();
+      for (std::size_t i = 0; i < n; ++i)
+        P_x[i] = CGAL::to_double(P_vec[i]);
+
       P_p[0] = 0;
-      for (int i = 0; i < n; ++i) {
+      for (std::size_t i = 0; i < n; ++i) {
         P_i[i] = i;
         P_p[i] = i;
       }
@@ -281,7 +251,7 @@ namespace Shape_regularization {
       c_int   *A_p) const {
 
       std::size_t it = 0;
-      for (int i = 0; i < A.outerSize(); ++i) {
+      for (std::size_t i = 0; i < A.outerSize(); ++i) {
         for (Sparse_matrix_iterator m_i(A, i); m_i; ++m_i) {
           const double val = CGAL::to_double(m_i.value());
           const std::size_t idx = m_i.row();
@@ -291,25 +261,27 @@ namespace Shape_regularization {
         }
       }
       A_p[0] = 0;
-      for (int i = 1; i <= A.outerSize(); ++i) {
+      for (std::size_t i = 1; i <= A.outerSize(); ++i) {
         const std::size_t coln = A.innerVector(i - 1).nonZeros();
-        A_p[i] = A_p[i-1] + coln;
+        A_p[i] = A_p[i - 1] + coln;
       } 
     }
 
     void set_qlu_data(
-      const c_int n, const c_int m, 
-      const Dense_vector& q,
-      const Dense_vector& l,
-      const Dense_vector& u,
       c_float *q_x, 
       c_float *l_x, 
       c_float *u_x) const {
 
-      for (int i = 0; i < m; ++i) {
-        if (i < n) q_x[i] = CGAL::to_double(q[i]);
-        l_x[i] = CGAL::to_double(l[i]);
-        u_x[i] = CGAL::to_double(u[i]);
+      const std::size_t n = q_vec.size();
+      const std::size_t m = l_vec.size();
+
+      CGAL_assertion(n <= m);
+      CGAL_assertion(l_vec.size() == u_vec.size());
+
+      for (std::size_t i = 0; i < m; ++i) {
+        if (i < n) q_x[i] = CGAL::to_double(q_vec[i]);
+        l_x[i] = CGAL::to_double(l_vec[i]);
+        u_x[i] = CGAL::to_double(u_vec[i]);
       }
     }
   };
