@@ -82,8 +82,9 @@ namespace Segments {
     using Point_2 = typename Traits::Point_2;
     using Vector_2  = typename Traits::Vector_2;
     using Segment_2 = typename Traits::Segment_2;
+    using Direction_2 = typename Traits::Direction_2;
 
-    using Segment_data = typename internal::Segment_wrapper_2<Traits>;
+    using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
     using Conditions = typename internal::Offset_conditions_2<Traits>;
     using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
 
@@ -209,7 +210,7 @@ namespace Segments {
 
       Targets_map targets;
       std::map<FT, Indices> collinear_groups;
-      std::map<std::size_t, Segment_data> segments;
+      std::map<std::size_t, Segment_wrapper_2> segments;
 
       CGAL_precondition(m_targets.size() > 0);
       for (const auto& group : m_groups) {
@@ -288,7 +289,7 @@ namespace Segments {
     Input_range& m_input_range;
     FT m_d_max;
     const Segment_map m_segment_map;
-    std::map<std::size_t, Segment_data> m_segments;
+    std::map<std::size_t, Segment_wrapper_2> m_segments;
     std::map<Size_pair, FT> m_targets;
     Grouping m_grouping;
     std::vector<Indices> m_groups;
@@ -306,21 +307,21 @@ namespace Segments {
 
         const auto& segment = 
           get(m_segment_map, *(m_input_range.begin() + seg_index));
-        Segment_data seg_data(segment, seg_index);
+        Segment_wrapper_2 seg_data(segment, seg_index);
+        seg_data.set_all();
 
         if (i == 0)
           frame_origin = seg_data.barycenter;
 
         seg_data.ref_coords = internal::transform_coordinates_2(
           seg_data.barycenter, frame_origin, seg_data.orientation);
-        m_segments.emplace(
-          seg_index, seg_data);
+        m_segments.emplace(seg_index, seg_data);
       } 
     }
 
     void build_grouping_data(
       const Indices& group,
-      std::map<std::size_t, Segment_data>& segments,
+      std::map<std::size_t, Segment_wrapper_2>& segments,
       Targets_map& targets) {
       
       for (const std::size_t seg_index : group) {
@@ -399,7 +400,8 @@ namespace Segments {
       auto& seg_data = m_segments.at(seg_index);
 
       const auto& direction = seg_data.direction;
-      const Vector_2 final_normal = Vector_2(-direction.y(), direction.x());
+      const Vector_2 final_normal = Vector_2(
+        -direction.dy(), direction.dx());
 
       const auto& source = seg_data.segment.source();
       const auto& target = seg_data.segment.target();
@@ -423,24 +425,27 @@ namespace Segments {
       const std::size_t seg_index, 
       const FT new_difference, 
       const FT a, const FT b, const FT c, 
-      const Vector_2& direction) {
+      const Direction_2& direction) {
       
       FT difference = new_difference;
       auto& seg_data = m_segments.at(seg_index);
 
       seg_data.direction = direction;
-      if (seg_data.direction.y() < FT(0) || 
-      (seg_data.direction.y() == FT(0) && seg_data.direction.x() < FT(0))) 
+      if (seg_data.direction.dy() < FT(0) || 
+      (seg_data.direction.dy() == FT(0) && seg_data.direction.dx() < FT(0))) 
         seg_data.direction = -seg_data.direction;
 
       Vector_2 final_normal = Vector_2(
-        -seg_data.direction.y(), seg_data.direction.x());
+        -seg_data.direction.dy(), seg_data.direction.dx());
 
       const auto& source = seg_data.segment.source();
       const auto& target = seg_data.segment.target();
 
       FT x1, x2, y1, y2;
-      if (CGAL::abs(seg_data.direction.x()) > CGAL::abs(seg_data.direction.y())) {
+      if (
+        CGAL::abs(seg_data.direction.dx()) > 
+        CGAL::abs(seg_data.direction.dy())) {
+
         x1 = source.x() + difference * final_normal.x();
         x2 = target.x() + difference * final_normal.x(); 
         y1 = (-c - a * x1) / b;

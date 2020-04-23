@@ -24,10 +24,6 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// CGAL includes.
-#include <CGAL/squared_distance_2.h>
-#include <CGAL/Aff_transformation_2.h>
-
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
 
@@ -58,7 +54,6 @@ namespace internal {
     using Line_2 = typename Traits::Line_2;
     using Intersect_2 = typename Traits::Intersect_2;
 
-    // Should I change it to the Segment_data_2 class?
     struct Segment_wrapper_2 {
 
       Segment_2 segment;
@@ -70,7 +65,6 @@ namespace internal {
     };
 
     using FT_pair = std::pair<FT, FT>;
-    using Segments_2 = std::vector<Segment_2>;
     using Segment_wrappers_2 = std::vector<Segment_wrapper_2>;
     using Polyline = std::vector<Point_3>;
 
@@ -113,7 +107,7 @@ namespace internal {
         wrap.index = i;
         wrap.segment = Segment_2(source, target);
         wrap.direction = 
-          internal::segment_to_direction_2(wrap.segment);
+          internal::direction_2(wrap.segment);
         wrap.is_valid_direction = 
           is_valid_principal_direction(min_length_2, wrap.segment);
         wraps.push_back(wrap);
@@ -147,7 +141,7 @@ namespace internal {
         wrap.index = i;
         wrap.segment = Segment_2(source, target);
         wrap.direction = 
-          internal::segment_to_direction_2(wrap.segment);
+          internal::direction_2(wrap.segment);
         wrap.is_valid_direction = 
           is_valid_principal_direction(min_length_2, wrap.segment);
         wraps.push_back(wrap);
@@ -552,7 +546,7 @@ namespace internal {
       const auto& ref_bounds = bounds[direction_index];
 
       const Direction_2 seg_direction = 
-        internal::segment_to_direction_2(segment);
+        internal::direction_2(segment);
       rotate_segment(
         ref_bounds, ref_direction, seg_direction, segment);
     }

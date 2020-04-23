@@ -40,6 +40,8 @@
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
+#include <CGAL/squared_distance_2.h>
+#include <CGAL/Aff_transformation_2.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {
@@ -113,27 +115,11 @@ namespace internal {
       CGAL::sqrt(CGAL::to_double(v.squared_length())));
   }
 
-  // Merge this function with the function below.
-  template<typename Segment_2>
-  typename Kernel_traits<Segment_2>::Kernel::Vector_2
-  direction_2(const Segment_2& segment) { 
-    
-    using Traits = typename Kernel_traits<Segment_2>::Kernel;
-    using FT = typename Traits::FT;
-    using Vector_2 = typename Traits::Vector_2;
-
-    Vector_2 v = segment.to_vector();
-    if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0))) 
-      v = -v;
-    normalize(v); // can I remove the normalize factor here?
-    return v;
-  }
-
   // Is it a valid implementation for a contour edge rather than a segment?
   // If I use angle_2_degrees with this, my consecutive_groups function does not work.
   template<typename Segment_2>
   typename Kernel_traits<Segment_2>::Kernel::Direction_2
-  segment_to_direction_2(const Segment_2& segment) { 
+  direction_2(const Segment_2& segment) { 
     
     using Traits = typename Kernel_traits<Segment_2>::Kernel;
     using FT = typename Traits::FT;

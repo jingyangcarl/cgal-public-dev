@@ -45,7 +45,7 @@ namespace internal {
     using Indices = std::vector<std::size_t>;
     using Size_pair = std::pair<std::size_t, std::size_t>;
 
-    using Segment_data = typename internal::Segment_wrapper_2<Traits>;
+    using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
     using Targets_map = 
       std::map<Size_pair, std::pair<FT, std::size_t> >;
     using Relations_map = 
@@ -59,7 +59,7 @@ namespace internal {
     void make_groups(
       const FT max_bound, 
       const std::size_t n, 
-      const std::map<std::size_t, Segment_data>& segments,
+      const std::map<std::size_t, Segment_wrapper_2>& segments,
       const std::vector<FT>& qp_result,
       std::map<FT, Indices>& groups_by_value,
       const Targets_map& targets, 
@@ -163,7 +163,7 @@ namespace internal {
 
     void build_map_of_values(
       const std::vector<FT>& qp_result,
-      const std::map<std::size_t, Segment_data>& segments) {
+      const std::map<std::size_t, Segment_wrapper_2>& segments) {
       
       for (const auto& segment_to_group : m_segments_to_groups) {
         int g_i = segment_to_group.second;
@@ -189,7 +189,7 @@ namespace internal {
     }
 
     void assign_segments_to_groups(
-      const std::map<std::size_t, Segment_data>& segments) {
+      const std::map<std::size_t, Segment_wrapper_2>& segments) {
       
       for (const auto& segment_to_group : m_segments_to_groups) {
         int g_i = segment_to_group.second;

@@ -73,7 +73,7 @@ namespace Segments {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
-    using Segment_wrapper = typename internal::Segment_wrapper_2<Traits>;
+    using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
     using Indices = std::vector<std::size_t>;
     /// \endcond
 
@@ -148,7 +148,7 @@ namespace Segments {
     const Segment_map m_segment_map;
     
     double m_max_angle;
-    std::vector<Segment_wrapper> m_wraps;
+    std::vector<Segment_wrapper_2> m_wraps;
     std::map<std::size_t, Indices> m_parallel_groups;
 
     void build_segment_data() {
@@ -157,7 +157,9 @@ namespace Segments {
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
         const auto& segment = get(
           m_segment_map, *(m_input_range.begin() + i));
-        m_wraps.push_back(Segment_wrapper(segment, i));
+        Segment_wrapper_2 wrap = Segment_wrapper_2(segment, i);
+        wrap.set_orientation();
+        m_wraps.push_back(wrap);
       }
       CGAL_assertion(m_wraps.size() == m_input_range.size());
     }

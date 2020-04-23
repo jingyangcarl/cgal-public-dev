@@ -197,7 +197,7 @@ namespace Contours {
       const auto& target = get(m_point_map, *(m_input_range.begin() + ip));
       
       const Segment_2 segment = Segment_2(source, target);
-      return internal::segment_to_direction_2(segment);
+      return internal::direction_2(segment);
     }
 
     void estimate_open(
@@ -241,7 +241,7 @@ namespace Contours {
       const auto& target = get(m_point_map, *(m_input_range.begin() + ip));
 
       const Segment_2 segment = Segment_2(source, target);
-      return internal::segment_to_direction_2(segment);
+      return internal::direction_2(segment);
     }
   };
 

@@ -37,14 +37,14 @@ namespace internal {
   public:
     using Traits = GeomTraits;
     using FT = typename Traits::FT;
-    using Segment_data = typename internal::Segment_wrapper_2<Traits>;
+    using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
 
     Offset_conditions_2() :
     m_margin_of_error(FT(1)) 
     { }
 
     FT reference(
-      const Segment_data& seg_data, 
+      const Segment_wrapper_2& seg_data, 
       const FT suffix) const {
 
       FT val = seg_data.ref_coords.y() + suffix;

@@ -36,37 +36,59 @@ namespace internal {
 
   public:
     using Traits = GeomTraits;
-    using Segment_2 = typename Traits::Segment_2;
-    using Point_2 = typename Traits::Point_2;
-    using Vector_2  = typename Traits::Vector_2;
     using FT = typename Traits::FT;
-
+    using Point_2 = typename Traits::Point_2;
+    using Segment_2 = typename Traits::Segment_2;
+    using Direction_2  = typename Traits::Direction_2;
+    
     const Segment_2& segment;
     const std::size_t index;
     
-    Point_2  barycenter;
-    FT       length;
-    Vector_2 direction;
-    FT       orientation;
-    Point_2  ref_coords;
-    FT       a, b, c;
+    Point_2 barycenter, ref_coords;
+    FT orientation, length, a, b, c;
+    Direction_2 direction;
 
     Segment_wrapper_2(
-      const Segment_2& s,
-      const std::size_t sindex):
-    segment(s), index(sindex) {
+      const Segment_2& segment_,
+      const std::size_t index_):
+    segment(segment_), 
+    index(index_) 
+    { }
 
+    void set_length() {
+      length = internal::length_2(segment);
+    }
+
+    void set_barycenter() {
       barycenter = internal::middle_point_2(
         segment.source(), segment.target());
-      length = internal::length_2(segment);
-      direction = internal::direction_2(segment);
-      orientation = internal::orientation_2(direction);
+    }
 
+    void set_direction() {
+      direction = internal::direction_2(segment); 
+    }
+
+    void set_orientation() {
+      set_direction();
+      const auto dir = direction.to_vector();
+      orientation = internal::orientation_2(dir);
+    }
+
+    void set_abc() {
+      
+      set_barycenter();
+      set_orientation();
+      
       const double angle_rad = CGAL::to_double(
         orientation * static_cast<FT>(CGAL_PI) / FT(180));
       a = -static_cast<FT>(std::sin(angle_rad));
       b = +static_cast<FT>(std::cos(angle_rad));
       c = -a * barycenter.x() - b * barycenter.y();
+    }
+
+    void set_all() {
+      set_length();
+      set_abc();
     }
   };
 

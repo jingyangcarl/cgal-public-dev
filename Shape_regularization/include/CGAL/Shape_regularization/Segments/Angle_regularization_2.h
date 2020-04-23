@@ -83,7 +83,7 @@ namespace Segments {
     using Vector_2 = typename Traits::Vector_2;
     using Segment_2 = typename Traits::Segment_2;
 
-    using Segment_wrapper = typename internal::Segment_wrapper_2<Traits>;
+    using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
     using Conditions = typename internal::Angle_conditions_2<Traits>;
     using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
     
@@ -224,7 +224,7 @@ namespace Segments {
 
       Targets_map targets;
       Relations_map relations;
-      std::map<std::size_t, Segment_wrapper> segments;
+      std::map<std::size_t, Segment_wrapper_2> segments;
       std::map<FT, Indices> parallel_groups;
 
       CGAL_precondition(m_targets.size() > 0);
@@ -322,7 +322,7 @@ namespace Segments {
     Input_range& m_input_range;
     FT m_theta_max;
     const Segment_map m_segment_map;
-    std::map<std::size_t, Segment_wrapper> m_segments;
+    std::map<std::size_t, Segment_wrapper_2> m_segments;
     std::map<Size_pair, FT> m_targets;
     std::map<Size_pair, int> m_relations;
     Grouping m_grouping;
@@ -340,14 +340,15 @@ namespace Segments {
 
         const auto& segment = get(m_segment_map, 
           *(m_input_range.begin() + seg_index));
-        const Segment_wrapper seg_data(segment, seg_index);
+        Segment_wrapper_2 seg_data(segment, seg_index);
+        seg_data.set_all();
         m_segments.emplace(seg_index, seg_data);
       }
     }
 
     void build_grouping_data(
       const Indices& group,
-      std::map<std::size_t, Segment_wrapper>& segments,
+      std::map<std::size_t, Segment_wrapper_2>& segments,
       Targets_map& targets,
       Relations_map& relations) {
       
