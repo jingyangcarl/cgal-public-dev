@@ -76,11 +76,16 @@ namespace Shape_regularization {
     void reserve_l(const std::size_t) { }
     void reserve_u(const std::size_t) { }
 
-    void set_d(int i, int j, const FT val) {
+    void set_d(
+      const std::size_t i, 
+      const std::size_t j, 
+      const FT val) {
       m_quadratic_program.set_d(i, j, val);
     }
 
-    void set_c(int j, const FT val) {
+    void set_c(
+      const std::size_t j, 
+      const FT val) {
       m_quadratic_program.set_c(j, val);
     }
 
@@ -88,19 +93,30 @@ namespace Shape_regularization {
       m_quadratic_program.set_c0(val);
     }
 
-    void set_a(int j, int i, const FT val) {
+    void set_a(
+      const std::size_t j, 
+      const std::size_t i, 
+      const FT val) {
       m_quadratic_program.set_a(j, i, val);
     }
     
-    void set_b(int i, const FT val) {
+    void set_b(
+      const std::size_t i, 
+      const FT val) {
       m_quadratic_program.set_b(i, val);
     }
 
-    void set_l(int j, bool, const FT val) {
+    void set_l(
+      const std::size_t j, 
+      const bool, 
+      const FT val) {
       m_quadratic_program.set_l(j, val);
     }
 
-    void set_u(int j, bool, const FT val) {
+    void set_u(
+      const std::size_t j, 
+      const bool, 
+      const FT val) {
       m_quadratic_program.set_u(j, val);
     }
 

@@ -34,6 +34,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <tuple>
 
 // CGAL includes.
 #include <CGAL/utils.h>
