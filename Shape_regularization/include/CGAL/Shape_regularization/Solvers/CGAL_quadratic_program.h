@@ -46,9 +46,7 @@ namespace Shape_regularization {
     number type.
   */
   template<typename FT>
-  class CGAL_quadratic_program : 
-    public CGAL::Quadratic_program<int> {
-
+  class CGAL_quadratic_program {
     using Quadratic_program = CGAL::Quadratic_program<int>;
 
   public:
@@ -60,7 +58,7 @@ namespace Shape_regularization {
       \brief initializes all internal data structures.
     */
     CGAL_quadratic_program() : 
-      Quadratic_program(
+      m_quadratic_program(
         CGAL::SMALLER, 
         true, 
         -internal::max_value<FT>(),
@@ -77,36 +75,59 @@ namespace Shape_regularization {
     void reserve_b(const std::size_t) { }
     void reserve_l(const std::size_t) { }
     void reserve_u(const std::size_t) { }
+
+    void set_d(int i, int j, const FT val) {
+      m_quadratic_program.set_d(i, j, val);
+    }
+
+    void set_c(int j, const FT val) {
+      m_quadratic_program.set_c(j, val);
+    }
+
+    void set_c0(const FT val) {
+      m_quadratic_program.set_c0(val);
+    }
+
+    void set_a(int j, int i, const FT val) {
+      m_quadratic_program.set_a(j, i, val);
+    }
+    
+    void set_b(int i, const FT val) {
+      m_quadratic_program.set_b(i, val);
+    }
+
+    void set_l(int j, bool, const FT val) {
+      m_quadratic_program.set_l(j, val);
+    }
+
+    void set_u(int j, bool, const FT val) {
+      m_quadratic_program.set_u(j, val);
+    }
+
+    /*
+      \brief solves an OSQP quadratic program.
+
+      \param solution
+      a vector with the solution
+
+      \returns a status of the computation `success == true`
+    */
+    bool solve(
+      std::vector<FT>& solution) {
+
+      auto s = CGAL::solve_quadratic_program(m_quadratic_program, FT());
+      for (auto x = s.variable_values_begin(); 
+      x != s.variable_values_end(); ++x)
+        solution.push_back(static_cast<FT>(
+          CGAL::to_double(*x)));
+
+      return s.solves_quadratic_program(m_quadratic_program);
+    }
     /// \endcond
+
+  private:
+    Quadratic_program m_quadratic_program;
   };
-
-  /*!
-    \ingroup PkgShapeRegularizationRefSolvers
-    
-    \brief solves a \cgal quadratic program.
-
-    \tparam FT
-    number type.
-
-    \param qp
-    a quadratic program to be solved
-
-    \param solution
-    a vector with the solution
-  */
-  template<typename FT>
-  bool solve_quadratic_program(
-    const CGAL::Shape_regularization::CGAL_quadratic_program<FT>& qp,
-    std::vector<FT>& solution) {
-    
-    auto s = CGAL::solve_quadratic_program(qp, FT());
-    for (auto x = s.variable_values_begin(); 
-    x != s.variable_values_end(); ++x)
-      solution.push_back(static_cast<FT>(
-        CGAL::to_double(*x)));
-
-    return s.solves_quadratic_program(qp);
-  }
 
 } // namespace Shape_regularization
 } // namespace CGAL

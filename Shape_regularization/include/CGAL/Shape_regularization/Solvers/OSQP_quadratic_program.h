@@ -24,10 +24,6 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-// CGAL includes.
-#include <CGAL/QP_models.h>
-#include <CGAL/QP_functions.h>
-
 // Eigen includes.
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -53,13 +49,10 @@ namespace Shape_regularization {
     number type.
   */
   template<typename FT>
-  class OSQP_quadratic_program : 
-    public CGAL::Quadratic_program<int> {
+  class OSQP_quadratic_program {
 
-    using Solution = CGAL::Quadratic_program_solution<FT>;
     using Triplet = Eigen::Triplet<FT>;
     using Sparse_matrix = typename Eigen::SparseMatrix<FT, Eigen::ColMajor>;
-    using Dense_vector = typename Eigen::Matrix<FT, Eigen::Dynamic, 1>;
     using Sparse_matrix_iterator = typename Sparse_matrix::InnerIterator;
 
   public:
@@ -130,6 +123,14 @@ namespace Shape_regularization {
       u_vec.push_back(val);
     }
 
+    /*
+      \brief solves an OSQP quadratic program.
+
+      \param solution
+      a vector with the solution
+
+      \returns a status of the computation `success == true`
+    */
     bool solve(
       std::vector<FT>& solution) {
 
@@ -285,28 +286,6 @@ namespace Shape_regularization {
       }
     }
   };
-
-  /*!
-    \ingroup PkgShapeRegularizationRefSolvers
-    
-    \brief solves an OSQP quadratic program.
-
-    \tparam FT
-    number type.
-
-    \param qp
-    a quadratic program to be solved
-
-    \param solution
-    a vector with the solution
-  */
-  template<typename FT>
-  bool solve_quadratic_program(
-    CGAL::Shape_regularization::OSQP_quadratic_program<FT>& qp,
-    std::vector<FT>& solution) {
-    
-    return qp.solve(solution);
-  }
 
 } // namespace Shape_regularization
 } // namespace CGAL

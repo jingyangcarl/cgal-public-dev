@@ -39,41 +39,33 @@ struct Custom_regularization_2 {
 };
 
 template<typename NT>
-class USER_quadratic_program : 
-  public CGAL::Quadratic_program<int> {
-  using Quadratic_program = CGAL::Quadratic_program<int>;
-  
+class USER_quadratic_program  {
   public:
-    USER_quadratic_program() : 
-      Quadratic_program(
-        CGAL::SMALLER, true, -NT(100000), true, +NT(100000))
-    { }
-
     void reserve_d(const std::size_t) { }
     void reserve_c(const std::size_t) { }
     void reserve_a(const std::size_t) { }
     void reserve_b(const std::size_t) { }
     void reserve_l(const std::size_t) { }
     void reserve_u(const std::size_t) { }
-};
 
-template<typename NT>
-bool solve_quadratic_program(
-  CGAL::Shape_regularization::USER_quadratic_program<NT>& qp,
-  std::vector<NT>& solution) {
-  
-  // Add your code here!
-  solution.clear();
-  return false; // return status of the computation
-}
+    void set_d(int, int, const FT) { }
+    void set_c(int, const FT) { }
+    void set_c0(const FT) { }
+    void set_a(int, int, const FT) { }
+    void set_b(int, const FT) { }
+    void set_l(int, bool, const FT) { }
+    void set_u(int, bool, const FT) { }
+
+    bool solve(std::vector<NT>& solution) { return false; }
+};
 
 } // namespace Shape_regularization
 } // namespace CGAL
 
 // Choose a type of a solver.
-#define OSQP_SOLVER
+// #define OSQP_SOLVER
 // #define CGAL_SOLVER
-// #define USER_SOLVER
+#define USER_SOLVER
 
 #if defined(OSQP_SOLVER)
 using Quadratic_program = 

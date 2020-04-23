@@ -26,8 +26,6 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
-#include <CGAL/Shape_regularization/Solvers/CGAL_quadratic_program.h>
-#include <CGAL/Shape_regularization/Solvers/OSQP_quadratic_program.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -362,8 +360,7 @@ namespace Shape_regularization {
       solution.clear();
       solution.reserve(n);
 
-      const auto success = CGAL::Shape_regularization::
-        solve_quadratic_program(qp, solution);
+      const auto success = qp.solve(solution);
       if (!success)
         std::cerr << "WARNING: The solver has not converged!" << std::endl;
       CGAL_assertion(solution.size() == n);
