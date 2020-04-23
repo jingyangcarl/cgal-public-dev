@@ -119,6 +119,13 @@ namespace Contours {
       else 
         estimate_open(
           direction_range, m_bounds, m_directions, m_assigned);
+
+      if (verbose()) {
+        std::cout << "* assigned directions: ";
+        for (std::size_t direction_index : m_assigned)
+          std::cout << direction_index << " ";
+        std::cout << std::endl;
+      }
     }
 
     /// @}
@@ -201,16 +208,6 @@ namespace Contours {
       
       m_base.unify_along_contours_closed(wraps, assigned);
       m_base.correct_directions_closed(wraps, assigned);
-
-      // Do we need that here?
-      // m_base.readjust_directions(wraps, assigned, directions);
-
-      if (verbose()) {
-        std::cout << "* assigned directions: ";
-        for (std::size_t direction_index : assigned)
-          std::cout << direction_index << " ";
-        std::cout << std::endl;
-      }
     }
 
     template<typename DirectionRange>
@@ -240,16 +237,6 @@ namespace Contours {
       
       m_base.unify_along_contours_open(wraps, assigned);
       m_base.correct_directions_open(wraps, assigned);
-
-      // Do we need that here?
-      // m_base.readjust_directions(wraps, assigned, directions);
-
-      if (verbose()) {
-        std::cout << "* assigned directions: ";
-        for (std::size_t direction_index : assigned)
-          std::cout << direction_index << " ";
-        std::cout << std::endl;
-      }
     }
   };
 

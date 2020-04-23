@@ -133,6 +133,13 @@ namespace Contours {
         estimate_closed(m_bounds, m_directions, m_assigned);
       else 
         estimate_open(m_bounds, m_directions, m_assigned);
+
+      if (verbose()) {
+        std::cout << "* assigned directions: ";
+        for (std::size_t direction_index : m_assigned)
+          std::cout << direction_index << " ";
+        std::cout << std::endl;
+      }
     }
 
     /// @}
@@ -202,20 +209,13 @@ namespace Contours {
       m_base.estimate_initial_directions(
         m_max_angle_2, wraps, bounds, directions, assigned);
 
-      if (directions.size() == 0) {
+      if (directions.size() <= 1) {
         m_base.set_longest_direction(
           wraps, bounds, directions, assigned);
       } else {
         m_base.unify_along_contours_closed(wraps, assigned);
         m_base.correct_directions_closed(wraps, assigned);
         m_base.readjust_directions(wraps, assigned, directions);
-      }
-
-      if (verbose()) {
-        std::cout << "* assigned directions: ";
-        for (std::size_t direction_index : assigned)
-          std::cout << direction_index << " ";
-        std::cout << std::endl;
       }
     }
 
@@ -230,20 +230,13 @@ namespace Contours {
       m_base.estimate_initial_directions(
         m_max_angle_2, wraps, bounds, directions, assigned);
 
-      if (directions.size() == 0) {
+      if (directions.size() <= 1) {
         m_base.set_longest_direction(
           wraps, bounds, directions, assigned);
       } else {
         m_base.unify_along_contours_open(wraps, assigned);
         m_base.correct_directions_open(wraps, assigned);
         m_base.readjust_directions(wraps, assigned, directions);
-      }
-
-      if (verbose()) {
-        std::cout << "* assigned directions: ";
-        for (std::size_t direction_index : assigned)
-          std::cout << direction_index << " ";
-        std::cout << std::endl;
       }
     }
   };

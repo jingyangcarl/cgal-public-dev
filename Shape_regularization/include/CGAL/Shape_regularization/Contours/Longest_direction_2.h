@@ -101,6 +101,13 @@ namespace Contours {
         estimate_closed(m_bounds, m_directions, m_assigned);
       else 
         estimate_open(m_bounds, m_directions, m_assigned);
+
+      if (verbose()) {
+        std::cout << "* assigned directions: ";
+        for (std::size_t direction_index : m_assigned)
+          std::cout << direction_index << " ";
+        std::cout << std::endl;
+      }
     }
 
     /// @}

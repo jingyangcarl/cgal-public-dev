@@ -36,12 +36,12 @@ if(CGAL_FOUND)
     message(STATUS "NOTICE: OSQP was not found. OSQP examples won't be available.")
   endif()
 
-  # create_single_source_cgal_program(
-  #   "regularize_planes.cpp")
-  # create_single_source_cgal_program(
-  #   "regularize_closed_contour.cpp")
-  # create_single_source_cgal_program(
-  #   "regularize_open_contour.cpp")
+  create_single_source_cgal_program(
+    "regularize_planes.cpp")
+  create_single_source_cgal_program(
+    "regularize_closed_contour.cpp")
+  create_single_source_cgal_program(
+    "regularize_open_contour.cpp")
 
 else()
   message(WARNING 
