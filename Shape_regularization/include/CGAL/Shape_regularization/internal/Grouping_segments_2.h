@@ -25,7 +25,7 @@
 // #include <CGAL/license/Shape_regularization.h>
 
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/Segment_data_2.h>
+#include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
 
 // TODO:
 // * Improve this class, try to clean it up and simplify.
@@ -45,7 +45,7 @@ namespace internal {
     using Indices = std::vector<std::size_t>;
     using Size_pair = std::pair<std::size_t, std::size_t>;
 
-    using Segment_data = typename internal::Segment_data_2<Traits>;
+    using Segment_data = typename internal::Segment_wrapper_2<Traits>;
     using Targets_map = 
       std::map<Size_pair, std::pair<FT, std::size_t> >;
     using Relations_map = 

@@ -25,7 +25,7 @@
 // #include <CGAL/license/Shape_regularization.h>
 
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/Segment_data_2.h>
+#include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -37,7 +37,7 @@ namespace internal {
   public:
     using Traits = GeomTraits;
     using FT = typename Traits::FT;
-    using Segment_data = typename internal::Segment_data_2<Traits>;
+    using Segment_data = typename internal::Segment_wrapper_2<Traits>;
 
     Angle_conditions_2() :
     m_margin_of_error(FT(1) / FT(4)) 

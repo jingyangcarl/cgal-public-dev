@@ -29,10 +29,7 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/Segment_data_2.h>
-
-// TODO:
-// * Improve this class by fixing the ugly parameter.
+#include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -76,8 +73,7 @@ namespace Segments {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
-    using Segment_2 = typename Traits::Segment_2;
-    using Segment_data = typename internal::Segment_data_2<Traits>;
+    using Segment_wrapper = typename internal::Segment_wrapper_2<Traits>;
     using Indices = std::vector<std::size_t>;
     /// \endcond
 
@@ -116,12 +112,11 @@ namespace Segments {
     m_input_range(input_range),
     m_segment_map(segment_map) {
 
-      FT max_angle = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_angle), FT(1000000));
-      m_tolerance = max_angle;
-
       CGAL_precondition(input_range.size() > 0);
+      const FT max_angle = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_angle), FT(5));
       CGAL_precondition(max_angle >= FT(0));
+      m_max_angle = std::floor(CGAL::to_double(max_angle));
 
       build_segment_data();
       make_parallel_groups();
@@ -140,8 +135,6 @@ namespace Segments {
     */
     template<typename OutputIterator>
     OutputIterator parallel_groups(OutputIterator groups) {
-      
-      CGAL_precondition(m_parallel_groups.size() > 0);
       for(const auto& parallel_group : m_parallel_groups) {
         const auto& group = parallel_group.second;
         *(groups++) = group;
@@ -153,26 +146,34 @@ namespace Segments {
   private:
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
-    std::vector<Segment_data> m_segments;
-    FT m_tolerance;
-    std::map<FT, Indices> m_parallel_groups;
+    
+    double m_max_angle;
+    std::vector<Segment_wrapper> m_wraps;
+    std::map<std::size_t, Indices> m_parallel_groups;
 
     void build_segment_data() {
+
+      m_wraps.reserve(m_input_range.size());
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        const auto& segment = 
-          get(m_segment_map, *(m_input_range.begin() + i));
-        const Segment_data seg_data(segment, i);
-        m_segments.push_back(seg_data);
+        const auto& segment = get(
+          m_segment_map, *(m_input_range.begin() + i));
+        m_wraps.push_back(Segment_wrapper(segment, i));
       }
-      CGAL_assertion(m_segments.size() > 0);
+      CGAL_assertion(m_wraps.size() == m_input_range.size());
     }
 
     void make_parallel_groups() {
-      for (const auto& seg_data : m_segments) {
-        const FT angle = static_cast<FT>(floor(
-          CGAL::to_double(seg_data.orientation * m_tolerance))) / m_tolerance;
-        const std::size_t seg_index = seg_data.index;
-        m_parallel_groups[angle].push_back(seg_index);
+      
+      m_parallel_groups.clear();
+      for (const auto& wrap : m_wraps) {
+
+        const double orient = CGAL::to_double(wrap.orientation);
+        const double fvalue = std::floor(orient);
+        const std::size_t num = static_cast<std::size_t>(
+          std::floor(fvalue / m_max_angle));
+
+        const std::size_t key = static_cast<std::size_t>(num * m_max_angle);
+        m_parallel_groups[key].push_back(wrap.index);
       }
     }
   };

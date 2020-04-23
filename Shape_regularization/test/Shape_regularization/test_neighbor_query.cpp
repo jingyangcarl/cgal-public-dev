@@ -43,6 +43,7 @@ void test_neighbor_query() {
   // Check unique group.
   Segments edges;
   neighbor_query.get_edges(edges);
+  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph0");
   assert(edges.size() == 17);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -50,6 +51,7 @@ void test_neighbor_query() {
   // Check clear.
   neighbor_query.clear();
   neighbor_query.get_edges(edges);
+  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph1");
   assert(edges.size() == 0);
   assert(neighbor_query.number_of_groups() == 0);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -58,6 +60,7 @@ void test_neighbor_query() {
   neighbor_query.clear();
   neighbor_query.add_group(groups[0]);
   neighbor_query.get_edges(edges);
+  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph2");
   assert(edges.size() == 5);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -66,6 +69,7 @@ void test_neighbor_query() {
   neighbor_query.clear();
   neighbor_query.add_group(groups[1]);
   neighbor_query.get_edges(edges);
+  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph3");
   assert(edges.size() == 5);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -75,6 +79,7 @@ void test_neighbor_query() {
   neighbor_query.add_group(groups[0]);
   neighbor_query.add_group(groups[1]);
   neighbor_query.get_edges(edges);
+  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph4");
   assert(edges.size() == 10);
   assert(neighbor_query.number_of_groups() == 2);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -84,6 +89,7 @@ void test_neighbor_query() {
   const std::list<std::size_t> mini = {0, 1};
   neighbor_query.add_group(mini);
   neighbor_query.get_edges(edges);
+  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/graph5");
   assert(edges.size() == 1);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);

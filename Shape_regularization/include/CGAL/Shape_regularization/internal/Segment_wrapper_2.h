@@ -19,8 +19,8 @@
 // Author(s)     : Jean-Philippe Bauchet, Florent Lafarge, Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2_H
-#define CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2_H
+#ifndef CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_WRAPPER_2_H
+#define CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_WRAPPER_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -32,7 +32,7 @@ namespace Shape_regularization {
 namespace internal {
 
   template<typename GeomTraits>
-  struct Segment_data_2 {
+  struct Segment_wrapper_2 {
 
   public:
     using Traits = GeomTraits;
@@ -51,7 +51,7 @@ namespace internal {
     Point_2  ref_coords;
     FT       a, b, c;
 
-    Segment_data_2(
+    Segment_wrapper_2(
       const Segment_2& s,
       const std::size_t sindex):
     segment(s), index(sindex) {
@@ -65,7 +65,7 @@ namespace internal {
       const double angle_rad = CGAL::to_double(
         orientation * static_cast<FT>(CGAL_PI) / FT(180));
       a = -static_cast<FT>(std::sin(angle_rad));
-      b =  static_cast<FT>(std::cos(angle_rad));
+      b = +static_cast<FT>(std::cos(angle_rad));
       c = -a * barycenter.x() - b * barycenter.y();
     }
   };
@@ -74,4 +74,4 @@ namespace internal {
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_DATA_2_H
+#endif // CGAL_SHAPE_REGULARIZATION_INTERNAL_SEGMENT_WRAPPER_2_H

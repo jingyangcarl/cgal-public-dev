@@ -17,7 +17,10 @@ if(CGAL_FOUND)
   if(osqp_FOUND)
     message(STATUS "Found OSQP")
 
-    set(targets test_neighbor_query)
+    set(targets 
+    test_neighbor_query
+    test_parallel_groups)
+    
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")
       if(TARGET ${target})

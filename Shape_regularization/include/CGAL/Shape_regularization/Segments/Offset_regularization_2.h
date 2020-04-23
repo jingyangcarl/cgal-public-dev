@@ -29,7 +29,7 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/Segment_data_2.h>
+#include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Offset_conditions_2.h>
 
@@ -83,7 +83,7 @@ namespace Segments {
     using Vector_2  = typename Traits::Vector_2;
     using Segment_2 = typename Traits::Segment_2;
 
-    using Segment_data = typename internal::Segment_data_2<Traits>;
+    using Segment_data = typename internal::Segment_wrapper_2<Traits>;
     using Conditions = typename internal::Offset_conditions_2<Traits>;
     using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
 
