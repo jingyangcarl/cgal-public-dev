@@ -98,8 +98,8 @@ namespace internal {
 
         wrap.index = i;
         wrap.segment = Segment_2(source, target);
-        wrap.direction = 
-          internal::direction_2(wrap.segment);
+        auto v = wrap.segment.to_vector();
+        wrap.direction = internal::direction_2(v);
         wrap.is_valid_direction = 
           is_valid_principal_direction(min_length_2, wrap.segment);
         wraps.push_back(wrap);
@@ -132,8 +132,8 @@ namespace internal {
 
         wrap.index = i;
         wrap.segment = Segment_2(source, target);
-        wrap.direction = 
-          internal::direction_2(wrap.segment);
+        auto v = wrap.segment.to_vector();
+        wrap.direction = internal::direction_2(v);
         wrap.is_valid_direction = 
           is_valid_principal_direction(min_length_2, wrap.segment);
         wraps.push_back(wrap);
@@ -537,8 +537,9 @@ namespace internal {
       const auto& ref_direction = directions[direction_index];
       const auto& ref_bounds = bounds[direction_index];
 
+      auto v = segment.to_vector();
       const Direction_2 seg_direction = 
-        internal::direction_2(segment);
+        internal::direction_2(v);
       rotate_segment(
         ref_bounds, ref_direction, seg_direction, segment);
     }

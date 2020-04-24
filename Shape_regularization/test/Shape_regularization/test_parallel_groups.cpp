@@ -48,7 +48,7 @@ void test_parallel_groups() {
   // saver.export_polylines(segments, 
   //   "/Users/monet/Documents/gsoc/ggr/logs/input");
   
-  PG grouping(
+  const PG grouping(
     segments, CGAL::parameters::max_angle(FT(55) / FT(10)));
   std::vector<Indices> groups;
   grouping.parallel_groups(

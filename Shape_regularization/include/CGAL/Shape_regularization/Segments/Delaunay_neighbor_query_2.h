@@ -167,7 +167,7 @@ namespace Segments {
 
       build_delaunay_triangulation(group);
       add_neighbors();
-      m_num_groups += 1;
+      ++m_num_groups;
     }
 
     /*!

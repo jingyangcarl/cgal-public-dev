@@ -105,10 +105,10 @@ namespace internal {
       CGAL::sqrt(CGAL::to_double(segment.squared_length())));
   }
 
-  template<typename Vector_T>
-  void normalize(Vector_T& v) {
+  template<typename Vector_d>
+  void normalize(Vector_d& v) {
     
-    using Traits = typename Kernel_traits<Vector_T>::Kernel;
+    using Traits = typename Kernel_traits<Vector_d>::Kernel;
     using FT = typename Traits::FT;
     
     v /= static_cast<FT>(
@@ -117,15 +117,14 @@ namespace internal {
 
   // Is it a valid implementation for a contour edge rather than a segment?
   // If I use angle_2_degrees with this, my function consecutive_groups() does not work.
-  template<typename Segment_2>
-  typename Kernel_traits<Segment_2>::Kernel::Direction_2
-  direction_2(const Segment_2& segment) { 
+  template<typename Vector_2>
+  typename Kernel_traits<Vector_2>::Kernel::Direction_2
+  direction_2(Vector_2& v) { 
     
-    using Traits = typename Kernel_traits<Segment_2>::Kernel;
+    using Traits = typename Kernel_traits<Vector_2>::Kernel;
     using FT = typename Traits::FT;
     using Direction_2 = typename Traits::Direction_2;
 
-    auto v = segment.to_vector();
     if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0))) 
       v = -v;
     normalize(v);
@@ -300,6 +299,16 @@ namespace internal {
     const double cosval = std::cos(CGAL::to_double(angle_rad));
     const Transformation_2 rotate_2(CGAL::ROTATION, sinval, cosval);
     direction = rotate_2(direction);
+  }
+
+  template<typename FT>
+  double radians_2(FT angle) {
+    
+    if (angle < FT(0)) angle += FT(180); 
+    else if (angle > FT(180)) angle -= FT(180);
+    const double angle_rad = CGAL::to_double(
+      angle * static_cast<FT>(CGAL_PI) / FT(180));
+    return angle_rad;
   }
 
 } // internal

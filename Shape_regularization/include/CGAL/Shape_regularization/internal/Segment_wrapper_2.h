@@ -69,7 +69,8 @@ namespace internal {
 
     void set_direction(
       const Segment_2& segment) {
-      direction = internal::direction_2(segment); 
+      auto v = segment.to_vector();
+      direction = internal::direction_2(v); 
     }
 
     void set_orientation(
@@ -108,6 +109,28 @@ namespace internal {
       ref_coords = internal::transform_coordinates_2(
         barycenter, frame_origin, orientation);
     }
+
+    Segment_2 orient() const {
+      
+      FT x1, y1, x2, y2;
+      if (
+        CGAL::abs(direction.dx()) > 
+        CGAL::abs(direction.dy())) { 
+        
+        x1 = barycenter.x() - length * direction.dx() / FT(2);
+        x2 = barycenter.x() + length * direction.dx() / FT(2);
+        y1 = (-c - a * x1) / b;
+        y2 = (-c - a * x2) / b;
+      }  else {
+        y1 = barycenter.y() - length * direction.dy() / FT(2);
+        y2 = barycenter.y() + length * direction.dy() / FT(2);
+        x1 = (-c - b * y1) / a;
+        x2 = (-c - b * y2) / a;
+      }
+      const Point_2 source = Point_2(x1, y1);
+      const Point_2 target = Point_2(x2, y2);
+      return Segment_2(source, target);
+    } 
   };
 
 } // namespace internal

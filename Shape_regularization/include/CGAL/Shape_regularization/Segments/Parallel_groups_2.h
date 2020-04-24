@@ -131,7 +131,7 @@ namespace Segments {
       an instance of OutputIterator
     */
     template<typename OutputIterator>
-    OutputIterator parallel_groups(OutputIterator groups) {
+    OutputIterator parallel_groups(OutputIterator groups) const {
       for (const auto& parallel_group : m_parallel_groups) {
         const auto& group = parallel_group.second;
         *(groups++) = group;
@@ -154,7 +154,8 @@ namespace Segments {
         const auto& segment = get(
           m_segment_map, *(m_input_range.begin() + i));
 
-        const auto direction = internal::direction_2(segment).to_vector(); 
+        auto v = segment.to_vector();
+        const auto direction = internal::direction_2(v).to_vector();
         const FT orientation = internal::orientation_2(direction);
         const double fvalue = std::floor(CGAL::to_double(orientation));
 
