@@ -127,8 +127,7 @@ namespace Segments {
       const NamedParameters np,
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
-    m_segment_map(segment_map),
-    m_num_modified_segments(0) { 
+    m_segment_map(segment_map) { 
       
       CGAL_precondition(input_range.size() > 1);
       const FT max_angle = parameters::choose_parameter(
@@ -175,33 +174,40 @@ namespace Segments {
       const auto& wrapj = m_wraps[j];
       CGAL_assertion(wrapj.is_used);
 
-      const FT mes_ij = wrapi.orientation - wrapj.orientation;
-      const double mes_90 = std::floor(CGAL::to_double(mes_ij / FT(90)));
+      const FT diff_ij = wrapi.orientation - wrapj.orientation;
+      const int diff_90 = static_cast<int>(
+        std::floor(CGAL::to_double(diff_ij / FT(90))));
 
-      const FT to_lower = FT(90) *  static_cast<FT>(mes_90)          - mes_ij;
-      const FT to_upper = FT(90) * (static_cast<FT>(mes_90) + FT(1)) - mes_ij;
+      const FT to_lower = FT(90) * (static_cast<FT>(diff_90) + FT(0)) - diff_ij;
+      const FT to_upper = FT(90) * (static_cast<FT>(diff_90) + FT(1)) - diff_ij;
+      
+      const FT abs_lower = CGAL::abs(to_lower);
+      const FT abs_upper = CGAL::abs(to_upper);
+      const FT angle = abs_lower < abs_upper ? to_lower : to_upper;
+      const FT target_value = angle;
+      
+      const FT abs_angle = CGAL::abs(angle);
+      if (abs_angle < bound(i) + bound(j)) {
 
-      const FT tar_val = 
-        CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
-
-      if (CGAL::abs(tar_val) < bound(i) + bound(j)) {
-        m_targets[std::make_pair(i, j)] = tar_val;
+        // A target value for the given graph edge i <-> j.
+        m_targets[std::make_pair(i, j)] = target_value;
  
-        int rel_val;
-        if (CGAL::abs(to_lower) < CGAL::abs(to_upper))
-          rel_val = ((90 * static_cast<int>(mes_90)) % 180 == 0 ? 0 : 1);
+        std::size_t regularity = std::size_t(-1);
+        if (abs_lower < abs_upper)
+          regularity = ((90 * (diff_90 + 0)) % 180 == 0 ? 0 : 1);
         else
-          rel_val = ((90 * static_cast<int>(mes_90 + 1.0)) % 180 == 0 ? 0 : 1);
+          regularity = ((90 * (diff_90 + 1)) % 180 == 0 ? 0 : 1);
         
-        m_relations[std::make_pair(i, j)] = rel_val;
+        // A type of regularity: 0 -> parallel; 1 -> orthogonal.
+        m_regularities[std::make_pair(i, j)] = regularity;
       } 
-      return tar_val;
+      return target_value;
     }
 
     /*!
       \brief returns `max_angle`.
     */
-    FT bound(const std::size_t) const {
+    const FT bound(const std::size_t) const {
       return m_max_angle;
     }
 
@@ -215,15 +221,15 @@ namespace Segments {
       \pre `solution.size() > 0`
     */
     void update(const std::vector<FT>& solution) {
-      CGAL_precondition(solution.size() > 0);
+      CGAL_assertion(solution.size() > 0);
 
       Targets_map targets;
       Relations_map relations;
       std::map<std::size_t, Segment_wrapper_2> segments;
       std::map<FT, Indices> parallel_groups;
 
-      CGAL_precondition(m_targets.size() > 0);
-      CGAL_precondition(m_targets.size() == m_relations.size());
+      CGAL_assertion(m_targets.size() > 0);
+      CGAL_assertion(m_targets.size() == m_regularities.size());
 
       for (const auto& group : m_groups) {
         if (group.size() < 2) continue;
@@ -299,6 +305,9 @@ namespace Segments {
     */
     void create_unique_group() {
       
+      CGAL_precondition(m_input_range.size() > 1);
+      if (m_input_range.size() < 2) return;
+
       Indices group(m_input_range.size());
       std::iota(group.begin(), group.end(), 0);
       add_group(group);
@@ -322,23 +331,35 @@ namespace Segments {
     void clear() {
       m_wraps.clear();
       m_wraps.resize(m_input_range.size());
+      m_groups.clear();
+      m_targets.clear();
+      m_regularities.clear();
+      m_num_modified_segments = 0;
     }
 
     /// @}
+
+    // EXTRA METHODS TO TEST THE CLASS!
+    /// \cond SKIP_IN_MANUAL
+    const std::size_t number_of_groups() const { 
+      return m_groups.size();
+    }
+    /// \endcond
 
   private:
     Input_range& m_input_range;
     const Segment_map m_segment_map;
     FT m_max_angle;
 
+    std::vector<Indices> m_groups;
     std::vector<Segment_wrapper_2> m_wraps;
+    std::size_t m_num_modified_segments;
 
     std::map<Size_pair, FT> m_targets;
-    std::map<Size_pair, int> m_relations;
+    std::map<Size_pair, std::size_t> m_regularities;
+
     Grouping m_grouping;
     std::map<FT, Indices> m_parallel_groups;
-    std::vector<Indices> m_groups;
-    std::size_t m_num_modified_segments;
 
     void update_segment_data(
       const Indices& group) {
@@ -364,35 +385,38 @@ namespace Segments {
       for (const std::size_t seg_index : group) {
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
-        const auto& seg_data = m_wraps[seg_index];
+        const auto& wrap = m_wraps[seg_index];
+        CGAL_assertion(wrap.is_used);
 
-        segments.emplace(seg_index, seg_data);
-        std::size_t tar_index = 0;
+        segments.emplace(seg_index, wrap);
+        std::size_t index = 0;
 
-        auto rit = m_relations.begin();
+        auto rit = m_regularities.begin();
         for (const auto& target : m_targets) {
-          const std::size_t seg_index_tar_i = target.first.first;
-          const std::size_t seg_index_tar_j = target.first.second;
-          const FT tar_val = target.second;
+          
+          const std::size_t ti = target.first.first;
+          const std::size_t tj = target.first.second;
+          const FT target_value = target.second;
 
-          auto& relation = *rit;
-          const std::size_t seg_index_rel_i = relation.first.first;
-          const std::size_t seg_index_rel_j = relation.first.second;
-          const int rel_val = relation.second;
+          auto& regularity = *rit;
+          const std::size_t ri = regularity.first.first;
+          const std::size_t rj = regularity.first.second;
+          const int regularity_type = regularity.second;
 
-          CGAL_precondition(seg_index_tar_i == seg_index_rel_i);
-          CGAL_precondition(seg_index_tar_j == seg_index_rel_j);
+          CGAL_assertion(ti == ri);
+          CGAL_assertion(tj == rj);
 
-          if (seg_index_tar_i == seg_index && seg_index_rel_i == seg_index) {
-            targets[std::make_pair(seg_index_tar_i, seg_index_tar_j)] = 
-              std::make_pair(tar_val, tar_index);
-            relations[std::make_pair(seg_index_rel_i, seg_index_rel_j)] = 
-              std::make_pair(rel_val, tar_index);
+          if (ti == seg_index && ri == seg_index) {
+            targets[std::make_pair(ti, tj)] = 
+              std::make_pair(target_value, index);
+            relations[std::make_pair(ri, rj)] = 
+              std::make_pair(regularity_type, index);
           }
-          ++rit; ++tar_index;
+          ++rit; ++index;
         }
       }
-      CGAL_postcondition(targets.size() == relations.size());
+      CGAL_assertion(
+        targets.size() == relations.size());
     }
 
     void rotate_parallel_segments(
@@ -422,9 +446,10 @@ namespace Segments {
         for (const std::size_t seg_index : group) {
           CGAL_assertion(
             seg_index >= 0 && seg_index < m_wraps.size());
+          const auto& wrap = m_wraps[seg_index];
+          CGAL_assertion(wrap.is_used);
 
-          const auto& seg_data = m_wraps[seg_index];
-          const auto& barycenter = seg_data.barycenter;
+          const auto& barycenter = wrap.barycenter;
           const FT c = -a * barycenter.x() - b * barycenter.y();
           set_orientation(seg_index, a, b, c, direction);
         }
@@ -442,9 +467,13 @@ namespace Segments {
         direction = -direction;
 
       FT x1, y1, x2, y2;
-      const auto& seg_data = m_wraps[seg_index];
-      const auto& barycenter = seg_data.barycenter;
-      const FT length = seg_data.length;
+      CGAL_assertion(
+        seg_index >= 0 && seg_index < m_wraps.size());
+      const auto& wrap = m_wraps[seg_index];
+      CGAL_assertion(wrap.is_used);
+      
+      const auto& barycenter = wrap.barycenter;
+      const FT length = wrap.length;
 
       if (CGAL::abs(direction.x()) > CGAL::abs(direction.y())) { 
         x1 = barycenter.x() - length * direction.x() / FT(2);
