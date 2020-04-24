@@ -132,19 +132,18 @@ namespace Segments {
     m_segment_map(segment_map),
     m_num_modified_segments(0) { 
 
-      FT max_offset = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(10));
-      m_d_max = max_offset;
-
       CGAL_precondition(input_range.size() > 1);
+      const FT max_offset = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(10));
       CGAL_precondition(max_offset >= FT(0));
 
-      if (max_offset < FT(0)) {
-        std::cout << 
-          "WARNING: The max offset bound has to be within [0, +inf)! Setting to 0." 
-        << std::endl;
-        m_d_max = FT(0);
+      m_max_offset = max_offset;
+      if (m_max_offset < FT(0)) {
+        std::cout << "WARNING: The max offset bound has to be within [0, +inf)! ";
+        std::cout << " Setting to the default value: 1/10 meters." << std::endl;
+        m_max_offset = FT(1) / FT(10);
       }
+      clear();
     }
     
     /// @}
@@ -156,34 +155,33 @@ namespace Segments {
       \brief calculates the target value between 2 segments, which are
       direct neighbors to each other. The target value is the offset distance.
 
-      \param query_index_i
+      \param i
       index of the first segment
 
-      \param query_index_j
+      \param j
       index of the second segment
 
-      \pre `query_index_i >= 0 && query_index_i < input_range.size()`
-      \pre `query_index_j >= 0 && query_index_j < input_range.size()`
+      \pre `i >= 0 && i < input_range.size()`
+      \pre `j >= 0 && j < input_range.size()`
     */
     FT target(
-      const std::size_t query_index_i, 
-      const std::size_t query_index_j) {
+      const std::size_t i, 
+      const std::size_t j) {
 
-      if( m_segments.size() == 0) 
+      if (m_wraps.size() == 0) 
         return FT(0);
 
-      CGAL_precondition(m_segments.size() > 1);
-      CGAL_precondition(m_segments.find(query_index_i) != m_segments.end());
-      CGAL_precondition(m_segments.find(query_index_j) != m_segments.end());
+      CGAL_assertion(m_wraps.size() == m_input_range.size());
+      CGAL_assertion(i >= 0 && i < m_wraps.size());
+      CGAL_assertion(j >= 0 && j < m_wraps.size());
 
-      const std::size_t i = query_index_i;
-      const std::size_t j = query_index_j;
-
-      const auto& s_i = m_segments.at(i);
-      const auto& s_j = m_segments.at(j);
+      const auto& wrapi = m_wraps[i];
+      CGAL_assertion(wrapi.is_used);
+      const auto& wrapj = m_wraps[j];
+      CGAL_assertion(wrapj.is_used);
 
       const FT tar_val = 
-        s_i.ref_coords.y() - s_j.ref_coords.y();
+        wrapi.ref_coords.y() - wrapj.ref_coords.y();
       if (CGAL::abs(tar_val) < bound(i) + bound(j))
         m_targets[std::make_pair(i, j)] = tar_val;
       return tar_val;
@@ -193,7 +191,7 @@ namespace Segments {
       \brief returns `max_offset`.
     */
     FT bound(const std::size_t) const {
-      return m_d_max;
+      return m_max_offset;
     }
 
     /*!
@@ -224,7 +222,7 @@ namespace Segments {
           const std::size_t n = m_input_range.size();
 
           m_grouping.make_groups(
-            m_d_max, n, segments, solution, 
+            m_max_offset, n, segments, solution, 
             collinear_groups, targets);
           translate_collinear_segments(collinear_groups);
         }
@@ -285,11 +283,26 @@ namespace Segments {
 
     /// @}
 
+    /// \name Internal data management
+    /// @{ 
+
+    /*!
+      \brief clears all internal data structures.
+    */
+    void clear() {
+      m_wraps.clear();
+      m_wraps.resize(m_input_range.size());
+    }
+
+    /// @}
+
   private:
     Input_range& m_input_range;
-    FT m_d_max;
     const Segment_map m_segment_map;
-    std::map<std::size_t, Segment_wrapper_2> m_segments;
+    FT m_max_offset;
+
+    std::vector<Segment_wrapper_2> m_wraps;
+
     std::map<Size_pair, FT> m_targets;
     Grouping m_grouping;
     std::vector<Indices> m_groups;
@@ -301,21 +314,17 @@ namespace Segments {
       Point_2 frame_origin;
       for (std::size_t i = 0; i < group.size(); ++i) {
         const std::size_t seg_index = group[i];
-        CGAL_precondition(m_segments.find(seg_index) == m_segments.end());
-        if (m_segments.find(seg_index) != m_segments.end())
-          continue;
-
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < m_wraps.size());
+        
+        auto& wrap = m_wraps[seg_index];
         const auto& segment = 
           get(m_segment_map, *(m_input_range.begin() + seg_index));
-        Segment_wrapper_2 seg_data(segment, seg_index);
-        seg_data.set_all();
+        wrap.set_all(seg_index, segment);
 
         if (i == 0)
-          frame_origin = seg_data.barycenter;
-
-        seg_data.ref_coords = internal::transform_coordinates_2(
-          seg_data.barycenter, frame_origin, seg_data.orientation);
-        m_segments.emplace(seg_index, seg_data);
+          frame_origin = wrap.barycenter;
+        wrap.set_ref_coords(frame_origin);
       } 
     }
 
@@ -325,8 +334,9 @@ namespace Segments {
       Targets_map& targets) {
       
       for (const std::size_t seg_index : group) {
-        CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
-        const auto& seg_data = m_segments.at(seg_index);
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < m_wraps.size());
+        const auto& seg_data = m_wraps[seg_index];
 
         segments.emplace(seg_index, seg_data);
         std::size_t tar_index = 0;
@@ -352,8 +362,9 @@ namespace Segments {
         const auto& group = collinear_group.second;
 
         const std::size_t longest = find_longest_segment(group);
-        CGAL_assertion(m_segments.find(longest) != m_segments.end());
-        const auto& longest_data = m_segments.at(longest);
+        CGAL_assertion(
+          longest >= 0 && longest < m_wraps.size());
+        const auto& longest_data = m_wraps[longest];
 
         FT new_difference = dt - longest_data.ref_coords.y();
         set_difference(longest, new_difference);
@@ -367,8 +378,9 @@ namespace Segments {
         // upon the line ax + by + c = 0.
         for (const std::size_t seg_index : group) {
           if (seg_index != longest) {
-            CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
-            const auto& seg_data = m_segments.at(seg_index);
+            CGAL_assertion(
+              seg_index >= 0 && seg_index < m_wraps.size());
+            const auto& seg_data = m_wraps[seg_index];
 
             new_difference = dt - seg_data.ref_coords.y();
             set_difference(seg_index, new_difference, la, lb, lc, ldirection);
@@ -383,7 +395,7 @@ namespace Segments {
       FT max_length = -FT(1);
       std::size_t longest = std::size_t(-1);
       for (const std::size_t seg_index : group) {
-        const FT seg_length = m_segments.at(seg_index).length;
+        const FT seg_length = m_wraps[seg_index].length;
         if (max_length < seg_length) {
           longest = seg_index;
           max_length = seg_length; 
@@ -397,14 +409,17 @@ namespace Segments {
       const FT new_difference) {
 
       const FT difference = new_difference;
-      auto& seg_data = m_segments.at(seg_index);
+      auto& seg_data = m_wraps[seg_index];
 
       const auto& direction = seg_data.direction;
       const Vector_2 final_normal = Vector_2(
         -direction.dy(), direction.dx());
 
-      const auto& source = seg_data.segment.source();
-      const auto& target = seg_data.segment.target();
+      const auto& segment = get(m_segment_map, 
+        *(m_input_range.begin() + seg_index));
+
+      const auto& source = segment.source();
+      const auto& target = segment.target();
 
       Point_2 new_source = Point_2(
         source.x() + difference * final_normal.x(), 
@@ -428,7 +443,7 @@ namespace Segments {
       const Direction_2& direction) {
       
       FT difference = new_difference;
-      auto& seg_data = m_segments.at(seg_index);
+      auto& seg_data = m_wraps[seg_index];
 
       seg_data.direction = direction;
       if (seg_data.direction.dy() < FT(0) || 
@@ -438,8 +453,11 @@ namespace Segments {
       Vector_2 final_normal = Vector_2(
         -seg_data.direction.dy(), seg_data.direction.dx());
 
-      const auto& source = seg_data.segment.source();
-      const auto& target = seg_data.segment.target();
+      const auto& segment = get(m_segment_map, 
+        *(m_input_range.begin() + seg_index));
+
+      const auto& source = segment.source();
+      const auto& target = segment.target();
 
       FT x1, x2, y1, y2;
       if (

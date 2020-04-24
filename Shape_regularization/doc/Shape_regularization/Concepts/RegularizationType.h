@@ -29,11 +29,11 @@ public:
     returns an objective function value between two items, which are direct neighbors.
 
     `CGAL::Shape_regularization::QP_regularization` calls this function for each neighbor pair 
-    `query_index_i <-> query_index_j` that participates in the regularization process.
+    `i <-> j` that participates in the regularization process.
   */
   typename GeomTraits::FT target(
-    const std::size_t query_index_i, 
-    const std::size_t query_index_j) {
+    const std::size_t i, 
+    const std::size_t j) {
 
   }
 

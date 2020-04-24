@@ -275,7 +275,7 @@ namespace internal {
       const FT bound_max = FT(90) - bound_min;
 
       const FT angle_2 = CGAL::abs(
-        internal::angle_2_degrees(longest, segment));
+        internal::angle_2(longest, segment));
       return (angle_2 <= bound_min) || (angle_2 >= bound_max);
     }
 
@@ -514,7 +514,7 @@ namespace internal {
         const auto& dj = wrap.direction;
 
         // Is it necessary here? Can I use angle_2_degrees instead?
-        const FT angle = internal::invar90_angle_2_degrees(di, dj);
+        const FT angle = internal::invar90_angle_2(di, dj);
 
         angles[direction_index] += angle;
         counts[direction_index] += FT(1);
@@ -878,8 +878,8 @@ namespace internal {
       const Segment_2& si, 
       const Segment_2& sp) const {
 
-      const FT angle_mi_2 = CGAL::abs(internal::angle_2_degrees(sm, si));
-      const FT angle_pi_2 = CGAL::abs(internal::angle_2_degrees(si, sp));
+      const FT angle_mi_2 = CGAL::abs(internal::angle_2(sm, si));
+      const FT angle_pi_2 = CGAL::abs(internal::angle_2(si, sp));
 
       const bool source_cond = ( angle_mi_2 <= m_angle_threshold_2 );
       const bool target_cond = ( angle_pi_2 <= m_angle_threshold_2 );
@@ -890,7 +890,7 @@ namespace internal {
     bool is_parallel_segment(
       const Segment_2& si, const Segment_2& sp) const {
 
-      const FT angle_pi_2 = CGAL::abs(internal::angle_2_degrees(si, sp));
+      const FT angle_pi_2 = CGAL::abs(internal::angle_2(si, sp));
       const bool target_cond = ( angle_pi_2 <= m_angle_threshold_2 );
       return target_cond;
     }

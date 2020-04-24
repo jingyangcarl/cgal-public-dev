@@ -41,43 +41,46 @@ namespace internal {
     using Segment_2 = typename Traits::Segment_2;
     using Direction_2  = typename Traits::Direction_2;
     
-    const Segment_2& segment;
-    const std::size_t index;
-    
+    std::size_t index = std::size_t(-1);
     Point_2 barycenter, ref_coords;
     FT orientation, length, a, b, c;
     Direction_2 direction;
+    bool is_used = false;
 
-    Segment_wrapper_2(
-      const Segment_2& segment_,
-      const std::size_t index_):
-    segment(segment_), 
-    index(index_) 
-    { }
+    void set_index(const std::size_t index_) {
+      index = index_; is_used = true;
+    }
 
-    void set_length() {
+    void set_length(
+      const Segment_2& segment) {
       length = internal::length_2(segment);
     }
 
-    void set_barycenter() {
+    void set_barycenter(
+      const Segment_2& segment) {
+
       barycenter = internal::middle_point_2(
         segment.source(), segment.target());
     }
 
-    void set_direction() {
+    void set_direction(
+      const Segment_2& segment) {
       direction = internal::direction_2(segment); 
     }
 
-    void set_orientation() {
-      set_direction();
+    void set_orientation(
+      const Segment_2& segment) {
+
+      set_direction(segment);
       const auto dir = direction.to_vector();
       orientation = internal::orientation_2(dir);
     }
 
-    void set_abc() {
+    void set_abc(
+      const Segment_2& segment) {
       
-      set_barycenter();
-      set_orientation();
+      set_barycenter(segment);
+      set_orientation(segment);
       
       const double angle_rad = CGAL::to_double(
         orientation * static_cast<FT>(CGAL_PI) / FT(180));
@@ -86,9 +89,20 @@ namespace internal {
       c = -a * barycenter.x() - b * barycenter.y();
     }
 
-    void set_all() {
-      set_length();
-      set_abc();
+    void set_all(
+      const std::size_t index_,
+      const Segment_2& segment) {
+      
+      set_index(index_);
+      set_length(segment);
+      set_abc(segment);
+    }
+
+    void set_ref_coords(
+      const Point_2& frame_origin) {
+
+      ref_coords = internal::transform_coordinates_2(
+        barycenter, frame_origin, orientation);
     }
   };
 

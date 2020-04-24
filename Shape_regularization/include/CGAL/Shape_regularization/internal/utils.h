@@ -68,7 +68,6 @@ namespace internal {
 
     const double angle_rad = 
       CGAL_PI * CGAL::to_double(angle_deg) / 180.0;
-
     const FT cos_val = static_cast<FT>(std::cos(angle_rad));
     const FT sin_val = static_cast<FT>(std::sin(angle_rad));
 
@@ -149,9 +148,25 @@ namespace internal {
     return angle_deg;
   }
 
+  template<typename FT>
+  FT orientation_to_angle_2(
+    const FT oi, const FT oj) {
+
+    const FT diff_ij = oi - oj;
+    const double diff_90 = std::floor(CGAL::to_double(diff_ij / FT(90)));
+    const FT to_lower = FT(90) *  static_cast<FT>(diff_90)          - diff_ij;
+    const FT to_upper = FT(90) * (static_cast<FT>(diff_90) + FT(1)) - diff_ij;
+
+    const FT angle_deg = 
+      CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
+    return angle_deg;
+  }
+
+  // It is used only in the contour regularization.
+  // Should it be used in other places, too?
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
-  invar90_angle_2_degrees(
+  invar90_angle_2(
     const Direction_2& di,
     const Direction_2& dj) {
     
@@ -163,14 +178,7 @@ namespace internal {
     const auto vdj = dj.to_vector();
     const FT oj = orientation_2(vdj);
 
-    const FT diffij = oi - oj;
-    const double diff90 = std::floor(CGAL::to_double(diffij / FT(90)));
-    const FT to_lower = FT(90) *  static_cast<FT>(diff90)          - diffij;
-    const FT to_upper = FT(90) * (static_cast<FT>(diff90) + FT(1)) - diffij;
-
-    const FT angle_deg = 
-      CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
-    return angle_deg;
+    return orientation_to_angle_2(oi, oj);
   }
 
   template<typename Direction_2>
@@ -204,7 +212,7 @@ namespace internal {
 
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
-  angle_2_degrees(
+  angle_2(
     const Direction_2& reference,
     const Direction_2& direction) {
 

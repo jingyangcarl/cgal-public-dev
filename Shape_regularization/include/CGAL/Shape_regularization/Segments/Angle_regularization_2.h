@@ -33,9 +33,6 @@
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Angle_conditions_2.h>
 
-// TODO:
-// * Clean it up.
-
 namespace CGAL {
 namespace Shape_regularization {
 namespace Segments {
@@ -133,19 +130,18 @@ namespace Segments {
     m_segment_map(segment_map),
     m_num_modified_segments(0) { 
       
-      FT max_angle = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_angle), FT(25));
-      m_theta_max = max_angle;
-
       CGAL_precondition(input_range.size() > 1);
+      const FT max_angle = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_angle), FT(25));
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
 
-      if (max_angle < FT(0) || max_angle > FT(90)) {
-        std::cout << 
-          "WARNING: The max angle bound has to be within [0, 90]! Setting to 0." 
-        << std::endl;
-        m_theta_max = FT(0);
+      m_max_angle = max_angle;
+      if (m_max_angle < FT(0) || m_max_angle > FT(90)) {
+        std::cout << "WARNING: The max angle bound has to be within [0, 90]! ";
+        std::cout << " Setting to the default value: 25 degrees." << std::endl;
+        m_max_angle = FT(25);
       }
+      clear();
     }
 
     /// @}
@@ -157,30 +153,29 @@ namespace Segments {
       \brief calculates the target value between 2 segments, which are
       direct neighbors to each other. The traget value is the angle.
 
-      \param query_index_i
+      \param i
       index of the first segment
 
-      \param query_index_j
+      \param j
       index of the second segment
 
-      \pre `query_index_i >= 0 && query_index_i < input_range.size()`
-      \pre `query_index_j >= 0 && query_index_j < input_range.size()`
+      \pre `i >= 0 && i < input_range.size()`
+      \pre `j >= 0 && j < input_range.size()`
     */
     FT target(
-      const std::size_t query_index_i, 
-      const std::size_t query_index_j) {
+      const std::size_t i, 
+      const std::size_t j) {
 
-      CGAL_precondition(m_segments.size() > 1);
-      CGAL_precondition(m_segments.find(query_index_i) != m_segments.end());
-      CGAL_precondition(m_segments.find(query_index_j) != m_segments.end());
+      CGAL_assertion(m_wraps.size() == m_input_range.size());
+      CGAL_assertion(i >= 0 && i < m_wraps.size());
+      CGAL_assertion(j >= 0 && j < m_wraps.size());
+      
+      const auto& wrapi = m_wraps[i];
+      CGAL_assertion(wrapi.is_used);
+      const auto& wrapj = m_wraps[j];
+      CGAL_assertion(wrapj.is_used);
 
-      const std::size_t i = query_index_i;
-      const std::size_t j = query_index_j;
-
-      const auto& s_i = m_segments.at(i);
-      const auto& s_j = m_segments.at(j);
-
-      const FT mes_ij = s_i.orientation - s_j.orientation;
+      const FT mes_ij = wrapi.orientation - wrapj.orientation;
       const double mes_90 = std::floor(CGAL::to_double(mes_ij / FT(90)));
 
       const FT to_lower = FT(90) *  static_cast<FT>(mes_90)          - mes_ij;
@@ -207,7 +202,7 @@ namespace Segments {
       \brief returns `max_angle`.
     */
     FT bound(const std::size_t) const {
-      return m_theta_max;
+      return m_max_angle;
     }
 
     /*!
@@ -241,7 +236,7 @@ namespace Segments {
           const std::size_t n = m_input_range.size();
 
           m_grouping.make_groups(
-            m_theta_max, n, segments, solution, 
+            m_max_angle, n, segments, solution, 
             parallel_groups, targets, relations);
           rotate_parallel_segments(parallel_groups);
         }
@@ -261,7 +256,7 @@ namespace Segments {
     */
     template<typename OutputIterator>
     OutputIterator parallel_groups(OutputIterator groups) {
-      for(const auto& parallel_group : m_parallel_groups) {
+      for (const auto& parallel_group : m_parallel_groups) {
         const auto& group = parallel_group.second;
         *(groups++) = group;
       }
@@ -318,11 +313,26 @@ namespace Segments {
 
     /// @}
 
+    /// \name Internal data management
+    /// @{ 
+
+    /*!
+      \brief clears all internal data structures.
+    */
+    void clear() {
+      m_wraps.clear();
+      m_wraps.resize(m_input_range.size());
+    }
+
+    /// @}
+
   private:
     Input_range& m_input_range;
-    FT m_theta_max;
     const Segment_map m_segment_map;
-    std::map<std::size_t, Segment_wrapper_2> m_segments;
+    FT m_max_angle;
+
+    std::vector<Segment_wrapper_2> m_wraps;
+
     std::map<Size_pair, FT> m_targets;
     std::map<Size_pair, int> m_relations;
     Grouping m_grouping;
@@ -334,15 +344,14 @@ namespace Segments {
       const Indices& group) {
       if (group.size() < 2) return;
 
-      for(const std::size_t seg_index : group) {
-        if(m_segments.find(seg_index) != m_segments.end())
-          continue;
-
+      Segment_wrapper_2 wrap;
+      for (const std::size_t seg_index : group) {
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < m_wraps.size());
+        auto& wrap = m_wraps[seg_index];
         const auto& segment = get(m_segment_map, 
           *(m_input_range.begin() + seg_index));
-        Segment_wrapper_2 seg_data(segment, seg_index);
-        seg_data.set_all();
-        m_segments.emplace(seg_index, seg_data);
+        wrap.set_all(seg_index, segment);
       }
     }
 
@@ -353,8 +362,9 @@ namespace Segments {
       Relations_map& relations) {
       
       for (const std::size_t seg_index : group) {
-        CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
-        const auto& seg_data = m_segments.at(seg_index);
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < m_wraps.size());
+        const auto& seg_data = m_wraps[seg_index];
 
         segments.emplace(seg_index, seg_data);
         std::size_t tar_index = 0;
@@ -410,9 +420,10 @@ namespace Segments {
         // Rotate segments with precision.
         // Compute equation of the supporting line of the rotated segment.
         for (const std::size_t seg_index : group) {
-          CGAL_precondition(m_segments.find(seg_index) != m_segments.end());
+          CGAL_assertion(
+            seg_index >= 0 && seg_index < m_wraps.size());
 
-          const auto& seg_data = m_segments.at(seg_index);
+          const auto& seg_data = m_wraps[seg_index];
           const auto& barycenter = seg_data.barycenter;
           const FT c = -a * barycenter.x() - b * barycenter.y();
           set_orientation(seg_index, a, b, c, direction);
@@ -431,7 +442,7 @@ namespace Segments {
         direction = -direction;
 
       FT x1, y1, x2, y2;
-      const auto& seg_data = m_segments.at(seg_index);
+      const auto& seg_data = m_wraps[seg_index];
       const auto& barycenter = seg_data.barycenter;
       const FT length = seg_data.length;
 

@@ -254,7 +254,7 @@ namespace Segments {
           m_segment_map, *(m_input_range.begin() + seg_index));
         const auto& source = segment.source();
         const auto& target = segment.target();
-        auto vh = m_delaunay.insert(
+        const auto vh = m_delaunay.insert(
           internal::middle_point_2(source, target));
         vh->info() = seg_index;
       }

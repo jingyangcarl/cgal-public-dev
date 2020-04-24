@@ -180,7 +180,7 @@ namespace internal {
           for (std::size_t j = ip; j < n; ++j) {
             auto& wrapj = wraps[j];
             const FT angle_2 = CGAL::abs(
-              internal::angle_2_degrees(
+              internal::angle_2(
                 wrapi.segment, wrapj.segment));
 
             if (angle_2 <= m_base.get_angle_threshold_2()) {

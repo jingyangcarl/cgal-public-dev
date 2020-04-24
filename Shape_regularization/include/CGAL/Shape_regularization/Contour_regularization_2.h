@@ -121,6 +121,7 @@ namespace Shape_regularization {
       const NamedParameters np,
       const PointMap point_map = PointMap()) { 
 
+      CGAL_precondition(input_range.size() >= 2);
       const FT max_offset_2 = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));
       m_regularization = std::make_shared<Regularization>(

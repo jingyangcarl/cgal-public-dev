@@ -23,7 +23,8 @@ if(CGAL_FOUND)
     regularize_100_segments_angles
     regularize_100_segments_offsets
     regularize_simple
-    regularize_real_data_2)
+    regularize_real_data_2
+    )
     
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")
