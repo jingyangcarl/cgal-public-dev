@@ -320,7 +320,7 @@ namespace Segments {
         auto& wrap = m_wraps[seg_index];
         const auto& segment = 
           get(m_segment_map, *(m_input_range.begin() + seg_index));
-        wrap.set_all(seg_index, segment);
+        wrap.set_qp(seg_index, segment);
 
         if (i == 0)
           frame_origin = wrap.barycenter;

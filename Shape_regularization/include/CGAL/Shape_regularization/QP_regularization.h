@@ -146,16 +146,16 @@ namespace Shape_regularization {
     void regularize() { 
       if (m_input_range.size() < 2) return;
 
-      // Graph.
+      // Graph = edges connecting neighbor segments.
       build_graph_of_neighbors();
       if (m_graph.size() == 0) return;
 
-      // Bounds.
+      // Bounds = number of input segments.
       obtain_bounds();
       if (m_bounds.size() == 0) return;
       if (m_bounds.size() != m_input_range.size()) return;
 
-      // Targets.
+      // Targets = number of graph edges.
       obtain_targets();
       if (m_targets.size() == 0) return;
 

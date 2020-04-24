@@ -110,8 +110,8 @@ namespace Contours {
     m_input_range(input_range),
     m_point_map(point_map) { 
 
-      CGAL_precondition(
-        direction_range.size() > 0);
+      CGAL_precondition(input_range.size() >= 2);
+      CGAL_precondition(direction_range.size() > 0);
 
       if (is_closed)
         estimate_closed(

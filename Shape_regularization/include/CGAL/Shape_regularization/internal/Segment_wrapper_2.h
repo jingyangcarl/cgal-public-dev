@@ -34,7 +34,6 @@ namespace internal {
   template<typename GeomTraits>
   struct Segment_wrapper_2 {
 
-  public:
     using Traits = GeomTraits;
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
@@ -42,10 +41,15 @@ namespace internal {
     using Direction_2  = typename Traits::Direction_2;
     
     std::size_t index = std::size_t(-1);
+    bool is_used = false;
+
     Point_2 barycenter, ref_coords;
     FT orientation, length, a, b, c;
     Direction_2 direction;
-    bool is_used = false;
+    
+    Segment_2 segment;
+    std::size_t group = std::size_t(-1);
+    bool is_valid_direction = false;
 
     void set_index(const std::size_t index_) {
       index = index_; is_used = true;
@@ -89,7 +93,7 @@ namespace internal {
       c = -a * barycenter.x() - b * barycenter.y();
     }
 
-    void set_all(
+    void set_qp(
       const std::size_t index_,
       const Segment_2& segment) {
       

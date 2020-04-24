@@ -26,6 +26,7 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
+#include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
 
 // TODO:
 // * Simplify this class if possible.
@@ -54,22 +55,13 @@ namespace internal {
     using Line_2 = typename Traits::Line_2;
     using Intersect_2 = typename Traits::Intersect_2;
 
-    struct Segment_wrapper_2 {
-
-      Segment_2 segment;
-      Direction_2 direction;
-      std::size_t index = std::size_t(-1);
-      std::size_t group = std::size_t(-1);
-      bool is_valid_direction = false;
-      bool is_used = false;
-    };
-
     using FT_pair = std::pair<FT, FT>;
+    using Segment_wrapper_2 = internal::Segment_wrapper_2<Traits>;
     using Segment_wrappers_2 = std::vector<Segment_wrapper_2>;
     using Polyline = std::vector<Point_3>;
 
     Contour_regularization_base_2() :
-    m_verbose(true),
+    m_verbose(false),
     m_angle_threshold_2(FT(5))
     { }
 
@@ -513,7 +505,7 @@ namespace internal {
         const auto& di = directions[direction_index];
         const auto& dj = wrap.direction;
 
-        // Is it necessary here? Can I use angle_2_degrees instead?
+        // Is it necessary here? Can I use angle_2() instead?
         const FT angle = internal::invar90_angle_2(di, dj);
 
         angles[direction_index] += angle;

@@ -68,6 +68,7 @@ namespace internal {
 
     const double angle_rad = 
       CGAL_PI * CGAL::to_double(angle_deg) / 180.0;
+    
     const FT cos_val = static_cast<FT>(std::cos(angle_rad));
     const FT sin_val = static_cast<FT>(std::sin(angle_rad));
 
@@ -163,7 +164,6 @@ namespace internal {
   }
 
   // It is used only in the contour regularization.
-  // Should it be used in other places, too?
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
   invar90_angle_2(

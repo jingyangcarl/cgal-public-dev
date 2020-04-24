@@ -62,7 +62,6 @@ namespace internal {
     m_max_offset_2(max_offset_2) 
     { }
 
-    // Optimize this one. It doubles input points.
     template<
     typename Input_range,
     typename Point_map>

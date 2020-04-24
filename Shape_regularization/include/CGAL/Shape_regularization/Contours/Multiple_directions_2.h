@@ -118,6 +118,7 @@ namespace Contours {
     m_input_range(input_range),
     m_point_map(point_map) { 
 
+      CGAL_precondition(input_range.size() >= 2);
       m_min_length_2 = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::min_length), FT(3));
       m_max_angle_2 = parameters::choose_parameter(
