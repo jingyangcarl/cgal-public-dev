@@ -59,8 +59,8 @@ namespace internal {
   }
 
   template<
-  typename Point_2, 
-  typename FT>
+  typename FT,
+  typename Point_2>
   Point_2 transform_coordinates_2(
     const Point_2& barycenter, 
     const Point_2& frame_origin, 
@@ -105,10 +105,10 @@ namespace internal {
       CGAL::sqrt(CGAL::to_double(segment.squared_length())));
   }
 
-  template<typename Vector>
-  void normalize(Vector& v) {
+  template<typename Vector_T>
+  void normalize(Vector_T& v) {
     
-    using Traits = typename Kernel_traits<Vector>::Kernel;
+    using Traits = typename Kernel_traits<Vector_T>::Kernel;
     using FT = typename Traits::FT;
     
     v /= static_cast<FT>(
@@ -116,24 +116,22 @@ namespace internal {
   }
 
   // Is it a valid implementation for a contour edge rather than a segment?
-  // If I use angle_2_degrees with this, my consecutive_groups function does not work.
+  // If I use angle_2_degrees with this, my function consecutive_groups() does not work.
   template<typename Segment_2>
   typename Kernel_traits<Segment_2>::Kernel::Direction_2
   direction_2(const Segment_2& segment) { 
     
     using Traits = typename Kernel_traits<Segment_2>::Kernel;
     using FT = typename Traits::FT;
-    using Vector_2 = typename Traits::Vector_2;
     using Direction_2 = typename Traits::Direction_2;
 
     auto v = segment.to_vector();
     if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0))) 
       v = -v;
-    normalize(v); // can I remove the normalize factor here?
+    normalize(v);
     return Direction_2(v);
   }
 
-  // Merge this function with the function below.
   template<typename Vector_2>
   typename Kernel_traits<Vector_2>::Kernel::FT
   orientation_2(const Vector_2& v) {
@@ -153,23 +151,6 @@ namespace internal {
 
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
-  orientation_2_degrees(const Direction_2& direction) {
-    
-    using Traits = typename Kernel_traits<Direction_2>::Kernel;
-    using FT = typename Traits::FT;
-
-    const FT angle_rad = static_cast<FT>(std::atan2(
-      CGAL::to_double(direction.dy()), 
-      CGAL::to_double(direction.dx())));
-
-    FT angle_deg = angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
-    if (angle_deg < FT(0)) 
-      angle_deg += FT(180);
-    return angle_deg;
-  }
-
-  template<typename Direction_2>
-  typename Kernel_traits<Direction_2>::Kernel::FT
   invar90_angle_2_degrees(
     const Direction_2& di,
     const Direction_2& dj) {
@@ -177,8 +158,10 @@ namespace internal {
     using Traits = typename Kernel_traits<Direction_2>::Kernel;
     using FT = typename Traits::FT;
 
-    const FT oi = orientation_2_degrees(di);
-    const FT oj = orientation_2_degrees(dj);
+    const auto vdi = di.to_vector();
+    const FT oi = orientation_2(vdi);
+    const auto vdj = dj.to_vector();
+    const FT oj = orientation_2(vdj);
 
     const FT diffij = oi - oj;
     const double diff90 = std::floor(CGAL::to_double(diffij / FT(90)));
