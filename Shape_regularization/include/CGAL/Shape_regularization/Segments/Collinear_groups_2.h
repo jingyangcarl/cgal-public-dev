@@ -19,8 +19,8 @@
 // Author(s)     : Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2_H
-#define CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2_H
+#ifndef CGAL_SHAPE_REGULARIZATION_COLLINEAR_GROUPS_2_H
+#define CGAL_SHAPE_REGULARIZATION_COLLINEAR_GROUPS_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -39,7 +39,7 @@ namespace Segments {
     \ingroup PkgShapeRegularizationRefSegments
 
     \brief Organizes segments with a similar orientation into groups of 
-    parallel segments.
+    collinear segments.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -56,7 +56,7 @@ namespace Segments {
   typename GeomTraits,
   typename InputRange,
   typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
-  class Parallel_groups_2 {
+  class Collinear_groups_2 {
 
   public:
 
@@ -93,18 +93,18 @@ namespace Segments {
       optional sequence of \ref pmp_namedparameters "Named Parameters" 
       among the ones listed below
 
-      \param max_angle
-      max angle deviation between two segments, the default is 5 degrees
+      \param max_offset
+      max offset deviation between two segments, the default is 0.5 meters
 
       \param segment_map
       an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
       if not provided, the default is used
 
       \pre `input_range.size() > 0`
-      \pre `max_angle >= 0 && max_angle <= 90`
+      \pre `max_offset >= 0`
     */
     template<typename NamedParameters>
-    Parallel_groups_2(
+    Collinear_groups_2(
       const InputRange& input_range,
       const NamedParameters np, 
       const SegmentMap segment_map = SegmentMap()) : 
@@ -112,11 +112,11 @@ namespace Segments {
     m_segment_map(segment_map) {
 
       CGAL_precondition(input_range.size() > 0);
-      const FT max_angle = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_angle), FT(5));
-      CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
-      m_max_angle = std::floor(CGAL::to_double(max_angle));
-      make_parallel_groups();
+      const FT max_offset = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));
+      CGAL_precondition(max_offset >= FT(0));
+      m_max_offset = std::floor(CGAL::to_double(max_offset));
+      make_collinear_groups();
     }
 
     /// @}
@@ -125,15 +125,15 @@ namespace Segments {
     /// @{ 
 
     /*!
-      \brief returns indices of parallel segments organized into groups.
+      \brief returns indices of collinear segments organized into groups.
 
       \param groups
       an instance of OutputIterator
     */
     template<typename OutputIterator>
-    OutputIterator parallel_groups(OutputIterator groups) const {
-      for (const auto& parallel_group : m_parallel_groups) {
-        const auto& group = parallel_group.second;
+    OutputIterator collinear_groups(OutputIterator groups) const {
+      for (const auto& collinear_group : m_collinear_groups) {
+        const auto& group = collinear_group.second;
         *(groups++) = group;
       }
       return groups;
@@ -144,28 +144,11 @@ namespace Segments {
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
     
-    double m_max_angle;
-    std::map<std::size_t, Indices> m_parallel_groups;
+    double m_max_offset;
+    std::map<std::size_t, Indices> m_collinear_groups;
 
-    void make_parallel_groups() {
+    void make_collinear_groups() {
       
-      m_parallel_groups.clear();
-      for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        const auto& segment = get(
-          m_segment_map, *(m_input_range.begin() + i));
-
-        auto v = segment.to_vector();
-        const auto direction = internal::direction_2(v).to_vector();
-        const FT orientation = internal::orientation_2(direction);
-        const double fvalue = std::floor(CGAL::to_double(orientation));
-
-        const std::size_t num = static_cast<std::size_t>(
-          std::floor(fvalue / m_max_angle));
-        const std::size_t key = static_cast<std::size_t>(
-          num * m_max_angle);
-
-        m_parallel_groups[key].push_back(i);
-      }
     }
   };
 
@@ -173,4 +156,4 @@ namespace Segments {
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_PARALLEL_GROUPS_2_H
+#endif // CGAL_SHAPE_REGULARIZATION_COLLINEAR_GROUPS_2_H

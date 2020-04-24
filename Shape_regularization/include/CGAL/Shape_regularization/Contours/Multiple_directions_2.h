@@ -95,10 +95,12 @@ namespace Contours {
       among the ones listed below
 
       \param min_length
-      the min length of a possible principal direction
+      the min length of a possible principal direction,
+      the default is 3 meters
 
       \param max_angle
-      the max angle bound between a contour edge and a possible principal direction
+      the max angle bound between a contour edge and a possible principal direction,
+      the default is 25 degrees
 
       \param is_closed 
       indicates wether the contour is closed or open

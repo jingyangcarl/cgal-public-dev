@@ -49,7 +49,7 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be a `ReadablePropertyMap` whose key type is the value type of the input 
+    must be a `LvaluePropertyMap` whose key type is the value type of the input 
     range and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
@@ -274,6 +274,8 @@ namespace Segments {
 
       For more details, 
       see `CGAL::Shape_regularization::Angle_regularization_2::add_group()`.
+
+      \pre `m_input_range.size() > 1`
     */
     void create_unique_group() {
       
@@ -330,11 +332,11 @@ namespace Segments {
       const Indices& group) {
       if (group.size() < 2) return;
 
-      Segment_wrapper_2 wrap;
       for (const std::size_t seg_index : group) {
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
+
         const auto& segment = get(m_segment_map, 
           *(m_input_range.begin() + seg_index));
         wrap.set_qp(seg_index, segment);

@@ -106,7 +106,8 @@ namespace Shape_regularization {
       among the ones listed below
 
       \param max_offset
-      the max offset bound that can be applied to a contour edge
+      the max offset bound that can be applied to a contour edge, 
+      the default is 0.5 meters
 
       \param point_map
       an instance of `PointMap`, if not provided, the default is used

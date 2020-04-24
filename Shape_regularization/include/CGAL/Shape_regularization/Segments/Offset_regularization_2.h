@@ -30,11 +30,11 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
+#include <CGAL/Shape_regularization/Segments/Collinear_groups_2.h>
+
+// Do we need that?
 #include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
 #include <CGAL/Shape_regularization/internal/Offset_conditions_2.h>
-
-// TODO:
-// * Clean it up.
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -53,7 +53,7 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
+    must be a `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
@@ -85,12 +85,13 @@ namespace Segments {
     using Direction_2 = typename Traits::Direction_2;
 
     using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
+    using Collinear_groups_2 = Collinear_groups_2<Traits, Input_range, Segment_map>;
+    using Indices = std::vector<std::size_t>;
+
+    // Do we need that?
     using Conditions = typename internal::Offset_conditions_2<Traits>;
     using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
-
-    using Indices = std::vector<std::size_t>;
     using Size_pair = std::pair<std::size_t, std::size_t>;
-
     using Targets_map = 
       std::map<Size_pair, std::pair<FT, std::size_t> >;
     /// \endcond
@@ -114,7 +115,7 @@ namespace Segments {
       among the ones listed below
 
       \param max_offset
-      max offset bound in meters, the default is 0.1 meters 
+      max offset bound in meters, the default is 0.5 meters
 
       \param segment_map
       an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`, 
@@ -134,14 +135,14 @@ namespace Segments {
 
       CGAL_precondition(input_range.size() > 1);
       const FT max_offset = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(10));
+        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));
       CGAL_precondition(max_offset >= FT(0));
 
       m_max_offset = max_offset;
       if (m_max_offset < FT(0)) {
         std::cout << "WARNING: The max offset bound has to be within [0, +inf)! ";
-        std::cout << " Setting to the default value: 1/10 meters." << std::endl;
-        m_max_offset = FT(1) / FT(10);
+        std::cout << " Setting to the default value: 0.5 meters." << std::endl;
+        m_max_offset = FT(1) / FT(2);
       }
       clear();
     }
@@ -168,23 +169,25 @@ namespace Segments {
       const std::size_t i, 
       const std::size_t j) {
 
-      if (m_wraps.size() == 0) 
+      if (m_wraps.size() == 0) // do I need that?
         return FT(0);
 
+      CGAL_precondition(i >= 0 && i < m_input_range.size());
+      CGAL_precondition(j >= 0 && j < m_input_range.size());
       CGAL_assertion(m_wraps.size() == m_input_range.size());
-      CGAL_assertion(i >= 0 && i < m_wraps.size());
-      CGAL_assertion(j >= 0 && j < m_wraps.size());
 
       const auto& wrapi = m_wraps[i];
       CGAL_assertion(wrapi.is_used);
       const auto& wrapj = m_wraps[j];
       CGAL_assertion(wrapj.is_used);
 
-      const FT tar_val = 
+      const FT target_value = 
         wrapi.ref_coords.y() - wrapj.ref_coords.y();
-      if (CGAL::abs(tar_val) < bound(i) + bound(j))
-        m_targets[std::make_pair(i, j)] = tar_val;
-      return tar_val;
+      const FT abs_target = CGAL::abs(target_value);
+
+      if (abs_target < bound(i) + bound(j))
+        m_targets[std::make_pair(i, j)] = target_value;
+      return target_value;
     }
 
     /*!
@@ -210,7 +213,7 @@ namespace Segments {
       std::map<FT, Indices> collinear_groups;
       std::map<std::size_t, Segment_wrapper_2> segments;
 
-      CGAL_precondition(m_targets.size() > 0);
+      CGAL_assertion(m_targets.size() > 0);
       for (const auto& group : m_groups) {
         if (group.size() < 2) continue; 
 
@@ -232,6 +235,22 @@ namespace Segments {
 
     /// \name Miscellaneous
     /// @{ 
+
+    /*!
+      \brief returns indices of collinear segments organized into groups.
+
+      \param groups
+      an instance of OutputIterator
+    */
+    template<typename OutputIterator>
+    OutputIterator collinear_groups(OutputIterator groups) const {
+
+      const Collinear_groups_2 grouping(
+        m_input_range, 
+        CGAL::parameters::max_offset(m_max_offset), 
+        m_segment_map);
+      return grouping.collinear_groups(groups);
+    }
 
     /*!
       \brief inserts a group of segments from `input_range`.
@@ -256,9 +275,10 @@ namespace Segments {
       group.reserve(index_range.size());
       for (const auto seg_index : index_range)
         group.push_back(seg_index);
-      
-      m_groups.push_back(group);
       update_segment_data(group);
+      ++m_num_groups;
+
+      m_groups.push_back(group); // do I need that?
     }
 
     /*!
@@ -266,9 +286,14 @@ namespace Segments {
 
       For more details, 
       see `CGAL::Shape_regularization::Offset_regularization_2::add_group()`.
+
+      \pre `m_input_range.size() > 1`
     */
     void create_unique_group() {
       
+      CGAL_precondition(m_input_range.size() > 1);
+      if (m_input_range.size() < 2) return;
+
       Indices group(m_input_range.size());
       std::iota(group.begin(), group.end(), 0);
       add_group(group);
@@ -292,23 +317,36 @@ namespace Segments {
     void clear() {
       m_wraps.clear();
       m_wraps.resize(m_input_range.size());
+      m_num_modified_segments = 0;
+      m_num_groups = 0;
     }
 
     /// @}
 
+    // EXTRA METHODS TO TEST THE CLASS!
+    /// \cond SKIP_IN_MANUAL
+    const std::size_t number_of_groups() const { 
+      return m_num_groups;
+    }
+    /// \endcond
+
   private:
     Input_range& m_input_range;
     const Segment_map m_segment_map;
-    FT m_max_offset;
 
+    FT m_max_offset;
     std::vector<Segment_wrapper_2> m_wraps;
 
+    std::size_t m_num_modified_segments;
+    std::size_t m_num_groups;
+
+    // Do we need that?
     std::map<Size_pair, FT> m_targets;
     Grouping m_grouping;
     std::vector<Indices> m_groups;
-    std::size_t m_num_modified_segments;
 
-    void update_segment_data(const Indices& group) {
+    void update_segment_data(
+      const Indices& group) {
       if (group.size() < 2) return;
 
       Point_2 frame_origin;
@@ -316,8 +354,8 @@ namespace Segments {
         const std::size_t seg_index = group[i];
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
-        
         auto& wrap = m_wraps[seg_index];
+
         const auto& segment = 
           get(m_segment_map, *(m_input_range.begin() + seg_index));
         wrap.set_qp(seg_index, segment);
@@ -328,6 +366,7 @@ namespace Segments {
       } 
     }
 
+    // Do we need that?
     void build_grouping_data(
       const Indices& group,
       std::map<std::size_t, Segment_wrapper_2>& segments,
@@ -336,9 +375,9 @@ namespace Segments {
       for (const std::size_t seg_index : group) {
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
-        const auto& seg_data = m_wraps[seg_index];
+        const auto& wrap = m_wraps[seg_index];
 
-        segments.emplace(seg_index, seg_data);
+        segments.emplace(seg_index, wrap);
         std::size_t tar_index = 0;
 
         for(const auto& target : m_targets) {
@@ -380,9 +419,9 @@ namespace Segments {
           if (seg_index != longest) {
             CGAL_assertion(
               seg_index >= 0 && seg_index < m_wraps.size());
-            const auto& seg_data = m_wraps[seg_index];
+            const auto& wrap = m_wraps[seg_index];
 
-            new_difference = dt - seg_data.ref_coords.y();
+            new_difference = dt - wrap.ref_coords.y();
             set_difference(seg_index, new_difference, la, lb, lc, ldirection);
           }
         }
@@ -409,9 +448,9 @@ namespace Segments {
       const FT new_difference) {
 
       const FT difference = new_difference;
-      auto& seg_data = m_wraps[seg_index];
+      auto& wrap = m_wraps[seg_index];
 
-      const auto& direction = seg_data.direction;
+      const auto& direction = wrap.direction;
       const Vector_2 final_normal = Vector_2(
         -direction.dy(), direction.dx());
 
@@ -432,7 +471,7 @@ namespace Segments {
       const FT by = (new_source.y() + new_target.y()) / FT(2);
 
       m_input_range[seg_index] = Segment_2(new_source, new_target);
-      seg_data.c = -seg_data.a * bx - seg_data.b * by;
+      wrap.c = -wrap.a * bx - wrap.b * by;
       ++m_num_modified_segments;
     }
 
@@ -443,15 +482,15 @@ namespace Segments {
       const Direction_2& direction) {
       
       FT difference = new_difference;
-      auto& seg_data = m_wraps[seg_index];
+      auto& wrap = m_wraps[seg_index];
 
-      seg_data.direction = direction;
-      if (seg_data.direction.dy() < FT(0) || 
-      (seg_data.direction.dy() == FT(0) && seg_data.direction.dx() < FT(0))) 
-        seg_data.direction = -seg_data.direction;
+      wrap.direction = direction;
+      if (wrap.direction.dy() < FT(0) || 
+      (wrap.direction.dy() == FT(0) && wrap.direction.dx() < FT(0))) 
+        wrap.direction = -wrap.direction;
 
       Vector_2 final_normal = Vector_2(
-        -seg_data.direction.dy(), seg_data.direction.dx());
+        -wrap.direction.dy(), wrap.direction.dx());
 
       const auto& segment = get(m_segment_map, 
         *(m_input_range.begin() + seg_index));
@@ -461,8 +500,8 @@ namespace Segments {
 
       FT x1, x2, y1, y2;
       if (
-        CGAL::abs(seg_data.direction.dx()) > 
-        CGAL::abs(seg_data.direction.dy())) {
+        CGAL::abs(wrap.direction.dx()) > 
+        CGAL::abs(wrap.direction.dy())) {
 
         x1 = source.x() + difference * final_normal.x();
         x2 = target.x() + difference * final_normal.x(); 
