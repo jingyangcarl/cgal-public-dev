@@ -48,6 +48,17 @@ namespace Tests {
       export_polylines(polylines, file_path);
     }
 
+    void export_group(
+      const std::vector<Segment_2>& segments,
+      const std::vector<std::size_t>& group,
+      const std::string name) {
+      
+      std::vector<Segment_2> edges;
+      for (const std::size_t seg_index : group)
+        edges.push_back(segments[seg_index]);
+      export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/" + name);
+    }
+
   private:
     std::stringstream out;
 

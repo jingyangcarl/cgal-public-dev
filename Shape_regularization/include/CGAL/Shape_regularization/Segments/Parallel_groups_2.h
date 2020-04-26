@@ -153,17 +153,8 @@ namespace Segments {
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
         const auto& segment = get(
           m_segment_map, *(m_input_range.begin() + i));
-
-        auto v = segment.to_vector();
-        const auto direction = internal::direction_2(v).to_vector();
-        const FT orientation = internal::orientation_2(direction);
-        const double fvalue = std::floor(CGAL::to_double(orientation));
-
-        const std::size_t num = static_cast<std::size_t>(
-          std::floor(fvalue / m_max_angle));
-        const std::size_t key = static_cast<std::size_t>(
-          num * m_max_angle);
-
+        const std::size_t key = 
+          internal::key_angle_2(m_max_angle, segment);
         m_parallel_groups[key].push_back(i);
       }
     }

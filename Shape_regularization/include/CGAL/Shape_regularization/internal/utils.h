@@ -311,6 +311,22 @@ namespace internal {
     return angle_rad;
   }
 
+  template<typename Segment_2>
+  std::size_t key_angle_2(
+    const double max_angle,
+    const Segment_2& segment) {
+
+    auto v = segment.to_vector();
+    const auto direction = internal::direction_2(v).to_vector();
+    const auto orientation = internal::orientation_2(direction);
+    const double fvalue = std::floor(CGAL::to_double(orientation));
+    const std::size_t num = static_cast<std::size_t>(
+      std::floor(fvalue / max_angle));
+    const std::size_t angle = static_cast<std::size_t>(
+      num * max_angle);
+    return angle;
+  }
+
 } // internal
 } // Shape_regularization
 } // CGAL

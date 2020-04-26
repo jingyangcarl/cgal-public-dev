@@ -30,6 +30,7 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
+#include <CGAL/Shape_regularization/Segments/Orthogonal_groups_2.h>
 #include <CGAL/Shape_regularization/Segments/Parallel_groups_2.h>
 
 namespace CGAL {
@@ -79,6 +80,7 @@ namespace Segments {
     using Direction_2 = typename Traits::Direction_2;
 
     using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
+    using Orthogonal_groups_2 = Orthogonal_groups_2<Traits, Input_range, Segment_map>;
     using Parallel_groups_2 = Parallel_groups_2<Traits, Input_range, Segment_map>;
     using Indices = std::vector<std::size_t>;
     /// \endcond
@@ -225,6 +227,22 @@ namespace Segments {
 
     /// \name Miscellaneous
     /// @{ 
+
+    /*!
+      \brief returns indices of orthogonal segments organized into groups.
+
+      \param groups
+      an instance of OutputIterator
+    */
+    template<typename OutputIterator>
+    OutputIterator orthogonal_groups(OutputIterator groups) const {
+
+      const Orthogonal_groups_2 grouping(
+        m_input_range, 
+        CGAL::parameters::max_angle(m_max_angle), 
+        m_segment_map);
+      return grouping.orthogonal_groups(groups);
+    }
 
     /*!
       \brief returns indices of parallel segments organized into groups.

@@ -1,2 +1,4 @@
 * When adding the QP_solver concept, I should probably put it in the Solver_interface 
 and refactor the MixedIntegerConcept, too.
+* Change angle computation in the Orthogonal_groups_2 class. Instead of taking to key_angle_2(),
+I should simply compute an angle between two segments.

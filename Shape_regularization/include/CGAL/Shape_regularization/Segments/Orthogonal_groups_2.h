@@ -19,8 +19,8 @@
 // Author(s)     : Gennadii Sytov, Dmitry Anisimov
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_COLLINEAR_GROUPS_2_H
-#define CGAL_SHAPE_REGULARIZATION_COLLINEAR_GROUPS_2_H
+#ifndef CGAL_SHAPE_REGULARIZATION_ORTHOGONAL_GROUPS_2_H
+#define CGAL_SHAPE_REGULARIZATION_ORTHOGONAL_GROUPS_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -40,7 +40,7 @@ namespace Segments {
     \ingroup PkgShapeRegularizationRefSegments
 
     \brief Organizes segments with a similar orientation into groups of 
-    collinear segments.
+    orthogonal segments.
 
     \tparam GeomTraits 
     must be a model of `Kernel`.
@@ -57,7 +57,7 @@ namespace Segments {
   typename GeomTraits,
   typename InputRange,
   typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
-  class Collinear_groups_2 {
+  class Orthogonal_groups_2 {
 
   public:
 
@@ -74,7 +74,6 @@ namespace Segments {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
-    using Line_2 = typename Traits::Line_2;
     using Indices = std::vector<std::size_t>;
     using Parallel_groups_2 = Parallel_groups_2<Traits, Input_range, Segment_map>;
     /// \endcond
@@ -96,18 +95,18 @@ namespace Segments {
       optional sequence of \ref pmp_namedparameters "Named Parameters" 
       among the ones listed below
 
-      \param max_offset
-      max offset deviation between two segments, the default is 0.2 meters
+      \param max_angle
+      max angle deviation between two segments, the default is 5 degrees
 
       \param segment_map
       an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
       if not provided, the default is used
 
       \pre `input_range.size() > 0`
-      \pre `max_offset >= 0`
+      \pre `max_angle >= 0 && max_angle <= 90`
     */
     template<typename NamedParameters>
-    Collinear_groups_2(
+    Orthogonal_groups_2(
       const InputRange& input_range,
       const NamedParameters np, 
       const SegmentMap segment_map = SegmentMap()) : 
@@ -117,11 +116,11 @@ namespace Segments {
       input_range, np, segment_map) {
 
       CGAL_precondition(input_range.size() > 0);
-      const FT max_offset = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(5));
-      CGAL_precondition(max_offset >= FT(0));
-      m_max_offset = max_offset;
-      make_collinear_groups();
+      const FT max_angle = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::max_angle), FT(5));
+      CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
+      m_max_angle = std::floor(CGAL::to_double(max_angle));
+      make_orthogonal_groups();
     }
 
     /// @}
@@ -130,15 +129,15 @@ namespace Segments {
     /// @{ 
 
     /*!
-      \brief returns indices of collinear segments organized into groups.
+      \brief returns indices of orthogonal segments organized into groups.
 
       \param groups
       an instance of OutputIterator
     */
     template<typename OutputIterator>
-    OutputIterator collinear_groups(OutputIterator groups) const {
-      for (const auto& collinear_group : m_collinear_groups) {
-        const auto& group = collinear_group;
+    OutputIterator orthogonal_groups(OutputIterator groups) const {
+      for (const auto& orthogonal_group : m_orthogonal_groups) {
+        const auto& group = orthogonal_group;
         *(groups++) = group;
       }
       return groups;
@@ -150,59 +149,58 @@ namespace Segments {
     const Segment_map m_segment_map;
     const Parallel_groups_2 m_grouping;
     
-    FT m_max_offset;
-    std::vector<Indices> m_collinear_groups;
+    double m_max_angle;
+    std::vector<Indices> m_orthogonal_groups;
 
-    void make_collinear_groups() {
+    void make_orthogonal_groups() {
       
       std::vector<Indices> parallel_groups;
       m_grouping.parallel_groups(
         std::back_inserter(parallel_groups));
-      m_collinear_groups.reserve(parallel_groups.size());
-      
-      Indices collinear_group;
-      std::vector<bool> states;
 
-      const FT sq_max_dist = m_max_offset * m_max_offset;
-      for (const auto& parallel_group : parallel_groups) {
-        CGAL_assertion(parallel_group.size() > 0);
+      Indices orthogonal_group;
+      std::vector<bool> states(parallel_groups.size(), false);
+
+      for (std::size_t i = 0; i < parallel_groups.size(); ++i) {
+        if (states[i]) continue;
+
+        CGAL_assertion(parallel_groups[i].size() > 0);
+        const std::size_t si_index = parallel_groups[i][0];
+        const auto& si = get(
+          m_segment_map, *(m_input_range.begin() + si_index));
+        const double anglei = static_cast<double>(
+          internal::key_angle_2(m_max_angle, si));
         
-        states.clear();
-        states.resize(parallel_group.size(), false);
-        for (std::size_t i = 0; i < parallel_group.size(); ++i) {
-          if (states[i]) continue;
-          
-          const std::size_t si_index = parallel_group[i];
-          const auto& si = get(m_segment_map, 
-            *(m_input_range.begin() + si_index));
-          
-          states[i] = true;
-          collinear_group.clear();
-          collinear_group.push_back(si_index);
+        orthogonal_group.clear();
+        for (const std::size_t seg_index : parallel_groups[i])
+          orthogonal_group.push_back(seg_index);
+        states[i] = true;
 
-          const Line_2 line = Line_2(si.source(), si.target());
-          for (std::size_t j = i + 1; j < parallel_group.size(); ++j) {
-            if (states[j]) continue;
+        for (std::size_t j = i + 1; j < parallel_groups.size(); ++j) {
+          if (states[j]) continue;
+        
+          CGAL_assertion(parallel_groups[j].size() > 0);
+          const std::size_t sj_index = parallel_groups[j][0];
+          const auto& sj = get(
+            m_segment_map, *(m_input_range.begin() + sj_index));
+          const double anglej = static_cast<double>(
+            internal::key_angle_2(m_max_angle, sj));
+
+          const double angle_diff = 
+            CGAL::abs(anglei - anglej);
+          if (
+            angle_diff >= 90.0 - m_max_angle && 
+            angle_diff <= 90.0 + m_max_angle) {
             
-            const std::size_t sj_index = parallel_group[j];
-            const auto& sj = get(m_segment_map, 
-              *(m_input_range.begin() + sj_index));
-            
-            const auto p = internal::middle_point_2(
-              sj.source(), sj.target());
-            const auto q = line.projection(p);
-            
-            const FT sq_dist = CGAL::squared_distance(p, q);
-            if (sq_dist <= sq_max_dist) {
-              states[j] = true;
-              collinear_group.push_back(sj_index);
-            }
+            for (const std::size_t seg_index : parallel_groups[j])
+              orthogonal_group.push_back(seg_index);
+            states[j] = true;
           }
-          m_collinear_groups.push_back(collinear_group);
         }
+        m_orthogonal_groups.push_back(orthogonal_group);
       }
       CGAL_assertion(
-        m_collinear_groups.size() >= parallel_groups.size());
+        m_orthogonal_groups.size() <= parallel_groups.size());
     }
   };
 
@@ -210,4 +208,4 @@ namespace Segments {
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_COLLINEAR_GROUPS_2_H
+#endif // CGAL_SHAPE_REGULARIZATION_ORTHOGONAL_GROUPS_2_H

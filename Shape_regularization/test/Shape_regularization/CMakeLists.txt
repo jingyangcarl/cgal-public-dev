@@ -19,7 +19,9 @@ if(CGAL_FOUND)
 
     set(targets 
     test_neighbor_query
-    test_parallel_groups)
+    test_parallel_groups
+    test_collinear_groups
+    test_orthogonal_groups)
     
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")
