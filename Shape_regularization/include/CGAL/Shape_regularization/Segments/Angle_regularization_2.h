@@ -196,7 +196,8 @@ namespace Segments {
 
       \pre `solution.size() > 0`
     */
-    void update(const std::vector<FT>& solution) {
+    void update(
+      const std::vector<FT>& solution) {
 
       CGAL_precondition(solution.size() > 0);
       for (auto& wrap : m_wraps) {

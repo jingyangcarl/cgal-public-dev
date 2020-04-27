@@ -29,7 +29,7 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/Contour_regularization_base_2.h>
+#include <CGAL/Shape_regularization/internal/Contour_base_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -74,7 +74,7 @@ namespace Contours {
     using Direction_2 = typename Traits::Direction_2;
 
     using FT_pair = std::pair<FT, FT>;
-    using Base = internal::Contour_regularization_base_2<Traits>;
+    using Base = internal::Contour_base_2<Traits>;
     using Segment_wrapper_2 = typename Base::Segment_wrapper_2;
     /// \endcond
 

@@ -19,8 +19,8 @@
 // Author(s)     : Dmitry Anisimov, Simon Giraudot
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_CONTOUR_REGULARIZATION_BASE_2_H
-#define CGAL_SHAPE_REGULARIZATION_CONTOUR_REGULARIZATION_BASE_2_H
+#ifndef CGAL_SHAPE_REGULARIZATION_CONTOUR_BASE_2_H
+#define CGAL_SHAPE_REGULARIZATION_CONTOUR_BASE_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
@@ -41,7 +41,7 @@ namespace Shape_regularization {
 namespace internal {
 
   template<typename GeomTraits>
-  class Contour_regularization_base_2 {
+  class Contour_base_2 {
 
   public:
     using Traits = GeomTraits;
@@ -60,7 +60,7 @@ namespace internal {
     using Segment_wrappers_2 = std::vector<Segment_wrapper_2>;
     using Polyline = std::vector<Point_3>;
 
-    Contour_regularization_base_2() :
+    Contour_base_2() :
     m_verbose(false),
     m_angle_threshold_2(FT(5))
     { }
@@ -1103,4 +1103,4 @@ namespace internal {
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_CONTOUR_REGULARIZATION_BASE_2_H
+#endif // CGAL_SHAPE_REGULARIZATION_CONTOUR_BASE_2_H

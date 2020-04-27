@@ -19,13 +19,13 @@
 // Author(s)     : Dmitry Anisimov, Simon Giraudot
 //
 
-#ifndef CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_REGULARIZATION_2_H
-#define CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_REGULARIZATION_2_H
+#ifndef CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_2_H
+#define CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_2_H
 
 // #include <CGAL/license/Shape_regularization.h>
 
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/Contour_regularization_base_2.h>
+#include <CGAL/Shape_regularization/internal/Contour_base_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -34,7 +34,7 @@ namespace internal {
   template<
   typename GeomTraits,
   typename ContourDirections>
-  class Closed_contour_regularization_2 {
+  class Closed_contour_2 {
 
   public:
     using Traits = GeomTraits;
@@ -47,7 +47,7 @@ namespace internal {
     using Segment_2 = typename Traits::Segment_2;
     using Line_2 = typename Traits::Line_2;
 
-    using Base = internal::Contour_regularization_base_2<Traits>;
+    using Base = internal::Contour_base_2<Traits>;
 
     using FT_pair = std::pair<FT, FT>;
     using Segments_2 = std::vector<Segment_2>;
@@ -55,7 +55,7 @@ namespace internal {
     using Segment_wrapper_2 = typename Base::Segment_wrapper_2;
     using Segment_wrappers_2 = typename Base::Segment_wrappers_2;
 
-    Closed_contour_regularization_2(
+    Closed_contour_2(
       const Contour_directions& estimator,
       const FT max_offset_2) :
     m_estimator(estimator),
@@ -394,4 +394,4 @@ namespace internal {
 } // namespace Shape_regularization
 } // namespace CGAL
 
-#endif // CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_REGULARIZATION_2_H
+#endif // CGAL_SHAPE_REGULARIZATION_CLOSED_CONTOUR_2_H

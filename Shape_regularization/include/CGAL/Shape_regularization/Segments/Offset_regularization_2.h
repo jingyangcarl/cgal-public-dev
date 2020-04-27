@@ -32,10 +32,6 @@
 #include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
 #include <CGAL/Shape_regularization/Segments/Collinear_groups_2.h>
 
-// Do we need that?
-#include <CGAL/Shape_regularization/internal/Grouping_segments_2.h>
-#include <CGAL/Shape_regularization/internal/Offset_conditions_2.h>
-
 namespace CGAL {
 namespace Shape_regularization {
 namespace Segments {
@@ -82,18 +78,10 @@ namespace Segments {
     using Point_2 = typename Traits::Point_2;
     using Vector_2  = typename Traits::Vector_2;
     using Segment_2 = typename Traits::Segment_2;
-    using Direction_2 = typename Traits::Direction_2;
 
     using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
     using Collinear_groups_2 = Collinear_groups_2<Traits, Input_range, Segment_map>;
     using Indices = std::vector<std::size_t>;
-
-    // Do we need that?
-    using Conditions = typename internal::Offset_conditions_2<Traits>;
-    using Grouping = internal::Grouping_segments_2<Traits, Conditions>;
-    using Size_pair = std::pair<std::size_t, std::size_t>;
-    using Targets_map = 
-      std::map<Size_pair, std::pair<FT, std::size_t> >;
     /// \endcond
 
     /// @}
@@ -169,9 +157,6 @@ namespace Segments {
       const std::size_t i, 
       const std::size_t j) {
 
-      if (m_wraps.size() == 0) // do I need that?
-        return FT(0);
-
       CGAL_precondition(i >= 0 && i < m_input_range.size());
       CGAL_precondition(j >= 0 && j < m_input_range.size());
       CGAL_assertion(m_wraps.size() == m_input_range.size());
@@ -183,10 +168,6 @@ namespace Segments {
 
       const FT target_value = 
         wrapi.ref_coords.y() - wrapj.ref_coords.y();
-      const FT abs_target = CGAL::abs(target_value);
-
-      if (abs_target < bound(i) + bound(j))
-        m_targets[std::make_pair(i, j)] = target_value;
       return target_value;
     }
 
@@ -206,13 +187,12 @@ namespace Segments {
 
       \pre `solution.size() > 0`
     */
-    void update(const std::vector<FT>& solution) {
-      CGAL_precondition(solution.size() > 0);
+    void update(
+      const std::vector<FT>& solution) {
 
       CGAL_precondition(solution.size() > 0);
       for (auto& wrap : m_wraps) {
         if (!wrap.is_used) continue;
-        // set_difference(wrap.index, -solution[wrap.index]);
 
         const std::size_t seg_index = wrap.index;
         const FT difference = -solution[seg_index];
@@ -290,8 +270,6 @@ namespace Segments {
         group.push_back(seg_index);
       update_segment_data(group);
       ++m_num_groups;
-
-      m_groups.push_back(group); // do I need that?
     }
 
     /*!
@@ -353,11 +331,6 @@ namespace Segments {
     std::size_t m_num_modified_segments;
     std::size_t m_num_groups;
 
-    // Do we need that?
-    std::map<Size_pair, FT> m_targets;
-    Grouping m_grouping;
-    std::vector<Indices> m_groups;
-
     void update_segment_data(
       const Indices& group) {
       if (group.size() < 2) return;
@@ -374,165 +347,10 @@ namespace Segments {
         wrap.set_qp(seg_index, segment);
 
         if (i == 0)
-          frame_origin = wrap.barycenter; // Do we need that?
+          frame_origin = wrap.barycenter;
         wrap.set_ref_coords(frame_origin);
       } 
     }
-
-    // Do we need that?
-    /*
-    void build_grouping_data(
-      const Indices& group,
-      std::map<std::size_t, Segment_wrapper_2>& segments,
-      Targets_map& targets) {
-      
-      for (const std::size_t seg_index : group) {
-        CGAL_assertion(
-          seg_index >= 0 && seg_index < m_wraps.size());
-        const auto& wrap = m_wraps[seg_index];
-
-        segments.emplace(seg_index, wrap);
-        std::size_t tar_index = 0;
-
-        for(const auto& target : m_targets) {
-          const std::size_t seg_index_tar_i = target.first.first;
-          const std::size_t seg_index_tar_j = target.first.second;
-          const FT tar_value = target.second;
-
-          if (seg_index_tar_i == seg_index)
-            targets[std::make_pair(seg_index_tar_i, seg_index_tar_j)] = 
-              std::make_pair(tar_value, tar_index);
-          ++tar_index;
-        }
-      }
-    }
-
-    void translate_collinear_segments(
-      const std::map<FT, Indices>& collinear_groups) {
-      
-      for (const auto& collinear_group : collinear_groups) {
-        const FT dt = collinear_group.first;
-        const auto& group = collinear_group.second;
-
-        const std::size_t longest = find_longest_segment(group);
-        CGAL_assertion(
-          longest >= 0 && longest < m_wraps.size());
-        const auto& longest_data = m_wraps[longest];
-
-        FT new_difference = dt - longest_data.ref_coords.y();
-        set_difference(longest, new_difference);
-
-        const FT la = longest_data.a;
-        const FT lb = longest_data.b;
-        const FT lc = longest_data.c;
-        const auto& ldirection = longest_data.direction;
-
-        // Translate the other segments, so that they rest 
-        // upon the line ax + by + c = 0.
-        for (const std::size_t seg_index : group) {
-          if (seg_index != longest) {
-            CGAL_assertion(
-              seg_index >= 0 && seg_index < m_wraps.size());
-            const auto& wrap = m_wraps[seg_index];
-
-            new_difference = dt - wrap.ref_coords.y();
-            set_difference(seg_index, new_difference, la, lb, lc, ldirection);
-          }
-        }
-      }
-    }
-
-    std::size_t find_longest_segment(
-      const Indices& group) const {
-      
-      FT max_length = -FT(1);
-      std::size_t longest = std::size_t(-1);
-      for (const std::size_t seg_index : group) {
-        const FT seg_length = m_wraps[seg_index].length;
-        if (max_length < seg_length) {
-          longest = seg_index;
-          max_length = seg_length; 
-        }
-      }
-      return longest;
-    }
-
-    void set_difference(
-      const std::size_t seg_index, 
-      const FT new_difference) {
-
-      const FT difference = new_difference;
-      auto& wrap = m_wraps[seg_index];
-
-      const auto& direction = wrap.direction;
-      const Vector_2 final_normal = Vector_2(
-        -direction.dy(), direction.dx());
-
-      const auto& segment = get(m_segment_map, 
-        *(m_input_range.begin() + seg_index));
-
-      const auto& source = segment.source();
-      const auto& target = segment.target();
-
-      Point_2 new_source = Point_2(
-        source.x() + difference * final_normal.x(), 
-        source.y() + difference * final_normal.y());
-      Point_2 new_target = Point_2(
-        target.x() + difference * final_normal.x(), 
-        target.y() + difference * final_normal.y());
-      
-      const FT bx = (new_source.x() + new_target.x()) / FT(2);
-      const FT by = (new_source.y() + new_target.y()) / FT(2);
-
-      m_input_range[seg_index] = Segment_2(new_source, new_target);
-      wrap.c = -wrap.a * bx - wrap.b * by;
-      ++m_num_modified_segments;
-    }
-
-    void set_difference(
-      const std::size_t seg_index, 
-      const FT new_difference, 
-      const FT a, const FT b, const FT c, 
-      const Direction_2& direction) {
-      
-      FT difference = new_difference;
-      auto& wrap = m_wraps[seg_index];
-
-      wrap.direction = direction;
-      if (wrap.direction.dy() < FT(0) || 
-      (wrap.direction.dy() == FT(0) && wrap.direction.dx() < FT(0))) 
-        wrap.direction = -wrap.direction;
-
-      Vector_2 final_normal = Vector_2(
-        -wrap.direction.dy(), wrap.direction.dx());
-
-      const auto& segment = get(m_segment_map, 
-        *(m_input_range.begin() + seg_index));
-
-      const auto& source = segment.source();
-      const auto& target = segment.target();
-
-      FT x1, x2, y1, y2;
-      if (
-        CGAL::abs(wrap.direction.dx()) > 
-        CGAL::abs(wrap.direction.dy())) {
-
-        x1 = source.x() + difference * final_normal.x();
-        x2 = target.x() + difference * final_normal.x(); 
-        y1 = (-c - a * x1) / b;
-        y2 = (-c - a * x2) / b;
-      } else {    
-        y1 = source.y() + difference * final_normal.y();
-        y2 = target.y() + difference * final_normal.y();
-        x1 = (-c - b * y1) / a;
-        x2 = (-c - b * y2) / a;
-      }
-
-      const Point_2 new_source = Point_2(x1, y1);
-      const Point_2 new_target = Point_2(x2, y2);
-      m_input_range[seg_index] = Segment_2(new_source, new_target);
-      ++m_num_modified_segments;
-    } */
   };
 
 } // namespace Segments

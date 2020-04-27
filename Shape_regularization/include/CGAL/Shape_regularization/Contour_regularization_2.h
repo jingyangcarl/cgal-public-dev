@@ -29,8 +29,8 @@
 #include <CGAL/boost/graph/Named_function_parameters.h>
 
 // Internal includes.
-#include <CGAL/Shape_regularization/internal/Closed_contour_regularization_2.h>
-#include <CGAL/Shape_regularization/internal/Open_contour_regularization_2.h>
+#include <CGAL/Shape_regularization/internal/Closed_contour_2.h>
+#include <CGAL/Shape_regularization/internal/Open_contour_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -82,8 +82,8 @@ namespace Shape_regularization {
     using FT = typename Traits::FT;
     using Regularization = typename std::conditional<
       std::is_same<ContourTag, CLOSED>::value,
-      internal::Closed_contour_regularization_2<Traits, Contour_directions>,
-      internal::Open_contour_regularization_2<Traits, Contour_directions> >::type;
+      internal::Closed_contour_2<Traits, Contour_directions>,
+      internal::Open_contour_2<Traits, Contour_directions> >::type;
     /// \endcond
 
     /// \name Initialization
