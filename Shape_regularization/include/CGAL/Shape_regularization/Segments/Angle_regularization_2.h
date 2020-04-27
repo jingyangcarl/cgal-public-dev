@@ -243,7 +243,7 @@ namespace Segments {
         m_input_range, 
         CGAL::parameters::max_angle(m_max_angle), 
         m_segment_map);
-      return grouping.orthogonal_groups(groups);
+      return grouping.groups(groups);
     }
 
     /*!
@@ -259,7 +259,7 @@ namespace Segments {
         m_input_range, 
         CGAL::parameters::max_angle(m_max_angle), 
         m_segment_map);
-      return grouping.parallel_groups(groups);
+      return grouping.groups(groups);
     }
 
     /*!

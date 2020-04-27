@@ -150,6 +150,7 @@ namespace Shape_regularization {
     template<typename OutputIterator>
     void regularize(
       OutputIterator contour) {
+      
       m_regularization->regularize(
         contour);
     }

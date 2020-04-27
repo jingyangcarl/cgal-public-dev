@@ -113,7 +113,7 @@ int main(int argc, char *argv[]) {
   CGAL::parameters::max_angle(max_angle_2));
 
   std::vector<Indices> parallel_groups;
-  grouping.parallel_groups(
+  grouping.groups(
     std::back_inserter(parallel_groups));
 
   std::cout << 

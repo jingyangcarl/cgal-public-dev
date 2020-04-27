@@ -115,8 +115,6 @@ namespace internal {
       CGAL::sqrt(CGAL::to_double(v.squared_length())));
   }
 
-  // Is it a valid implementation for a contour edge rather than a segment?
-  // If I use angle_2_degrees with this, my function consecutive_groups() does not work.
   template<typename Vector_2>
   typename Kernel_traits<Vector_2>::Kernel::Direction_2
   direction_2(Vector_2& v) { 

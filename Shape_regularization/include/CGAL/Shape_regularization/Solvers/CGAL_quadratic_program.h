@@ -44,6 +44,8 @@ namespace Shape_regularization {
 
     \tparam FT
     number type.
+
+    \cgalModels `QuadraticProgram`
   */
   template<typename FT>
   class CGAL_quadratic_program {

@@ -31,9 +31,6 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
 
-// TODO:
-// * Clean it up.
-
 namespace CGAL {
 namespace Shape_regularization {
 namespace Segments {
@@ -54,6 +51,8 @@ namespace Segments {
     must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
+
+    \cgalModels `GroupType`
   */
   template<
   typename GeomTraits,
@@ -130,11 +129,17 @@ namespace Segments {
     /*!
       \brief returns indices of parallel segments organized into groups.
 
+      \tparam OutputIterator 
+      must be a model of `OutputIterator`
+
       \param groups
-      an instance of OutputIterator
+      an instance of OutputIterator, 
+      whose value type is `std::vector<std::size_t>`
+
+      \return an output iterator
     */
     template<typename OutputIterator>
-    OutputIterator parallel_groups(OutputIterator groups) const {
+    OutputIterator groups(OutputIterator groups) const {
       for (const auto& parallel_group : m_parallel_groups) {
         const auto& group = parallel_group.second;
         *(groups++) = group;

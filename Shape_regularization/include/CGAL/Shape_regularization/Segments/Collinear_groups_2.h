@@ -32,10 +32,6 @@
 #include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/Segments/Parallel_groups_2.h>
 
-// TODO:
-// * Clean it up.
-// * Change this function by using the y offset value.
-
 namespace CGAL {
 namespace Shape_regularization {
 namespace Segments {
@@ -56,6 +52,8 @@ namespace Segments {
     must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
+
+    \cgalModels `GroupType`
   */
   template<
   typename GeomTraits,
@@ -136,11 +134,17 @@ namespace Segments {
     /*!
       \brief returns indices of collinear segments organized into groups.
 
+      \tparam OutputIterator 
+      must be a model of `OutputIterator`
+
       \param groups
-      an instance of OutputIterator
+      an instance of OutputIterator, 
+      whose value type is `std::vector<std::size_t>`
+
+      \return an output iterator
     */
     template<typename OutputIterator>
-    OutputIterator collinear_groups(OutputIterator groups) const {
+    OutputIterator groups(OutputIterator groups) const {
       for (const auto& collinear_group : m_collinear_groups) {
         const auto& group = collinear_group;
         *(groups++) = group;
@@ -160,7 +164,7 @@ namespace Segments {
     void make_collinear_groups() {
       
       std::vector<Indices> parallel_groups;
-      m_grouping.parallel_groups(
+      m_grouping.groups(
         std::back_inserter(parallel_groups));
       m_collinear_groups.reserve(parallel_groups.size());
       
@@ -170,43 +174,67 @@ namespace Segments {
       const FT sq_max_dist = m_max_offset * m_max_offset;
       for (const auto& parallel_group : parallel_groups) {
         CGAL_assertion(parallel_group.size() > 0);
-        
+
         states.clear();
         states.resize(parallel_group.size(), false);
-        for (std::size_t i = 0; i < parallel_group.size(); ++i) {
-          if (states[i]) continue;
-          
-          const std::size_t si_index = parallel_group[i];
-          const auto& si = get(m_segment_map, 
-            *(m_input_range.begin() + si_index));
-          
-          states[i] = true;
-          collinear_group.clear();
-          collinear_group.push_back(si_index);
-
-          const Line_2 line = Line_2(si.source(), si.target());
-          for (std::size_t j = i + 1; j < parallel_group.size(); ++j) {
-            if (states[j]) continue;
-            
-            const std::size_t sj_index = parallel_group[j];
-            const auto& sj = get(m_segment_map, 
-              *(m_input_range.begin() + sj_index));
-            
-            const auto p = internal::middle_point_2(
-              sj.source(), sj.target());
-            const auto q = line.projection(p);
-            
-            const FT sq_dist = CGAL::squared_distance(p, q);
-            if (sq_dist <= sq_max_dist) {
-              states[j] = true;
-              collinear_group.push_back(sj_index);
-            }
-          }
-          m_collinear_groups.push_back(collinear_group);
-        }
+        handle_parallel_group(
+          parallel_group, sq_max_dist, 
+          states, collinear_group);
       }
       CGAL_assertion(
         m_collinear_groups.size() >= parallel_groups.size());
+    }
+
+    void handle_parallel_group(
+      const Indices& parallel_group,
+      const FT sq_max_dist,
+      std::vector<bool>& states,
+      Indices& collinear_group) {
+
+      for (std::size_t i = 0; i < parallel_group.size(); ++i) {
+        if (states[i]) continue;
+        
+        const std::size_t si_index = parallel_group[i];
+        const auto& si = get(m_segment_map, 
+          *(m_input_range.begin() + si_index));
+        
+        states[i] = true;
+        collinear_group.clear();
+        collinear_group.push_back(si_index);
+
+        const Line_2 line = Line_2(si.source(), si.target());
+        traverse_group(
+          i, line, parallel_group, sq_max_dist, 
+          states, collinear_group);
+        m_collinear_groups.push_back(collinear_group);
+      }
+    }
+
+    void traverse_group(
+      const std::size_t i,
+      const Line_2& line,
+      const Indices& parallel_group,
+      const FT sq_max_dist,
+      std::vector<bool>& states,
+      Indices& collinear_group) const {
+
+      for (std::size_t j = i + 1; j < parallel_group.size(); ++j) {
+        if (states[j]) continue;
+        
+        const std::size_t sj_index = parallel_group[j];
+        const auto& sj = get(m_segment_map, 
+          *(m_input_range.begin() + sj_index));
+        
+        const auto p = internal::middle_point_2(
+          sj.source(), sj.target());
+        const auto q = line.projection(p);
+        
+        const FT sq_dist = CGAL::squared_distance(p, q);
+        if (sq_dist <= sq_max_dist) {
+          states[j] = true;
+          collinear_group.push_back(sj_index);
+        }
+      }
     }
   };
 

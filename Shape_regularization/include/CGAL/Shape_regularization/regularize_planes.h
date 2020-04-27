@@ -483,6 +483,8 @@ namespace PL {
 /// \endcond
 
 /*
+To be removed!
+
 \tparam PointPMap must be a model of `ReadablePropertyMap` with the value type `Kernel::Point_3`.
 It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
 
@@ -551,8 +553,8 @@ namespace Planes {
   typename NamedParameters>
   void regularize_planes(
     PlaneRange& planes,
-    const PointRange& points, // do we need them?
-    const NamedParameters& np) {
+    const PointRange& points,
+    const NamedParameters np) {
     
     /*
     using Kernel = GeomTraits;

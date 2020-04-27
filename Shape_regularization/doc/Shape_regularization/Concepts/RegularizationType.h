@@ -8,7 +8,7 @@ required for setting up the the global regularization problem.
 
 \cgalHasModel 
 - `CGAL::Shape_regularization::Segments::Angle_regularization_2`, 
-- `CGAL::Shape_regularization::Segments::Offset_regularization_2`
+- `CGAL::Shape_regularization::Segments::Offset_regularization_2`.
 */
 class RegularizationType {
 

@@ -242,7 +242,7 @@ namespace Segments {
         m_input_range, 
         CGAL::parameters::max_offset(m_max_offset), 
         m_segment_map);
-      return grouping.collinear_groups(groups);
+      return grouping.groups(groups);
     }
 
     /*!
@@ -346,8 +346,7 @@ namespace Segments {
           get(m_segment_map, *(m_input_range.begin() + seg_index));
         wrap.set_qp(seg_index, segment);
 
-        if (i == 0)
-          frame_origin = wrap.barycenter;
+        if (i == 0) frame_origin = wrap.barycenter;
         wrap.set_ref_coords(frame_origin);
       } 
     }

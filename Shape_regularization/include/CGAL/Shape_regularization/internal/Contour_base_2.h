@@ -1086,7 +1086,8 @@ namespace internal {
       CGAL::set_ascii_mode(file);
       if (!file) {
         std::cout << 
-        "Error: cannot save the file: " << path << std::endl; return;
+          "Error: cannot save the file: " << path << std::endl; 
+        return;
       }
       
       file << out.str() << std::endl; file.close();

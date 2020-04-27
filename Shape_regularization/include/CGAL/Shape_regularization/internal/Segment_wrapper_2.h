@@ -129,6 +129,7 @@ namespace internal {
       }
       const Point_2 source = Point_2(x1, y1);
       const Point_2 target = Point_2(x2, y2);
+      
       return Segment_2(source, target);
     } 
   };

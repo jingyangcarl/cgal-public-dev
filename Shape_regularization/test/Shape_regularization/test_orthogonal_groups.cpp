@@ -1,3 +1,4 @@
+#include <list>
 #include <vector>
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
@@ -28,7 +29,7 @@ void test_orthogonal_groups() {
 
     Segment_2(Point_2(7, 1), Point_2(10, 0)), // bottom right group
 
-    Segment_2(Point_2( 8, 3), Point_2(FT(98) / FT(10), FT(52) / FT(10))), // top right group
+    Segment_2(Point_2( 8, 3), Point_2(10, FT(52) / FT(10))), // top right group
     Segment_2(Point_2(12, 2), Point_2(10, 4))
   };
   // saver.export_polylines(segments, 
@@ -37,7 +38,7 @@ void test_orthogonal_groups() {
   const OG grouping(
     segments, CGAL::parameters::all_default());
   std::vector<Indices> groups;
-  grouping.orthogonal_groups(
+  grouping.groups(
     std::back_inserter(groups));
   assert(groups.size() == 3);
 

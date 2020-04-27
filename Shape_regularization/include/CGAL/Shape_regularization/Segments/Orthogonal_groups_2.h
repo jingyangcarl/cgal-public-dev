@@ -32,10 +32,6 @@
 #include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/Segments/Parallel_groups_2.h>
 
-// TODO:
-// * Clean it up.
-// * Change angle computation below.
-
 namespace CGAL {
 namespace Shape_regularization {
 namespace Segments {
@@ -56,6 +52,8 @@ namespace Segments {
     must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
+
+    \cgalModels `GroupType`
   */
   template<
   typename GeomTraits,
@@ -78,6 +76,7 @@ namespace Segments {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
+    using Direction_2 = typename Traits::Direction_2;
     using Indices = std::vector<std::size_t>;
     using Parallel_groups_2 = Parallel_groups_2<Traits, Input_range, Segment_map>;
     /// \endcond
@@ -123,7 +122,7 @@ namespace Segments {
       const FT max_angle = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_angle), FT(5));
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
-      m_max_angle = std::floor(CGAL::to_double(max_angle));
+      m_max_angle = max_angle;
       make_orthogonal_groups();
     }
 
@@ -135,11 +134,17 @@ namespace Segments {
     /*!
       \brief returns indices of orthogonal segments organized into groups.
 
+      \tparam OutputIterator 
+      must be a model of `OutputIterator`
+
       \param groups
-      an instance of OutputIterator
+      an instance of OutputIterator, 
+      whose value type is `std::vector<std::size_t>`
+
+      \return an output iterator
     */
     template<typename OutputIterator>
-    OutputIterator orthogonal_groups(OutputIterator groups) const {
+    OutputIterator groups(OutputIterator groups) const {
       for (const auto& orthogonal_group : m_orthogonal_groups) {
         const auto& group = orthogonal_group;
         *(groups++) = group;
@@ -153,18 +158,17 @@ namespace Segments {
     const Segment_map m_segment_map;
     const Parallel_groups_2 m_grouping;
     
-    double m_max_angle;
+    FT m_max_angle;
     std::vector<Indices> m_orthogonal_groups;
 
     void make_orthogonal_groups() {
       
       std::vector<Indices> parallel_groups;
-      m_grouping.parallel_groups(
+      m_grouping.groups(
         std::back_inserter(parallel_groups));
 
       Indices orthogonal_group;
       std::vector<bool> states(parallel_groups.size(), false);
-
       for (std::size_t i = 0; i < parallel_groups.size(); ++i) {
         if (states[i]) continue;
 
@@ -172,39 +176,49 @@ namespace Segments {
         const std::size_t si_index = parallel_groups[i][0];
         const auto& si = get(
           m_segment_map, *(m_input_range.begin() + si_index));
-        const double anglei = static_cast<double>(
-          internal::key_angle_2(m_max_angle, si));
+        auto vi = si.to_vector();
+        const Direction_2 di = internal::direction_2(vi);
         
         orthogonal_group.clear();
         for (const std::size_t seg_index : parallel_groups[i])
           orthogonal_group.push_back(seg_index);
         states[i] = true;
 
-        for (std::size_t j = i + 1; j < parallel_groups.size(); ++j) {
-          if (states[j]) continue;
-        
-          CGAL_assertion(parallel_groups[j].size() > 0);
-          const std::size_t sj_index = parallel_groups[j][0];
-          const auto& sj = get(
-            m_segment_map, *(m_input_range.begin() + sj_index));
-          const double anglej = static_cast<double>(
-            internal::key_angle_2(m_max_angle, sj));
-
-          const double angle_diff = 
-            CGAL::abs(anglei - anglej);
-          if (
-            angle_diff >= 90.0 - m_max_angle && 
-            angle_diff <= 90.0 + m_max_angle) {
-            
-            for (const std::size_t seg_index : parallel_groups[j])
-              orthogonal_group.push_back(seg_index);
-            states[j] = true;
-          }
-        }
+        traverse_group(i, di, parallel_groups,
+        states, orthogonal_group);
         m_orthogonal_groups.push_back(orthogonal_group);
       }
       CGAL_assertion(
         m_orthogonal_groups.size() <= parallel_groups.size());
+    }
+
+    void traverse_group(
+      const std::size_t i,
+      const Direction_2& di,
+      const std::vector<Indices>& parallel_groups,
+      std::vector<bool>& states,
+      Indices& orthogonal_group) {
+      
+      for (std::size_t j = i + 1; j < parallel_groups.size(); ++j) {
+        if (states[j]) continue;
+      
+        CGAL_assertion(parallel_groups[j].size() > 0);
+        const std::size_t sj_index = parallel_groups[j][0];
+        const auto& sj = get(
+          m_segment_map, *(m_input_range.begin() + sj_index));
+        auto vj = sj.to_vector();
+        const Direction_2 dj = internal::direction_2(vj);
+
+        const FT angle = 
+          internal::angle_2(di, dj);
+        if (
+          angle <= m_max_angle || 
+          angle >= FT(90) - m_max_angle) {
+          for (const std::size_t seg_index : parallel_groups[j])
+            orthogonal_group.push_back(seg_index);
+          states[j] = true;
+        }
+      }
     }
   };
 

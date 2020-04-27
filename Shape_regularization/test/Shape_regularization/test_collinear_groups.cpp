@@ -1,3 +1,4 @@
+#include <list>
 #include <vector>
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
@@ -38,7 +39,7 @@ void test_collinear_groups() {
   const CG grouping(
     segments, CGAL::parameters::all_default());
   std::vector<Indices> groups;
-  grouping.collinear_groups(
+  grouping.groups(
     std::back_inserter(groups));
   assert(groups.size() == 4);
 

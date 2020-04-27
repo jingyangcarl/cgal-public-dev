@@ -9,7 +9,7 @@ to estimate principal directions of the contour.
 \cgalHasModel 
 - `CGAL::Shape_regularization::Contours::Longest_direction_2`,
 - `CGAL::Shape_regularization::Contours::Multiple_directions_2`,
-- `CGAL::Shape_regularization::Contours::User_defined_directions_2`
+- `CGAL::Shape_regularization::Contours::User_defined_directions_2`.
 */
 class ContourDirections {
 

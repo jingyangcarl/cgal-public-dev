@@ -1,3 +1,4 @@
+#include <list>
 #include <vector>
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
@@ -36,7 +37,7 @@ void test_parallel_groups() {
   const PG grouping(
     segments, CGAL::parameters::all_default());
   std::vector<Indices> groups;
-  grouping.parallel_groups(
+  grouping.groups(
     std::back_inserter(groups));
   assert(groups.size() == 3);
 
