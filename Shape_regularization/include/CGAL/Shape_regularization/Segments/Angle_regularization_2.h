@@ -202,7 +202,8 @@ namespace Segments {
       for (auto& wrap : m_wraps) {
         if (!wrap.is_used) continue;
 
-        wrap.orientation += solution[wrap.index]; 
+        const std::size_t seg_index = wrap.index; 
+        wrap.orientation += solution[seg_index]; 
         const double angle_rad = internal::radians_2(wrap.orientation);
 
         const FT x = static_cast<FT>(std::cos(angle_rad));
@@ -218,7 +219,7 @@ namespace Segments {
         wrap.c = -wrap.a * wrap.barycenter.x() - wrap.b * wrap.barycenter.y();
         
         put(m_segment_map, 
-          *(m_input_range.begin() + wrap.index), wrap.orient());
+          *(m_input_range.begin() + seg_index), wrap.orient());
         ++m_num_modified_segments;
       }
     }

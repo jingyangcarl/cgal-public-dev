@@ -31,6 +31,9 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
 
+// TODO:
+// * Clean it up.
+
 namespace CGAL {
 namespace Shape_regularization {
 namespace Segments {

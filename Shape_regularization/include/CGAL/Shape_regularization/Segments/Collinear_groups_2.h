@@ -32,6 +32,10 @@
 #include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/Segments/Parallel_groups_2.h>
 
+// TODO:
+// * Clean it up.
+// * Change this function by using the y offset value.
+
 namespace CGAL {
 namespace Shape_regularization {
 namespace Segments {

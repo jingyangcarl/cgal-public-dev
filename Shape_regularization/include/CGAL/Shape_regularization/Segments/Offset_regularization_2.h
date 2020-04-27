@@ -209,26 +209,39 @@ namespace Segments {
     void update(const std::vector<FT>& solution) {
       CGAL_precondition(solution.size() > 0);
 
-      Targets_map targets;
-      std::map<FT, Indices> collinear_groups;
-      std::map<std::size_t, Segment_wrapper_2> segments;
+      CGAL_precondition(solution.size() > 0);
+      for (auto& wrap : m_wraps) {
+        if (!wrap.is_used) continue;
+        // set_difference(wrap.index, -solution[wrap.index]);
 
-      CGAL_assertion(m_targets.size() > 0);
-      for (const auto& group : m_groups) {
-        if (group.size() < 2) continue; 
+        const std::size_t seg_index = wrap.index;
+        const FT difference = -solution[seg_index];
 
-        targets.clear(); segments.clear();
-        build_grouping_data(group, segments, targets);
+        const auto& direction = wrap.direction;
+        const Vector_2 final_normal = Vector_2(
+          -direction.dy(), direction.dx());
 
-        collinear_groups.clear();
-        if (segments.size() > 0) {
-          const std::size_t n = m_input_range.size();
+        const auto& segment = get(m_segment_map, 
+          *(m_input_range.begin() + seg_index));
+        const auto& source = segment.source();
+        const auto& target = segment.target();
 
-          m_grouping.make_groups(
-            m_max_offset, n, segments, solution, 
-            collinear_groups, targets);
-          translate_collinear_segments(collinear_groups);
-        }
+        const Point_2 new_source = Point_2(
+          source.x() + difference * final_normal.x(), 
+          source.y() + difference * final_normal.y());
+        const Point_2 new_target = Point_2(
+          target.x() + difference * final_normal.x(), 
+          target.y() + difference * final_normal.y());
+      
+        const FT bx = (new_source.x() + new_target.x()) / FT(2);
+        const FT by = (new_source.y() + new_target.y()) / FT(2);
+        wrap.barycenter = Point_2(bx, by);
+        wrap.c = -wrap.a * bx - wrap.b * by;
+
+        const Segment_2 modified = Segment_2(new_source, new_target);
+        put(m_segment_map, 
+          *(m_input_range.begin() + seg_index), modified);
+        ++m_num_modified_segments;
       }
     }
     /// @}
@@ -361,12 +374,13 @@ namespace Segments {
         wrap.set_qp(seg_index, segment);
 
         if (i == 0)
-          frame_origin = wrap.barycenter;
+          frame_origin = wrap.barycenter; // Do we need that?
         wrap.set_ref_coords(frame_origin);
       } 
     }
 
     // Do we need that?
+    /*
     void build_grouping_data(
       const Indices& group,
       std::map<std::size_t, Segment_wrapper_2>& segments,
@@ -518,7 +532,7 @@ namespace Segments {
       const Point_2 new_target = Point_2(x2, y2);
       m_input_range[seg_index] = Segment_2(new_source, new_target);
       ++m_num_modified_segments;
-    }
+    } */
   };
 
 } // namespace Segments
