@@ -1,9 +1,7 @@
-#include <CGAL/Timer.h>
+#include "include/Saver.h"
 #include <CGAL/property_map.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_regularization.h>
-
-#include "include/Saver.h"
 
 // Typedefs.
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -35,18 +33,9 @@ using Saver =
 
 int main(int argc, char *argv[]) {
 
-  std::cout << std::endl << 
-    "regularize 15 segments example started" 
-  << std::endl << std::endl;
-
   // If we want to save the result in a file, we save it in a path.
   std::string path = "";
   if (argc > 1) path = argv[1];
-
-  // Initialize a timer.
-  CGAL::Timer timer;
-
-  // Initialize input range.
 
   // Initialize 30 points.
   std::vector<Point_2> points = {
@@ -92,9 +81,6 @@ int main(int argc, char *argv[]) {
     saver.save_segments_2(input_range, full_path);
   }
 
-  // Regularize.
-  timer.start();
-
   // Angle regularization.
   Quadratic_program qp_angles;
 
@@ -114,24 +100,16 @@ int main(int argc, char *argv[]) {
     input_range, neighbor_query, angle_regularization, qp_angles);
   qp_angle_regularizer.regularize();
 
-  timer.stop();
   std::cout << 
     "* number of modified segments (angles) = " << 
-    angle_regularization.number_of_modified_segments() << 
-    " in time = " << timer.time() << " sec." 
-  << std::endl;
+    angle_regularization.number_of_modified_segments() << std::endl;
 
   // Offset regularization.
   Quadratic_program qp_offsets;
 
-  timer.reset(); timer.start();
   std::vector<Indices> parallel_groups;
   angle_regularization.parallel_groups(
     std::back_inserter(parallel_groups));
-
-  std::cout << 
-    "* number of parallel_groups = " << parallel_groups.size() 
-  << std::endl;
 
   const FT max_offset_2 = FT(1) / FT(10);
   Offset_regularization offset_regularization(
@@ -148,12 +126,9 @@ int main(int argc, char *argv[]) {
     input_range, neighbor_query, offset_regularization, qp_offsets);
   qp_offset_regularizer.regularize();
 
-  timer.stop();
   std::cout << 
     "* number of modified segments (offsets) = " << 
-    offset_regularization.number_of_modified_segments() << 
-    " in time = " << timer.time() << " sec." 
-  << std::endl;
+    offset_regularization.number_of_modified_segments() << std::endl;
 
   // Save regularized segments.
   if (path != "") {
@@ -161,8 +136,4 @@ int main(int argc, char *argv[]) {
     const std::string full_path = path + "regularize_15_segments_after";
     saver.save_segments_2(input_range, full_path);
   }
-
-  std::cout << std::endl << 
-    "regularize 15 segments example finished" 
-  << std::endl << std::endl;
 }

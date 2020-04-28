@@ -2,6 +2,7 @@
 #define CGAL_SHAPE_REGULARIZATION_TESTS_SAVER_H
 
 // STL includes.
+#include <list>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -9,6 +10,7 @@
 
 // CGAL includes.
 #include <CGAL/IO/io.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -20,7 +22,6 @@ namespace Tests {
   public:
     using Traits = GeomTraits;
     using FT = typename Traits::FT;
-    using Point_2 = typename Traits::Point_2;
     using Point_3 = typename Traits::Point_3;
     using Segment_2 = typename Traits::Segment_2;
     using Polyline = std::vector<Point_3>;

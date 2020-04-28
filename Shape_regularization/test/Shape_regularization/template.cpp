@@ -1,5 +1,4 @@
-#include <list>
-#include <vector>
+#include "include/utils.h"
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -9,6 +8,7 @@ namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
 void test_with_name() { 
+  
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
@@ -20,8 +20,8 @@ void test_with_name() {
 }
 
 int main() {
-  test_neighbor_query< CGAL::Simple_cartesian<double> >();
-  test_neighbor_query< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_neighbor_query< CGAL::Exact_predicates_exact_constructions_kernel >();
+  test_with_name< CGAL::Simple_cartesian<double> >();
+  test_with_name< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_with_name< CGAL::Exact_predicates_exact_constructions_kernel >(); 
   return EXIT_SUCCESS;
 }

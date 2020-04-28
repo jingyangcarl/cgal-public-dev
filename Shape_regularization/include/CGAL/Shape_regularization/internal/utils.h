@@ -309,6 +309,7 @@ namespace internal {
     return angle_rad;
   }
 
+  // Remove this function since max_angle cannot be equal 0!
   template<typename Segment_2>
   std::size_t key_angle_2(
     const double max_angle,
@@ -317,7 +318,9 @@ namespace internal {
     auto v = segment.to_vector();
     const auto direction = internal::direction_2(v).to_vector();
     const auto orientation = internal::orientation_2(direction);
-    const double fvalue = std::floor(CGAL::to_double(orientation));
+    double fvalue = std::ceil(CGAL::to_double(orientation));
+    if (fvalue >= 180.0) fvalue -= 180.0;
+    CGAL_assertion(max_angle != 0.0);
     const std::size_t num = static_cast<std::size_t>(
       std::floor(fvalue / max_angle));
     const std::size_t angle = static_cast<std::size_t>(

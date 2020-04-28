@@ -49,7 +49,7 @@ namespace Shape_regularization {
   */
   template<typename FT>
   class CGAL_quadratic_program {
-    using Quadratic_program = CGAL::Quadratic_program<int>;
+    using Quadratic_program = CGAL::Quadratic_program<FT>;
 
   public:
 
@@ -110,16 +110,16 @@ namespace Shape_regularization {
 
     void set_l(
       const std::size_t j, 
-      const bool, 
+      const bool is_finite, 
       const FT val) {
-      m_quadratic_program.set_l(j, val);
+      m_quadratic_program.set_l(j, is_finite, val);
     }
 
     void set_u(
       const std::size_t j, 
-      const bool, 
+      const bool is_finite, 
       const FT val) {
-      m_quadratic_program.set_u(j, val);
+      m_quadratic_program.set_u(j, is_finite, val);
     }
 
     /*

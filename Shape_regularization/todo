@@ -1,4 +1,7 @@
 * When adding the QP_solver concept, I should probably put it in the Solver_interface 
 and refactor the MixedIntegerConcept, too.
-* Change angle computation in the Orthogonal_groups_2 class. Instead of taking to key_angle_2(),
-I should simply compute an angle between two segments.
+* Redo the Parallel_segments_2 class. Now it is not precise enough! Remove key_angle_2().
+* Redo the 100_segments_offsets example and test. Current generation is weird.
+* Should I remove Parallel_groups_2 class from the Collinear and Orthogonal classes?
+* Add contour tests.
+* Clean regularize_planes(), tests, and examples.

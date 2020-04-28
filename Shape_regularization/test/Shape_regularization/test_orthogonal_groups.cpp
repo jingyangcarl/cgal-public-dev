@@ -1,5 +1,4 @@
-#include <list>
-#include <vector>
+#include "include/utils.h"
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -10,6 +9,7 @@ namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
 void test_orthogonal_groups() { 
+
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
@@ -33,7 +33,7 @@ void test_orthogonal_groups() {
     Segment_2(Point_2(12, 2), Point_2(10, 4))
   };
   // saver.export_polylines(segments, 
-  //   "/Users/monet/Documents/gsoc/ggr/logs/input");
+  //   "/Users/monet/Documents/gsoc/ggr/logs/og_input");
   
   const OG grouping(
     segments, CGAL::parameters::all_default());
@@ -42,11 +42,11 @@ void test_orthogonal_groups() {
     std::back_inserter(groups));
   assert(groups.size() == 3);
 
-  // saver.export_group(segments, groups[0], "group0");
+  // saver.export_group(segments, groups[0], "og_group0");
   assert(groups[0].size() == 5);
-  // saver.export_group(segments, groups[1], "group1");
+  // saver.export_group(segments, groups[1], "og_group1");
   assert(groups[1].size() == 2);
-  // saver.export_group(segments, groups[2], "group2");
+  // saver.export_group(segments, groups[2], "og_group2");
   assert(groups[2].size() == 1);
 }
 
@@ -54,5 +54,6 @@ int main() {
   test_orthogonal_groups< CGAL::Simple_cartesian<double> >();
   test_orthogonal_groups< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_orthogonal_groups< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_orthogonal_groups: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

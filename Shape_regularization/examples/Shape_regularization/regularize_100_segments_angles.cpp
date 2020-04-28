@@ -1,4 +1,4 @@
-#include <CGAL/Timer.h>
+#include "include/Saver.h"
 #include <CGAL/property_map.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization.h>
@@ -7,8 +7,6 @@
 #include <CGAL/Counting_iterator.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/point_generators_2.h>
-
-#include "include/Saver.h"
 
 // Typedefs.
 using Kernel = CGAL::Simple_cartesian<double>;
@@ -39,16 +37,9 @@ using Count_iterator = CGAL::Counting_iterator<Segment_iterator, Segment_2>;
 
 int main(int argc, char *argv[]) {
 
-  std::cout << std::endl << 
-    "regularize 100 segments angles example started" 
-  << std::endl << std::endl;
-
   // If we want to save the result in a file, we save it in a path.
   std::string path = "";
   if (argc > 1) path = argv[1];
-
-  // Initialize a timer.
-  CGAL::Timer timer;
 
   // Initialize input range.
   Input_range input_range;
@@ -83,35 +74,26 @@ int main(int argc, char *argv[]) {
     saver.save_segments_2(input_range, full_path);
   }
 
-  // Regularize.
-  timer.start();
-
   // Create a solver.
   Quadratic_program qp_angles;
 
   // Create a neighbor query.
-  Indices group(input_range.size());
-  std::iota(group.begin(), group.end(), 0);
   Neighbor_query neighbor_query(input_range);
+  neighbor_query.create_unique_group();
 
   // Angle regularization.
   const FT max_angle_2 = FT(40);
   Angle_regularization angle_regularization(
     input_range, CGAL::parameters::max_angle(max_angle_2));
-
-  neighbor_query.add_group(group);
-  angle_regularization.add_group(group);
+  angle_regularization.create_unique_group();
 
   QP_angle_regularizer qp_angle_regularizer(
     input_range, neighbor_query, angle_regularization, qp_angles);
   qp_angle_regularizer.regularize();
 
-  timer.stop();
   std::cout << 
     "* number of modified segments = " << 
-    angle_regularization.number_of_modified_segments() << 
-    " in time = " << timer.time() << " sec." 
-  << std::endl;
+    angle_regularization.number_of_modified_segments() << std::endl;
 
   // Save regularized segments.
   if (path != "") {
@@ -119,8 +101,4 @@ int main(int argc, char *argv[]) {
     const std::string full_path = path + "regularize_100_segments_angles_after";
     saver.save_segments_2(input_range, full_path);
   }
-
-  std::cout << std::endl << 
-    "regularize 100 segments angles example finished" 
-  << std::endl << std::endl;
 }

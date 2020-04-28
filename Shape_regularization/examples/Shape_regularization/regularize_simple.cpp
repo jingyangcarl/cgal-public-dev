@@ -2,15 +2,17 @@
 #include <CGAL/Shape_regularization.h>
 
 using Kernel = CGAL::Simple_cartesian<double>;
-using Point_2   = typename Kernel::Point_2;
-using Segment_2 = typename Kernel::Segment_2;
+
+using FT          = typename Kernel::FT;
+using Point_2     = typename Kernel::Point_2;
+using Segment_2   = typename Kernel::Segment_2;
 using Input_range = std::vector<Segment_2>;
 
 using NQ = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Input_range>;
-using RT = CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Input_range>;
-using QP = CGAL::Shape_regularization::OSQP_quadratic_program<double>;
+using AR = CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Input_range>;
+using QP = CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
 using Regularizer = 
-  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, NQ, RT, QP>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, NQ, AR, QP>;
 
 int main(int argc, char *argv[]) {
 
@@ -23,7 +25,7 @@ int main(int argc, char *argv[]) {
 
   NQ neighbor_query(input_range);
   neighbor_query.create_unique_group();
-  RT angle_regularization(
+  AR angle_regularization(
     input_range, CGAL::parameters::all_default());
   angle_regularization.create_unique_group();
   

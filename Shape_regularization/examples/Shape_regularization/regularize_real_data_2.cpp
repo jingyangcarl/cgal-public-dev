@@ -1,10 +1,8 @@
-#include <CGAL/Timer.h>
+#include "include/Saver.h"
 #include <CGAL/property_map.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/Shape_regularization.h>
-
-#include "include/Saver.h"
 
 // Typedefs.
 using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -39,7 +37,7 @@ using Saver =
 void boundary_points_on_line_2(
   const std::vector<Point_2>& points,
   const Line_2& line,
-  Point_2 &p, Point_2 &q) {
+  Point_2& p, Point_2& q) {
 
   const FT max_value = FT(1000000000000);
   
@@ -62,13 +60,6 @@ void boundary_points_on_line_2(
 }
 
 int main(int argc, char *argv[]) {
-
-  std::cout << std::endl << 
-    "regularize real data 2 example started" 
-  << std::endl << std::endl;
-
-  // Initialize a timer.
-  CGAL::Timer timer;
 
   // Initialize input range.
   Input_range input_range;
@@ -119,9 +110,6 @@ int main(int argc, char *argv[]) {
     saver.save_segments_2(input_range, full_path);
   }
 
-  // Regularize.
-  timer.start();
-
   // Angle regularization.
   Quadratic_program qp_angles;
 
@@ -140,17 +128,8 @@ int main(int argc, char *argv[]) {
     input_range, neighbor_query, angle_regularization, qp_angles);
   qp_angle_regularizer.regularize();
 
-  timer.stop();
-  std::cout << 
-    "* number of modified segments (angles) = " << 
-    angle_regularization.number_of_modified_segments() << 
-    " in time = " << timer.time() << " sec." 
-  << std::endl;
-
   // Offset regularization.
   Quadratic_program qp_offsets;
-
-  timer.reset(); timer.start();
   std::vector<Indices> parallel_groups;
   angle_regularization.parallel_groups(
     std::back_inserter(parallel_groups));
@@ -174,13 +153,6 @@ int main(int argc, char *argv[]) {
     input_range, neighbor_query, offset_regularization, qp_offsets);
   qp_offset_regularizer.regularize();
 
-  timer.stop();
-  std::cout << 
-    "* number of modified segments (offsets) = " << 
-    offset_regularization.number_of_modified_segments() << 
-    " in time = " << timer.time() << " sec." 
-  << std::endl;
-
   // Save regularized segments.
   if (argc > 2) {
     Saver saver;
@@ -188,8 +160,4 @@ int main(int argc, char *argv[]) {
       std::string(argv[2]) + "regularize_real_data_2_after";
     saver.save_segments_2(input_range, full_path);
   }
-
-  std::cout << std::endl << 
-    "regularize real data 2 example finished" 
-  << std::endl << std::endl;
 }

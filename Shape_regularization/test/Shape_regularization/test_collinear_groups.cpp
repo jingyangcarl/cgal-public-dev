@@ -1,5 +1,4 @@
-#include <list>
-#include <vector>
+#include "include/utils.h"
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -10,6 +9,7 @@ namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
 void test_collinear_groups() { 
+  
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
@@ -34,7 +34,7 @@ void test_collinear_groups() {
     Segment_2(Point_2(7, 2), Point_2(5, 4)) // top right group
   };
   // saver.export_polylines(segments, 
-  //   "/Users/monet/Documents/gsoc/ggr/logs/input");
+  //   "/Users/monet/Documents/gsoc/ggr/logs/cg_input");
   
   const CG grouping(
     segments, CGAL::parameters::all_default());
@@ -43,13 +43,13 @@ void test_collinear_groups() {
     std::back_inserter(groups));
   assert(groups.size() == 4);
 
-  // saver.export_group(segments, groups[0], "group0");
+  // saver.export_group(segments, groups[0], "cg_group0");
   assert(groups[0].size() == 2);
-  // saver.export_group(segments, groups[1], "group1");
+  // saver.export_group(segments, groups[1], "cg_group1");
   assert(groups[1].size() == 3);
-  // saver.export_group(segments, groups[2], "group2");
+  // saver.export_group(segments, groups[2], "cg_group2");
   assert(groups[2].size() == 2);
-  // saver.export_group(segments, groups[3], "group3");
+  // saver.export_group(segments, groups[3], "cg_group3");
   assert(groups[3].size() == 1);
 }
 
@@ -57,5 +57,6 @@ int main() {
   test_collinear_groups< CGAL::Simple_cartesian<double> >();
   test_collinear_groups< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_collinear_groups< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_collinear_groups: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }
