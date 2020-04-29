@@ -482,88 +482,44 @@ namespace PL {
 
 /// \endcond
 
-/*
-To be removed!
-
-\tparam PointPMap must be a model of `ReadablePropertyMap` with the value type `Kernel::Point_3`.
-It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
-
-\tparam PlaneMap must be a model of `WritablePropertyMap` with the value type `Kernel::Plane_3`.
-It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
-
-\tparam IndexMap must be a model of `ReadablePropertyMap` with the value type `int`.
-  
-\tparam GeomTraits must be a model of `Kernel`.
-It can be omitted and deduced automatically from the value type of `PointMap`.
-*/
-
 namespace Planes {
 
-  /// \ingroup PkgShapeRegularizationRef  
-  /*!
-    \brief Hierarchical plane regularization.
-
-    Given a set of detected planes with their corresponding inlier sets,
-    this function enables to regularize the planes: 
-    - %Planes, which are near parallel, are made parallel.
-    - %Planes, which are near orthogonal, are made exactly orthogonal.
-    - Parallel planes, which are near coplanar, are made exactly coplanar.
-    - %Planes, which are near symmetrical with respect to a user-defined axis, are made exactly symmetrical.
-
-    %Planes are directly modified. Points are left unaltered, as well as their 
-    relationship to the planes (no transfer of a point from a primitive plane to another).
-
-    The implementation follows \cgalCite{cgal:vla-lod-15}.
-
-    \tparam PlaneRange must be a model of `Range` with planes.
-
-    \tparam PointRange must be a model of `ConstRange` with points.
-
-    \tparam NamedParameters
-    a sequence of \ref pmp_namedparameters "Named Parameters".
-
-    \param planes `Range` of planes
-
-    \param points `ConstRange` of points
-
-    \param np optional sequence of \ref pmp_namedparameters "Named Parameters" 
-    among the ones listed below:
-
-    \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
-    \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
-    \param index_map property map: index of a point `std::size_t` -> index of a plane `int` (-1 if the point is not assigned to a plane)
-
-    \param regularize_parallelism selects whether parallelism is regularized or not
-    \param regularize_orthogonality selects whether orthogonality is regularized or not
-    \param regularize_coplanarity selects whether coplanarity is regularized or not
-    \param regularize_axis_symmetry selects whether axis symmetry is regularized or not
-
-    \param max_angle max angle between normal vectors of planes (in degrees) 
-    used for parallelism, orthogonality, and axis symmetry. %Default value is 25 degrees.
-
-    \param max_offset max distance between two parallel planes (in meters) such that 
-    they are considered coplanar. %Default value is 0.01 meters.
-
-    \param symmetry_direction chosen axis for symmetry regularization. 
-    %Default value is the Z axis.
-  */ 
+  /// \cond SKIP_IN_MANUAL
   template<
-  typename PlaneRange,
   typename PointRange,
-  typename NamedParameters>
+  typename PointMap,
+  typename PlaneRange,
+  typename PlaneMap,
+  typename IndexMap,
+  typename GeomTraits>
   void regularize_planes(
-    PlaneRange& planes,
     const PointRange& points,
-    const NamedParameters np) {
-    
-    /*
-    using Kernel = GeomTraits;
-    typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::Vector_3 Vector;
-    typedef typename Kernel::Plane_3 Plane;
+    const PointMap point_map,
+    PlaneRange& planes,
+    const PlaneMap plane_map,
+    const IndexMap index_map,
+    const GeomTraits&,
+    const bool regularize_parallelism,
+    const bool regularize_orthogonality,
+    const bool regularize_coplanarity,
+    const bool regularize_axis_symmetry,
+    typename GeomTraits::FT tolerance_angle 
+      = typename GeomTraits::FT(25),
+    const typename GeomTraits::FT tolerance_coplanarity 
+      = typename GeomTraits::FT(1) / typename GeomTraits::FT(100),
+    const typename GeomTraits::Vector_3 symmetry_direction
+      = typename GeomTraits::Vector_3(
+        typename GeomTraits::FT(0), 
+        typename GeomTraits::FT(0), 
+        typename GeomTraits::FT(1))) {
 
-    typedef typename internal::PL::Plane_cluster<Kernel> Plane_cluster;
+    using Kernel = GeomTraits;
+    using FT = typename Kernel::FT;
+    using Point = typename Kernel::Point_3;
+    using Vector = typename Kernel::Vector_3;
+    using Plane = typename Kernel::Plane_3;
+
+    using Plane_cluster = typename internal::PL::Plane_cluster<Kernel>;
 
     // Compute centroids and areas.
     std::vector<Point> centroids;
@@ -690,18 +646,16 @@ namespace Planes {
             put(plane_map, *(planes.begin() + index_prim), plane_reg);
         }
       }
-    } */
+    }
   }
 
-/// \cond SKIP_IN_MANUAL
-
-// Workaround for the bug reported here:
-// https://developercommunity.visualstudio.com/content/problem/340310/unaccepted-typename-that-other-compilers-require.html
-#if _MSC_VER == 1915
-#define CGAL_TYPENAME_FOR_MSC
-#else
-#define CGAL_TYPENAME_FOR_MSC typename
-#endif
+  // Workaround for the bug reported here:
+  // https://developercommunity.visualstudio.com/content/problem/340310/unaccepted-typename-that-other-compilers-require.html
+  #if _MSC_VER == 1915
+  #define CGAL_TYPENAME_FOR_MSC
+  #else
+  #define CGAL_TYPENAME_FOR_MSC typename
+  #endif
 
   // This variant deduces the kernel from the point property map.
   template<
@@ -712,25 +666,25 @@ namespace Planes {
   typename IndexMap>
   void regularize_planes(
     const PointRange& points,
-    PointMap point_map,
+    const PointMap point_map,
     PlaneRange& planes,
-    PlaneMap plane_map,
-    IndexMap index_map,
-    bool regularize_parallelism,
-    bool regularize_orthogonality,
-    bool regularize_coplanarity,
-    bool regularize_axis_symmetry,
-    typename Kernel_traits<
+    const PlaneMap plane_map,
+    const IndexMap index_map,
+    const bool regularize_parallelism,
+    const bool regularize_orthogonality,
+    const bool regularize_coplanarity,
+    const bool regularize_axis_symmetry,
+    const typename Kernel_traits<
       typename boost::property_traits<PointMap>::value_type>::Kernel::FT tolerance_angle = 
       CGAL_TYPENAME_FOR_MSC Kernel_traits<
         typename boost::property_traits<PointMap>::value_type>::Kernel::FT(25),
-    typename Kernel_traits<
+    const typename Kernel_traits<
       typename boost::property_traits<PointMap>::value_type>::Kernel::FT tolerance_coplanarity = 
       CGAL_TYPENAME_FOR_MSC Kernel_traits<
         typename boost::property_traits<PointMap>::value_type>::Kernel::FT(1) / 
       CGAL_TYPENAME_FOR_MSC Kernel_traits<
         typename boost::property_traits<PointMap>::value_type>::Kernel::FT(100),
-    typename Kernel_traits<
+    const typename Kernel_traits<
       typename boost::property_traits<PointMap>::value_type>::Kernel::Vector_3 symmetry_direction
         = CGAL_TYPENAME_FOR_MSC Kernel_traits<
           typename boost::property_traits<PointMap>::value_type>::Kernel::Vector_3(
@@ -751,11 +705,132 @@ namespace Planes {
       tolerance_angle, tolerance_coplanarity, symmetry_direction);
   }
 
-#ifdef CGAL_TYPENAME_FOR_MSC
-#undef CGAL_TYPENAME_FOR_MSC
-#endif
+  #ifdef CGAL_TYPENAME_FOR_MSC
+  #undef CGAL_TYPENAME_FOR_MSC
+  #endif
+  /// \endcond
 
-/// \endcond
+  /* To be removed!
+  
+  \tparam PointPMap must be a model of `ReadablePropertyMap` with the value type `Kernel::Point_3`.
+  It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
+
+  \tparam PlaneMap must be a model of `WritablePropertyMap` with the value type `Kernel::Plane_3`.
+  It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
+
+  \tparam IndexMap must be a model of `ReadablePropertyMap` with the value type `int`.
+    
+  \tparam GeomTraits must be a model of `Kernel`.
+  It can be omitted and deduced automatically from the value type of `PointMap`.
+  */
+
+  /// \ingroup PkgShapeRegularizationRef  
+  /*!
+    \brief Hierarchical plane regularization.
+
+    Given a set of detected planes with their corresponding inlier sets,
+    this function enables to regularize the planes: 
+    - %Planes, which are near parallel, are made parallel.
+    - %Planes, which are near orthogonal, are made exactly orthogonal.
+    - Parallel planes, which are near coplanar, are made exactly coplanar.
+    - %Planes, which are near symmetrical with respect to a user-defined axis, are made exactly symmetrical.
+
+    %Planes are directly modified. Points are left unaltered, as well as their 
+    relationship to the planes (no transfer of a point from a primitive plane to another).
+
+    The implementation follows \cgalCite{cgal:vla-lod-15}.
+
+    \tparam PlaneRange must be a model of `Range` with planes.
+
+    \tparam PointRange must be a model of `ConstRange` with points.
+
+    \tparam NamedParameters
+    a sequence of \ref pmp_namedparameters "Named Parameters".
+
+    \param planes `Range` of planes
+
+    \param points `ConstRange` of points
+
+    \param np optional sequence of \ref pmp_namedparameters "Named Parameters" 
+    among the ones listed below:
+
+    \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
+    \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
+    \param index_map property map: index of a point `std::size_t` -> index of a plane `int` (-1 if the point is not assigned to a plane)
+
+    \param regularize_parallelism selects whether parallelism is regularized or not
+    \param regularize_orthogonality selects whether orthogonality is regularized or not
+    \param regularize_coplanarity selects whether coplanarity is regularized or not
+    \param regularize_axis_symmetry selects whether axis symmetry is regularized or not
+
+    \param max_angle max angle between normal vectors of planes (in degrees) 
+    used for parallelism, orthogonality, and axis symmetry. %Default value is 25 degrees.
+
+    \param max_offset max distance between two parallel planes (in meters) such that 
+    they are considered coplanar. %Default value is 0.01 meters.
+
+    \param symmetry_direction chosen axis for symmetry regularization. 
+    %Default value is the Z axis.
+  */ 
+  template<
+  typename PlaneRange,
+  typename PlaneMap,
+  typename PointRange,
+  typename PointMap,
+  typename NamedParameters>
+  void regularize_planes(
+    PlaneRange& planes,
+    const PlaneMap plane_map,
+    const PointRange& points,
+    const PointMap point_map,
+    const NamedParameters np) {
+    
+    using parameters::get_parameter;
+    using parameters::choose_parameter;
+    using PlaneIndexMap = typename CGAL::Point_set_processing_3::
+      GetPlaneIndexMap<NamedParameters>::type;
+
+    CGAL_static_assertion_msg(
+      !(boost::is_same<PlaneIndexMap,
+      typename CGAL::Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
+      "Error: no index map found!");
+    const PlaneIndexMap index_map = 
+      choose_parameter(get_parameter(np, internal_np::plane_index_map), PlaneIndexMap());
+
+    using Kernel = typename Kernel_traits<
+      typename boost::property_traits<PointMap>::value_type>::type;
+
+    using FT = typename Kernel::FT;
+    using Vector_3 = typename Kernel::Vector_3;
+
+    const bool reg_prll = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::regularize_parallelism), 
+      true);
+    const bool reg_orth = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::regularize_orthogonality), 
+      true);
+    const bool reg_copl = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::regularize_coplanarity), 
+      true);
+    const bool reg_symm = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::regularize_axis_symmetry), 
+      true);
+
+    const FT tol_angle = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::max_angle), 
+      FT(25));
+    const FT tol_copln = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::max_offset), 
+      FT(1) / FT(100));
+    const Vector_3 sym_dir = parameters::choose_parameter(
+      parameters::get_parameter(np, internal_np::symmetry_direction), 
+      Vector_3(FT(0), FT(0), FT(1)));
+
+    regularize_planes(
+      points, point_map, planes, plane_map, index_map, Kernel(),
+      reg_prll, reg_orth, reg_copl, reg_symm,
+      tol_angle, tol_copln, sym_dir);
+  }
 
 } // namespace Planes
 } // namespace Shape_regularization

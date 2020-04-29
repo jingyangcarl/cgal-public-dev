@@ -12,6 +12,8 @@
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Aff_transformation_3.h>
+#include <CGAL/Random.h>
 
 namespace CGAL {
 namespace Shape_regularization {

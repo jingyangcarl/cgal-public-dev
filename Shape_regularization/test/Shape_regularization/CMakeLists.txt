@@ -29,7 +29,9 @@ if(CGAL_FOUND)
     test_4_segments
     test_100_segments_angles
     test_100_segments_offsets
-    test_cgal_solver)
+    test_cgal_solver
+    test_plane_regularization
+    )
     
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")

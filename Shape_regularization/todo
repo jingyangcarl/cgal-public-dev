@@ -4,4 +4,6 @@ and refactor the MixedIntegerConcept, too.
 * Redo the 100_segments_offsets example and test. Current generation is weird.
 * Should I remove Parallel_groups_2 class from the Collinear and Orthogonal classes?
 * Add contour tests.
-* Clean regularize_planes(), tests, and examples.
+* Add a deprecated API section to Plane Regularization.
+* Add benchmarks.
+* Clean tests and examples.

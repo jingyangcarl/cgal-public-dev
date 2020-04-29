@@ -137,7 +137,7 @@ CGAL_add_named_parameter(max_offset_t, max_offset, max_offset)
 CGAL_add_named_parameter(regularize_parallelism_t, regularize_parallelism, regularize_parallelism)
 CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, regularize_orthogonality)
 CGAL_add_named_parameter(regularize_coplanarity_t, regularize_coplanarity, regularize_coplanarity)
-CGAL_add_named_parameter(regularize_z_symmetry_t, regularize_z_symmetry, regularize_z_symmetry)
+CGAL_add_named_parameter(regularize_axis_symmetry_t, regularize_axis_symmetry, regularize_axis_symmetry)
 CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_direction)
 
 // meshing parameters
