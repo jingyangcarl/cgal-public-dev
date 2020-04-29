@@ -50,7 +50,7 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be a `LvaluePropertyMap` whose key type is the value type of the input 
+    must be an `LvaluePropertyMap` whose key type is the value type of the input 
     range and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
@@ -233,8 +233,12 @@ namespace Segments {
     /*!
       \brief returns indices of orthogonal segments organized into groups.
 
+      \tparam OutputIterator 
+      must be a model of `OutputIterator`
+
       \param groups
-      an instance of OutputIterator
+      an instance of `OutputIterator`, 
+      whose value type is `std::vector<std::size_t>`
     */
     template<typename OutputIterator>
     OutputIterator orthogonal_groups(OutputIterator groups) const {
@@ -249,8 +253,12 @@ namespace Segments {
     /*!
       \brief returns indices of parallel segments organized into groups.
 
+      \tparam OutputIterator 
+      must be a model of `OutputIterator`
+
       \param groups
-      an instance of OutputIterator
+      an instance of `OutputIterator`, 
+      whose value type is `std::vector<std::size_t>`
     */
     template<typename OutputIterator>
     OutputIterator parallel_groups(OutputIterator groups) const {
@@ -293,7 +301,7 @@ namespace Segments {
       \brief inserts all input segments from `input_range` as one unique group.
 
       For more details, 
-      see `CGAL::Shape_regularization::Angle_regularization_2::add_group()`.
+      see `CGAL::Shape_regularization::Segments::Angle_regularization_2::add_group()`.
 
       \pre `m_input_range.size() > 1`
     */

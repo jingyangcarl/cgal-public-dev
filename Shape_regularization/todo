@@ -6,3 +6,4 @@ and refactor the MixedIntegerConcept, too.
 * Add a deprecated API section to Plane Regularization.
 * Add benchmarks.
 * Clean tests and examples.
+* Clean the named parameters docs.

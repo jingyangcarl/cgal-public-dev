@@ -45,7 +45,7 @@ Other instances can be added by the user, as explained \ref QP_Regularization_Im
 The main class `CGAL::Shape_regularization::QP_regularization` is parameterized by:
 - `NeighborQuery` that provides the means for accessing local neighbors of an item,
 - `RegularizationType` that determines a regularization type to be applied, and
-- `QuadraticProgram` that is used to define and solve the corresponding QP problem.
+- `QPSolver` that is used to define and solve the corresponding QP problem.
 
 Within this generic framework, users can regularize any set of input items provided 
 their own neighbor search, regularization type, and QP solver.
@@ -90,8 +90,7 @@ two particular models of the corresponding QP solver:
 Since the internal quadratic program that has to be solved is sparse, we recommend using the second
 solver, because the \cgal version will internally convert this problem into a dense one that takes 
 considerable effort to solve, while the OSQP version is sparse and very efficient. Both solvers 
-follow the `QuadraticProgram` concept (see more in \ref PkgQPSolver) and thus users are free 
-to provide their own version of the solver.
+follow the `QPSolver` concept and thus users are free to provide their own version of the solver.
 
 
 \subsection QP_Regularization_Implementation Implementation
@@ -104,14 +103,12 @@ These concepts are used to parameterize the main `CGAL::Shape_regularization::QP
 1. Use `NeighborQuery` to find local neighbors of each input item;
 2. Use `RegularizationType` to estimate current regularities among these neighbors;
 3. Use `RegularizationType` to set max bounds on the allowed regularity changes;
-4. Use `QuadraticProgram` to solve the quadratic programming problem;
+4. Use `QPSolver` to solve the quadratic programming problem;
 5. Use `RegularizationType` to update input items with respect to the modified regularities.
 
 In addition, the user may also want to change a \ref QP_Regularization_Solvers "QP solver" 
 if one knows how to optimize it for a specific type of input data. To do that, one 
-has to implement a model of the `QuadraticProgram` concept and a global function:
-- `solve_quadratic_program(QuadraticProgram& qp, std::vector<FT>& solution)` that 
-takes an instance of the user-defined QP model and a vector, which stores a solution.
+has to implement a model of the `QPSolver` concept.
 
 An example below shows how to define your own type of the above concepts and how to
 choose among available solvers.
@@ -302,7 +299,15 @@ We also present a graph (TO BE ADDED LATER) that shows how the QP regularization
 the number of input segments.
 
 
-\subsection QP_Regularization_Segments_Utils Parallel Groups
+\subsection QP_Regularization_Segments_Utils Utilities
+
+This \cgal component also provides three models of the concept `GroupType`:
+- `CGAL::Shape_regularization::Segments::Parallel_groups_2` - organizes a set 
+of segments into groups of parallel segments;
+- `CGAL::Shape_regularization::Segments::Orthogonal_groups_2` - organizes a set 
+of segments into groups of orthogonal segments;
+- `CGAL::Shape_regularization::Segments::Collinear_groups_2` - organizes a set 
+of segments into groups of collinear segments.
 
 The `CGAL::Shape_regularization::Segments::Parallel_groups_2` class is created to 
 enable users to form groups of parallel segments without applying the angle 
@@ -314,8 +319,14 @@ create the groups of parallel segments by using this class and provide them as i
 to the offset regularization algorithm.
 
 The generated groups of parallel segments can be accessed through the 
-`CGAL::Shape_regularization::Segments::Parallel_groups_2::parallel_groups()` method.
+`CGAL::Shape_regularization::Segments::Parallel_groups_2::groups()` method.
 An example on how to use this class can be found \ref QP_Parallel_Groups_Example "here".
+
+The other two classes serve a similar goal. The `CGAL::Shape_regularization::Segments::Orthogonal_groups_2` 
+class first creates groups of parallel segments and then merges them into groups, where all 
+segments are either parallel or orthogonal to each other. The 
+`CGAL::Shape_regularization::Segments::Collinear_groups_2` class first creates groups of 
+parallel segments and then splits each of these groups into groups of collinear segments, if any.
 
 
 \section Contour_Regularization Contours

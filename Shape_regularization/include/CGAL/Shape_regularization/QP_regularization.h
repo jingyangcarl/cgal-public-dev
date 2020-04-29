@@ -36,7 +36,7 @@ namespace Shape_regularization {
     \brief Shape regularization algorithm based on the quadratic programming 
     global optimization.
 
-    Given a quadratic programming solver via the class `QuadraticProgram`, this version of the 
+    Given a quadratic programming solver via the class `QPSolver`, this version of the 
     shape regularization algorithm enables to regularize a set of user-defined 
     items provided a way
     - to access neighbors of each item via the `NeighborQuery` class; 
@@ -55,15 +55,15 @@ namespace Shape_regularization {
     \tparam RegularizationType
     must be a model of `RegularizationType`.
 
-    \tparam QuadraticProgram
-    must be a model of `QuadraticProgram`.
+    \tparam QPSolver
+    must be a model of `QPSolver`.
   */
   template<
   typename GeomTraits,
   typename InputRange,
   typename NeighborQuery, 
   typename RegularizationType,
-  typename QuadraticProgram>
+  typename QPSolver>
   class QP_regularization {
 
   private:
@@ -91,7 +91,7 @@ namespace Shape_regularization {
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Regularization_type = RegularizationType;
-    using Quadratic_program = QuadraticProgram;
+    using Quadratic_program = QPSolver;
 
     using FT = typename Traits::FT;
     using Indices = std::vector<std::size_t>;
@@ -116,7 +116,7 @@ namespace Shape_regularization {
       obtain bounds and target values of the items
 
       \param quadratic_program
-      an instance of `QuadraticProgram` to solve the quadratic programming problem
+      an instance of `QPSolver` to solve the quadratic programming problem
 
       \pre `input_range.size() > 1`
     */
@@ -124,7 +124,7 @@ namespace Shape_regularization {
       const InputRange& input_range, 
       NeighborQuery& neighbor_query, 
       RegularizationType& regularization_type,
-      QuadraticProgram& quadratic_program) :
+      QPSolver& quadratic_program) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_regularization_type(regularization_type),

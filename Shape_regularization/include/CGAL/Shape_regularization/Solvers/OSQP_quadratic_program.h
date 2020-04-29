@@ -44,7 +44,7 @@ namespace Shape_regularization {
     \tparam FT
     number type.
 
-    \cgalModels `QuadraticProgram`
+    \cgalModels `QPSolver`
   */
   template<typename FT>
   class OSQP_quadratic_program {

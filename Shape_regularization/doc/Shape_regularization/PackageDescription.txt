@@ -55,6 +55,8 @@ rotated and aligned with respect to the user-specified conditions.}
 ## Shape Regularization ##
 
 ### Concepts ###
+- `QPSolver`
+- `GroupType`
 - `NeighborQuery`
 - `RegularizationType`
 - `ContourDirections`
@@ -64,7 +66,7 @@ rotated and aligned with respect to the user-specified conditions.}
 - `CGAL::Shape_regularization::OSQP_quadratic_program<FT>`
 
 ### Algorithms ###
-- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QuadraticProgram>`
+- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>`
 - `CGAL::Shape_regularization::Contour_regularization_2<GeomTraits, InputRange, ContourDirections, ContourTag, PointMap>`
 
 ### Segments ###
@@ -72,6 +74,8 @@ rotated and aligned with respect to the user-specified conditions.}
 - `CGAL::Shape_regularization::Segments::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
 - `CGAL::Shape_regularization::Segments::Offset_regularization_2<GeomTraits, InputRange, SegmentMap>`
 - `CGAL::Shape_regularization::Segments::Parallel_groups_2<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_regularization::Segments::Orthogonal_groups_2<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_regularization::Segments::Collinear_groups_2<GeomTraits, InputRange, SegmentMap>`
 
 ### Contours ###
 - `CGAL::Shape_regularization::Contours::Longest_direction_2<GeomTraits, InputRange, PointMap>`
