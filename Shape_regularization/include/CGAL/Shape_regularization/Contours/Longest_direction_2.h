@@ -152,6 +152,13 @@ namespace Contours {
 
     /// @}
 
+    // EXTRA METHODS TO TEST THE CLASS!
+    /// \cond SKIP_IN_MANUAL
+    const std::vector<Direction_2>& get_directions() const {
+      return m_directions;
+    }
+    /// \endcond
+
   private:
     const Input_range& m_input_range;
     const Point_map m_point_map;

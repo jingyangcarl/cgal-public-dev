@@ -168,6 +168,13 @@ namespace Contours {
 
     /// @}
 
+    // EXTRA METHODS TO TEST THE CLASS!
+    /// \cond SKIP_IN_MANUAL
+    const std::vector<Direction_2>& get_directions() const {
+      return m_directions;
+    }
+    /// \endcond
+
   private:
     const Input_range& m_input_range;
     const Point_map m_point_map;
@@ -206,6 +213,9 @@ namespace Contours {
       for (std::size_t i = 0; i < directions.size(); ++i)
         bounds.push_back(std::make_pair(FT(45), FT(45)));
       
+      assigned.clear(); assigned.resize(wraps.size());
+      m_base.set_directions(directions, wraps, assigned);
+
       m_base.unify_along_contours_closed(wraps, assigned);
       m_base.correct_directions_closed(wraps, assigned);
     }
@@ -235,6 +245,9 @@ namespace Contours {
       for (std::size_t i = 0; i < directions.size(); ++i)
         bounds.push_back(std::make_pair(FT(45), FT(45)));
       
+      assigned.clear(); assigned.resize(wraps.size());
+      m_base.set_directions(directions, wraps, assigned);
+
       m_base.unify_along_contours_open(wraps, assigned);
       m_base.correct_directions_open(wraps, assigned);
     }

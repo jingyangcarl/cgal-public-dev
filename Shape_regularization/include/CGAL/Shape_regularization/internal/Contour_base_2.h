@@ -73,6 +73,22 @@ namespace internal {
       return m_angle_threshold_2;
     }
 
+    void set_directions(
+      const std::vector<Direction_2>& directions,
+      std::vector<Segment_wrapper_2>& wraps,
+      std::vector<std::size_t>& assigned) const {
+
+      for (auto& wrap : wraps) {
+        for (std::size_t i = 0; i < directions.size(); ++i) {
+          if (does_satisify_angle_conditions(
+            FT(5), directions[i], wrap.direction)) {
+            assigned[wrap.index] = i;
+            wrap.is_used = true; break;
+          }
+        }
+      }
+    }
+
     // Optimize this one. It doubles input points.
     template<
     typename Input_range,
@@ -256,10 +272,11 @@ namespace internal {
     }
 
     // Redo this function using a different method for computing angles.
+    template<typename Item>
     bool does_satisify_angle_conditions(
       const FT max_angle_2,
-      const Segment_2& longest,
-      const Segment_2& segment) const {
+      const Item& longest,
+      const Item& segment) const {
 
       CGAL_precondition(
         max_angle_2 >= FT(0) && max_angle_2 <= FT(90));
@@ -757,8 +774,10 @@ namespace internal {
       CGAL_assertion(weights.size() == wraps.size());
     }
 
+    // Improve this function!
     Segment_2 find_central_segment(
       const std::vector<Segment_wrapper_2>& wraps) const {
+      return find_longest_segment(wraps);
 
       Point_2 source, target;
       FT x1 = FT(0), y1 = FT(0);

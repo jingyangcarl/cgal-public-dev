@@ -22,6 +22,7 @@ namespace Tests {
   public:
     using Traits = GeomTraits;
     using FT = typename Traits::FT;
+    using Point_2 = typename Traits::Point_2;
     using Point_3 = typename Traits::Point_3;
     using Segment_2 = typename Traits::Segment_2;
     using Polyline = std::vector<Point_3>;
@@ -58,6 +59,48 @@ namespace Tests {
       for (const std::size_t seg_index : group)
         edges.push_back(segments[seg_index]);
       export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/" + name);
+    }
+
+    void export_closed_contour(
+      const std::vector<Point_2>& contour, 
+      const std::string name) {
+
+      if (contour.size() == 0)
+        return;
+
+      std::vector<Segment_2> segments;
+      const std::size_t n = contour.size();
+      segments.reserve(n);
+
+      for (std::size_t i = 0; i < n; ++i) {
+        const std::size_t ip = (i + 1) % n;
+
+        const auto& p = contour[i];
+        const auto& q = contour[ip];
+        segments.push_back(Segment_2(p, q));
+      }
+      export_polylines(segments, name);
+    }
+
+    void export_open_contour(
+      const std::vector<Point_2>& contour, 
+      const std::string name) {
+
+      if (contour.size() == 0)
+        return;
+
+      std::vector<Segment_2> segments;
+      const std::size_t n = contour.size();
+      segments.reserve(n - 1);
+
+      for (std::size_t i = 0; i < n - 1; ++i) {
+        const std::size_t ip = i + 1;
+
+        const auto& p = contour[i];
+        const auto& q = contour[ip];
+        segments.push_back(Segment_2(p, q));
+      }
+      export_polylines(segments, name);
     }
 
   private:
