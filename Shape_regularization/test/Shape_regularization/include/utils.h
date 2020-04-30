@@ -13,6 +13,10 @@
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Aff_transformation_3.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/function_objects.h>
+#include <CGAL/Join_input_iterator.h>
+#include <CGAL/Counting_iterator.h>
 #include <CGAL/Random.h>
 
 namespace CGAL {
@@ -37,8 +41,7 @@ void check_reference_values(
   }
 }
 
-// Change this function!
-double get_coef_value(
+double get_coefficient_value(
   const double theta, double& iterator) {
   
   if (
@@ -67,6 +70,70 @@ double get_coef_value(
 
   if (theta < CGAL_PI) return -1.0 * iterator;
   return iterator;
+}
+
+template<typename Segment_2>
+void create_example_offsets(
+  std::vector<Segment_2>& segments) {
+
+  using Traits = typename Kernel_traits<Segment_2>::Kernel;
+  using Point_2 = typename Traits::Point_2;
+
+  segments.clear();
+  segments.reserve(100);
+
+  double theta = 0.0, coef = 0.0, iterator = 0.0;
+  double theta_step = CGAL_PI / 25.0;
+
+  while (theta < 2.0 * CGAL_PI) {
+    const double st = std::sin(theta);
+    const double ct = std::cos(theta);
+    
+    const Point_2 a = Point_2(0.0, 0.0);
+    const Point_2 b = Point_2(ct, st);
+
+    coef = get_coefficient_value(theta, iterator);
+    const Point_2 c = Point_2(ct, st + coef);
+    const Point_2 d = Point_2(2.0 * ct, 2.0 * st + coef);
+    theta += theta_step;
+
+    segments.push_back(Segment_2(a, b));
+    segments.push_back(Segment_2(c, d));
+  }
+}
+
+template<typename Segment_2>
+void create_example_angles(
+  std::vector<Segment_2>& segments) {
+
+  using Traits = typename Kernel_traits<Segment_2>::Kernel;
+  using Point_2 = typename Traits::Point_2;
+
+  using PG = CGAL::Points_on_segment_2<Point_2>;
+  using Creator = CGAL::Creator_uniform_2<Point_2, Segment_2>;
+  using Segment_iterator = CGAL::Join_input_iterator_2<PG, PG, Creator>;
+  using Count_iterator = CGAL::Counting_iterator<Segment_iterator, Segment_2>;
+
+  segments.clear();
+  segments.reserve(100);
+
+  // A horizontal like fan.
+  PG p1(Point_2(-250,  -50), Point_2(-250,  50), 50);
+  PG p2(Point_2( 250, -250), Point_2( 250, 250), 50);
+
+  Segment_iterator t1(p1, p2);
+  Count_iterator t1_begin(t1);
+  Count_iterator t1_end(t1, 50);
+  std::copy(t1_begin, t1_end, std::back_inserter(segments));
+
+  // A vertical like fan.
+  PG p3(Point_2( -50, -250), Point_2( 50, -250), 50);
+  PG p4(Point_2(-250,  250), Point_2(250,  250), 50);
+
+  Segment_iterator t2(p3, p4);
+  Count_iterator t2_begin(t2);
+  Count_iterator t2_end(t2, 50);
+  std::copy(t2_begin, t2_end, std::back_inserter(segments));
 }
 
 } // namespace Tests

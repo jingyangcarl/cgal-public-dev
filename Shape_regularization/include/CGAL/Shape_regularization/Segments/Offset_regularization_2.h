@@ -128,8 +128,8 @@ namespace Segments {
 
       m_max_offset = max_offset;
       if (m_max_offset < FT(0)) {
-        std::cout << "WARNING: The max offset bound has to be within [0, +inf)! ";
-        std::cout << " Setting to the default value: 0.5 meters." << std::endl;
+        std::cerr << "WARNING: The max offset bound has to be within [0, +inf)! ";
+        std::cerr << " Setting to the default value: 0.5 meters." << std::endl;
         m_max_offset = FT(1) / FT(2);
       }
       clear();

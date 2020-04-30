@@ -2,7 +2,6 @@
 #define CGAL_SHAPE_REGULARIZATION_TESTS_SAVER_H
 
 // STL includes.
-#include <list>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -37,7 +36,7 @@ namespace Tests {
 
     void export_polylines(
       const std::vector<Segment_2>& segments,
-      const std::string file_path) {
+      const std::string path) {
       
       std::vector<Polyline> polylines(segments.size());
       for (std::size_t i = 0; i < segments.size(); ++i) {
@@ -47,18 +46,18 @@ namespace Tests {
         polylines[i].push_back(Point_3(s.x(), s.y(), FT(0)));
         polylines[i].push_back(Point_3(t.x(), t.y(), FT(0)));
       }
-      export_polylines(polylines, file_path);
+      export_polylines(polylines, path);
     }
 
     void export_group(
       const std::vector<Segment_2>& segments,
       const std::vector<std::size_t>& group,
-      const std::string name) {
+      const std::string path) {
       
       std::vector<Segment_2> edges;
       for (const std::size_t seg_index : group)
         edges.push_back(segments[seg_index]);
-      export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/" + name);
+      export_polylines(edges, path);
     }
 
     void export_closed_contour(
@@ -117,7 +116,7 @@ namespace Tests {
       CGAL::set_ascii_mode(file);
       if (!file) {
         std::cout << 
-          "Error: Cannot save the file: " << path << std::endl; return;
+          "Error: cannot save the file: " << path << std::endl; return;
       }
       
       file << data() << std::endl; file.close();
@@ -127,7 +126,7 @@ namespace Tests {
 
     void export_polylines(
       const std::vector<Polyline>& polylines,
-      const std::string file_path) {
+      const std::string path) {
 
       if (polylines.size() == 0)
         return;
@@ -141,7 +140,7 @@ namespace Tests {
           out << polyline[j] << " ";
         out << std::endl;
       }
-      save(file_path + ".polylines");
+      save(path + ".polylines");
     }
   };
 

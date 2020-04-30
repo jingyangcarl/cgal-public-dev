@@ -42,12 +42,12 @@ void test_orthogonal_groups() {
     std::back_inserter(groups));
   assert(groups.size() == 3);
 
-  // saver.export_group(segments, groups[0], "og_group0");
+  // saver.export_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/og_group0");
   assert(groups[0].size() == 5);
-  // saver.export_group(segments, groups[1], "og_group1");
-  assert(groups[1].size() == 2);
-  // saver.export_group(segments, groups[2], "og_group2");
-  assert(groups[2].size() == 1);
+  // saver.export_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/og_group1");
+  assert(groups[1].size() == 1);
+  // saver.export_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/og_group2");
+  assert(groups[2].size() == 2);
 }
 
 int main() {

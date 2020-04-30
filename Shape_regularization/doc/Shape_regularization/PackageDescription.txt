@@ -56,7 +56,6 @@ rotated and aligned with respect to the user-specified conditions.}
 
 ### Concepts ###
 - `QPSolver`
-- `GroupType`
 - `NeighborQuery`
 - `RegularizationType`
 - `ContourDirections`

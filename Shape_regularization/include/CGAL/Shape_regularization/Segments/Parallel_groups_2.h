@@ -51,8 +51,6 @@ namespace Segments {
     must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
-
-    \cgalModels `GroupType`
   */
   template<
   typename GeomTraits,
@@ -75,6 +73,7 @@ namespace Segments {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
+    using Segment_2 = typename Traits::Segment_2;
     using Indices = std::vector<std::size_t>;
     /// \endcond
 
@@ -117,7 +116,7 @@ namespace Segments {
       const FT max_angle = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_angle), FT(5));
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
-      m_max_angle = std::floor(CGAL::to_double(max_angle));
+      m_max_angle = max_angle;
       make_parallel_groups();
     }
 
@@ -141,7 +140,7 @@ namespace Segments {
     template<typename OutputIterator>
     OutputIterator groups(OutputIterator groups) const {
       for (const auto& parallel_group : m_parallel_groups) {
-        const auto& group = parallel_group.second;
+        const auto& group = parallel_group;
         *(groups++) = group;
       }
       return groups;
@@ -152,18 +151,47 @@ namespace Segments {
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
     
-    double m_max_angle;
-    std::map<std::size_t, Indices> m_parallel_groups;
+    FT m_max_angle;
+    std::vector<Indices> m_parallel_groups;
 
     void make_parallel_groups() {
       
       m_parallel_groups.clear();
+      std::vector<bool> states(m_input_range.size(), false);
+      Indices parallel_group;
+
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
-        const auto& segment = get(
+        if (states[i]) continue;
+        const auto& si = get(
           m_segment_map, *(m_input_range.begin() + i));
-        const std::size_t key = 
-          internal::key_angle_2(m_max_angle, segment);
-        m_parallel_groups[key].push_back(i);
+
+        states[i] = true;
+        parallel_group.clear();
+        parallel_group.push_back(i);
+
+        traverse_group(i, si, states, parallel_group);
+        m_parallel_groups.push_back(parallel_group);
+      }
+    }
+
+    void traverse_group(
+      const std::size_t i,
+      const Segment_2& si,
+      std::vector<bool>& states,
+      Indices& parallel_group) const {
+
+      for (std::size_t j = i + 1; j < m_input_range.size(); ++j) {
+        if (states[j]) continue;
+        const auto& sj = get(
+          m_segment_map, *(m_input_range.begin() + j));
+
+        const FT angle_2 = 
+          CGAL::abs(internal::angle_2(si, sj));
+        if (angle_2 <= m_max_angle) {
+          
+          states[j] = true;
+          parallel_group.push_back(j);
+        }
       }
     }
   };

@@ -43,13 +43,13 @@ void test_collinear_groups() {
     std::back_inserter(groups));
   assert(groups.size() == 4);
 
-  // saver.export_group(segments, groups[0], "cg_group0");
+  // saver.export_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/cg_group0");
   assert(groups[0].size() == 2);
-  // saver.export_group(segments, groups[1], "cg_group1");
+  // saver.export_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/cg_group1");
   assert(groups[1].size() == 3);
-  // saver.export_group(segments, groups[2], "cg_group2");
+  // saver.export_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/cg_group2");
   assert(groups[2].size() == 2);
-  // saver.export_group(segments, groups[3], "cg_group3");
+  // saver.export_group(segments, groups[3], "/Users/monet/Documents/gsoc/ggr/logs/cg_group3");
   assert(groups[3].size() == 1);
 }
 

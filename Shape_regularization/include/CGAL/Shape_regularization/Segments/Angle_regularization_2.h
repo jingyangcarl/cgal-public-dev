@@ -128,8 +128,8 @@ namespace Segments {
 
       m_max_angle = max_angle;
       if (m_max_angle < FT(0) || m_max_angle > FT(90)) {
-        std::cout << "WARNING: The max angle bound has to be within [0, 90]! ";
-        std::cout << " Setting to the default value: 25 degrees." << std::endl;
+        std::cerr << "WARNING: The max angle bound has to be within [0, 90]! ";
+        std::cerr << " Setting to the default value: 25 degrees." << std::endl;
         m_max_angle = FT(25);
       }
       clear();

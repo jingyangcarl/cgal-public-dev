@@ -301,7 +301,7 @@ the number of input segments.
 
 \subsection QP_Regularization_Segments_Utils Utilities
 
-This \cgal component also provides three models of the concept `GroupType`:
+This \cgal component also provides three ways to group segments:
 - `CGAL::Shape_regularization::Segments::Parallel_groups_2` - organizes a set 
 of segments into groups of parallel segments;
 - `CGAL::Shape_regularization::Segments::Orthogonal_groups_2` - organizes a set 

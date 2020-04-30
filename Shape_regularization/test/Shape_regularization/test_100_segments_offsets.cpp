@@ -11,7 +11,6 @@ template<class Traits>
 void test_100_segments_offsets() { 
   
   using FT        = typename Traits::FT;
-  using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
   using Indices   = std::vector<std::size_t>;
   using Saver     = SR::Tests::Saver<Traits>;
@@ -29,26 +28,7 @@ void test_100_segments_offsets() {
   Saver saver;
   Segment_map smap;
   Segments segments;
-  segments.reserve(100);
-
-  double theta = 0.0, coef = 0.0, iterator = 0.0;
-  double theta_step = CGAL_PI / 25.0;
-
-  while (theta < 2 * CGAL_PI) {
-    const double st = std::sin(theta);
-    const double ct = std::cos(theta);
-    const Point_2 a = Point_2(0, 0);
-    const Point_2 b = Point_2(ct, st);
-
-    coef = SR::Tests::get_coef_value(theta, iterator);
-    const Point_2 c = Point_2(ct, st + coef);
-    const Point_2 d = Point_2(2 * ct, 2 * st + coef);
-    theta += theta_step;
-
-    segments.push_back(Segment_2(a, b));
-    segments.push_back(Segment_2(c, d));
-  }
-
+  SR::Tests::create_example_offsets(segments);
   assert(segments.size() == 100);
   // saver.export_polylines(segments, 
   //   "/Users/monet/Documents/gsoc/ggr/logs/100o_input");
@@ -63,17 +43,18 @@ void test_100_segments_offsets() {
   grouping.groups(std::back_inserter(
     parallel_groups));
 
-  // Segments segs;
+  // Segments output;
   // for (std::size_t i = 0; i < parallel_groups.size(); ++i) {
   //   const auto& parallel_group = parallel_groups[i];
+  //   output.clear();
   //   for (const std::size_t idx : parallel_group)
-  //     segs.push_back(segments[idx]);
-  //   saver.export_polylines(segs, 
-  //   "/Users/monet/Documents/gsoc/ggr/logs/segs_" + std::to_string(i));
+  //     output.push_back(segments[idx]);
+  //   saver.export_polylines(output, 
+  //   "/Users/monet/Documents/gsoc/ggr/logs/output_" + std::to_string(i));
   // }
 
   assert(segments.size() == 100);
-  assert(parallel_groups.size() == 29);
+  assert(parallel_groups.size() == 25);
 
   const FT max_offset_2 = FT(1) / FT(4);
   OR offset_regularization(

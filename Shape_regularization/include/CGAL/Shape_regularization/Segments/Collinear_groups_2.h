@@ -52,8 +52,6 @@ namespace Segments {
     must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
-
-    \cgalModels `GroupType`
   */
   template<
   typename GeomTraits,

@@ -52,8 +52,6 @@ namespace Segments {
     must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
-
-    \cgalModels `GroupType`
   */
   template<
   typename GeomTraits,
@@ -76,7 +74,7 @@ namespace Segments {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
-    using Direction_2 = typename Traits::Direction_2;
+    using Segment_2 = typename Traits::Segment_2;
     using Indices = std::vector<std::size_t>;
     using Parallel_groups_2 = Parallel_groups_2<Traits, Input_range, Segment_map>;
     /// \endcond
@@ -176,15 +174,13 @@ namespace Segments {
         const std::size_t si_index = parallel_groups[i][0];
         const auto& si = get(
           m_segment_map, *(m_input_range.begin() + si_index));
-        auto vi = si.to_vector();
-        const Direction_2 di = internal::direction_2(vi);
         
+        states[i] = true;
         orthogonal_group.clear();
         for (const std::size_t seg_index : parallel_groups[i])
           orthogonal_group.push_back(seg_index);
-        states[i] = true;
 
-        traverse_group(i, di, parallel_groups,
+        traverse_group(i, si, parallel_groups,
         states, orthogonal_group);
         m_orthogonal_groups.push_back(orthogonal_group);
       }
@@ -194,10 +190,10 @@ namespace Segments {
 
     void traverse_group(
       const std::size_t i,
-      const Direction_2& di,
+      const Segment_2& si,
       const std::vector<Indices>& parallel_groups,
       std::vector<bool>& states,
-      Indices& orthogonal_group) {
+      Indices& orthogonal_group) const {
       
       for (std::size_t j = i + 1; j < parallel_groups.size(); ++j) {
         if (states[j]) continue;
@@ -206,17 +202,15 @@ namespace Segments {
         const std::size_t sj_index = parallel_groups[j][0];
         const auto& sj = get(
           m_segment_map, *(m_input_range.begin() + sj_index));
-        auto vj = sj.to_vector();
-        const Direction_2 dj = internal::direction_2(vj);
 
-        const FT angle = 
-          internal::angle_2(di, dj);
-        if (
-          angle <= m_max_angle || 
-          angle >= FT(90) - m_max_angle) {
+        const FT angle_2 = 
+          CGAL::abs(internal::angle_2(si, sj));
+        if (angle_2 <= m_max_angle || 
+            angle_2 >= FT(90) - m_max_angle) {
+          
+          states[j] = true;
           for (const std::size_t seg_index : parallel_groups[j])
             orthogonal_group.push_back(seg_index);
-          states[j] = true;
         }
       }
     }

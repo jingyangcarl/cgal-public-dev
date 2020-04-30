@@ -41,11 +41,11 @@ void test_parallel_groups() {
     std::back_inserter(groups));
   assert(groups.size() == 3);
 
-  // saver.export_group(segments, groups[0], "pg_group0");
+  // saver.export_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/pg_group0");
   assert(groups[0].size() == 3);
-  // saver.export_group(segments, groups[1], "pg_group1");
+  // saver.export_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/pg_group1");
   assert(groups[1].size() == 2);
-  // saver.export_group(segments, groups[2], "pg_group2");
+  // saver.export_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/pg_group2");
   assert(groups[2].size() == 2);
 }
 

@@ -1,9 +1,7 @@
 * When adding the QP_solver concept, I should probably put it in the Solver_interface 
 and refactor the MixedIntegerConcept, too.
-* Redo the Parallel_segments_2 class. Now it is not precise enough! Remove key_angle_2().
-* Redo the 100_segments_offsets example and test. Current generation is weird.
-* Should I remove Parallel_groups_2 class from the Collinear and Orthogonal classes?
+* Remove all unnecessary functions.
 * Add a deprecated API section to Plane Regularization.
 * Add benchmarks.
-* Clean tests and examples.
+* Clean examples.
 * Clean the named parameters docs.
