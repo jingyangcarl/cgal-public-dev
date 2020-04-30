@@ -29,20 +29,26 @@ using Plane_map = CGAL::Shape_detection::Plane_map<Traits>;
 
 int main(int argc, char** argv) {
 
-  Pwn_vector points;
-  std::ifstream stream(
-    argc > 1 ? argv[1] : "data/cube.pwn");
+  // If we want to load a different file, we load it from a path.
+  std::string path = "data/cube.pwn";
+  if (argc > 1) path = argv[1];
 
-  if (!stream ||
+  Pwn_vector points;
+  std::ifstream file(path.c_str(), std::ios_base::in);
+  CGAL::set_ascii_mode(file);
+  file.precision(20);
+
+  if (!file ||
     !CGAL::read_xyz_points(
-      stream,
+      file,
       std::back_inserter(points),
       CGAL::parameters::point_map(Point_map()).
       normal_map(Normal_map()))) {
 
-    std::cerr << "Error: cannot read file cube.pwn!" << std::endl;
+    std::cerr << "Error: cannot read the file cube.pwn!" << std::endl;
     return EXIT_FAILURE;
   }
+  file.close();
 
   // Call RANSAC shape detection with planes.
   Efficient_RANSAC efficient_ransac;
@@ -62,6 +68,7 @@ int main(int argc, char** argv) {
       CGAL::Shape_detection::Point_to_shape_index_map<Traits>(points, planes)).
     regularize_coplanarity(false). // do not regularize coplanarity
     max_angle(FT(10))); // 10 degrees of tolerance for parallelism / orthogonality
-    
+  
+  std::cout << "* all detected planes are regularized" << std::endl;
   return EXIT_SUCCESS;
 }

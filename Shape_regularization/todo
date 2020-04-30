@@ -1,7 +1,5 @@
-* When adding the QP_solver concept, I should probably put it in the Solver_interface 
-and refactor the MixedIntegerConcept, too.
-* Remove all unnecessary functions.
-* Add a deprecated API section to Plane Regularization.
 * Add benchmarks.
-* Clean examples.
-* Clean the named parameters docs.
+* Remove all unnecessary functions.
+* Improve the contour base algorithm.
+* When adding the QP_solver concept, I should put it in the Solver_interface 
+and refactor the MixedIntegerConcept, too.

@@ -1,8 +1,6 @@
 #ifndef CGAL_SHAPE_REGULARIZATION_EXAMPLES_SAVER_H
 #define CGAL_SHAPE_REGULARIZATION_EXAMPLES_SAVER_H
 
-// #include <CGAL/license/Shape_regularization.h>
-
 // STL includes.
 #include <vector>
 #include <string>
@@ -11,6 +9,7 @@
 
 // CGAL includes.
 #include <CGAL/IO/io.h>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -25,34 +24,43 @@ namespace Examples {
     using Point_2 = typename Traits::Point_2;
     using Point_3 = typename Traits::Point_3;
     using Segment_2 = typename Traits::Segment_2;
-    using Polygon_3 = std::vector<Point_3>;
     using Polyline = std::vector<Point_3>;
-    using Polylines = std::vector<Polyline>;
 
     Saver() { 
       out.precision(20); 
     }
-
+ 
     inline std::string data() const {
       return out.str();
     }
 
-    void save_segments_2(
-      const std::vector<Segment_2>& segments, 
+    void export_polylines(
+      const std::vector<Segment_2>& segments,
       const std::string path) {
       
-      clear();
-      for (const auto& segment : segments) {
-        out << "v " << segment.source() << " " << FT(0) << std::endl;
-        out << "v " << segment.target() << " " << FT(0) << std::endl;
-        out << "v " << segment.target() << " " << FT(0) << std::endl;
+      std::vector<Polyline> polylines(segments.size());
+      for (std::size_t i = 0; i < segments.size(); ++i) {
+        const auto& s = segments[i].source();
+        const auto& t = segments[i].target();
+        
+        polylines[i].push_back(Point_3(s.x(), s.y(), FT(0)));
+        polylines[i].push_back(Point_3(t.x(), t.y(), FT(0)));
       }
-      for (std::size_t i = 0; i < segments.size() * 3; i += 3)
-        out << "f " << i + 1 << " " << i + 2 << " " << i + 3 << std::endl;
-      save(path + ".obj");
+      export_polylines(polylines, path);
     }
 
-    void save_closed_contour_2(
+    void export_group(
+      const std::vector<Segment_2>& segments,
+      const std::vector<std::size_t>& group,
+      const std::string path) {
+      
+      std::vector<Segment_2> edges;
+      for (const std::size_t seg_index : group)
+        edges.push_back(segments[seg_index]);
+      export_polylines(edges, path);
+    }
+
+    void export_closed_contour(
       const std::vector<Point_2>& contour, 
       const std::string name) {
 
@@ -73,7 +81,7 @@ namespace Examples {
       export_polylines(segments, name);
     }
 
-    void save_open_contour_2(
+    void export_open_contour(
       const std::vector<Point_2>& contour, 
       const std::string name) {
 
@@ -94,52 +102,6 @@ namespace Examples {
       export_polylines(segments, name);
     }
 
-    template<typename Segment_wrapper_2>
-    void export_polylines(
-      const std::vector<Segment_wrapper_2>& wraps,
-      const std::string file_path) {
-
-      std::vector<Segment_2> segments;
-      segments.reserve(wraps.size());
-      for (const auto& wrap : wraps)
-        segments.push_back(wrap.segment);
-      export_polylines(segments, file_path);
-    }
-
-    void export_polylines(
-      const std::vector<Segment_2>& segments,
-      const std::string file_path) {
-      
-      std::vector< std::vector<Point_3> > polylines(segments.size());
-      for (std::size_t i = 0; i < segments.size(); ++i) {
-        const Point_2& s = segments[i].source();
-        const Point_2& t = segments[i].target();
-        
-        polylines[i].push_back(Point_3(s.x(), s.y(), FT(0)));
-        polylines[i].push_back(Point_3(t.x(), t.y(), FT(0)));
-      }
-      export_polylines(polylines, file_path);
-    }
-
-    void export_polylines(
-      const Polylines& polylines,
-      const std::string file_path) {
-
-      if (polylines.size() == 0)
-        return;
-
-      clear();
-      for (std::size_t i = 0; i < polylines.size(); ++i) {
-        const auto &polyline = polylines[i];
-
-        out << polyline.size() << " ";
-        for (std::size_t j = 0; j < polyline.size(); ++j)
-          out << polyline[j] << " ";
-        out << std::endl;
-      }
-      save(file_path + ".polylines");
-    }
-
   private:
     std::stringstream out;
 
@@ -154,14 +116,31 @@ namespace Examples {
       CGAL::set_ascii_mode(file);
       if (!file) {
         std::cout << 
-        "Error: cannot save the file: " << path << std::endl; return;
+          "Error: cannot save the file: " << path << std::endl; return;
       }
-      file << data() << std::endl;
-      file.close();
-
+      
+      file << data() << std::endl; file.close();
       std::cout << 
-        "* segments are saved in " 
-      << path << std::endl;
+        "* data are saved in " << path << std::endl;
+    }
+
+    void export_polylines(
+      const std::vector<Polyline>& polylines,
+      const std::string path) {
+
+      if (polylines.size() == 0)
+        return;
+
+      clear();
+      for (std::size_t i = 0; i < polylines.size(); ++i) {
+        const auto& polyline = polylines[i];
+
+        out << polyline.size() << " ";
+        for (std::size_t j = 0; j < polyline.size(); ++j)
+          out << polyline[j] << " ";
+        out << std::endl;
+      }
+      save(path + ".polylines");
     }
   };
 

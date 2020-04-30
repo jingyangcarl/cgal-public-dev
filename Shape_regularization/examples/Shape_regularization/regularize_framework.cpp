@@ -1,12 +1,11 @@
-#include <CGAL/property_map.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization.h>
 
-using Kernel = CGAL::Simple_cartesian<double>;
-using FT = typename Kernel::FT;
-using Point_2 = typename Kernel::Point_2;
+using Kernel    = CGAL::Simple_cartesian<double>;
+using FT        = typename Kernel::FT;
+using Point_2   = typename Kernel::Point_2;
 using Segment_2 = typename Kernel::Segment_2;
-using Input_range = std::vector<Segment_2>;
+using Segments  = std::vector<Segment_2>;
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -16,47 +15,50 @@ struct Custom_neighbor_query_2 {
     const std::size_t query_index,
     std::vector<std::size_t>& neighbors) {
     neighbors.clear();
-    // Add your code here!
+    if (query_index == 0) { neighbors.push_back(1); } // first  segment
+    if (query_index == 1) { neighbors.push_back(0); } // second segment
   }
 };
 
 struct Custom_regularization_2 {
   FT bound(
     const std::size_t query_index) const { 
-    // Add your code here!
-    return FT(0);
+    return FT(5); // max angle change
   }
   FT target(
     const std::size_t query_index_i, 
     const std::size_t query_index_j) {
-    // Add your code here!
-    return FT(0);
+    return FT(0); // 0 angle change
   }
   void update(
     const std::vector<FT>& solution) {
-    // Add your code here!
+    // skip update
   }
 };
 
 template<typename NT>
 class USER_quadratic_program  {
-  public:
-    void reserve_d(const std::size_t) { }
-    void reserve_c(const std::size_t) { }
-    void reserve_a(const std::size_t) { }
-    void reserve_b(const std::size_t) { }
-    void reserve_l(const std::size_t) { }
-    void reserve_u(const std::size_t) { }
+public:
+  void reserve_d(const std::size_t) { }
+  void reserve_c(const std::size_t) { }
+  void reserve_a(const std::size_t) { }
+  void reserve_b(const std::size_t) { }
+  void reserve_l(const std::size_t) { }
+  void reserve_u(const std::size_t) { }
 
-    void set_d(int, int, const FT) { }
-    void set_c(int, const FT) { }
-    void set_c0(const FT) { }
-    void set_a(int, int, const FT) { }
-    void set_b(int, const FT) { }
-    void set_l(int, bool, const FT) { }
-    void set_u(int, bool, const FT) { }
+  void  set_d(const std::size_t, const std::size_t, const FT) { }
+  void  set_c(const std::size_t, const FT) { }
+  void set_c0(const FT) { }
+  void  set_a(const std::size_t, const std::size_t, const FT) { }
+  void  set_b(const std::size_t, const FT) { }
+  void  set_l(const std::size_t, const bool, const FT) { }
+  void  set_u(const std::size_t, const bool, const FT) { }
 
-    bool solve(std::vector<NT>& solution) { return false; }
+  bool solve(std::vector<NT>& solution) { 
+    solution.clear();
+    solution.resize(3, NT(0)); // 3 = 2 segments + 1 edge between them
+    return true; 
+  }
 };
 
 } // namespace Shape_regularization
@@ -84,7 +86,7 @@ using NQ = CGAL::Shape_regularization::Custom_neighbor_query_2;
 using RT = CGAL::Shape_regularization::Custom_regularization_2;
 using QP = Quadratic_program;
 using Regularizer = 
-  CGAL::Shape_regularization::QP_regularization<Kernel, Input_range, NQ, RT, QP>;
+  CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, RT, QP>;
 
 int main(int argc, char *argv[]) {
   
@@ -92,8 +94,14 @@ int main(int argc, char *argv[]) {
   RT angle_regularization;
   QP quadratic_program;
 
-  Input_range input_range;
+  Segments segments = {
+    Segment_2(Point_2(-1,  0), Point_2(1, 0)),
+    Segment_2(Point_2( 0, -1), Point_2(0, 1))
+  };
+
   Regularizer regularizer(
-    input_range, neighbor_query, angle_regularization, quadratic_program);
+    segments, neighbor_query, angle_regularization, quadratic_program);
   regularizer.regularize();
+
+  std::cout << "* regularized 2 segments" << std::endl;
 }

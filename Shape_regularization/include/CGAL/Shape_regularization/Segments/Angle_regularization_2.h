@@ -288,9 +288,8 @@ namespace Segments {
     template<typename IndexRange>
   	void add_group(
       const IndexRange& index_range) { 
-      
-      CGAL_precondition(index_range.size() > 1);
-      if (index_range.size() < 2) return;
+      if (index_range.size() < 2) 
+        return;
       
       Indices group;
       group.reserve(index_range.size());

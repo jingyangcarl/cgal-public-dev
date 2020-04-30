@@ -41,7 +41,6 @@ if(CGAL_FOUND)
     "regularize_closed_contour.cpp")
   create_single_source_cgal_program(
     "regularize_open_contour.cpp")
-
 else()
   message(WARNING 
   "This program requires the CGAL library, and will not be compiled.")
