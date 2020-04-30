@@ -48,7 +48,7 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
   */
@@ -85,21 +85,24 @@ namespace Segments {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      a sequence of \ref pmp_namedparameters "Named Parameters".
+      a sequence of \ref sr_namedparameters "Named Parameters".
 
       \param input_range 
       an instance of `InputRange` with 2D segments
 
       \param np
-      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters" 
       among the ones listed below
-
-      \param max_angle
-      max angle deviation between two segments, the default is 5 degrees
 
       \param segment_map
       an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
       if not provided, the default is used
+
+      \cgalNamedParamsBegin
+        \cgalParamBegin{max_angle} 
+          max angle deviation in degrees between two segments, the default is 5 degrees 
+        \cgalParamEnd
+      \cgalNamedParamsEnd
 
       \pre `input_range.size() > 0`
       \pre `max_angle >= 0 && max_angle <= 90`

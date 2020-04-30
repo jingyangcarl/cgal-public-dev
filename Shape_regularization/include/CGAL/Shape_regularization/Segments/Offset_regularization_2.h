@@ -49,7 +49,7 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be an `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
+    must be a model of `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
@@ -93,21 +93,24 @@ namespace Segments {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      a sequence of \ref pmp_namedparameters "Named Parameters".
+      a sequence of \ref sr_namedparameters "Named Parameters".
 
       \param input_range 
       an instance of `InputRange` with 2D segments
 
       \param np
-      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters" 
       among the ones listed below
-
-      \param max_offset
-      max offset bound in meters, the default is 0.5 meters
 
       \param segment_map
       an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`, 
       if not provided, the default is used
+
+      \cgalNamedParamsBegin
+        \cgalParamBegin{max_offset} 
+          max offset deviation in meters between two segments, the default is 0.5 meters
+        \cgalParamEnd
+      \cgalNamedParamsEnd
 
       \pre `input_range.size() > 1`
       \pre `max_offset >= 0`

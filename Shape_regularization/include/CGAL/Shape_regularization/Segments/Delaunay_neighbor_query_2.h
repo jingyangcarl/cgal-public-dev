@@ -51,7 +51,7 @@ namespace Segments {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap 
-    must be a `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
     and value type is `GeomTraits::Segment_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 

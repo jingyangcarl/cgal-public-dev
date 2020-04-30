@@ -51,7 +51,7 @@ namespace Contours {
     must be a model of `ConstRange`.
 
     \tparam PointMap
-    must be a `ReadablePropertyMap` whose key type is the value type of the input 
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input 
     range and value type is `GeomTraits::Point_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
@@ -85,28 +85,31 @@ namespace Contours {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      a sequence of \ref pmp_namedparameters "Named Parameters".
+      a sequence of \ref sr_namedparameters "Named Parameters".
 
       \param input_range
       a const range of points, which form a contour
 
       \param np
-      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters" 
       among the ones listed below
 
-      \param min_length
-      the min length of a possible principal direction,
-      the default is 3 meters
-
-      \param max_angle
-      the max angle bound between a contour edge and a possible principal direction,
-      the default is 25 degrees
-
       \param is_closed 
-      indicates wether the contour is closed or open
+      indicates whether the contour is closed or open
 
       \param point_map
       an instance of `PointMap`, if not provided, the default is used
+
+      \cgalNamedParamsBegin
+        \cgalParamBegin{max_angle} 
+          max angle deviation in degrees between a contour edge and a given 
+          principal direction, the default is 25 degrees
+        \cgalParamEnd
+        \cgalParamBegin{min_length} 
+          min length in meters of a contour edge whose direction can be taken 
+          as a principal direction, the default is 3 meters
+        \cgalParamEnd
+      \cgalNamedParamsEnd
 
       \pre `input_range.size() >= 3` for closed contours
       \pre `input_range.size() >= 2` for open contours

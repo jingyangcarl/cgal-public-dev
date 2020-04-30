@@ -710,20 +710,6 @@ namespace Planes {
   #endif
   /// \endcond
 
-  /* To be removed!
-  
-  \tparam PointPMap must be a model of `ReadablePropertyMap` with the value type `Kernel::Point_3`.
-  It can be omitted if the value type of the iterator of `PointRange` is convertible to `Point_3<Kernel>`.
-
-  \tparam PlaneMap must be a model of `WritablePropertyMap` with the value type `Kernel::Plane_3`.
-  It can be omitted if the value type of the iterator of `PlaneRange` is convertible to `Plane_3<Kernel>`.
-
-  \tparam IndexMap must be a model of `ReadablePropertyMap` with the value type `int`.
-    
-  \tparam GeomTraits must be a model of `Kernel`.
-  It can be omitted and deduced automatically from the value type of `PointMap`.
-  */
-
   /// \ingroup PkgShapeRegularizationRef  
   /*!
     \brief Hierarchical plane regularization.
@@ -742,35 +728,55 @@ namespace Planes {
 
     \tparam PlaneRange must be a model of `Range` with planes.
 
+    \tparam PlaneMap must be a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<Kernel>`.
+
     \tparam PointRange must be a model of `ConstRange` with points.
 
+    \tparam PointMap must be a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<Kernel>`.
+
     \tparam NamedParameters
-    a sequence of \ref pmp_namedparameters "Named Parameters".
+    a sequence of \ref sr_namedparameters "Named Parameters".
 
     \param planes `Range` of planes
 
+    \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
+
     \param points `ConstRange` of points
 
-    \param np optional sequence of \ref pmp_namedparameters "Named Parameters" 
-    among the ones listed below:
-
-    \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
     \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
-    \param index_map property map: index of a point `std::size_t` -> index of a plane `int` (-1 if the point is not assigned to a plane)
 
-    \param regularize_parallelism selects whether parallelism is regularized or not
-    \param regularize_orthogonality selects whether orthogonality is regularized or not
-    \param regularize_coplanarity selects whether coplanarity is regularized or not
-    \param regularize_axis_symmetry selects whether axis symmetry is regularized or not
-
-    \param max_angle max angle between normal vectors of planes (in degrees) 
-    used for parallelism, orthogonality, and axis symmetry. %Default value is 25 degrees.
-
-    \param max_offset max distance between two parallel planes (in meters) such that 
-    they are considered coplanar. %Default value is 0.01 meters.
-
-    \param symmetry_direction chosen axis for symmetry regularization. 
-    %Default value is the Z axis.
+    \param np optional sequence of \ref sr_namedparameters "Named Parameters" 
+    among the ones listed below:
+    
+    \cgalNamedParamsBegin
+      \cgalParamBegin{plane_index_map} 
+        a property map that associates the index of a point in the input range 
+        to the index of plane (-1 if point is not assigned to a plane), no default value
+      \cgalParamEnd
+      \cgalParamBegin{max_angle}
+        max angle in degrees between plane normals used for parallelism, 
+        orthogonality, and axis symmetry, the default is 25 degrees
+      \cgalParamEnd
+      \cgalParamBegin{max_offset}
+        max distance in meters between two parallel planes such that 
+        they are considered coplanar, the default is 0.01 meters
+      \cgalParamEnd
+      \cgalParamBegin{regularize_parallelism}
+        selects whether parallelism is regularized or not, the default is `true`
+      \cgalParamEnd
+      \cgalParamBegin{regularize_orthogonality}
+        selects whether orthogonality is regularized or not, the default is `true`
+      \cgalParamEnd
+      \cgalParamBegin{regularize_coplanarity}
+        selects whether coplanarity is regularized or not, the default is `true`
+      \cgalParamEnd
+      \cgalParamBegin{regularize_axis_symmetry}
+        selects whether axis symmetry is regularized or not, the default is `true`
+      \cgalParamEnd
+      \cgalParamBegin{symmetry_direction}
+        an axis for symmetry regularization, the default is Z axis
+      \cgalParamEnd
+    \cgalNamedParamsEnd
   */ 
   template<
   typename PlaneRange,

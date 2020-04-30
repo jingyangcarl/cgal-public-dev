@@ -1,0 +1,71 @@
+/*!
+\defgroup sr_namedparameters Parameters
+\ingroup PkgShapeRegularizationRef
+
+In this package, all parameters are implemented as BGL optional named parameters 
+(see \ref BGLNamedParameters for more information on how to use them). The sequence 
+of named parameters starts with `CGAL::parameters::`. Using `CGAL::parameters::all_default()` 
+indicates that default values of optional parameters shall be used.
+
+This package offers the following named parameters:
+
+\cgalNPTableBegin
+
+\cgalNPBegin{max_angle} \anchor SR_max_angle
+max angle bound between two items in degrees\n
+<b>Type:</b> floating point value\n
+<b>Default:</b> `{5, 25} degrees, depends on the class`
+\cgalNPEnd
+
+\cgalNPBegin{max_offset} \anchor SR_max_offset
+max offset bound between two items in meters\n
+<b>Type:</b> floating point value\n
+<b>Default:</b> `{0.01, 0.2, 0.5} meters, depends on the class`
+\cgalNPEnd
+
+\cgalNPBegin{min_length} \anchor SR_min_length
+min length of an item in meters\n
+<b>Type:</b> floating point value\n
+<b>Default:</b> `3 meters`
+\cgalNPEnd
+
+\cgalNPBegin{plane_index_map} \anchor SR_plane_index_map
+a property map that associates the index of a point in the input range to 
+the index of a plane (-1 if the point is not assigned to a plane)\n
+<b>Type:</b> a model of `ReadablePropertyMap` with `std::size_t` as key type and 
+`int` as value type\n
+<b>Default:</b> no default value
+\cgalNPEnd
+
+\cgalNPBegin{regularize_parallelism} \anchor SR_regularize_parallelism
+selects whether parallelism is regularized or not\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{regularize_orthogonality} \anchor SR_regularize_orthogonality
+selects whether orthogonality is regularized or not\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{regularize_coplanarity} \anchor SR_regularize_coplanarity
+selects whether coplanarity is regularized or not\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{regularize_axis_symmetry} \anchor SR_regularize_axis_symmetry
+selects whether axis symmetry is regularized or not\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> `true`
+\cgalNPEnd
+
+\cgalNPBegin{symmetry_direction} \anchor SR_symmetry_direction
+an axis for symmetry regularization\n
+<b>Type:</b> `CGAL::Vector_3<Kernel>`\n
+<b>Default:</b> Z axis that is `CGAL::Vector_3<Kernel>(0, 0, 1)`
+\cgalNPEnd
+
+\cgalNPTableEnd
+*/

@@ -417,11 +417,14 @@ The user can choose to regularize only one or several of these four properties.
 The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters, 
 which are subgroups of axis-symmetric and orthogonal clusters) as described by Verdie et al. in \cgalCite{cgal:vla-lod-15}.
 
-The following example illustrates how to use the plane regularization function. Note 
-that all parameters are provided through the named parameters mechanism. The used kernel is 
-`Exact_predicates_inexact_constructions_kernel`.
+The following example illustrates how to use the plane regularization function. 
+The used kernel is `Exact_predicates_inexact_constructions_kernel`.
 
 \cgalExample{Shape_regularization/regularize_planes.cpp}
+
+Please note that this function was earlier used in the \ref PkgShapeDetection package. You can 
+still use the old API of that function, however to avoid parameters ambiguity, we strongly 
+suggest to use the new API with the \ref sr_namedparameters "Named Parameters" mechanism.
 
 
 \section Shape_Regularization_History History

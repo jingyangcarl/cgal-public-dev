@@ -61,7 +61,7 @@ namespace Shape_regularization {
     must be either `CGAL::Shape_regularization::CLOSED` or `CGAL::Shape_regularization::OPEN`.
 
     \tparam PointMap
-    must be a `ReadablePropertyMap` whose key type is the value type of the input 
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input 
     range and value type is `GeomTraits::Point_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
   */
@@ -93,7 +93,7 @@ namespace Shape_regularization {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      a sequence of \ref pmp_namedparameters "Named Parameters".
+      a sequence of \ref sr_namedparameters "Named Parameters".
 
       \param input_range
       a const range of points, which form a contour
@@ -102,15 +102,17 @@ namespace Shape_regularization {
       estimated contour directions 
 
       \param np
-      optional sequence of \ref pmp_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters" 
       among the ones listed below
-
-      \param max_offset
-      the max offset bound that can be applied to a contour edge, 
-      the default is 0.5 meters
 
       \param point_map
       an instance of `PointMap`, if not provided, the default is used
+
+      \cgalNamedParamsBegin
+        \cgalParamBegin{max_offset} 
+          max offset deviation in meters between two contour edges, the default is 0.5 meters
+        \cgalParamEnd
+      \cgalNamedParamsEnd
 
       \pre `input_range.size() >= 3` for closed contours
       \pre `input_range.size() >= 2` for open contours

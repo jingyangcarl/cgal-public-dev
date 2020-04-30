@@ -46,7 +46,7 @@ namespace Contours {
     must be a model of `ConstRange`.
 
     \tparam PointMap
-    must be a `ReadablePropertyMap` whose key type is the value type of the input 
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input 
     range and value type is `GeomTraits::Point_2`. %Default is the 
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
@@ -82,7 +82,7 @@ namespace Contours {
       a const range of points, which form a contour
 
       \param is_closed 
-      indicates wether the contour is closed or open
+      indicates whether the contour is closed or open
 
       \param point_map
       an instance of `PointMap`, if not provided, the default is used
