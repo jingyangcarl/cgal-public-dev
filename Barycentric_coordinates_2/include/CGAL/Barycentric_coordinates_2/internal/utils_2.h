@@ -34,6 +34,7 @@
 #include <vector>
 #include <utility>
 #include <iterator>
+#include <tuple>
 
 // Boost headers.
 #include <boost/mpl/has_xxx.hpp>
@@ -72,15 +73,15 @@ namespace internal {
     UNSPECIFIED = 4
   };
 
-  template<typename GeomTraits> 
+  template<typename GeomTraits>
   class Default_sqrt {
-    
+
   private:
     using Traits = GeomTraits;
     using FT = typename Traits::FT;
 
   public:
-    FT operator()(const FT value) const { 
+    FT operator()(const FT value) const {
       return static_cast<FT>(
         CGAL::sqrt(CGAL::to_double(CGAL::abs(value))));
     }
@@ -89,15 +90,15 @@ namespace internal {
   BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Sqrt, Sqrt, false)
 
   // Case: do_not_use_default = false.
-  template<typename GeomTraits, 
+  template<typename GeomTraits,
   bool do_not_use_default = Has_nested_type_Sqrt<GeomTraits>::value>
   class Get_sqrt {
-        
+
   public:
     using Traits = GeomTraits;
     using Sqrt = Default_sqrt<Traits>;
 
-    static Sqrt sqrt_object(const Traits& ) { 
+    static Sqrt sqrt_object(const Traits& ) {
       return Sqrt();
     }
   };
@@ -105,12 +106,12 @@ namespace internal {
   // Case: do_not_use_default = true.
   template<typename GeomTraits>
   class Get_sqrt<GeomTraits, true> {
-        
+
   public:
     using Traits = GeomTraits;
     using Sqrt = typename Traits::Sqrt;
 
-    static Sqrt sqrt_object(const Traits& traits) { 
+    static Sqrt sqrt_object(const Traits& traits) {
       return traits.sqrt_object();
     }
   };
@@ -121,7 +122,7 @@ namespace internal {
     FT sum = FT(0);
     for (const auto& value : values)
       sum += value;
-    
+
     if (sum == FT(0))
       return;
 
@@ -138,13 +139,13 @@ namespace internal {
       *(output++) = 0;
   }
 
-  template< 
+  template<
   typename OutputIterator,
   typename GeomTraits>
   OutputIterator linear_coordinates_2(
-    const typename GeomTraits::Point_2& source, 
-    const typename GeomTraits::Point_2& target, 
-    const typename GeomTraits::Point_2& query, 
+    const typename GeomTraits::Point_2& source,
+    const typename GeomTraits::Point_2& target,
+    const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits) {
 
@@ -160,7 +161,7 @@ namespace internal {
     const auto squared_distance_2 = traits.compute_squared_distance_2_object();
 
     // Project point on the segment.
-    const FT opposite_scalar_product = 
+    const FT opposite_scalar_product =
     scalar_product_2(query - target, source - target);
 
     // Compute coordinates.
@@ -178,9 +179,9 @@ namespace internal {
   typename OutputIterator,
   typename GeomTraits>
   OutputIterator planar_coordinates_2(
-    const typename GeomTraits::Point_2& p0, 
-    const typename GeomTraits::Point_2& p1, 
-    const typename GeomTraits::Point_2& p2, 
+    const typename GeomTraits::Point_2& p0,
+    const typename GeomTraits::Point_2& p1,
+    const typename GeomTraits::Point_2& p2,
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits) {
@@ -219,12 +220,12 @@ namespace internal {
   template<typename GeomTraits>
   boost::optional< std::pair<Query_point_location, std::size_t> >
   get_edge_index(
-    const std::vector<typename GeomTraits::Point_2>& polygon, 
+    const std::vector<typename GeomTraits::Point_2>& polygon,
     const typename GeomTraits::Point_2& query,
     const GeomTraits traits) {
 
     const auto collinear_2 = traits.collinear_2_object();
-    const auto collinear_are_ordered_along_line_2 = 
+    const auto collinear_are_ordered_along_line_2 =
       traits.collinear_are_ordered_along_line_2_object();
     CGAL_precondition(polygon.size() >= 3);
 
@@ -236,7 +237,7 @@ namespace internal {
       const std::size_t ip = (i + 1) % n;
       if (
         collinear_2(
-          polygon[i], polygon[ip], query) && 
+          polygon[i], polygon[ip], query) &&
         collinear_are_ordered_along_line_2(
           polygon[i], query, polygon[ip]))
         return std::make_pair(Query_point_location::ON_EDGE, i);
@@ -248,14 +249,14 @@ namespace internal {
     using Segment_2 = typename GeomTraits::Segment_2;
 
     const FT tol = FT(1) / FT(100000);
-    for (std::size_t i = 0; i < n; ++i) {          
+    for (std::size_t i = 0; i < n; ++i) {
       const Segment_2 segment = Segment_2(query, polygon[i]);
       const FT r = segment.squared_length();
       if (CGAL::abs(r) < tol)
         return std::make_pair(Query_point_location::ON_VERTEX, i);
     }
 
-    for (std::size_t i = 0; i < n; ++i) {          
+    for (std::size_t i = 0; i < n; ++i) {
       const std::size_t ip = (i + 1) % n;
 
       const Vector_2 s1 = Vector_2(query, polygon[i]);
@@ -274,7 +275,7 @@ namespace internal {
   template<typename GeomTraits>
   boost::optional< std::pair<Query_point_location, std::size_t> >
   locate_wrt_polygon_2(
-    const std::vector<typename GeomTraits::Point_2>& polygon, 
+    const std::vector<typename GeomTraits::Point_2>& polygon,
     const typename GeomTraits::Point_2& query,
     const GeomTraits traits) {
 
@@ -296,7 +297,7 @@ namespace internal {
   }
 
   enum class Polygon_type {
-    
+
     // Concave polygon = non-convex polygon.
     CONCAVE = 0,
 
@@ -308,11 +309,11 @@ namespace internal {
   };
 
   template<typename GeomTraits>
-  Polygon_type 
+  Polygon_type
   polygon_type_2(
     const std::vector<typename GeomTraits::Point_2>& polygon,
     const GeomTraits traits) {
-    
+
     using Point_2 = typename GeomTraits::Point_2;
     const auto collinear_2 = traits.collinear_2_object();
     CGAL_precondition(polygon.size() >= 3);
@@ -324,10 +325,10 @@ namespace internal {
       // In case we find at least one, return WEAKLY_CONVEX polygon.
       const std::size_t n = polygon.size();
       for (std::size_t i = 0; i < n; ++i) {
-      
+
         const std::size_t im = (i + n - 1) % n;
         const std::size_t ip = (i + 1) % n;
-      
+
         if (collinear_2(polygon[im], polygon[i], polygon[ip]))
           return Polygon_type::WEAKLY_CONVEX;
       }
@@ -350,7 +351,7 @@ namespace internal {
     using FT = typename GeomTraits::FT;
     const std::size_t n = polygon.size();
 
-    std::vector<FT> b; 
+    std::vector<FT> b;
     b.reserve(2);
 
     const auto& source = polygon[n - 1];
@@ -382,19 +383,19 @@ namespace internal {
 
     // Compute coordinates with respect to the query point location.
     switch (location) {
-      
+
       case Query_point_location::ON_VERTEX: {
         CGAL_precondition(index >= 0 && index < n);
-        
+
         for (std::size_t i = 0; i < n; ++i)
-          if (i == index) 
+          if (i == index)
             *(coordinates++) = FT(1);
           else
             *(coordinates++) = FT(0);
         return std::make_pair(coordinates, true);
       }
-      
-      case Query_point_location::ON_EDGE: {  
+
+      case Query_point_location::ON_EDGE: {
         CGAL_precondition(index >= 0 && index < n);
 
         if (index == n - 1)
@@ -419,21 +420,21 @@ namespace internal {
         internal::get_default(n, coordinates);
         return std::make_pair(coordinates, false);
       }
-    } 
+    }
     return std::make_pair(coordinates, false);
   }
 
   enum class Edge_case {
-    
+
     UNBOUNDED = 0, // point is on the unbounded side of the polygon
     BOUNDARY  = 1, // point is on the boundary of the polygon
     INTERIOR  = 2  // point is in the interior of the polygon
   };
 
   template<typename GeomTraits>
-  typename GeomTraits::FT 
+  typename GeomTraits::FT
   cotangent_2(
-    const typename GeomTraits::Vector_2& v1, 
+    const typename GeomTraits::Vector_2& v1,
     const typename GeomTraits::Vector_2& v2,
     const GeomTraits traits) {
 

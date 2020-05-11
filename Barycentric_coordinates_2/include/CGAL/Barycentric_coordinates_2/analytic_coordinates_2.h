@@ -64,6 +64,7 @@ namespace Barycentric_coordinates {
     An instance of `GeomTraits`.
 
     \return an output iterator.
+
     \pre `p0 != p1`
   */
   template<
@@ -112,6 +113,7 @@ namespace Barycentric_coordinates {
     An output iterator that stores the computed coordinates.
 
     \return an output iterator.
+
     \pre `p0 != p1`
   */
   template<
@@ -153,11 +155,15 @@ namespace Barycentric_coordinates {
     \param traits
     An instance of `GeomTraits`.
 
-    \return an `std::pair<GeomTraits::FT, GeomTraits::FT>`.
+    \return an `std::pair<GeomTraits::FT, GeomTraits::FT>`
+    with the computed coordinates.
+
     \pre `p0 != p1`
   */
   template<typename GeomTraits>
-  std::pair<typename GeomTraits::FT, typename GeomTraits::FT>
+  std::pair<
+  typename GeomTraits::FT,
+  typename GeomTraits::FT>
   segment_coordinates_2(
     const typename GeomTraits::Point_2& p0,
     const typename GeomTraits::Point_2& p1,
@@ -197,11 +203,15 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \return an `std::pair<GeomTraits::FT, GeomTraits::FT>`.
+    \return an `std::pair<GeomTraits::FT, GeomTraits::FT>`
+    with the computed coordinates.
+
     \pre `p0 != p1`
   */
   template<typename Point_2>
-  std::pair<typename Kernel_traits<Point_2>::Kernel::FT, typename Kernel_traits<Point_2>::Kernel::FT>
+  std::pair<
+  typename Kernel_traits<Point_2>::Kernel::FT,
+  typename Kernel_traits<Point_2>::Kernel::FT>
   segment_coordinates_2(
     const Point_2& p0,
     const Point_2& p1,
@@ -215,9 +225,9 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates2RefFunctions
 
-    This function takes the vertices `p0`, `p1`, and `p2` of a triangle and computes the
-    triangle coordinates at a given `query` point with respect to these vertices.
-    The coordinates are returned in `coordinates`.
+    This function computes barycentric coordinates at a given `query` point
+    with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
+    coordinate per point. The coordinates are returned in `coordinates`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -238,7 +248,7 @@ namespace Barycentric_coordinates {
     A query point.
 
     \param coordinates
-    An output iterator that stores the computed triangle coordinates.
+    An output iterator that stores the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
@@ -265,9 +275,9 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates2RefFunctions
 
-    This function takes the vertices `p0`, `p1`, and `p2` of a triangle and computes the
-    triangle coordinates at a given `query` point with respect to these vertices.
-    The coordinates are returned in `coordinates`.
+    This function computes barycentric coordinates at a given `query` point
+    with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
+    coordinate per point. The coordinates are returned in `coordinates`.
 
     This function infers a traits class from the `Point_2` class and calls the
     generic version of this function.
@@ -291,7 +301,7 @@ namespace Barycentric_coordinates {
     A query point.
 
     \param coordinates
-    An output iterator that stores the computed triangle coordinates.
+    An output iterator that stores the computed coordinates.
 
     \return an output iterator.
 
@@ -310,6 +320,102 @@ namespace Barycentric_coordinates {
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return triangle_coordinates_2(
       p0, p1, p2, query, coordinates, GeomTraits());
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function computes barycentric coordinates at a given `query` point
+    with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
+    coordinate per point.
+
+    \tparam GeomTraits
+    is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
+
+    \param p0
+    The first vertex of a triangle.
+
+    \param p1
+    The second vertex of a triangle.
+
+    \param p2
+    The third vertex of a triangle.
+
+    \param query
+    A query point.
+
+    \param traits
+    An instance of `GeomTraits`.
+
+    \return an `std::tuple<GeomTraits::FT, GeomTraits::FT, GeomTraits::FT>`
+    with the computed coordinates.
+
+    \pre `area_2(p0, p1, p2) != 0`
+  */
+  template<typename GeomTraits>
+  std::tuple<
+  typename GeomTraits::FT,
+  typename GeomTraits::FT,
+  typename GeomTraits::FT>
+  triangle_coordinates_2(
+    const typename GeomTraits::Point_2& p0,
+    const typename GeomTraits::Point_2& p1,
+    const typename GeomTraits::Point_2& p2,
+    const typename GeomTraits::Point_2& query,
+    const GeomTraits traits) {
+
+    using FT = typename GeomTraits::FT;
+    std::vector<FT> coordinates;
+    coordinates.reserve(3);
+    return internal::planar_coordinates_2(
+      p0, p1, p2, query, std::back_inserter(coordinates), traits);
+    return std::make_tuple(coordinates[0], coordinates[1], coordinates[2]);
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function computes barycentric coordinates at a given `query` point
+    with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
+    coordinate per point.
+
+    This function infers a traits class from the `Point_2` class and calls the
+    generic version of this function.
+
+    \tparam Point_2
+    is a point type.
+
+    \param p0
+    The first vertex of a triangle.
+
+    \param p1
+    The second vertex of a triangle.
+
+    \param p2
+    The third vertex of a triangle.
+
+    \param query
+    A query point.
+
+    \return an `std::tuple<GeomTraits::FT, GeomTraits::FT, GeomTraits::FT>`
+    with the computed coordinates.
+
+    \pre `area_2(p0, p1, p2) != 0`
+  */
+  template<typename Point_2>
+  std::tuple<
+  typename Kernel_traits<Point_2>::Kernel::FT,
+  typename Kernel_traits<Point_2>::Kernel::FT,
+  typename Kernel_traits<Point_2>::Kernel::FT>
+  triangle_coordinates_2(
+    const Point_2& p0,
+    const Point_2& p1,
+    const Point_2& p2,
+    const Point_2& query) {
+
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    return triangle_coordinates_2(
+      p0, p1, p2, query, GeomTraits());
   }
 
   /*!
