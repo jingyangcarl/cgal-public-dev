@@ -204,7 +204,7 @@ namespace Barycentric_coordinates {
       const Polygon&,
       const Point_2& query,
       OutputIterator coordinates,
-      GeomTraits) {
+      GeomTraits, VertexMap) {
 
       const std::size_t n = m_polygon.size();
 
@@ -268,7 +268,8 @@ namespace Barycentric_coordinates {
       const Point_2& query,
       OutputIterator coordinates) {
 
-      return operator()(m_input_polygon, query, coordinates, m_traits);
+      return operator()(
+        m_input_polygon, query, coordinates, m_traits, m_vertex_map);
     }
 
     /*!

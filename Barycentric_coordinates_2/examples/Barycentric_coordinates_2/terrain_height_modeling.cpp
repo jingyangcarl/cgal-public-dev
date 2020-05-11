@@ -15,7 +15,8 @@ using Projection = CGAL::Projection_traits_xy_3<Kernel>;
 using FT    = typename Projection::FT;
 using Point = typename Projection::Point_2;
 
-using Points = std::vector<Point>;
+using Points    = std::vector<Point>;
+using Point_map = CGAL::Identity_property_map<Point>;
 
 // Coordinates.
 using Domain     = CGAL::Barycentric_coordinates::Delaunay_domain_2<
@@ -58,7 +59,7 @@ int main() {
   // Instantiate a Delaunay domain.
   std::list<Point> list_of_seeds;
   list_of_seeds.push_back(Point(0.1, 0.1, 0.0));
-  
+
   Domain domain(polygon);
   domain.create(0.05, list_of_seeds);
 
@@ -78,27 +79,28 @@ int main() {
   // Instantiate the class with mean value weights.
   Mean_value mean_value(polygon);
 
-  // Compute mean value coordinates and use them to interpolate data 
+  // Compute mean value coordinates and use them to interpolate data
   // from the polygon's boundary to its interior.
   std::vector<FT> coordinates;
   coordinates.reserve(polygon.size());
   for (std::size_t i = 0; i < domain.number_of_vertices(); ++i) {
     const auto& query = domain.vertex(i);
-    
+
     coordinates.clear();
     CGAL::Barycentric_coordinates::analytic_coordinates_2(
-    polygon, query, mean_value, std::back_inserter(coordinates), Projection());
+    polygon, query, mean_value, std::back_inserter(coordinates),
+    Projection(), Point_map());
 
-    for (std::size_t i = 0; i < polygon.size(); ++i) 
+    for (std::size_t i = 0; i < polygon.size(); ++i)
       boundary[i] = std::make_pair(polygon[i], coordinates[i]);
-    
+
     const FT f = CGAL::linear_interpolation(
-      boundary.begin(), boundary.end(), FT(1), 
+      boundary.begin(), boundary.end(), FT(1),
       Function_value_access(vertex_function_value));
-    
+
     queries.push_back(Point(query.x(), query.y(), f));
   }
-  
+
   // Output interpolated heights.
   std::cout << std::endl << "interpolated heights: " << std::endl << std::endl;
   for (const auto& query : queries)

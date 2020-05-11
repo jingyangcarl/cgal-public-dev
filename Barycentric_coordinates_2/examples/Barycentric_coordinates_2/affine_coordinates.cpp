@@ -19,27 +19,25 @@ using MatrixXd = Eigen::MatrixXd;
 
 int main() {
 
-  Kernel traits;
-  Point_map point_map;
-
   // Create a set of vertices.
-  const Points_2 vertices = { 
+  const Points_2 vertices = {
     Point_2(0.0, 0.0), Point_2(0.75, 0.25), Point_2(0.5, 0.5), Point_2(0.4, -0.2) };
 
   // Create a set of query points.
-  const Points_2 queries = { 
+  const Points_2 queries = {
     Point_2(0.2, 0.2), Point_2(0.3, 0.3), Point_2(0.4, 0.4) };
 
   // Create a lambda function with affine coordinates.
   // This implementation is based on the following paper:
   // S. Waldron. Affine generalized barycentric coordinates.
   // Jaen Journal on Approximation, 3(2):209-226, 2011.
+  // This function is a model of the AnalyticWeights_2 concept.
   const auto affine = [](
-    const Points_2& vertices, 
-    const Point_2& query, 
+    const Points_2& vertices,
+    const Point_2& query,
     Output_iterator coordinates,
-    Kernel traits) { 
-    
+    Kernel traits, Point_map) {
+
     const std::size_t n = vertices.size();
     const auto lambda = [](const Point_2& p){ return std::make_pair(p, 1.0); };
     const Point_2 b = CGAL::barycenter(
@@ -55,36 +53,33 @@ int main() {
     const auto A   = V.adjoint();
     const auto mat = V * A;
     const auto inv = mat.inverse();
-    
+
     Point_2 diff; VectorXd vec(2);
     for (std::size_t i = 0; i < n; ++i) {
       const FT x = query.x() - b.x();
       const FT y = query.y() - b.y();
       diff = Point_2(x, y);
-      
+
       vec(0) = V(0, i);
       vec(1) = V(1, i);
       const auto res = inv * vec;
 
-      *(coordinates++) = 
+      *(coordinates++) =
         diff.x() * res(0) + diff.y() * res(1) + 1.0 / double(n);
     }
   };
 
-  // Evaluate affine coordinates for all query points at once.
-  std::vector< std::vector<FT> > bs;
-  bs.reserve(queries.size());
-  CGAL::Barycentric_coordinates::analytic_weights_2(
-    vertices, queries, affine, std::back_inserter(bs), traits, point_map);
-
-  // Output affine coordinates.
+  // Evaluate affine coordinates for all query points.
   std::cout << std::endl << "affine coordinates: " << std::endl << std::endl;
-  for (const auto& b : bs) {
-    for (std::size_t i = 0; i < b.size() - 1; ++i)
-      std::cout << b[i] << ", ";
-    std::cout << b[b.size() - 1] << std::endl;
+
+  std::vector<FT> bs;
+  for (const auto& query : queries) {
+    bs.clear();
+    affine(vertices, query, std::back_inserter(bs), Kernel(), Point_map());
+    for (std::size_t i = 0; i < bs.size() - 1; ++i)
+      std::cout << bs[i] << ", ";
+    std::cout << bs[bs.size() - 1] << std::endl;
   }
   std::cout << std::endl;
-
   return EXIT_SUCCESS;
 }

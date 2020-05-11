@@ -183,7 +183,7 @@ namespace Barycentric_coordinates {
       const Polygon&,
       const Point_2& query,
       OutputIterator weights,
-      GeomTraits) {
+      GeomTraits, VertexMap) {
 
       switch(m_computation_policy) {
         case Computation_policy::PRECISE_COMPUTATION: {
@@ -234,7 +234,8 @@ namespace Barycentric_coordinates {
       const Point_2& query,
       OutputIterator weights) {
 
-      return operator()(m_input_polygon, query, weights, m_traits);
+      return operator()(
+        m_input_polygon, query, weights, m_traits, m_vertex_map);
     }
 
     /// @}
