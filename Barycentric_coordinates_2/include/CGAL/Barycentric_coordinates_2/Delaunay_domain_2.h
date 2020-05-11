@@ -39,12 +39,12 @@
 namespace CGAL {
 namespace Barycentric_coordinates {
 
-  /*! 
-    \ingroup PkgBarycentricCoordinates2RefClasses
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefHarmonic
 
     \brief Delaunay domain restricted to a simple polygon.
 
-    This class implements a discretized domain of a simple polygon, where 
+    This class implements a discretized domain of a simple polygon, where
     space partition is represented as a constrained Delaunay triangulation.
 
     Internally, the package `2D Conforming Triangulations and Meshes` is used.
@@ -53,10 +53,10 @@ namespace Barycentric_coordinates {
     \tparam Polygon
     is a model of `ConstRange`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
-    \tparam VertexMap 
+    \tparam VertexMap
     is an `LvaluePropertyMap` whose key type is `Polygon::value_type` and
     value type is `GeomTraits::Point_2`.
 
@@ -73,7 +73,7 @@ namespace Barycentric_coordinates {
     /// \name Types
     /// @{
 
-    /// \cond SKIP_IN_MANUAL 
+    /// \cond SKIP_IN_MANUAL
     using Polygon_    = Polygon;
     using GeomTraits_ = GeomTraits;
     using VertexMap_  = VertexMap;
@@ -93,7 +93,7 @@ namespace Barycentric_coordinates {
     using Criteria = CGAL::Delaunay_mesh_size_criteria_2<CDT>;
     using Mesher   = CGAL::Delaunay_mesher_2<CDT, Criteria>;
     /// \endcond
-      
+
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
@@ -104,7 +104,7 @@ namespace Barycentric_coordinates {
 
     /// \name Initialization
     /// @{
-      
+
     /*!
       \brief initializes all internal data structures.
 
@@ -112,7 +112,7 @@ namespace Barycentric_coordinates {
       An instance of `Polygon` with vertices of a simple polygon.
 
       \param vertex_map
-      An instance of `VertexMap` that maps a vertex from `polygon` 
+      An instance of `VertexMap` that maps a vertex from `polygon`
       to `Point_2`.
 
       \param traits
@@ -127,7 +127,7 @@ namespace Barycentric_coordinates {
       const GeomTraits traits = GeomTraits()) :
     m_input_polygon(polygon),
     m_vertex_map(vertex_map),
-    m_traits(traits) { 
+    m_traits(traits) {
 
       m_polygon.clear();
       m_polygon.reserve(m_input_polygon.size());
@@ -141,14 +141,14 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief creates a constrained Delaunay triangulation restricted to 
+      \brief creates a constrained Delaunay triangulation restricted to
       the input `polygon`.
 
       \param shape_size
       A shape size bound. See `Delaunay_mesh_size_criteria_2`.
 
       \param list_of_seeds
-      Contains seed points indicating, which parts of the `polygon` 
+      Contains seed points indicating, which parts of the `polygon`
       should be partitioned and subdivided.
     */
     void create(
@@ -158,7 +158,7 @@ namespace Barycentric_coordinates {
       // Create Delaunay triangulation.
       m_cdt.clear(); m_vhs.clear();
       m_vhs.reserve(m_polygon.size());
-      for (const auto& vertex : m_polygon) 
+      for (const auto& vertex : m_polygon)
         m_vhs.push_back(m_cdt.insert(vertex));
 
       for(std::size_t i = 0; i < m_vhs.size(); ++i) {
@@ -174,7 +174,7 @@ namespace Barycentric_coordinates {
 
       // Find interior points.
       std::set<Vertex_handle> vhs;
-      for (auto fh = m_cdt.finite_faces_begin(); 
+      for (auto fh = m_cdt.finite_faces_begin();
       fh != m_cdt.finite_faces_end(); ++fh) {
         if (fh->is_in_domain()) {
           vhs.insert(fh->vertex(0));
@@ -233,7 +233,7 @@ namespace Barycentric_coordinates {
 
     /*!
       \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::number_of_vertices()`.
-      
+
       This function returns the number of vertices in the discretized domain.
     */
     const std::size_t number_of_vertices() const {
@@ -242,8 +242,8 @@ namespace Barycentric_coordinates {
 
     /*!
       \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::vertex()`.
-      
-      This function returns a vertex of the discretized domain with 
+
+      This function returns a vertex of the discretized domain with
       the index `query_index`.
 
       \param query_index
@@ -264,8 +264,8 @@ namespace Barycentric_coordinates {
 
     /*!
       \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::is_on_boundary()`.
-      
-      This function controls if the vertex of the discretized domain with the 
+
+      This function controls if the vertex of the discretized domain with the
       index `query_index` is on the boundary of the `polygon`.
 
       \param query_index
@@ -286,8 +286,8 @@ namespace Barycentric_coordinates {
 
     /*!
       \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::operator()()`.
-      
-      This function returns a one-ring neighborhood of the vertex of the 
+
+      This function returns a one-ring neighborhood of the vertex of the
       discretized domain with the index `query_index`.
 
       \param query_index
@@ -301,9 +301,9 @@ namespace Barycentric_coordinates {
       \warning `create()` should be called before calling this method!
     */
     void operator()(
-      const std::size_t query_index, 
+      const std::size_t query_index,
       std::vector<std::size_t>& neighbors) const {
-      
+
       CGAL_precondition(
         query_index >= 0 && query_index < number_of_vertices());
 
@@ -325,13 +325,13 @@ namespace Barycentric_coordinates {
         neighbors.push_back(circ->info().index);
         ++circ;
       } while (circ != end);
-      
+
       CGAL_assertion(neighbors.size() > 0);
     }
 
     /*!
       \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::locate()`.
-      
+
       This function locates a query point in the discretized domain.
 
       \param query
@@ -345,7 +345,7 @@ namespace Barycentric_coordinates {
       \warning `create()` should be called before calling this method!
     */
     bool locate(
-      const Point_2& query, 
+      const Point_2& query,
       std::vector<std::size_t>& element) const {
 
       element.clear();
@@ -361,7 +361,7 @@ namespace Barycentric_coordinates {
     }
 
   private:
-      
+
     // Fields.
     const Polygon& m_input_polygon;
     const VertexMap m_vertex_map;

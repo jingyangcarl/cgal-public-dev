@@ -29,33 +29,33 @@
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
-// [1] Reference: "M. S. Floater, K. Hormann, and G. Kos. 
-// A general construction of barycentric coordinates over convex polygons. 
+// [1] Reference: "M. S. Floater, K. Hormann, and G. Kos.
+// A general construction of barycentric coordinates over convex polygons.
 // Advances in Computational Mathematics, 24(1-4):311-331, 2006.".
 
 namespace CGAL {
 namespace Barycentric_coordinates {
 
-  /*! 
-    \ingroup PkgBarycentricCoordinates2RefClasses
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefWeights
 
     \brief Discrete harmonic weights.
 
-    This class implements 2D discrete harmonic weights ( \cite cgal:bc:fhk-gcbcocp-06, 
+    This class implements 2D discrete harmonic weights ( \cite cgal:bc:fhk-gcbcocp-06,
     \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ) and can be used in conjunction
     with `Barycentric_coordinates::analytic_coordinates_2()` to compute
     discrete harmonic coordinates.
-    
-    Discrete harmonic coordinates are well-defined in the closure of a strictly 
+
+    Discrete harmonic coordinates are well-defined in the closure of a strictly
     convex polygon but they do not necesserily give positive values.
 
     \tparam Polygon
     is a model of `ConstRange`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
-    \tparam VertexMap 
+    \tparam VertexMap
     is an `LvaluePropertyMap` whose key type is `Polygon::value_type` and
     value type is `GeomTraits::Point_2`.
 
@@ -80,7 +80,7 @@ namespace Barycentric_coordinates {
     using Area_2 = typename GeomTraits::Compute_area_2;
     using Squared_distance_2 = typename GeomTraits::Compute_squared_distance_2;
     /// \endcond
-      
+
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
@@ -91,11 +91,11 @@ namespace Barycentric_coordinates {
 
     /// \name Initialization
     /// @{
-      
+
     /*!
       \brief initializes all internal data structures.
 
-      This class implements the behavior of discrete harmonic weights 
+      This class implements the behavior of discrete harmonic weights
       for 2D query points.
 
       \param polygon
@@ -105,7 +105,7 @@ namespace Barycentric_coordinates {
       One of the `Barycentric_coordinates::Computation_policy`.
 
       \param vertex_map
-      An instance of `VertexMap` that maps a vertex from `polygon` 
+      An instance of `VertexMap` that maps a vertex from `polygon`
       to `Point_2`.
 
       \param traits
@@ -117,7 +117,7 @@ namespace Barycentric_coordinates {
     */
     Discrete_harmonic_weights_2(
       const Polygon& polygon,
-      const Computation_policy computation_policy 
+      const Computation_policy computation_policy
         = Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES,
       const VertexMap vertex_map = VertexMap(),
       const GeomTraits traits = GeomTraits()) :
@@ -127,7 +127,7 @@ namespace Barycentric_coordinates {
     m_traits(traits),
     m_area_2(m_traits.compute_area_2_object()),
     m_squared_distance_2(m_traits.compute_squared_distance_2_object()) {
-        
+
       m_polygon.clear();
       m_polygon.reserve(m_input_polygon.size());
       for (const auto& item : m_input_polygon)
@@ -140,14 +140,14 @@ namespace Barycentric_coordinates {
       B.resize(m_polygon.size());
       w.resize(m_polygon.size());
 
-      const internal::Polygon_type polygon_type = 
+      const internal::Polygon_type polygon_type =
         internal::polygon_type_2(m_polygon, m_traits);
 
       if (polygon_type != internal::Polygon_type::STRICTLY_CONVEX)
         m_is_strictly_convex_polygon = false;
-      else 
+      else
         m_is_strictly_convex_polygon = true;
-      
+
       CGAL_precondition(
         CGAL::is_simple_2(m_polygon.begin(), m_polygon.end(), m_traits));
       CGAL_precondition(
@@ -157,12 +157,12 @@ namespace Barycentric_coordinates {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief implements `CGAL::Barycentric_coordinates::AnalyticWeights_2::operator()()`.
-        
-      This function fills `weights` with discrete harmonic weights 
+
+      This function fills `weights` with discrete harmonic weights
       computed at the `query` point with respect to the vertices of the `polygon`.
       If `query` belongs to the polygon's boundary, the returned weights are normalized.
 
@@ -178,7 +178,7 @@ namespace Barycentric_coordinates {
     template<typename OutputIterator>
     OutputIterator operator()(
       const Polygon&,
-      const Point_2& query, 
+      const Point_2& query,
       OutputIterator weights,
       GeomTraits) {
 
@@ -191,7 +191,7 @@ namespace Barycentric_coordinates {
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
           if (edge_case == internal::Edge_case::UNBOUNDED)
-            std::cerr << std::endl << 
+            std::cerr << std::endl <<
             "point does not belong to the polygon" << std::endl;
           return max_precision_weights(query, weights);
         }
@@ -203,7 +203,7 @@ namespace Barycentric_coordinates {
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
           if (edge_case == internal::Edge_case::UNBOUNDED)
-            std::cerr << std::endl << 
+            std::cerr << std::endl <<
             "point does not belong to the polygon" << std::endl;
           return max_speed_weights(query, weights);
         }
@@ -212,7 +212,7 @@ namespace Barycentric_coordinates {
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
           if (edge_case == internal::Edge_case::UNBOUNDED)
-            std::cerr << std::endl << 
+            std::cerr << std::endl <<
             "point does not belong to the polygon" << std::endl;
           return max_precision_weights(query, weights);
         }
@@ -220,10 +220,10 @@ namespace Barycentric_coordinates {
       return weights;
     }
 
-    /*! 
-      This function fills `weights` with discrete harmonic weights 
+    /*!
+      This function fills `weights` with discrete harmonic weights
       computed at the `query` point with respect to the vertices of the `polygon`.
-        
+
       This function calls the generic function above.
 
       \tparam OutputIterator
@@ -237,16 +237,16 @@ namespace Barycentric_coordinates {
     */
     template<typename OutputIterator>
     OutputIterator operator()(
-      const Point_2& query, 
+      const Point_2& query,
       OutputIterator weights) {
-      
+
       return operator()(m_input_polygon, query, weights, m_traits);
     }
 
     /// @}
 
   private:
-      
+
     // Fields.
     std::vector<FT> r;
     std::vector<FT> A;
@@ -260,7 +260,7 @@ namespace Barycentric_coordinates {
 
     const Area_2 m_area_2;
     const Squared_distance_2 m_squared_distance_2;
-    
+
     std::vector<Point_2> m_polygon;
     bool m_is_strictly_convex_polygon;
 
@@ -279,7 +279,7 @@ namespace Barycentric_coordinates {
       const internal::Query_point_location location = (*result).first;
       const std::size_t index = (*result).second;
 
-      if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE) 
+      if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE)
         return internal::Edge_case::UNBOUNDED;
 
       if (
@@ -301,7 +301,7 @@ namespace Barycentric_coordinates {
       // Get the number of vertices in the polygon.
       const std::size_t n = m_polygon.size();
 
-      // Compute areas A, B, and distances r following the notation from [1]. 
+      // Compute areas A, B, and distances r following the notation from [1].
       // Split the loop to make this computation faster.
       r[0] = m_squared_distance_2(m_polygon[0], query);
       A[0] = m_area_2(m_polygon[0], m_polygon[1], query);
@@ -320,20 +320,20 @@ namespace Barycentric_coordinates {
       // Initialize weights with the numerator of the formula (25) with p = 2 from [1].
       // Then we multiply them by areas A as in the formula (5) in [1]. We also split the loop.
       w[0] = r[1] * A[n-1] - r[0] * B[0] + r[n-1] * A[0];
-      for (std::size_t j = 1; j < n-1; ++j) 
+      for (std::size_t j = 1; j < n-1; ++j)
         w[0] *= A[j];
 
       for (std::size_t i = 1; i < n-1; ++i) {
         w[i] = r[i+1] * A[i-1] - r[i] * B[i] + r[i-1] * A[i];
-      
-        for (std::size_t j = 0; j < i-1; ++j) 
+
+        for (std::size_t j = 0; j < i-1; ++j)
           w[i] *= A[j];
-        for (std::size_t j = i+1; j < n; ++j) 
+        for (std::size_t j = i+1; j < n; ++j)
           w[i] *= A[j];
       }
 
       w[n-1] = r[0] * A[n-2] - r[n-1] * B[n-1] + r[n-2] * A[n-1];
-      for (std::size_t j = 0; j < n-2; ++j) 
+      for (std::size_t j = 0; j < n-2; ++j)
         w[n-1] *= A[j];
 
       // Return weights.
@@ -351,7 +351,7 @@ namespace Barycentric_coordinates {
       // Get the number of vertices in the polygon.
       const std::size_t n = m_polygon.size();
 
-      // Compute areas A, B, and distances r following the notation from [1]. 
+      // Compute areas A, B, and distances r following the notation from [1].
       // Split the loop to make this computation faster.
       r[0] = m_squared_distance_2(m_polygon[0], query);
       A[0] = m_area_2(m_polygon[0], m_polygon[1], query);

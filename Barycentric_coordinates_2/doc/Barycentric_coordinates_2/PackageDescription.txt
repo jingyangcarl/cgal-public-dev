@@ -4,12 +4,22 @@
 \defgroup PkgBarycentricCoordinates2RefConcepts Concepts
 \ingroup PkgBarycentricCoordinates2Ref
 
-Concepts, which are used to parameterize barycentric coordinate classes.
+Generalized barycentric concepts.
 
-\defgroup PkgBarycentricCoordinates2RefClasses Classes
+\defgroup PkgBarycentricCoordinates2RefWeights Generalized Weights
 \ingroup PkgBarycentricCoordinates2Ref
 
-Generalized barycentric weight and coordinate functions.
+Generalized barycentric weights.
+
+\defgroup PkgBarycentricCoordinates2RefHarmonic Harmonic Coordinates
+\ingroup PkgBarycentricCoordinates2Ref
+
+Harmonic coordinates and related classes.
+
+\defgroup PkgBarycentricCoordinates2RefFunctions Free Functions
+\ingroup PkgBarycentricCoordinates2Ref
+
+Free functions to compute barycentric weights and coordinates.
 
 \defgroup PkgBarycentricCoordinates2RefDeprecated Deprecated
 \ingroup PkgBarycentricCoordinates2Ref
@@ -18,15 +28,15 @@ Deprecated classes and functions.
 
 \addtogroup PkgBarycentricCoordinates2Ref
 
-\cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentricCoordinates2RefSummary}
+\cgalPkgDescriptionBegin{2D Generalized Barycentric Coordinates, PkgBarycentricCoordinates2}
 \cgalPkgPicture{barcoord_thumb.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez}
-\cgalPkgDesc{This package offers an efficient and 
-robust implementation of two-dimensional generalized barycentric coordinates defined 
-for simple two-dimensional polygons. If coordinates with respect to multivariate 
-scattered points instead of a polygon are required, please refer to natural neighbor coordinates 
+\cgalPkgDesc{This package offers an efficient and
+robust implementation of two-dimensional generalized barycentric coordinates defined
+for simple two-dimensional polygons. If coordinates with respect to multivariate
+scattered points instead of a polygon are required, please refer to natural neighbor coordinates
 from the Package \ref PkgInterpolation2.}
 \cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentricCoordinates2Ref}
 \cgalPkgSummaryEnd
@@ -46,16 +56,19 @@ from the Package \ref PkgInterpolation2.}
 - `CGAL::Barycentric_coordinates::DiscretizedDomain_2`
 - `CGAL::Barycentric_coordinates::SparseLinearSolver_2`
 
-## Classes ##
+## Generalized Weights ##
 - `CGAL::Barycentric_coordinates::Wachspress_weights_2<Polygon, GeomTraits, VertexMap>`
 - `CGAL::Barycentric_coordinates::Mean_value_weights_2<Polygon, GeomTraits, VertexMap>`
 - `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Polygon, GeomTraits, VertexMap>`
+
+## Harmonic Coordinates ##
+- `CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, GeomTraits, VertexMap>`
 - `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, Solver, GeomTraits, VertexMap>`
 
 ## Enumerations ##
 - `CGAL::Barycentric_coordinates::Computation_policy`
 
-## Functions ##
+## Free Functions ##
 - `CGAL::Barycentric_coordinates::segment_coordinates_2()`
 - `CGAL::Barycentric_coordinates::triangle_coordinates_2()`
 - `CGAL::Barycentric_coordinates::boundary_coordinates_2()`

@@ -34,23 +34,23 @@
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
 
-// [1] Reference: "P. Joshi, M. Meyer, T. DeRose, B. Green, and T. Sanocki. 
+// [1] Reference: "P. Joshi, M. Meyer, T. DeRose, B. Green, and T. Sanocki.
 // Harmonic coordinates for character articulation.
 // ACM Transactions on Graphics, 26(3):71:1-9, 2007.".
 
 namespace CGAL {
 namespace Barycentric_coordinates {
 
-  /*! 
-    \ingroup PkgBarycentricCoordinates2RefClasses
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefHarmonic
 
     \brief Harmonic coordinates.
 
     This class implements 2D harmonic coordinates and can be used in conjunction
-    with `Barycentric_coordinates::analytic_coordinates_2()` to evaluate 
+    with `Barycentric_coordinates::analytic_coordinates_2()` to evaluate
     harmonic coordinate functions at any point inside a polygon.
-    
-    Harmonic coordinates are well-defined and non-negative in the closure 
+
+    Harmonic coordinates are well-defined and non-negative in the closure
     of any simple polygon.
 
     Internally, the `Barycentric_coordinates::Discrete_harmonic_weights_2`
@@ -60,16 +60,16 @@ namespace Barycentric_coordinates {
     is a model of `ConstRange`.
 
     \tparam Domain
-    is a model of `CGAL::Barycentric_coordinates::DiscretizedDomain_2`. For the 
+    is a model of `CGAL::Barycentric_coordinates::DiscretizedDomain_2`. For the
     moment, we only support domains that have elements, which are triangles.
 
     \tparam Solver
     is a model of `CGAL::Barycentric_coordinates::SparseLinearSolver_2`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
-    \tparam VertexMap 
+    \tparam VertexMap
     is an `LvaluePropertyMap` whose key type is `Polygon::value_type` and
     value type is `GeomTraits::Point_2`.
 
@@ -88,21 +88,21 @@ namespace Barycentric_coordinates {
     /// \name Types
     /// @{
 
-    /// \cond SKIP_IN_MANUAL 
+    /// \cond SKIP_IN_MANUAL
     using Polygon_    = Polygon;
     using Domain_     = Domain;
     using Solver_     = Solver;
     using GeomTraits_ = GeomTraits;
     using VertexMap_  = VertexMap;
     /// \endcond
-      
+
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
     /// Point type.
     typedef typename GeomTraits::Point_2 Point_2;
 
-    /// \cond SKIP_IN_MANUAL 
+    /// \cond SKIP_IN_MANUAL
     using Vector_2 = typename GeomTraits::Vector_2;
 
     using MatrixFT  = Eigen::SparseMatrix<FT>;
@@ -114,11 +114,11 @@ namespace Barycentric_coordinates {
 
     /// \name Initialization
     /// @{
-      
+
     /*!
       \brief initializes all internal data structures.
 
-      This class implements the behavior of harmonic coordinates 
+      This class implements the behavior of harmonic coordinates
       for 2D query points.
 
       \param polygon
@@ -131,7 +131,7 @@ namespace Barycentric_coordinates {
       An instance of `Solver`.
 
       \param vertex_map
-      An instance of `VertexMap` that maps a vertex from `polygon` 
+      An instance of `VertexMap` that maps a vertex from `polygon`
       to `Point_2`.
 
       \param traits
@@ -150,7 +150,7 @@ namespace Barycentric_coordinates {
     m_domain(domain),
     m_solver(solver),
     m_vertex_map(vertex_map),
-    m_traits(traits) { 
+    m_traits(traits) {
 
       m_polygon.clear();
       m_polygon.reserve(m_input_polygon.size());
@@ -171,16 +171,16 @@ namespace Barycentric_coordinates {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief implements `CGAL::Barycentric_coordinates::AnalyticWeights_2::operator()()`.
-        
-      This function fills `coordinates` with harmonic coordinates 
+
+      This function fills `coordinates` with harmonic coordinates
       evaluated at the point `query` with respect to the vertices of the `polygon`.
       Evaluation is performed by locating an element in the `domain` that contains
       `query` and then interpolating harmonic coordinates within this element.
-        
+
       If query is not inside `domain`, all coordinates are set to zero. If the
       located element has more than 3 vertices, all coordinates are set to zero.
 
@@ -202,7 +202,7 @@ namespace Barycentric_coordinates {
     template<typename OutputIterator>
     OutputIterator operator()(
       const Polygon&,
-      const Point_2& query, 
+      const Point_2& query,
       OutputIterator coordinates,
       GeomTraits) {
 
@@ -231,7 +231,7 @@ namespace Barycentric_coordinates {
       CGAL::Barycentric_coordinates::internal::planar_coordinates_2(
         p0, p1, p2, query, std::back_inserter(m_b), m_traits);
       CGAL_assertion(m_b.size() == 3);
-      
+
       CGAL_assertion(
         m_coordinates.size() == m_domain.number_of_vertices());
       const auto& hm0 = m_coordinates.at(i0);
@@ -244,12 +244,12 @@ namespace Barycentric_coordinates {
       return coordinates;
     }
 
-    /*! 
-      This function fills `coordinates` with harmonic coordinates 
+    /*!
+      This function fills `coordinates` with harmonic coordinates
       evaluated at the point `query` with respect to the vertices of the `polygon`.
       Evaluation is performed by locating an element in the `domain` that contains
       `query` and then interpolating harmonic coordinates within this element.
-        
+
       This function calls the generic function above.
 
       \tparam OutputIterator
@@ -265,16 +265,16 @@ namespace Barycentric_coordinates {
     */
     template<typename OutputIterator>
     OutputIterator operator()(
-      const Point_2& query, 
+      const Point_2& query,
       OutputIterator coordinates) {
-      
+
       return operator()(m_input_polygon, query, coordinates, m_traits);
     }
 
     /*!
-      \brief fills `coordinates` with harmonic coordinates computed at the 
+      \brief fills `coordinates` with harmonic coordinates computed at the
       vertex of the input `domain` with the index `query`.
-        
+
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
 
@@ -290,7 +290,7 @@ namespace Barycentric_coordinates {
     */
     template<typename OutputIterator>
     OutputIterator coordinates(
-      const std::size_t query, 
+      const std::size_t query,
       OutputIterator coordinates) const {
 
       CGAL_precondition(
@@ -305,9 +305,9 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief fills `coordinates` with harmonic coordinates computed at all the 
+      \brief fills `coordinates` with harmonic coordinates computed at all the
       vertices of the input `domain`.
-        
+
       \tparam OutputIterator
       is an output iterator whose value type is `std::vector<FT>`.
 
@@ -361,7 +361,7 @@ namespace Barycentric_coordinates {
       internal::get_default(
         n, std::back_inserter(empty_vec));
 
-      std::vector<FT> lambda; 
+      std::vector<FT> lambda;
       lambda.reserve(n);
 
       m_coordinates.clear();
@@ -378,10 +378,10 @@ namespace Barycentric_coordinates {
 
           const auto location = (*edge_found).first;
           const auto index = (*edge_found).second;
-          
+
           lambda.clear();
           internal::boundary_coordinates_2(
-            m_polygon, query, location, index, 
+            m_polygon, query, location, index,
             std::back_inserter(lambda), m_traits);
 
           for (std::size_t k = 0; k < n; ++k)
@@ -402,13 +402,13 @@ namespace Barycentric_coordinates {
           neighbors.clear();
           m_domain(i, neighbors);
           const std::size_t nn = neighbors.size();
-          
+
           alpha_cot.clear(); beta_cot.clear();
           for (std::size_t j = 0; j < nn; ++j) {
             const std::size_t jp = (j + 1) % nn;
 
             const auto& p1 = m_domain.vertex(neighbors[j]);
-            const auto& p2 = m_domain.vertex(neighbors[jp]); 
+            const auto& p2 = m_domain.vertex(neighbors[jp]);
 
             Vector_2 s1 = query - p1;
             Vector_2 s2 = p2 - p1;
@@ -449,7 +449,7 @@ namespace Barycentric_coordinates {
         for (std::size_t i = 0; i < N; ++i) {
           if (m_domain.is_on_boundary(i))
             m_coordinates[i][k] = boundary(indices[i], k);
-          else             
+          else
             m_coordinates[i][k] = x(indices[i], k);
         }
       }
@@ -477,7 +477,7 @@ namespace Barycentric_coordinates {
     /// @}
 
   private:
-      
+
     // Fields.
     const Polygon& m_input_polygon;
     const Domain& m_domain;

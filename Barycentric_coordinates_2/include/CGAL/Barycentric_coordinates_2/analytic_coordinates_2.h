@@ -33,14 +33,16 @@ namespace CGAL {
 namespace Barycentric_coordinates {
 
   /*!
-    This function takes the `source` and `target` vertices of a segment and computes 
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function takes the `source` and `target` vertices of a segment and computes
     the segment coordinates at a given `query` point with respect to these vertices.
     The coordinates are returned in `coordinates`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
     \param source
@@ -52,7 +54,7 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed segment coordinates.
 
     \param traits
@@ -62,13 +64,13 @@ namespace Barycentric_coordinates {
 
     \pre `source != target`
   */
-  template< 
+  template<
   typename OutputIterator,
   typename GeomTraits>
   OutputIterator segment_coordinates_2(
-    const typename GeomTraits::Point_2& source, 
-    const typename GeomTraits::Point_2& target, 
-    const typename GeomTraits::Point_2& query, 
+    const typename GeomTraits::Point_2& source,
+    const typename GeomTraits::Point_2& target,
+    const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits) {
 
@@ -77,7 +79,9 @@ namespace Barycentric_coordinates {
   }
 
   /*!
-    This function takes the `source` and `target` vertices of a segment and computes 
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function takes the `source` and `target` vertices of a segment and computes
     the segment coordinates at a given `query` point with respect to these vertices.
     The coordinates are returned in `coordinates`.
 
@@ -99,7 +103,7 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed segment coordinates.
 
     \return an output iterator.
@@ -107,12 +111,12 @@ namespace Barycentric_coordinates {
     \pre `source != target`
   */
   template<
-  typename Point_2, 
+  typename Point_2,
   typename OutputIterator>
   OutputIterator segment_coordinates_2(
-    const Point_2& source, 
-    const Point_2& target, 
-    const Point_2& query, 
+    const Point_2& source,
+    const Point_2& target,
+    const Point_2& query,
     OutputIterator coordinates) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
@@ -121,6 +125,8 @@ namespace Barycentric_coordinates {
   }
 
   /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
     This function takes the vertices `p0`, `p1`, and `p2` of a triangle and computes the
     triangle coordinates at a given `query` point with respect to these vertices.
     The coordinates are returned in `coordinates`.
@@ -128,7 +134,7 @@ namespace Barycentric_coordinates {
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
     \param p0
@@ -143,7 +149,7 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed triangle coordinates.
 
     \param traits
@@ -157,9 +163,9 @@ namespace Barycentric_coordinates {
   typename OutputIterator,
   typename GeomTraits>
   OutputIterator triangle_coordinates_2(
-    const typename GeomTraits::Point_2& p0, 
-    const typename GeomTraits::Point_2& p1, 
-    const typename GeomTraits::Point_2& p2, 
+    const typename GeomTraits::Point_2& p0,
+    const typename GeomTraits::Point_2& p1,
+    const typename GeomTraits::Point_2& p2,
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits) {
@@ -169,6 +175,8 @@ namespace Barycentric_coordinates {
   }
 
   /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
     This function takes the vertices `p0`, `p1`, and `p2` of a triangle and computes the
     triangle coordinates at a given `query` point with respect to these vertices.
     The coordinates are returned in `coordinates`.
@@ -194,7 +202,7 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed triangle coordinates.
 
     \return an output iterator.
@@ -202,12 +210,12 @@ namespace Barycentric_coordinates {
     \pre `area_2(p0, p1, p2) != 0`
   */
   template<
-  typename Point_2, 
+  typename Point_2,
   typename OutputIterator>
   OutputIterator triangle_coordinates_2(
-    const Point_2& p0, 
-    const Point_2& p1, 
-    const Point_2& p2, 
+    const Point_2& p0,
+    const Point_2& p1,
+    const Point_2& p2,
     const Point_2& query,
     OutputIterator coordinates) {
 
@@ -217,6 +225,8 @@ namespace Barycentric_coordinates {
   }
 
   /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
     This function takes a `query` point and computes boundary barycentric
     coordinates at this point with respect to the vertices of a given `polygon`.
     These coordinates are then returned in `coordinates`.
@@ -234,7 +244,7 @@ namespace Barycentric_coordinates {
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
     \tparam VertexMap
@@ -247,17 +257,17 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
 
     \param vertex_map
-    An instance of `VertexMap` that maps a vertex from `polygon` 
+    An instance of `VertexMap` that maps a vertex from `polygon`
     to `GeomTraits::Point_2`.
 
-    \return an output iterator with the tag indicating if `query` 
+    \return an output iterator with the tag indicating if `query`
     belongs to the polygon's boundary.
   */
   template<
@@ -278,7 +288,7 @@ namespace Barycentric_coordinates {
     for (const auto& item : polygon)
       poly.push_back(get(vertex_map, item));
 
-    const auto result = 
+    const auto result =
     internal::locate_wrt_polygon_2(poly, query, traits);
     auto location = (*result).first;
     auto index    = (*result).second;
@@ -293,6 +303,8 @@ namespace Barycentric_coordinates {
   }
 
   /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
     This function takes a `query` point and computes boundary barycentric
     coordinates at this point with respect to the vertices of a given `polygon`.
     These coordinates are then returned in `coordinates`.
@@ -319,13 +331,13 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed coordinates.
 
     \param vertex_map
     An instance of `VertexMap` that maps a vertex from `polygon` to `Point_2`.
 
-    \return an output iterator with the tag indicating if `query` 
+    \return an output iterator with the tag indicating if `query`
     belongs to the polygon's boundary.
   */
   template<
@@ -345,8 +357,10 @@ namespace Barycentric_coordinates {
   }
 
   /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
     This function takes a range of `query` points and computes boundary barycentric
-    coordinates at each point with respect to the vertices of a given `polygon`. 
+    coordinates at each point with respect to the vertices of a given `polygon`.
     These coordinates are then returned in `coordinates`.
 
     If a query point from the range does not belong to the polygon's boundary,
@@ -361,7 +375,7 @@ namespace Barycentric_coordinates {
     \tparam OutputIterator
     is an output iterator whose value type is `std::vector<GeomTraits::FT>`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
     \tparam VertexMap
@@ -378,18 +392,18 @@ namespace Barycentric_coordinates {
     \param queries
     An instance of `QueryRange` with query points.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
 
     \param vertex_map
-    An instance of `VertexMap` that maps a vertex from `polygon` 
+    An instance of `VertexMap` that maps a vertex from `polygon`
     to `GeomTraits::Point_2`.
 
     \param point_map
-    An instance of `PointMap` that maps an item from `queries` 
+    An instance of `PointMap` that maps an item from `queries`
     to `GeomTraits::Point_2`.
 
     \return an output iterator.
@@ -423,7 +437,7 @@ namespace Barycentric_coordinates {
     for (const auto& item : queries) {
       const auto& query = get(point_map, item);
 
-      const auto result = 
+      const auto result =
       internal::locate_wrt_polygon_2(poly, query, traits);
       auto location = (*result).first;
       auto index    = (*result).second;
@@ -442,8 +456,10 @@ namespace Barycentric_coordinates {
   }
 
   /*!
-    This function takes a range of `query` points and computes the chosen 
-    barycentric `weights` at each point with respect to the given `vertices`. 
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function takes a range of `query` points and computes the chosen
+    barycentric `weights` at each point with respect to the given `vertices`.
     These weights are then returned in `output`.
 
     \tparam VertexRange
@@ -458,7 +474,7 @@ namespace Barycentric_coordinates {
     \tparam OutputIterator
     is an output iterator whose value type is `std::vector<GeomTraits::FT>`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
     \tparam PointMap
@@ -472,17 +488,17 @@ namespace Barycentric_coordinates {
     An instance of `QueryRange` with query points.
 
     \param weights
-    An instance of `Weights` that computes the corresponding 
+    An instance of `Weights` that computes the corresponding
     barycentric weights.
 
-    \param output 
+    \param output
     An output iterator that stores the computed weights.
 
     \param traits
     An instance of `GeomTraits`.
 
     \param point_map
-    An instance of `PointMap` that maps an item from `queries` 
+    An instance of `PointMap` that maps an item from `queries`
     to `GeomTraits::Point_2`.
 
     \return an output iterator.
@@ -510,15 +526,17 @@ namespace Barycentric_coordinates {
     for (const auto& item : queries) {
       const auto& query = get(point_map, item);
       w.clear(); weights(
-        vertices, query, std::back_inserter(w), traits); 
+        vertices, query, std::back_inserter(w), traits);
       *(output++) = w;
     }
     return output;
   }
 
   /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
     This function takes a `query` point and computes the chosen barycentric
-    `weights` at this point with respect to the given `vertices`. These weights 
+    `weights` at this point with respect to the given `vertices`. These weights
     are then normalized and returned in `coordinates`.
 
     \tparam VertexRange
@@ -533,7 +551,7 @@ namespace Barycentric_coordinates {
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
     \param vertices
@@ -543,10 +561,10 @@ namespace Barycentric_coordinates {
     A query point.
 
     \param weights
-    An instance of `Weights` that computes the corresponding 
+    An instance of `Weights` that computes the corresponding
     barycentric weights.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed coordinates.
 
     \param traits
@@ -580,8 +598,10 @@ namespace Barycentric_coordinates {
   }
 
   /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
     This function takes a `query` point and computes the chosen barycentric
-    `weights` at this point with respect to the given `vertices`. These weights 
+    `weights` at this point with respect to the given `vertices`. These weights
     are then normalized and returned in `coordinates`.
 
     This function infers a traits class from the `Point_2` class and calls the
@@ -606,10 +626,10 @@ namespace Barycentric_coordinates {
     A query point.
 
     \param weights
-    An instance of `Weights` that computes the corresponding 
+    An instance of `Weights` that computes the corresponding
     barycentric weights.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed coordinates.
 
     \return an output iterator.
@@ -631,8 +651,10 @@ namespace Barycentric_coordinates {
   }
 
   /*!
-    This function takes a range of `query` points and computes the chosen 
-    barycentric `weights` at each point with respect to the given `vertices`. 
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function takes a range of `query` points and computes the chosen
+    barycentric `weights` at each point with respect to the given `vertices`.
     These weights are then normalized and returned in `coordinates`.
 
     \tparam VertexRange
@@ -647,7 +669,7 @@ namespace Barycentric_coordinates {
     \tparam OutputIterator
     is an output iterator whose value type is `std::vector<GeomTraits::FT>`.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
     \tparam PointMap
@@ -661,17 +683,17 @@ namespace Barycentric_coordinates {
     An instance of `QueryRange` with query points.
 
     \param weights
-    An instance of `Weights` that computes the corresponding 
+    An instance of `Weights` that computes the corresponding
     barycentric weights.
 
-    \param coordinates 
+    \param coordinates
     An output iterator that stores the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
 
     \param point_map
-    An instance of `PointMap` that maps an item from `queries` 
+    An instance of `PointMap` that maps an item from `queries`
     to `GeomTraits::Point_2`.
 
     \return an output iterator.
