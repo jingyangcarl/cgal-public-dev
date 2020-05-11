@@ -35,9 +35,12 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates2RefFunctions
 
-    This function takes the `source` and `target` vertices of a segment and computes
-    the segment coordinates at a given `query` point with respect to these vertices.
-    The coordinates are returned in `coordinates`.
+    This function computes barycentric coordinates at a given `query` point
+    with respect to the end points `p0` and `p1` of a segment that is one
+    coordinate per end point. The coordinates are returned in `coordinates`.
+
+    If the `query` point does not belong to the line through `p0` and `p1`, it is
+    projected onto this line, and only then the coordinates are computed.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -45,45 +48,47 @@ namespace Barycentric_coordinates {
     \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
-    \param source
+    \param p0
     The source vertex of a segment.
 
-    \param target
+    \param p1
     The target vertex of a segment.
 
     \param query
     A query point.
 
     \param coordinates
-    An output iterator that stores the computed segment coordinates.
+    An output iterator that stores the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
 
     \return an output iterator.
-
-    \pre `source != target`
+    \pre `p0 != p1`
   */
   template<
   typename OutputIterator,
   typename GeomTraits>
   OutputIterator segment_coordinates_2(
-    const typename GeomTraits::Point_2& source,
-    const typename GeomTraits::Point_2& target,
+    const typename GeomTraits::Point_2& p0,
+    const typename GeomTraits::Point_2& p1,
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits) {
 
     return internal::linear_coordinates_2(
-      source, target, query, coordinates, traits);
+      p0, p1, query, coordinates, traits);
   }
 
   /*!
     \ingroup PkgBarycentricCoordinates2RefFunctions
 
-    This function takes the `source` and `target` vertices of a segment and computes
-    the segment coordinates at a given `query` point with respect to these vertices.
-    The coordinates are returned in `coordinates`.
+    This function computes barycentric coordinates at a given `query` point
+    with respect to the end points `p0` and `p1` of a segment that is one
+    coordinate per end point. The coordinates are returned in `coordinates`.
+
+    If the `query` point does not belong to the line through `p0` and `p1`, it is
+    projected onto this line, and only then the coordinates are computed.
 
     This function infers a traits class from the `Point_2` class and calls the
     generic version of this function.
@@ -94,34 +99,117 @@ namespace Barycentric_coordinates {
     \tparam OutputIterator
     is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
-    \param source
+    \param p0
     The source vertex of a segment.
 
-    \param target
+    \param p1
     The target vertex of a segment.
 
     \param query
     A query point.
 
     \param coordinates
-    An output iterator that stores the computed segment coordinates.
+    An output iterator that stores the computed coordinates.
 
     \return an output iterator.
-
-    \pre `source != target`
+    \pre `p0 != p1`
   */
   template<
   typename Point_2,
   typename OutputIterator>
   OutputIterator segment_coordinates_2(
-    const Point_2& source,
-    const Point_2& target,
+    const Point_2& p0,
+    const Point_2& p1,
     const Point_2& query,
     OutputIterator coordinates) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return segment_coordinates_2(
-      source, target, query, coordinates, GeomTraits());
+      p0, p1, query, coordinates, GeomTraits());
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function computes barycentric coordinates at a given `query` point
+    with respect to the end points `p0` and `p1` of a segment that is one
+    coordinate per end point.
+
+    If the `query` point does not belong to the line through `p0` and `p1`, it is
+    projected onto this line, and only then the coordinates are computed.
+
+    \tparam GeomTraits
+    is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
+
+    \param p0
+    The source vertex of a segment.
+
+    \param p1
+    The target vertex of a segment.
+
+    \param query
+    A query point.
+
+    \param traits
+    An instance of `GeomTraits`.
+
+    \return an `std::pair<GeomTraits::FT, GeomTraits::FT>`.
+    \pre `p0 != p1`
+  */
+  template<typename GeomTraits>
+  std::pair<typename GeomTraits::FT, typename GeomTraits::FT>
+  segment_coordinates_2(
+    const typename GeomTraits::Point_2& p0,
+    const typename GeomTraits::Point_2& p1,
+    const typename GeomTraits::Point_2& query,
+    const GeomTraits traits) {
+
+    using FT = typename GeomTraits::FT;
+    std::vector<FT> coordinates;
+    coordinates.reserve(2);
+    internal::linear_coordinates_2(
+      p0, p1, query, std::back_inserter(coordinates), traits);
+    return std::make_pair(coordinates[0], coordinates[1]);
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function computes barycentric coordinates at a given `query` point
+    with respect to the end points `p0` and `p1` of a segment that is one
+    coordinate per end point.
+
+    If the `query` point does not belong to the line through `p0` and `p1`, it is
+    projected onto this line, and only then the coordinates are computed.
+
+    This function infers a traits class from the `Point_2` class and calls the
+    generic version of this function.
+
+    \tparam Point_2
+    is a point type.
+
+    \param p0
+    The source vertex of a segment.
+
+    \param p1
+    The target vertex of a segment.
+
+    \param query
+    A query point.
+
+    \return an `std::pair<GeomTraits::FT, GeomTraits::FT>`.
+    \pre `p0 != p1`
+  */
+  template<typename Point_2>
+  std::pair<typename Kernel_traits<Point_2>::Kernel::FT, typename Kernel_traits<Point_2>::Kernel::FT>
+  segment_coordinates_2(
+    const Point_2& p0,
+    const Point_2& p1,
+    const Point_2& query) {
+
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    return segment_coordinates_2(
+      p0, p1, query, GeomTraits());
   }
 
   /*!
