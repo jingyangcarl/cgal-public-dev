@@ -37,14 +37,14 @@ int main() {
     "segment coordinates (all queries): " << std::endl << std::endl;
   for (std::size_t i = 0; i < coordinates.size(); i += 2)
     std::cout <<
-    coordinates[i + 0] << ", " << coordinates[i + 1]
-    << std::endl;
+    coordinates[i + 0] << ", " <<
+    coordinates[i + 1] << std::endl;
   std::cout << std::endl;
 
-  // Output segment coordinates for the first point.
+  // Get a pair of segment coordinates for the first point.
   const auto pair = CGAL::Barycentric_coordinates::segment_coordinates_in_pair_2(
     source, target, queries[0]);
-  std::cout << "segment coordinates [query 0]: " <<
+  std::cout << "segment coordinates (query 0): " <<
     pair.first << " " << pair.second << std::endl << std::endl;
 
   return EXIT_SUCCESS;

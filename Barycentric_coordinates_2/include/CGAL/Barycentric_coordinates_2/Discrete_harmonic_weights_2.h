@@ -1,4 +1,4 @@
-// Copyright (c) 2014 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2019 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -53,13 +53,13 @@ namespace Barycentric_coordinates {
     is a model of `ConstRange`.
 
     \tparam GeomTraits
-    is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
+    is a model of `BarycentricTraits_2`.
 
     \tparam VertexMap
     is an `LvaluePropertyMap` whose key type is `Polygon::value_type` and
     value type is `GeomTraits::Point_2`.
 
-    \cgalModels `CGAL::Barycentric_coordinates::AnalyticWeights_2`
+    \cgalModels `AnalyticWeights_2`
   */
   template<
   typename Polygon,
@@ -164,7 +164,7 @@ namespace Barycentric_coordinates {
 
       This function fills `weights` with discrete harmonic weights
       computed at the `query` point with respect to the vertices of the `polygon`.
-      If `query` belongs to the polygon's boundary, the returned weights are normalized.
+      If `query` belongs to the polygon boundary, the returned weights are normalized.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.

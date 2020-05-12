@@ -51,19 +51,19 @@ from the Package \ref PkgInterpolation2.}
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `CGAL::Barycentric_coordinates::AnalyticWeights_2`
-- `CGAL::Barycentric_coordinates::BarycentricTraits_2`
-- `CGAL::Barycentric_coordinates::DiscretizedDomain_2`
-- `CGAL::Barycentric_coordinates::SparseLinearSolver_2`
+- `AnalyticWeights_2`
+- `BarycentricTraits_2`
+- `DiscretizedDomain_2`
+- `SparseLinearSolver_2`
 
 ## Generalized Weights ##
-- `CGAL::Barycentric_coordinates::Wachspress_weights_2<Polygon, GeomTraits, VertexMap>`
-- `CGAL::Barycentric_coordinates::Mean_value_weights_2<Polygon, GeomTraits, VertexMap>`
-- `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Barycentric_coordinates::Wachspress_weights_2<GeomTraits>`
+- `CGAL::Barycentric_coordinates::Mean_value_weights_2<GeomTraits>`
+- `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<GeomTraits>`
 
 ## Harmonic Coordinates ##
-- `CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, GeomTraits, VertexMap>`
-- `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, Solver, GeomTraits, VertexMap>`
+- `CGAL::Barycentric_coordinates::Delaunay_domain_2<GeomTraits>`
+- `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<GeomTraits, Domain, Solver>`
 
 ## Enumerations ##
 - `CGAL::Barycentric_coordinates::Computation_policy`
@@ -71,7 +71,6 @@ from the Package \ref PkgInterpolation2.}
 ## Free Functions ##
 - `CGAL::Barycentric_coordinates::segment_coordinates_2()`
 - `CGAL::Barycentric_coordinates::triangle_coordinates_2()`
-- `CGAL::Barycentric_coordinates::boundary_coordinates_2()`
-- `CGAL::Barycentric_coordinates::analytic_weights_2()`
-- `CGAL::Barycentric_coordinates::analytic_coordinates_2()`
+- `CGAL::Barycentric_coordinates::wachspress_weights_2()`
+- `CGAL::Barycentric_coordinates::wachspress_coordinates_2()`
 */

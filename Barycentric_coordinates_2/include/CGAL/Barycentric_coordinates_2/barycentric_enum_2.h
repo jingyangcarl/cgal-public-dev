@@ -1,4 +1,4 @@
-// Copyright (c) 2014 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2019 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -46,7 +46,7 @@ enum class Computation_policy {
 
   /*!
     Computation is very precise but has typically a quadratic time complexity
-    with respect to the number of the polygon's vertices. In addition,
+    with respect to the number of the polygon vertices. In addition,
     each query point is controlled for different edge cases, which slows down
     the computation. This is the default strategy.
   */
@@ -54,13 +54,13 @@ enum class Computation_policy {
 
   /*!
     Computation is very precise but has typically a quadratic time complexity
-    with respect to the number of the polygon's vertices.
+    with respect to the number of the polygon vertices.
   */
   PRECISE_COMPUTATION = 1,
 
   /*!
     Computation has typically a linear time complexity with respect to the
-    number of the polygon's vertices, but may be less precise. In addition,
+    number of the polygon vertices, but may be less precise. In addition,
     each query point is controlled for different edge cases, which slows down
     the computation.
   */
@@ -68,9 +68,14 @@ enum class Computation_policy {
 
   /*!
     Computation has typically a linear time complexity with respect to the
-    number of the polygon's vertices, but may be less precise.
+    number of the polygon vertices, but may be less precise.
   */
-  FAST_COMPUTATION = 3
+  FAST_COMPUTATION = 3,
+
+  /*!
+    The default value is `PRECISE_COMPUTATION_WITH_EDGE_CASES`.
+  */
+  DEFAULT = PRECISE_COMPUTATION_WITH_EDGE_CASES
 };
 
 /// @}

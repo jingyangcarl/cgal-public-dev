@@ -1,6 +1,3 @@
-namespace CGAL {
-namespace Barycentric_coordinates_depr {
-
 /*!
 \ingroup PkgBarycentricCoordinates2RefConcepts
 \cgalConcept
@@ -53,5 +50,3 @@ boost::optional<OutputIterator> coordinates_on_unbounded_side(const Traits::Poin
 /// @}
 
 }; /* end BarycentricCoordinates_2_depr */
-}
-}

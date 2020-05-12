@@ -28,6 +28,7 @@
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_weights_2.h>
 
 namespace CGAL {
 namespace Barycentric_coordinates {
@@ -134,7 +135,7 @@ namespace Barycentric_coordinates {
 
     This function computes barycentric coordinates at a given `query` point
     with respect to the end points `p0` and `p1` of a segment that is one
-    coordinate per end point.
+    coordinate per end point. The coordinates are returned in a pair.
 
     If the `query` point does not belong to the line through `p0` and `p1`, it is
     projected onto this line, and only then the coordinates are computed.
@@ -174,6 +175,7 @@ namespace Barycentric_coordinates {
     coordinates.reserve(2);
     internal::linear_coordinates_2(
       p0, p1, query, std::back_inserter(coordinates), traits);
+    CGAL_assertion(coordinates.size() == 2);
     return std::make_pair(coordinates[0], coordinates[1]);
   }
 
@@ -182,7 +184,7 @@ namespace Barycentric_coordinates {
 
     This function computes barycentric coordinates at a given `query` point
     with respect to the end points `p0` and `p1` of a segment that is one
-    coordinate per end point.
+    coordinate per end point. The coordinates are returned in a pair.
 
     If the `query` point does not belong to the line through `p0` and `p1`, it is
     projected onto this line, and only then the coordinates are computed.
@@ -324,7 +326,7 @@ namespace Barycentric_coordinates {
 
     This function computes barycentric coordinates at a given `query` point
     with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
-    coordinate per point.
+    coordinate per point. The coordinates are returned in a tuple.
 
     \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
@@ -366,6 +368,7 @@ namespace Barycentric_coordinates {
     coordinates.reserve(3);
     internal::planar_coordinates_2(
       p0, p1, p2, query, std::back_inserter(coordinates), traits);
+    CGAL_assertion(coordinates.size() == 3);
     return std::make_tuple(coordinates[0], coordinates[1], coordinates[2]);
   }
 
@@ -374,7 +377,7 @@ namespace Barycentric_coordinates {
 
     This function computes barycentric coordinates at a given `query` point
     with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
-    coordinate per point.
+    coordinate per point. The coordinates are returned in a tuple.
 
     This function infers a traits class from the `Point_2` class.
 
@@ -417,18 +420,14 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates2RefFunctions
 
-    This function takes a `query` point and computes boundary barycentric
-    coordinates at this point with respect to the vertices of a given `polygon`.
-    These coordinates are then returned in `coordinates`.
+    This function computes 2D Wachspress weights at a given `query` point
+    with respect to the vertices of a strictly convex `polygon`, that is one
+    weight per vertex. The weights are returned in `weights`.
 
-    If `query` is at the vertex, the corresponding coordinate is set to one, while
-    all other coordinates are zero. If `query` is on the edge, the two corresponding
-    coordinates are segment coordinates, while all other coordinates are set to zero.
-    If `query` is not on the boundary, all the coordinates are set to zero.
+    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
+    If one needs a flexible API, please refer to that class.
 
-    Internally, `CGAL::Barycentric_coordinates::segment_coordinates_2()` are used.
-
-    \tparam Polygon
+    \tparam PointRange
     is a model of `ConstRange`.
 
     \tparam OutputIterator
@@ -437,12 +436,119 @@ namespace Barycentric_coordinates {
     \tparam GeomTraits
     is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
 
-    \tparam VertexMap
-    is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
-    value type is `GeomTraits::Point_2`.
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a strictly convex polygon.
+
+    \param query
+    A query point.
+
+    \param weights
+    An output iterator that stores the computed weights.
+
+    \param traits
+    An instance of `GeomTraits`.
+
+    \param policy
+    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+
+    \return an output iterator.
+
+    \pre `polygon.size() >= 3`
+    \pre `polygon is simple`
+    \pre `polygon is strictly convex`
+  */
+  template<
+  typename PointRange,
+  typename OutputIterator,
+  typename GeomTraits>
+  OutputIterator wachspress_weights_2(
+    const PointRange& polygon,
+    const typename GeomTraits::Point_2& query,
+    OutputIterator weights,
+    const GeomTraits traits,
+    const Computation_policy policy =
+    Computation_policy::DEFAULT) {
+
+    Wachspress_weights_2<GeomTraits> wachspress(
+      polygon, policy, traits);
+    return wachspress(query, weights);
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function computes 2D Wachspress weights at a given `query` point
+    with respect to the vertices of a strictly convex `polygon`, that is one
+    weight per vertex. The weights are returned in `weights`.
+
+    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
+    If one needs a flexible API, please refer to that class.
+
+    This function infers a traits class from the `Point_2` class.
+
+    \tparam PointRange
+    is a model of `ConstRange`.
+
+    \tparam OutputIterator
+    is an output iterator whose value type is `GeomTraits::FT`.
 
     \param polygon
-    An instance of `Polygon` with the vertices of a simple polygon.
+    An instance of `PointRange` with 2D points, which form a strictly convex polygon.
+
+    \param query
+    A query point.
+
+    \param weights
+    An output iterator that stores the computed weights.
+
+    \param policy
+    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+
+    \return an output iterator.
+
+    \pre `polygon.size() >= 3`
+    \pre `polygon is simple`
+    \pre `polygon is strictly convex`
+  */
+  template<
+  typename PointRange,
+  typename Point_2,
+  typename OutputIterator>
+  OutputIterator wachspress_weights_2(
+    const PointRange& polygon,
+    const Point_2& query,
+    OutputIterator weights,
+    const Computation_policy policy =
+    Computation_policy::DEFAULT) {
+
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    return wachspress_weights_2(
+      polygon, query, weights, GeomTraits(), policy);
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    This function computes 2D Wachspress coordinates at a given `query` point
+    with respect to the vertices of a strictly convex `polygon`, that is one
+    coordinate per vertex. The coordinates are returned in `coordinates`.
+
+    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
+    If one needs a flexible API, please refer to that class.
+
+    \tparam PointRange
+    is a model of `ConstRange`.
+
+    \tparam OutputIterator
+    is an output iterator whose value type is `GeomTraits::FT`.
+
+    \tparam GeomTraits
+    is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
+
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a strictly convex polygon.
 
     \param query
     A query point.
@@ -453,243 +559,84 @@ namespace Barycentric_coordinates {
     \param traits
     An instance of `GeomTraits`.
 
-    \param vertex_map
-    An instance of `VertexMap` that maps a vertex from `polygon`
-    to `GeomTraits::Point_2`.
+    \param policy
+    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
 
-    \return an output iterator with the flag indicating whether
-    the query point belongs to the polygon boundary.
+    \return an output iterator.
+
+    \pre `polygon.size() >= 3`
+    \pre `polygon is simple`
+    \pre `polygon is strictly convex`
   */
   template<
-  typename Polygon,
+  typename PointRange,
   typename OutputIterator,
-  typename GeomTraits,
-  typename VertexMap>
-  std::pair<OutputIterator, bool> boundary_coordinates_2(
-    const Polygon& polygon,
+  typename GeomTraits>
+  OutputIterator wachspress_coordinates_2(
+    const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits,
-    const VertexMap vertex_map) {
+    const Computation_policy policy =
+    Computation_policy::DEFAULT) {
 
-    using Point_2 = typename GeomTraits::Point_2;
-    std::vector<Point_2> poly;
-    poly.reserve(polygon.size());
-    for (const auto& item : polygon)
-      poly.push_back(get(vertex_map, item));
-
-    const auto result =
-    internal::locate_wrt_polygon_2(poly, query, traits);
-    auto location = (*result).first;
-    auto index    = (*result).second;
-
-    if (!result) {
-      location = internal::Query_point_location::UNSPECIFIED;
-      index = std::size_t(-1);
-    }
-
-    return internal::boundary_coordinates_2(
-      poly, query, location, index, coordinates, traits);
+    Wachspress_weights_2<GeomTraits> wachspress(
+      polygon, policy, traits);
+    return wachspress.coordinates(query, coordinates);
   }
 
   /*!
     \ingroup PkgBarycentricCoordinates2RefFunctions
 
-    This function takes a `query` point and computes boundary barycentric
-    coordinates at this point with respect to the vertices of a given `polygon`.
-    These coordinates are then returned in `coordinates`.
+    This function computes 2D Wachspress coordinates at a given `query` point
+    with respect to the vertices of a strictly convex `polygon`, that is one
+    coordinate per vertex. The coordinates are returned in `coordinates`.
 
-    If `query` is at the vertex, the corresponding coordinate is set to one, while
-    all other coordinates are zero. If `query` is on the edge, the two corresponding
-    coordinates are segment coordinates, while all other coordinates are set to zero.
-    If `query` is not on the boundary, all the coordinates are set to zero.
-
-    Internally, `CGAL::Barycentric_coordinates::segment_coordinates_2()` are used.
+    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
+    If one needs a flexible API, please refer to that class.
 
     This function infers a traits class from the `Point_2` class.
 
-    \tparam Polygon
+    \tparam PointRange
     is a model of `ConstRange`.
-
-    \tparam Point_2
-    is a point type.
-
-    \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
-
-    \tparam VertexMap
-    is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
-    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
-
-    \param polygon
-    An instance of `Polygon` with the vertices of a simple polygon.
-
-    \param query
-    A query point.
-
-    \param coordinates
-    An output iterator that stores the computed coordinates.
-
-    \param vertex_map
-    An instance of `VertexMap` that maps a vertex from `polygon`
-    to `Point_2`. The default is the identity property map.
-
-    \return an output iterator with the flag indicating whether
-    the query point belongs to the polygon boundary.
-  */
-  template<
-  typename Polygon,
-  typename Point_2,
-  typename OutputIterator,
-  typename VertexMap = CGAL::Identity_property_map<
-  typename Kernel_traits<Point_2>::Kernel::Point_2> >
-  std::pair<OutputIterator, bool> boundary_coordinates_2(
-    const Polygon& polygon,
-    const Point_2& query,
-    OutputIterator coordinates,
-    const VertexMap vertex_map = VertexMap()) {
-
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
-    return boundary_coordinates_2(
-      polygon, query, coordinates, GeomTraits(), vertex_map);
-  }
-
-  /*!
-    \ingroup PkgBarycentricCoordinates2RefFunctions
-
-    This function takes a `query` point and computes the chosen barycentric
-    `weights` at this point with respect to the given `vertices`. These weights
-    are then normalized and returned in `coordinates`.
-
-    \tparam VertexRange
-    is a model of `ConstRange`.
-
-    \tparam Point_2
-    is a point type.
-
-    \tparam Weights
-    is a model of `CGAL::Barycentric_coordinates::AnalyticWeights_2`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
 
-    \tparam GeomTraits
-    is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
-
-    \tparam VertexMap
-    is a `ReadablePropertyMap` whose key type is `VertexRange::value_type` and
-    value type is `GeomTraits::Point_2`.
-
-    \param vertices
-    An instance of `VertexRange` with vertices, e.g. polygon vertices.
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a strictly convex polygon.
 
     \param query
     A query point.
 
-    \param weights
-    An instance of `Weights` that computes the corresponding
-    barycentric weights at the given query point.
-
     \param coordinates
     An output iterator that stores the computed coordinates.
 
-    \param traits
-    An instance of `GeomTraits`.
-
-    \param vertex_map
-    An instance of `VertexMap` that maps a vertex from `vertices`
-    to `GeomTraits::Point_2`.
+    \param policy
+    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
 
     \return an output iterator.
+
+    \pre `polygon.size() >= 3`
+    \pre `polygon is simple`
+    \pre `polygon is strictly convex`
   */
   template<
-  typename VertexRange,
+  typename PointRange,
   typename Point_2,
-  typename Weights,
-  typename OutputIterator,
-  typename GeomTraits,
-  typename VertexMap>
-  OutputIterator analytic_coordinates_2(
-    const VertexRange& vertices,
+  typename OutputIterator>
+  OutputIterator wachspress_coordinates_2(
+    const PointRange& polygon,
     const Point_2& query,
-    Weights& weights,
     OutputIterator coordinates,
-    const GeomTraits traits,
-    const VertexMap vertex_map) {
-
-    using FT = typename GeomTraits::FT;
-
-    std::vector<FT> b;
-    b.reserve(vertices.size());
-
-    weights(
-      vertices, query, std::back_inserter(b), traits, vertex_map);
-    internal::normalize(b);
-    for (const auto& value : b)
-      *(coordinates++) = value;
-    return coordinates;
-  }
-
-  /*!
-    \ingroup PkgBarycentricCoordinates2RefFunctions
-
-    This function takes a `query` point and computes the chosen barycentric
-    `weights` at this point with respect to the given `vertices`. These weights
-    are then normalized and returned in `coordinates`.
-
-    This function infers a traits class from the `Point_2` class.
-
-    \tparam VertexRange
-    is a model of `ConstRange`.
-
-    \tparam Point_2
-    is a point type.
-
-    \tparam Weights
-    is a model of `CGAL::Barycentric_coordinates::AnalyticWeights_2`.
-
-    \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
-
-    \tparam VertexMap
-    is a `ReadablePropertyMap` whose key type is `VertexRange::value_type` and
-    value type is `GeomTraits::Point_2`. The default is `CGAL::Identity_property_map`.
-
-    \param vertices
-    An instance of `VertexRange` with vertices, e.g. polygon vertices.
-
-    \param query
-    A query point.
-
-    \param weights
-    An instance of `Weights` that computes the corresponding
-    barycentric weights at the given query point.
-
-    \param coordinates
-    An output iterator that stores the computed coordinates.
-
-    \param vertex_map
-    An instance of `VertexMap` that maps a vertex from `vertices`
-    to `GeomTraits::Point_2`. The default is the identity property map.
-
-    \return an output iterator.
-  */
-  template<
-  typename VertexRange,
-  typename Point_2,
-  typename Weights,
-  typename OutputIterator,
-  typename VertexMap = CGAL::Identity_property_map<typename Kernel_traits<Point_2>::Kernel::Point_2> >
-  OutputIterator analytic_coordinates_2(
-    const VertexRange& vertices,
-    const Point_2& query,
-    Weights& weights,
-    OutputIterator coordinates,
-    const VertexMap vertex_map = VertexMap()) {
+    const Computation_policy policy =
+    Computation_policy::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
-    return analytic_coordinates_2(
-      vertices, query, weights, coordinates, GeomTraits(), vertex_map);
+    return wachspress_coordinates_2(
+      polygon, query, coordinates, GeomTraits(), policy);
   }
 
 } // namespace Barycentric_coordinates

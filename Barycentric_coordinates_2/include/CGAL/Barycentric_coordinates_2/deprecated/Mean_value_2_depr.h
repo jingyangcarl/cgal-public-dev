@@ -30,11 +30,11 @@
 
 #include <CGAL/disable_warnings.h>
 
-// STL headers. 
+// STL headers.
 #include <vector>
 
 // CGAL headers.
-#include <CGAL/utils.h> 
+#include <CGAL/utils.h>
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 
@@ -55,14 +55,14 @@ namespace Barycentric_coordinates_depr {
 // Try to find a square root object in the provided `Traits` class. If not, then use the default square root from CGAL.
 
 // Finds a square root of the provided value of the type `Kernel::FT` by first converting it to the double type and then taking the square root using the `CGAL::sqrt()` function.
-template<class Traits> 
+template<class Traits>
     class Default_sqrt
 {
     typedef typename Traits::FT FT;
 
 public:
     FT operator()(const FT &value) const
-    { 
+    {
         return FT(CGAL::sqrt(CGAL::to_double(value)));
     }
 };
@@ -76,9 +76,9 @@ template<class Traits, bool do_not_use_default = Has_nested_type_Sqrt<Traits>::v
 public:
     typedef Default_sqrt<Traits> Sqrt;
 
-    static Sqrt sqrt_object(const Traits&) 
-    { 
-        return Sqrt(); 
+    static Sqrt sqrt_object(const Traits&)
+    {
+        return Sqrt();
     }
 };
 
@@ -90,8 +90,8 @@ public:
     typedef typename Traits::Sqrt Sqrt;
 
     static Sqrt sqrt_object(const Traits &traits)
-    { 
-        return traits.sqrt_object(); 
+    {
+        return traits.sqrt_object();
     }
 };
 
@@ -110,13 +110,13 @@ public:
 
  * \deprecated This part of the package is deprecated since the version 5.1 of \cgal.
 
-\tparam Traits must be a model of the concept `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
+\tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
-\cgalModels `CGAL::Barycentric_coordinates::BarycentricCoordinates_2_depr`
+\cgalModels `BarycentricCoordinates_2_depr`
 
 */
- 
-template<class Traits> 
+
+template<class Traits>
     class Mean_value_2
 {
 
@@ -173,7 +173,7 @@ public:
     // This function computes mean value barycentric coordinates for a chosen query point on the bounded side of a simple polygon.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> coordinates_on_bounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
-    {   
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -195,7 +195,7 @@ public:
     // This function computes mean value barycentric coordinates for a chosen query point on the unbounded side of a simple polygon.
     template<class OutputIterator>
         inline boost::optional<OutputIterator> coordinates_on_unbounded_side(const Point_2 &query_point, OutputIterator &output, const Type_of_algorithm type_of_algorithm)
-    {   
+    {
         switch(type_of_algorithm)
         {
             case PRECISE:
@@ -277,7 +277,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf 
+        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);
@@ -406,7 +406,7 @@ private:
         D[n-1] = scalar_product_2(s[n-1], s[0]);
 
         // Compute intermediate values t using the formulas from slide 19 here
-        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf 
+        // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
         for(int i = 0; i < n-1; ++i) {
             CGAL_precondition( (r[i]*r[i+1] + D[i]) != FT(0) );
             t[i] = A[i] / (r[i]*r[i+1] + D[i]);

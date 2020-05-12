@@ -41,9 +41,9 @@
 #include <boost/optional/optional.hpp>
 
 // CGAL includes.
+#include <CGAL/utils.h>
 #include <CGAL/barycenter.h>
 #include <CGAL/assertions.h>
-#include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
 #include <CGAL/Polygon_2_algorithms.h>
@@ -57,19 +57,19 @@ namespace internal {
 
   enum class Query_point_location {
 
-    /// Query point is located at the vertex of the polygon.
+    // Query point is located at the vertex of the polygon.
     ON_VERTEX = 0,
 
-    /// Query point is located on the edge of the polygon.
+    // Query point is located on the edge of the polygon.
     ON_EDGE = 1,
 
-    /// Query point is located in the polygon's interior.
+    // Query point is located in the polygon interior.
     ON_BOUNDED_SIDE = 2,
 
-    /// Query point is located in the polygon's exterior.
+    // Query point is located in the polygon exterior.
     ON_UNBOUNDED_SIDE = 3,
 
-    /// Location is unspecified. Leads to all coordinates being set to zero.
+    // Location is unspecified. Leads to all coordinates being set to zero.
     UNSPECIFIED = 4
   };
 
@@ -123,12 +123,11 @@ namespace internal {
     for (const auto& value : values)
       sum += value;
 
+    CGAL_assertion(sum != FT(0));
     if (sum == FT(0))
       return;
 
-    CGAL_assertion(sum != FT(0));
     const FT inv_sum = FT(1) / sum;
-
     for (auto& value : values)
       value *= inv_sum;
   }
@@ -150,8 +149,10 @@ namespace internal {
     const GeomTraits traits) {
 
     CGAL_precondition(source != target);
-    if (source == target)
+    if (source == target) {
+      get_default(2, coordinates);
       return coordinates;
+    }
 
     // Number type.
     using FT = typename GeomTraits::FT;
@@ -165,6 +166,7 @@ namespace internal {
     scalar_product_2(query - target, source - target);
 
     // Compute coordinates.
+    CGAL_assertion(source != target);
     const FT b0 = opposite_scalar_product / squared_distance_2(source, target);
     const FT b1 = FT(1) - b0;
 
@@ -194,14 +196,17 @@ namespace internal {
     const FT total_area = area_2(p0, p1, p2);
 
     CGAL_precondition(total_area != FT(0));
-    if (total_area == FT(0))
+    if (total_area == FT(0)) {
+      get_default(3, coordinates);
       return coordinates;
+    }
 
     // Compute some related sub-areas.
     const FT A1 = area_2(p1, p2, query);
     const FT A2 = area_2(p2, p0, query);
 
     // Compute the inverted total area of the triangle.
+    CGAL_assertion(total_area != FT(0));
     const FT inverted_total_area = FT(1) / total_area;
 
     // Compute coordinates.
@@ -321,7 +326,7 @@ namespace internal {
     // First, test the polygon on convexity.
     if (CGAL::is_convex_2(polygon.begin(), polygon.end(), traits)) {
 
-      // Test all the consequent triplets of the polygon's vertices on collinearity.
+      // Test all the consequent triplets of the polygon vertices on collinearity.
       // In case we find at least one, return WEAKLY_CONVEX polygon.
       const std::size_t n = polygon.size();
       for (std::size_t i = 0; i < n; ++i) {
@@ -385,7 +390,7 @@ namespace internal {
     switch (location) {
 
       case Query_point_location::ON_VERTEX: {
-        CGAL_precondition(index >= 0 && index < n);
+        CGAL_assertion(index >= 0 && index < n);
 
         for (std::size_t i = 0; i < n; ++i)
           if (i == index)
@@ -396,7 +401,7 @@ namespace internal {
       }
 
       case Query_point_location::ON_EDGE: {
-        CGAL_precondition(index >= 0 && index < n);
+        CGAL_assertion(index >= 0 && index < n);
 
         if (index == n - 1)
           return coordinates_on_last_edge_2(
@@ -444,7 +449,10 @@ namespace internal {
 
     const FT dot = scalar_product_2(v1, v2);
     const FT det = cross_product_2(v1, v2);
-    return dot / CGAL::abs(det);
+
+    const FT cot_denominator = CGAL::abs(det);
+    CGAL_assertion(cot_denominator != FT(0));
+    return dot / cot_denominator;
   }
 
 } // namespace internal

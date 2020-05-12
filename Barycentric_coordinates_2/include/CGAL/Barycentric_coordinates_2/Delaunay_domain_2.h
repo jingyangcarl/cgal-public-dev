@@ -54,13 +54,13 @@ namespace Barycentric_coordinates {
     is a model of `ConstRange`.
 
     \tparam GeomTraits
-    is a model of `CGAL::Barycentric_coordinates::BarycentricTraits_2`.
+    is a model of `BarycentricTraits_2`.
 
     \tparam VertexMap
     is an `LvaluePropertyMap` whose key type is `Polygon::value_type` and
     value type is `GeomTraits::Point_2`.
 
-    \cgalModels `CGAL::Barycentric_coordinates::DiscretizedDomain_2`
+    \cgalModels `DiscretizedDomain_2`
   */
   template<
   typename Polygon,
