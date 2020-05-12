@@ -4,19 +4,15 @@
 #include <CGAL/Barycentric_coordinates_2.h>
 
 // Typedefs.
-
-// General.
 using Kernel     = CGAL::Exact_predicates_inexact_constructions_kernel;
 using Projection = CGAL::Projection_traits_xy_3<Kernel>;
 
 using FT    = typename Projection::FT;
 using Point = typename Projection::Point_2;
 
-// Coordinates.
-using Domain = CGAL::Barycentric_coordinates::Delaunay_domain_2<Projection>;
+using Domain     = CGAL::Barycentric_coordinates::Delaunay_domain_2<Projection>;
 using Mean_value = CGAL::Barycentric_coordinates::Mean_value_weights_2<Projection>;
 
-// Interpolation.
 using Vertex_function_value = std::map<Point, FT, typename Projection::Less_xy_2>;
 using Function_value_access = CGAL::Data_access<Vertex_function_value>;
 using Point_with_coordinate = std::pair<Point, FT>;
@@ -62,8 +58,8 @@ int main() {
   std::vector<Point_with_coordinate> boundary;
   boundary.resize(polygon.size());
 
-  // Store all generated interior points with the interpolated data.
-  Points queries;
+  // Use it to store all generated interior points with the interpolated data.
+  std::vector<Point> queries;
   queries.reserve(domain.number_of_vertices());
 
   // Instantiate the class with the mean value weights.

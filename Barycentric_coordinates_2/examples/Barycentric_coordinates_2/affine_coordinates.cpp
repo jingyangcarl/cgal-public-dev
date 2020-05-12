@@ -5,11 +5,13 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 // Typedefs.
-using Kernel = CGAL::Simple_cartesian<double>;
-using Point_2 = Kernel::Point_2;
-using Output_iterator = std::back_insert_iterator< std::vector<double> >;
+using Kernel   = CGAL::Simple_cartesian<double>;
+using Point_2  = Kernel::Point_2;
 using VectorXd = Eigen::VectorXd;
 using MatrixXd = Eigen::MatrixXd;
+
+using Output_iterator =
+  std::back_insert_iterator< std::vector<double> >;
 
 int main() {
 

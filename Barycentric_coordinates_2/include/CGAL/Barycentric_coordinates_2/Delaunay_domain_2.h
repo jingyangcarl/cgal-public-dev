@@ -42,30 +42,21 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates2RefHarmonic
 
-    \brief Delaunay domain restricted to a simple polygon.
+    \brief 2D Delaunay domain restricted to a simple polygon.
 
     This class implements a discretized domain of a simple polygon, where
     space partition is represented as a constrained Delaunay triangulation.
+    The constraints are the polygon edges. The triangle size is controlled
+    by the user-defined parameter.
 
-    Internally, the package `2D Conforming Triangulations and Meshes` is used.
-    See it for more advance reference.
-
-    \tparam Polygon
-    is a model of `ConstRange`.
+    Internally, the package \ref PkgMesh2 is used. See it for more details.
 
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
 
-    \tparam VertexMap
-    is an `LvaluePropertyMap` whose key type is `Polygon::value_type` and
-    value type is `GeomTraits::Point_2`.
-
     \cgalModels `DiscretizedDomain_2`
   */
-  template<
-  typename Polygon,
-  typename GeomTraits,
-  typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
+  template<typename GeomTraits>
   class Delaunay_domain_2 {
 
   public:
@@ -74,9 +65,7 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Polygon_    = Polygon;
-    using GeomTraits_ = GeomTraits;
-    using VertexMap_  = VertexMap;
+    using GT = GeomTraits;
 
     struct VI {
       internal::Edge_case type = internal::Edge_case::UNBOUNDED;
@@ -108,47 +97,54 @@ namespace Barycentric_coordinates {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam Polygon
+      is a model of `ConstRange`.
+
+      \tparam VertexMap
+      is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+      value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
       \param polygon
-      An instance of `Polygon` with vertices of a simple polygon.
+      An instance of `Polygon` with the vertices of a simple polygon.
+
+      \param traits
+      An instance of `GeomTraits`. The default initialization is provided.
 
       \param vertex_map
       An instance of `VertexMap` that maps a vertex from `polygon`
-      to `Point_2`.
-
-      \param traits
-      An instance of `GeomTraits`.
+      to `Point_2`. The default is the identity property map.
 
       \pre `polygon.size() >= 3`
       \pre `polygon is simple`
     */
+    template<
+    typename Polygon,
+    typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Delaunay_domain_2(
       const Polygon& polygon,
-      const VertexMap vertex_map = VertexMap(),
-      const GeomTraits traits = GeomTraits()) :
-    m_input_polygon(polygon),
-    m_vertex_map(vertex_map),
+      const GeomTraits traits = GeomTraits(),
+      const VertexMap vertex_map = VertexMap()) :
     m_traits(traits) {
 
       m_polygon.clear();
-      m_polygon.reserve(m_input_polygon.size());
-      for (const auto& item : m_input_polygon)
-        m_polygon.push_back(get(m_vertex_map, item));
+      m_polygon.reserve(polygon.size());
+      for (const auto& item : polygon)
+        m_polygon.push_back(get(vertex_map, item));
+      CGAL_precondition(m_polygon.size() >= 3);
 
-      CGAL_precondition(
-        m_polygon.size() >= 3);
       CGAL_precondition(
         CGAL::is_simple_2(m_polygon.begin(), m_polygon.end(), m_traits));
     }
 
     /*!
       \brief creates a constrained Delaunay triangulation restricted to
-      the input `polygon`.
+      the input polygon.
 
       \param shape_size
       A shape size bound. See `Delaunay_mesh_size_criteria_2`.
 
       \param list_of_seeds
-      Contains seed points indicating, which parts of the `polygon`
+      Contains seed points indicating, which parts of the input polygon
       should be partitioned and subdivided.
     */
     void create(
@@ -208,15 +204,18 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief returns barycenters of all finite elements in the discretized domain.
+      \brief computes all triangle barycenters.
 
       \param barycenters
-      An `std::vector` that stores the computed coordinates.
+      An `std::vector` that stores the computed barycenters.
 
       \warning `create()` should be called before calling this method!
     */
-    void get_barycenters(
+    void barycenters(
       std::vector<Point_2>& barycenters) const {
+
+      if (m_cdt.number_of_faces() == 0)
+        return;
 
       barycenters.clear();
       barycenters.reserve(m_cdt.number_of_faces());
@@ -232,7 +231,7 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::number_of_vertices()`.
+      \brief implements `DiscretizedDomain_2::number_of_vertices()`.
 
       This function returns the number of vertices in the discretized domain.
     */
@@ -241,7 +240,7 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::vertex()`.
+      \brief implements `DiscretizedDomain_2::vertex()`.
 
       This function returns a vertex of the discretized domain with
       the index `query_index`.
@@ -263,7 +262,7 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::is_on_boundary()`.
+      \brief implements `DiscretizedDomain_2::is_on_boundary()`.
 
       This function controls if the vertex of the discretized domain with the
       index `query_index` is on the boundary of the `polygon`.
@@ -285,13 +284,13 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::operator()()`.
+      \brief implements `DiscretizedDomain_2::operator()()`.
 
       This function returns a one-ring neighborhood of the vertex of the
       discretized domain with the index `query_index`.
 
       \param query_index
-      An index of the query vertex.
+      A query vertex.
 
       \param neighbors
       Stores indices of all direct neighbors of the query vertex.
@@ -330,15 +329,15 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief implements `CGAL::Barycentric_coordinates::DiscretizedDomain_2::locate()`.
+      \brief implements `DiscretizedDomain_2::locate()`.
 
       This function locates a query point in the discretized domain.
 
       \param query
       A query point.
 
-      \param element
-      Stores indices of the finite element that contains `query`.
+      \param triangle
+      Stores indices of the triangle that contains `query`.
 
       \pre `query_index >= 0 && query_index < number_of_vertices()`
 
@@ -346,27 +345,24 @@ namespace Barycentric_coordinates {
     */
     bool locate(
       const Point_2& query,
-      std::vector<std::size_t>& element) const {
+      std::vector<std::size_t>& triangle) const {
 
-      element.clear();
+      triangle.clear();
       const auto fh = m_cdt.locate(query);
       for (std::size_t i = 0; i < 3; ++i) {
         const auto vh = fh->vertex(i);
         if (
           vh->info().type == internal::Edge_case::INTERIOR ||
           vh->info().type == internal::Edge_case::BOUNDARY )
-          element.push_back(vh->info().index);
+          triangle.push_back(vh->info().index);
       }
-      return ( element.size() == 3 );
+      return triangle.size() == 3;
     }
 
   private:
 
     // Fields.
-    const Polygon& m_input_polygon;
-    const VertexMap m_vertex_map;
     const GeomTraits m_traits;
-
     std::vector<Point_2> m_polygon;
     std::vector<Vertex_handle> m_vhs;
     CDT m_cdt;

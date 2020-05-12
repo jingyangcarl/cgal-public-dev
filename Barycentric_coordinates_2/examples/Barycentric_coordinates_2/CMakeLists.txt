@@ -22,15 +22,15 @@ if(CGAL_FOUND)
     "discrete_harmonic_coordinates.cpp")
   create_single_source_cgal_program(
     "mean_value_coordinates.cpp")
-  # create_single_source_cgal_program(
-  #   "terrain_height_modeling.cpp")
+  create_single_source_cgal_program(
+    "terrain_height_modeling.cpp")
 
   find_package(Eigen3 REQUIRED)
   if(EIGEN3_FOUND)
     include(${EIGEN3_USE_FILE})
 
-    # create_single_source_cgal_program(
-    #   "harmonic_coordinates.cpp")
+    create_single_source_cgal_program(
+      "harmonic_coordinates.cpp")
     create_single_source_cgal_program(
       "affine_coordinates.cpp")
 
