@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_weights_2.h>
 #include <CGAL/Barycentric_coordinates_2/analytic_coordinates_2.h>
 
 // Typedefs.
@@ -16,11 +15,9 @@ struct Info {
 };
 
 using Vertex_with_info = std::pair<Point_2, Info>;
-using Vertices_2       = std::list<Vertex_with_info>;
-using Vertex_map       = CGAL::First_of_pair_property_map<Vertex_with_info>;
+using Vertex_map = CGAL::First_of_pair_property_map<Vertex_with_info>;
 
-using Discrete_harmonic =
-  CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Vertices_2, Kernel, Vertex_map>;
+using Discrete_harmonic = CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Kernel>;
 using Policy = CGAL::Barycentric_coordinates::Computation_policy;
 
 int main() {
@@ -29,7 +26,7 @@ int main() {
   Vertex_map vertex_map;
 
   // Construct a unit square.
-  const Vertices_2 square = {
+  const std::list<Vertex_with_info> square = {
     std::make_pair(Point_2(0, 0), Info("1")), std::make_pair(Point_2(1, 0), Info("2")),
     std::make_pair(Point_2(1, 1), Info("3")), std::make_pair(Point_2(0, 1), Info("4"))
   };
@@ -38,7 +35,7 @@ int main() {
   // We do not check for edge cases since we know the exact positions
   // of all our points.
   const Policy policy = Policy::PRECISE_COMPUTATION;
-  Discrete_harmonic discrete_harmonic(square, policy, vertex_map);
+  Discrete_harmonic discrete_harmonic(square, policy, kernel, vertex_map);
 
   // Instantiate the center point of the unit square.
   const Point_2 center(FT(1) / FT(2), FT(1) / FT(2));
@@ -54,9 +51,7 @@ int main() {
 
   // Compute discrete harmonic coordinates for the center point.
   std::list<FT> coordinates;
-  CGAL::Barycentric_coordinates::analytic_coordinates_2(
-    square, center, discrete_harmonic, std::back_inserter(coordinates),
-    kernel, vertex_map);
+  discrete_harmonic.coordinates(center, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (center): ";
   for (const FT coordinate : coordinates)
@@ -92,9 +87,7 @@ int main() {
   std::vector<FT> bs;
   for (const auto& query : interior_points) {
     bs.clear();
-    CGAL::Barycentric_coordinates::analytic_coordinates_2(
-      square, query, discrete_harmonic, std::back_inserter(bs),
-      kernel, vertex_map);
+    discrete_harmonic.coordinates(query, std::back_inserter(bs));
     for (std::size_t i = 0; i < bs.size() - 1; ++i)
       std::cout << bs[i] << ", ";
     std::cout << bs[bs.size() - 1] << std::endl;
@@ -112,7 +105,7 @@ int main() {
   CGAL::Barycentric_coordinates::boundary_coordinates_2(
     square, e4, std::back_inserter(coordinates), kernel, vertex_map);
 
-  std::cout << std::endl << "boundary coordinates edge2 edge4: ";
+  std::cout << std::endl << "boundary coordinates (edge 2 and edge 4): ";
   for (const FT coordinate : coordinates)
     std::cout << coordinate << " ";
   std::cout << std::endl;
@@ -130,13 +123,13 @@ int main() {
 
   // Compute discrete harmonic coordinates = boundary coordinates for all 6 points.
   std::cout << std::endl <<
-    "boundary coordinates edge1 edge3 + vertices: "
+    "boundary coordinates (edge 1, edge 3, and vertices): "
   << std::endl << std::endl;
 
   for (const auto& query : es13) {
     bs.clear();
     CGAL::Barycentric_coordinates::boundary_coordinates_2(
-      square, query, std::back_inserter(bs), kernel, vertex_map);
+      square, query, std::back_inserter(bs), vertex_map); // we can skip kernel here
     for (std::size_t i = 0; i < bs.size() - 1; ++i)
       std::cout << bs[i] << ", ";
     std::cout << bs[bs.size() - 1] << std::endl;
@@ -148,15 +141,14 @@ int main() {
   const Point_2 l(FT(-1) / FT(2), FT(1) / FT(2));
   const Point_2 r(FT(3)  / FT(2), FT(1) / FT(2));
 
-  // Compute discrete harmonic coordinates for all the exterior points one by one.
+  // Compute discrete harmonic coordinates for all exterior points.
   coordinates.clear();
-  CGAL::Barycentric_coordinates::analytic_coordinates_2(
-    square, l, discrete_harmonic, std::back_inserter(coordinates), kernel, vertex_map);
-  CGAL::Barycentric_coordinates::analytic_coordinates_2(
-    square, r, discrete_harmonic, std::back_inserter(coordinates), kernel, vertex_map);
+  discrete_harmonic.coordinates(l, std::back_inserter(coordinates));
+  discrete_harmonic.coordinates(r, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (exterior): ";
-  for (const FT coordinate : coordinates) std::cout << coordinate << " ";
+  for (const FT coordinate : coordinates)
+    std::cout << coordinate << " ";
   std::cout << std::endl << std::endl;
 
   return EXIT_SUCCESS;

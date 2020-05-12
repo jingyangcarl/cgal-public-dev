@@ -161,7 +161,7 @@ namespace internal {
     const auto scalar_product_2   = traits.compute_scalar_product_2_object();
     const auto squared_distance_2 = traits.compute_squared_distance_2_object();
 
-    // Project point on the segment.
+    // Project point onto segment.
     const FT opposite_scalar_product =
     scalar_product_2(query - target, source - target);
 
@@ -248,7 +248,7 @@ namespace internal {
         return std::make_pair(Query_point_location::ON_EDGE, i);
     }
 
-    /*
+    /* // Should be removed!
     using FT = typename GeomTraits::FT;
     using Vector_2 = typename GeomTraits::Vector_2;
     using Segment_2 = typename GeomTraits::Segment_2;
@@ -436,6 +436,7 @@ namespace internal {
     INTERIOR  = 2  // point is in the interior of the polygon
   };
 
+  // Do we need it at all? Can we use DH weights inside Harmonic coordinates?
   template<typename GeomTraits>
   typename GeomTraits::FT
   cotangent_2(

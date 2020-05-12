@@ -39,32 +39,21 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates2RefWeights
 
-    \brief Discrete harmonic weights.
+    \brief 2D discrete harmonic weights.
 
     This class implements 2D discrete harmonic weights ( \cite cgal:bc:fhk-gcbcocp-06,
-    \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ) and can be used in conjunction
-    with `Barycentric_coordinates::analytic_coordinates_2()` to compute
-    discrete harmonic coordinates.
+    \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ), which can be normalized
+    to get the corresponding discrete harmonic coordinates.
 
     Discrete harmonic coordinates are well-defined in the closure of a strictly
-    convex polygon but they do not necesserily give positive values.
-
-    \tparam Polygon
-    is a model of `ConstRange`.
+    convex polygon but they are not necesserily positive.
 
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
 
-    \tparam VertexMap
-    is an `LvaluePropertyMap` whose key type is `Polygon::value_type` and
-    value type is `GeomTraits::Point_2`.
-
     \cgalModels `AnalyticWeights_2`
   */
-  template<
-  typename Polygon,
-  typename GeomTraits,
-  typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
+  template<typename GeomTraits>
   class Discrete_harmonic_weights_2 {
 
   public:
@@ -73,9 +62,7 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Polygon_ = Polygon;
-    using GeomTraits_ = GeomTraits;
-    using VertexMap_ = VertexMap;
+    using GT = GeomTraits;
 
     using Area_2 = typename GeomTraits::Compute_area_2;
     using Squared_distance_2 = typename GeomTraits::Compute_squared_distance_2;
@@ -98,41 +85,49 @@ namespace Barycentric_coordinates {
       This class implements the behavior of discrete harmonic weights
       for 2D query points.
 
-      \param polygon
-      An instance of `Polygon` with vertices of a strictly convex polygon.
+      \tparam Polygon
+      is a model of `ConstRange`.
 
-      \param computation_policy
-      One of the `Barycentric_coordinates::Computation_policy`.
+      \tparam VertexMap
+      is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+      value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
+      \param polygon
+      An instance of `Polygon` with the vertices of a strictly convex polygon.
+
+      \param policy
+      One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+      The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+
+      \param traits
+      An instance of `GeomTraits`. The default initialization is provided.
 
       \param vertex_map
       An instance of `VertexMap` that maps a vertex from `polygon`
-      to `Point_2`.
-
-      \param traits
-      An instance of `GeomTraits`.
+      to `Point_2`. The default is the identity property map.
 
       \pre `polygon.size() >= 3`
       \pre `polygon is simple`
       \pre `polygon is strictly convex`
     */
+    template<
+    typename Polygon,
+    typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Discrete_harmonic_weights_2(
       const Polygon& polygon,
-      const Computation_policy computation_policy
-        = Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES,
-      const VertexMap vertex_map = VertexMap(),
-      const GeomTraits traits = GeomTraits()) :
-    m_input_polygon(polygon),
-    m_computation_policy(computation_policy),
-    m_vertex_map(vertex_map),
+      const Computation_policy policy
+      = Computation_policy::DEFAULT,
+      const GeomTraits traits = GeomTraits(),
+      const VertexMap vertex_map = VertexMap()) :
+    m_computation_policy(policy),
     m_traits(traits),
     m_area_2(m_traits.compute_area_2_object()),
     m_squared_distance_2(m_traits.compute_squared_distance_2_object()) {
 
       m_polygon.clear();
-      m_polygon.reserve(m_input_polygon.size());
-      for (const auto& item : m_input_polygon)
-        m_polygon.push_back(get(m_vertex_map, item));
-
+      m_polygon.reserve(polygon.size());
+      for (const auto& item : polygon)
+        m_polygon.push_back(get(vertex_map, item));
       CGAL_precondition(m_polygon.size() >= 3);
 
       r.resize(m_polygon.size());
@@ -160,71 +155,11 @@ namespace Barycentric_coordinates {
     /// @{
 
     /*!
-      \brief implements `CGAL::Barycentric_coordinates::AnalyticWeights_2::operator()()`.
+      \brief computes 2D discrete harmonic weights.
 
-      This function fills `weights` with discrete harmonic weights
-      computed at the `query` point with respect to the vertices of the `polygon`.
-      If `query` belongs to the polygon boundary, the returned weights are normalized.
-
-      \tparam OutputIterator
-      is an output iterator whose value type is `FT`.
-
-      \param query
-      A query point.
-
-      \param weights
-      An output iterator that stores the computed weights.
-    */
-    template<typename OutputIterator>
-    OutputIterator operator()(
-      const Polygon&,
-      const Point_2& query,
-      OutputIterator weights,
-      GeomTraits, VertexMap) {
-
-      switch(m_computation_policy) {
-        case Computation_policy::PRECISE_COMPUTATION: {
-          return max_precision_weights(query, weights);
-        }
-        case Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
-          if (edge_case == internal::Edge_case::UNBOUNDED)
-            std::cerr << std::endl <<
-            "point does not belong to the polygon" << std::endl;
-          return max_precision_weights(query, weights);
-        }
-        case Computation_policy::FAST_COMPUTATION: {
-          return max_speed_weights(query, weights);
-        }
-        case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
-          if (edge_case == internal::Edge_case::UNBOUNDED)
-            std::cerr << std::endl <<
-            "point does not belong to the polygon" << std::endl;
-          return max_speed_weights(query, weights);
-        }
-        default: {
-          const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
-          if (edge_case == internal::Edge_case::UNBOUNDED)
-            std::cerr << std::endl <<
-            "point does not belong to the polygon" << std::endl;
-          return max_precision_weights(query, weights);
-        }
-      }
-      return weights;
-    }
-
-    /*!
-      This function fills `weights` with discrete harmonic weights
-      computed at the `query` point with respect to the vertices of the `polygon`.
-
-      This function calls the generic function above.
+      This function fills `weights` with 2D discrete harmonic weights computed at the `query`
+      point with respect to the vertices of the input polygon. If `query` belongs to
+      the polygon boundary, the returned weights are normalized.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
@@ -234,14 +169,42 @@ namespace Barycentric_coordinates {
 
       \param weights
       An output iterator that stores the computed weights.
+
+      \return an output iterator.
     */
     template<typename OutputIterator>
     OutputIterator operator()(
       const Point_2& query,
       OutputIterator weights) {
 
-      return operator()(
-        m_input_polygon, query, weights, m_traits, m_vertex_map);
+      const bool normalize = false;
+      return compute(normalize, query, weights);
+    }
+
+    /*!
+      \brief computes 2D discrete harmonic coordinates.
+
+      This function fills `coordinates` with 2D discrete harmonic coordinates computed at the `query`
+      point with respect to the vertices of the input polygon.
+
+      \tparam OutputIterator
+      is an output iterator whose value type is `FT`.
+
+      \param query
+      A query point.
+
+      \param coordinates
+      An output iterator that stores the computed coordinates.
+
+      \return an output iterator.
+    */
+    template<typename OutputIterator>
+    OutputIterator coordinates(
+      const Point_2& query,
+      OutputIterator coordinates) {
+
+      const bool normalize = true;
+      return compute(normalize, query, coordinates);
     }
 
     /// @}
@@ -254,9 +217,7 @@ namespace Barycentric_coordinates {
     std::vector<FT> B;
     std::vector<FT> w;
 
-    const Polygon& m_input_polygon;
     const Computation_policy m_computation_policy;
-    const VertexMap m_vertex_map;
     const GeomTraits m_traits;
 
     const Area_2 m_area_2;
@@ -266,6 +227,48 @@ namespace Barycentric_coordinates {
     bool m_is_strictly_convex_polygon;
 
     // Functions.
+    template<typename OutputIterator>
+    OutputIterator compute(
+      const bool normalize,
+      const Point_2& query,
+      OutputIterator weights) {
+
+      switch (m_computation_policy) {
+
+        case Computation_policy::PRECISE_COMPUTATION: {
+          return max_precision_weights(normalize, query, weights);
+        }
+
+        case Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
+          const auto edge_case = verify(query, weights);
+          if (edge_case == internal::Edge_case::BOUNDARY)
+            return weights;
+          if (edge_case == internal::Edge_case::UNBOUNDED)
+            std::cerr << std::endl <<
+            "query does not belong to the polygon" << std::endl;
+          return max_precision_weights(normalize, query, weights);
+        }
+
+        case Computation_policy::FAST_COMPUTATION: {
+          return max_speed_weights(normalize, query, weights);
+        }
+
+        case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
+          const auto edge_case = verify(query, weights);
+          if (edge_case == internal::Edge_case::BOUNDARY)
+            return weights;
+          if (edge_case == internal::Edge_case::UNBOUNDED)
+            std::cerr << std::endl <<
+            "query does not belong to the polygon" << std::endl;
+          return max_speed_weights(normalize, query, weights);
+        }
+
+        default:
+          return weights;
+      }
+      return weights;
+    }
+
     template<typename OutputIterator>
     internal::Edge_case verify(
       const Point_2& query,
@@ -296,6 +299,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator max_precision_weights(
+      const bool normalize,
       const Point_2& query,
       OutputIterator weights) {
 
@@ -337,6 +341,10 @@ namespace Barycentric_coordinates {
       for (std::size_t j = 0; j < n-2; ++j)
         w[n-1] *= A[j];
 
+      // Normalize if necessary.
+      if (normalize)
+        internal::normalize(w);
+
       // Return weights.
       for (std::size_t i = 0; i < n; ++i)
         *(weights++) = w[i];
@@ -346,6 +354,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator max_speed_weights(
+      const bool normalize,
       const Point_2& query,
       OutputIterator weights) {
 
@@ -370,15 +379,23 @@ namespace Barycentric_coordinates {
 
       // Compute unnormalized weights following the formula (25) with p = 2 from [1].
       CGAL_precondition(A[n-1] != FT(0) && A[0] != FT(0));
-      *(weights++) = (r[1]*A[n-1] - r[0]*B[0] + r[n-1]*A[0]) / (A[n-1] * A[0]);
+      w[0] = (r[1]*A[n-1] - r[0]*B[0] + r[n-1]*A[0]) / (A[n-1] * A[0]);
 
       for (std::size_t i = 1; i < n-1; ++i) {
         CGAL_precondition(A[i-1] != FT(0) && A[i] != FT(0));
-        *(weights++) = (r[i+1]*A[i-1] - r[i]*B[i] + r[i-1]*A[i]) / (A[i-1] * A[i]);
+        w[i] = (r[i+1]*A[i-1] - r[i]*B[i] + r[i-1]*A[i]) / (A[i-1] * A[i]);
       }
 
       CGAL_precondition(A[n-2] != FT(0) && A[n-1] != FT(0));
-      *(weights++) = (r[0]*A[n-2] - r[n-1]*B[n-1] + r[n-2]*A[n-1]) / (A[n-2] * A[n-1]);
+      w[n-1] = (r[0]*A[n-2] - r[n-1]*B[n-1] + r[n-2]*A[n-1]) / (A[n-2] * A[n-1]);
+
+      // Normalize if necessary.
+      if (normalize)
+        internal::normalize(w);
+
+      // Return weights.
+      for (std::size_t i = 0; i < n; ++i)
+        *(weights++) = w[i];
 
       // Return weights.
       return weights;

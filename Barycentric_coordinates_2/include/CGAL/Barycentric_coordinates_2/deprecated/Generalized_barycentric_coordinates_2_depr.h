@@ -60,7 +60,6 @@ namespace Barycentric_coordinates_depr {
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
 */
-
 template<class Coordinate_2, class Traits>
     class Generalized_barycentric_coordinates_2
 {

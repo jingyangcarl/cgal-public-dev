@@ -115,7 +115,6 @@ public:
 \cgalModels `BarycentricCoordinates_2_depr`
 
 */
-
 template<class Traits>
     class Mean_value_2
 {

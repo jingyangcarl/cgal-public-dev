@@ -60,7 +60,6 @@ namespace Barycentric_coordinates_depr {
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
 */
-
 template<class Traits>
     class Triangle_coordinates_2
 {
@@ -238,7 +237,6 @@ private:
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
 */
-
 template<class Traits>
     inline std::array<typename Traits::FT,3> compute_triangle_coordinates_2(const typename Traits::Point_2 &first_vertex, const typename Traits::Point_2 &second_vertex, const typename Traits::Point_2 &third_vertex, const typename Traits::Point_2 &query_point, const Traits &barycentric_traits = Traits())
 {

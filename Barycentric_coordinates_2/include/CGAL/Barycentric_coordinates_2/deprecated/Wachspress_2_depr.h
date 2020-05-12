@@ -65,7 +65,6 @@ namespace Barycentric_coordinates_depr {
 \pre The provided polygon is strictly convex.
 
 */
-
 template<class Traits>
     class Wachspress_2
 {

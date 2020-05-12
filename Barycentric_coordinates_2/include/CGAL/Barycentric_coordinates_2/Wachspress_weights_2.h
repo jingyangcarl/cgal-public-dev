@@ -62,7 +62,7 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using GeomTraits_ = GeomTraits;
+    using GT = GeomTraits;
     using Area_2 = typename GeomTraits::Compute_area_2;
     /// \endcond
 
@@ -93,7 +93,7 @@ namespace Barycentric_coordinates {
       \param polygon
       An instance of `Polygon` with the vertices of a strictly convex polygon.
 
-      \param computation_policy
+      \param policy
       One of the `CGAL::Barycentric_coordinates::Computation_policy`.
       The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
 
@@ -113,11 +113,11 @@ namespace Barycentric_coordinates {
     typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Wachspress_weights_2(
       const Polygon& polygon,
-      const Computation_policy computation_policy
-        = Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES,
+      const Computation_policy policy
+      = Computation_policy::DEFAULT,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
-    m_computation_policy(computation_policy),
+    m_computation_policy(policy),
     m_traits(traits),
     m_area_2(m_traits.compute_area_2_object()) {
 
@@ -151,7 +151,7 @@ namespace Barycentric_coordinates {
     /// @{
 
     /*!
-      \brief implements `AnalyticWeights_2::operator()()`.
+      \brief computes 2D Wachspress weights.
 
       This function fills `weights` with 2D Wachspress weights computed at the `query`
       point with respect to the vertices of the input polygon. If `query` belongs to
@@ -178,6 +178,8 @@ namespace Barycentric_coordinates {
     }
 
     /*!
+      \brief computes 2D Wachspress coordinates.
+
       This function fills `coordinates` with 2D Wachspress coordinates computed at the `query`
       point with respect to the vertices of the input polygon.
 
@@ -212,6 +214,7 @@ namespace Barycentric_coordinates {
 
     const Computation_policy m_computation_policy;
     const GeomTraits m_traits;
+
     const Area_2 m_area_2;
 
     std::vector<Point_2> m_polygon;
@@ -236,7 +239,7 @@ namespace Barycentric_coordinates {
             return weights;
           if (edge_case == internal::Edge_case::UNBOUNDED)
             std::cerr << std::endl <<
-            "point does not belong to the polygon" << std::endl;
+            "query does not belong to the polygon" << std::endl;
           return max_precision_weights(normalize, query, weights);
         }
 
@@ -250,7 +253,7 @@ namespace Barycentric_coordinates {
             return weights;
           if (edge_case == internal::Edge_case::UNBOUNDED)
             std::cerr << std::endl <<
-            "point does not belong to the polygon" << std::endl;
+            "query does not belong to the polygon" << std::endl;
           return max_speed_weights(normalize, query, weights);
         }
 
