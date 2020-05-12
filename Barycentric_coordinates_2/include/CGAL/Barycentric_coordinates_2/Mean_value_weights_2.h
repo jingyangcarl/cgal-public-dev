@@ -32,9 +32,10 @@
 // [1] Reference: "K. Hormann and M. Floater.
 // Mean value coordinates for arbitrary planar polygons.
 // ACM Transactions on Graphics, 25(4):1424-1441, 2006.".
-// [2] Reference: "M. S. Floater,
-// Wachspress and mean value coordinates,
-// to appear in the Proceedings of the 14th International Conference on Approximation Theory,
+
+// [2] Reference: "M. S. Floater.
+// Wachspress and mean value coordinates.
+// Proceedings of the 14th International Conference on Approximation Theory.
 // G. Fasshauer and L. L. Schumaker (eds.)."
 
 namespace CGAL {
@@ -43,32 +44,21 @@ namespace Barycentric_coordinates {
   /*!
     \ingroup PkgBarycentricCoordinates2RefWeights
 
-    \brief Mean value weights.
+    \brief 2D mean value weights.
 
     This class implements 2D mean value weights ( \cite cgal:bc:hf-mvcapp-06,
-    \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ) and can be used in conjunction
-    with `Barycentric_coordinates::analytic_coordinates_2()` to compute
-    mean value coordinates.
+    \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ), which can be normalized
+    to get the corresponding mean value coordinates.
 
     Mean value coordinates are well-defined everywhere in the plane and are
     non-negative in the kernel of a star-shaped polygon.
 
-    \tparam Polygon
-    is a model of `ConstRange`.
-
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
 
-    \tparam VertexMap
-    is an `LvaluePropertyMap` whose key type is `Polygon::value_type` and
-    value type is `GeomTraits::Point_2`.
-
     \cgalModels `AnalyticWeights_2`
   */
-  template<
-  typename Polygon,
-  typename GeomTraits,
-  typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
+  template<typename GeomTraits>
   class Mean_value_weights_2 {
 
   public:
@@ -77,10 +67,7 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using Polygon_ = Polygon;
-    using GeomTraits_ = GeomTraits;
-    using VertexMap_ = VertexMap;
-
+    using GT = GeomTraits;
     using Vector_2 = typename GeomTraits::Vector_2;
     using Area_2 = typename GeomTraits::Compute_area_2;
     using Squared_length_2 = typename GeomTraits::Compute_squared_length_2;
@@ -106,31 +93,40 @@ namespace Barycentric_coordinates {
       This class implements the behavior of mean value weights
       for 2D query points.
 
-      \param polygon
-      An instance of `Polygon` with vertices of a simple polygon.
+      \tparam Polygon
+      is a model of `ConstRange`.
 
-      \param computation_policy
-      One of the `Barycentric_coordinates::Computation_policy`.
+      \tparam VertexMap
+      is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+      value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
+      \param polygon
+      An instance of `Polygon` with the vertices of a simple polygon.
+
+      \param policy
+      One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+      The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+
+      \param traits
+      An instance of `GeomTraits`. The default initialization is provided.
 
       \param vertex_map
       An instance of `VertexMap` that maps a vertex from `polygon`
-      to `Point_2`.
-
-      \param traits
-      An instance of `GeomTraits`.
+      to `Point_2`. The default is the identity property map.
 
       \pre `polygon.size() >= 3`
       \pre `polygon is simple`
     */
+    template<
+    typename Polygon,
+    typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Mean_value_weights_2(
       const Polygon& polygon,
-      const Computation_policy computation_policy
-        = Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES,
-      const VertexMap vertex_map = VertexMap(),
-      const GeomTraits traits = GeomTraits()) :
-    m_input_polygon(polygon),
-    m_computation_policy(computation_policy),
-    m_vertex_map(vertex_map),
+      const Computation_policy policy
+      = Computation_policy::DEFAULT,
+      const GeomTraits traits = GeomTraits(),
+      const VertexMap vertex_map = VertexMap()) :
+    m_computation_policy(policy),
     m_traits(traits),
     m_area_2(m_traits.compute_area_2_object()),
     m_squared_length_2(m_traits.compute_squared_length_2_object()),
@@ -138,10 +134,9 @@ namespace Barycentric_coordinates {
     m_sqrt(Get_sqrt::sqrt_object(m_traits))  {
 
       m_polygon.clear();
-      m_polygon.reserve(m_input_polygon.size());
-      for (const auto& item : m_input_polygon)
-        m_polygon.push_back(get(m_vertex_map, item));
-
+      m_polygon.reserve(polygon.size());
+      for (const auto& item : polygon)
+        m_polygon.push_back(get(vertex_map, item));
       CGAL_precondition(m_polygon.size() >= 3);
 
       s.resize(m_polygon.size());
@@ -163,62 +158,11 @@ namespace Barycentric_coordinates {
     /// @{
 
     /*!
-      \brief implements `AnalyticWeights_2::operator()()`.
+      \brief computes 2D mean value weights.
 
-      This function fills `weights` with mean value weights
-      computed at the `query` point with respect to the vertices of the `polygon`.
-      If `query` belongs to the polygon boundary, the returned weights are normalized.
-
-      \tparam OutputIterator
-      is an output iterator whose value type is `FT`.
-
-      \param query
-      A query point.
-
-      \param weights
-      An output iterator that stores the computed weights.
-    */
-    template<typename OutputIterator>
-    OutputIterator operator()(
-      const Polygon&,
-      const Point_2& query,
-      OutputIterator weights,
-      GeomTraits, VertexMap) {
-
-      switch(m_computation_policy) {
-        case Computation_policy::PRECISE_COMPUTATION: {
-          return max_precision_weights(query, weights);
-        }
-        case Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
-          return max_precision_weights(query, weights);
-        }
-        case Computation_policy::FAST_COMPUTATION: {
-          return max_speed_weights(query, weights);
-        }
-        case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
-          return max_speed_weights(query, weights);
-        }
-        default: {
-          const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
-          return max_precision_weights(query, weights);
-        }
-      }
-      return weights;
-    }
-
-    /*!
-      This function fills `weights` with mean value weights
-      computed at the `query` point with respect to the vertices of the `polygon`.
-
-      This function calls the generic function above.
+      This function fills `weights` with 2D mean value weights computed at the `query`
+      point with respect to the vertices of the input polygon. If `query` belongs to
+      the polygon boundary, the returned weights are normalized.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
@@ -228,14 +172,42 @@ namespace Barycentric_coordinates {
 
       \param weights
       An output iterator that stores the computed weights.
+
+      \return an output iterator.
     */
     template<typename OutputIterator>
     OutputIterator operator()(
       const Point_2& query,
       OutputIterator weights) {
 
-      return operator()(
-        m_input_polygon, query, weights, m_traits, m_vertex_map);
+      const bool normalize = false;
+      return compute(normalize, query, weights);
+    }
+
+    /*!
+      \brief computes 2D mean value coordinates.
+
+      This function fills `coordinates` with 2D mean value coordinates computed at the `query`
+      point with respect to the vertices of the input polygon.
+
+      \tparam OutputIterator
+      is an output iterator whose value type is `FT`.
+
+      \param query
+      A query point.
+
+      \param coordinates
+      An output iterator that stores the computed coordinates.
+
+      \return an output iterator.
+    */
+    template<typename OutputIterator>
+    OutputIterator coordinates(
+      const Point_2& query,
+      OutputIterator coordinates) {
+
+      const bool normalize = true;
+      return compute(normalize, query, coordinates);
     }
 
     /// @}
@@ -253,9 +225,7 @@ namespace Barycentric_coordinates {
     std::vector<FT> t;
     std::vector<FT> w;
 
-    const Polygon& m_input_polygon;
     const Computation_policy m_computation_policy;
-    const VertexMap m_vertex_map;
     const GeomTraits m_traits;
 
     const Area_2 m_area_2;
@@ -266,6 +236,44 @@ namespace Barycentric_coordinates {
     std::vector<Point_2> m_polygon;
 
     // Functions.
+    template<typename OutputIterator>
+    OutputIterator compute(
+      const bool normalize,
+      const Point_2& query,
+      OutputIterator weights) {
+
+      switch (m_computation_policy) {
+
+        case Computation_policy::PRECISE_COMPUTATION: {
+          return max_precision_weights(normalize, query, weights);
+        }
+
+        case Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
+          const auto edge_case = verify(query, weights);
+          if (edge_case == internal::Edge_case::BOUNDARY)
+            return weights;
+          return max_precision_weights(normalize, query, weights);
+        }
+
+        case Computation_policy::FAST_COMPUTATION: {
+          return max_speed_weights(normalize, query, weights);
+        }
+
+        case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
+          const auto edge_case = verify(query, weights);
+          if (edge_case == internal::Edge_case::BOUNDARY)
+            return weights;
+          return max_speed_weights(normalize, query, weights);
+        }
+
+        default: {
+          internal::get_default(m_polygon.size(), weights);
+          return weights;
+        }
+      }
+      return weights;
+    }
+
     template<typename OutputIterator>
     internal::Edge_case verify(
       const Point_2& query,
@@ -296,6 +304,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator max_precision_weights(
+      const bool normalize,
       const Point_2& query,
       OutputIterator weights) {
 
@@ -357,6 +366,10 @@ namespace Barycentric_coordinates {
         w[n-1] *= P[j];
       w[n-1] = sign_of_weight(A[n-2], A[n-1], B[n-1]) * m_sqrt(w[n-1]);
 
+      // Normalize if necessary.
+      if (normalize)
+        internal::normalize(w);
+
       // Return weights.
       for (std::size_t i = 0; i < n; ++i)
         *(weights++) = w[i];
@@ -366,6 +379,7 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator max_speed_weights(
+      const bool normalize,
       const Point_2& query,
       OutputIterator weights) {
 
@@ -405,29 +419,37 @@ namespace Barycentric_coordinates {
 
       // Compute mean value weights using the same pseudo-code as before.
       CGAL_precondition(r[0] != FT(0));
-      *(weights++) = (t[n-1] + t[0]) / r[0];
+      w[0] = (t[n-1] + t[0]) / r[0];
 
       for (std::size_t i = 1; i < n-1; ++i) {
         CGAL_precondition(r[i] != FT(0));
-        *(weights++) = (t[i-1] + t[i]) / r[i];
+        w[i] = (t[i-1] + t[i]) / r[i];
       }
 
       CGAL_precondition(r[n-1] != FT(0));
-      *(weights++) = (t[n-2] + t[n-1]) / r[n-1];
+      w[n-1] = (t[n-2] + t[n-1]) / r[n-1];
+
+      // Normalize if necessary.
+      if (normalize)
+        internal::normalize(w);
+
+      // Return weights.
+      for (std::size_t i = 0; i < n; ++i)
+        *(weights++) = w[i];
 
       // Return weights.
       return weights;
     }
 
     // Return the sign of a mean value weight function.
-    // We can have 3 different values: 0 if the weight = 0, -1
-    // if the weight is negative, and +1 if the weight is positive.
+    // We can have 3 different values: 0 if the weight = 0,
+    // -1 if the weight is negative, and +1 if the weight is positive.
     FT sign_of_weight(const FT& A_prev, const FT& A, const FT& B) const {
 
-      if (A_prev > FT(0) && A > FT(0) && B <= FT(0)) return FT(1);
-      if (A_prev < FT(0) && A < FT(0) && B >= FT(0)) return FT(-1);
-      if (B > FT(0)) return FT(1);
-      if (B < FT(0)) return FT(-1);
+      if (A_prev > FT(0) && A > FT(0) && B <= FT(0)) return  FT(1);
+      if (A_prev < FT(0) && A < FT(0) && B >= FT(0)) return -FT(1);
+      if (B > FT(0)) return  FT(1);
+      if (B < FT(0)) return -FT(1);
 
       return FT(0);
     }

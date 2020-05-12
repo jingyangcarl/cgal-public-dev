@@ -257,8 +257,10 @@ namespace Barycentric_coordinates {
           return max_speed_weights(normalize, query, weights);
         }
 
-        default:
+        default: {
+          internal::get_default(m_polygon.size(), weights);
           return weights;
+        }
       }
       return weights;
     }

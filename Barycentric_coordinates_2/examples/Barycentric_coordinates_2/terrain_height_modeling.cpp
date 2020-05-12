@@ -1,10 +1,7 @@
 #include <CGAL/Projection_traits_xy_3.h>
-#include <CGAL/Interpolation_traits_2.h>
 #include <CGAL/interpolation_functions.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
-#include <CGAL/Barycentric_coordinates_2/Mean_value_weights_2.h>
-#include <CGAL/Barycentric_coordinates_2/analytic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2.h>
 
 // Typedefs.
 
@@ -15,28 +12,21 @@ using Projection = CGAL::Projection_traits_xy_3<Kernel>;
 using FT    = typename Projection::FT;
 using Point = typename Projection::Point_2;
 
-using Points    = std::vector<Point>;
-using Point_map = CGAL::Identity_property_map<Point>;
-
 // Coordinates.
-using Domain     = CGAL::Barycentric_coordinates::Delaunay_domain_2<
-  Points, Projection>;
-using Mean_value = CGAL::Barycentric_coordinates::Mean_value_weights_2<
-  Points, Projection>;
+using Domain = CGAL::Barycentric_coordinates::Delaunay_domain_2<Projection>;
+using Mean_value = CGAL::Barycentric_coordinates::Mean_value_weights_2<Projection>;
 
 // Interpolation.
-using Interpolation_traits   = CGAL::Interpolation_traits_2<Projection>;
-using Vertex_function_value  = std::map<Point, FT, typename Projection::Less_xy_2>;
-using Function_value_access  = CGAL::Data_access<Vertex_function_value>;
-using Point_with_coordinate  = std::pair<Point, FT>;
-using Points_with_coordinate = std::vector<Point_with_coordinate>;
+using Vertex_function_value = std::map<Point, FT, typename Projection::Less_xy_2>;
+using Function_value_access = CGAL::Data_access<Vertex_function_value>;
+using Point_with_coordinate = std::pair<Point, FT>;
 
 int main() {
 
   // Construct a polygon that bounds a three-dimensional terrain.
   // Note that z-coordinate of each vertex represents the height function.
   // Projection in 2D is performed automatically by the Projection traits class.
-  const Points polygon = {
+  const std::vector<Point> polygon = {
     Point(0.03, 0.05, 0.000), Point(0.07, 0.04, 10.00), Point(0.10, 0.04, 20.00),
     Point(0.14, 0.04, 30.00), Point(0.17, 0.07, 40.00), Point(0.19, 0.09, 50.00),
     Point(0.22, 0.11, 60.00), Point(0.25, 0.11, 70.00), Point(0.27, 0.10, 80.00),
@@ -69,40 +59,38 @@ int main() {
     vertex_function_value.insert(
       std::make_pair(vertex, vertex.z()));
 
-  Points_with_coordinate boundary;
+  std::vector<Point_with_coordinate> boundary;
   boundary.resize(polygon.size());
 
-  // Store all generated interior points with interpolated data here.
+  // Store all generated interior points with the interpolated data.
   Points queries;
   queries.reserve(domain.number_of_vertices());
 
-  // Instantiate the class with mean value weights.
+  // Instantiate the class with the mean value weights.
   Mean_value mean_value(polygon);
 
   // Compute mean value coordinates and use them to interpolate data
-  // from the polygon's boundary to its interior.
+  // from the polygon boundary to its interior.
   std::vector<FT> coordinates;
   coordinates.reserve(polygon.size());
   for (std::size_t i = 0; i < domain.number_of_vertices(); ++i) {
     const auto& query = domain.vertex(i);
 
     coordinates.clear();
-    CGAL::Barycentric_coordinates::analytic_coordinates_2(
-    polygon, query, mean_value, std::back_inserter(coordinates),
-    Projection(), Point_map());
-
+    mean_value.coordinates(query, std::back_inserter(coordinates));
     for (std::size_t i = 0; i < polygon.size(); ++i)
       boundary[i] = std::make_pair(polygon[i], coordinates[i]);
 
     const FT f = CGAL::linear_interpolation(
       boundary.begin(), boundary.end(), FT(1),
       Function_value_access(vertex_function_value));
-
     queries.push_back(Point(query.x(), query.y(), f));
   }
 
   // Output interpolated heights.
-  std::cout << std::endl << "interpolated heights: " << std::endl << std::endl;
+  std::cout << std::endl <<
+    "interpolated heights (all queries): "
+  << std::endl << std::endl;
   for (const auto& query : queries)
     std::cout << query.z() << std::endl;
   std::cout << std::endl;

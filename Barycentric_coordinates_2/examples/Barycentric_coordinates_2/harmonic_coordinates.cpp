@@ -23,17 +23,17 @@ using Domain   = CGAL::Barycentric_coordinates::Delaunay_domain_2<
 using Harmonic = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<
   Points_2, Domain, Solver, Kernel>;
 
-int main() {  
+int main() {
 
   // Construct a unit square.
-  const Points_2 square = { 
+  const Points_2 square = {
     Point_2(0.0, 0.0), Point_2(1.0, 0.0),
     Point_2(1.0, 1.0), Point_2(0.0, 1.0) };
 
   // Instantiate a Delaunay domain.
   std::list<Point_2> list_of_seeds;
   list_of_seeds.push_back(Point_2(0.5, 0.5));
-  
+
   Domain domain(square);
   domain.create(0.1, list_of_seeds);
 
@@ -44,14 +44,14 @@ int main() {
   Harmonic harmonic(
     square, domain, solver);
   harmonic.compute();
-  
+
   // Create an std::vector to store coordinates.
   std::vector<FT> coordinates;
   coordinates.reserve(square.size());
 
   // Output harmonic coordinates.
-  std::cout << std::endl << 
-    "harmonic coordinates: " 
+  std::cout << std::endl <<
+    "harmonic coordinates: "
   << std::endl << std::endl;
   for (std::size_t k = 0; k < domain.number_of_vertices(); ++k) {
     coordinates.clear();
@@ -65,8 +65,8 @@ int main() {
 
   // Evaluate harmonic coordinates at the barycenters of all finite elements
   // and output them one by one.
-  std::cout << std::endl << 
-    "harmonic coordinates evaluated at: " 
+  std::cout << std::endl <<
+    "harmonic coordinates evaluated at: "
   << std::endl << std::endl;
 
   Points_2 barycenters;
@@ -82,4 +82,6 @@ int main() {
     std::cout << coordinates[coordinates.size() - 1] << std::endl;
   }
   std::cout << std::endl;
+
+  return EXIT_SUCCESS;
 }

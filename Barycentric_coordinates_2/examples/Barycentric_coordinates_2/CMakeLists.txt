@@ -20,8 +20,8 @@ if(CGAL_FOUND)
     "wachspress_coordinates.cpp")
   create_single_source_cgal_program(
     "discrete_harmonic_coordinates.cpp")
-  # create_single_source_cgal_program(
-  #   "mean_value_coordinates.cpp")
+  create_single_source_cgal_program(
+    "mean_value_coordinates.cpp")
   # create_single_source_cgal_program(
   #   "terrain_height_modeling.cpp")
 
@@ -31,8 +31,8 @@ if(CGAL_FOUND)
 
     # create_single_source_cgal_program(
     #   "harmonic_coordinates.cpp")
-    # create_single_source_cgal_program(
-    #   "affine_coordinates.cpp")
+    create_single_source_cgal_program(
+      "affine_coordinates.cpp")
 
   else()
     message(WARNING

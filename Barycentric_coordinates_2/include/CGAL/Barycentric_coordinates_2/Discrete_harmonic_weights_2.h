@@ -63,7 +63,6 @@ namespace Barycentric_coordinates {
 
     /// \cond SKIP_IN_MANUAL
     using GT = GeomTraits;
-
     using Area_2 = typename GeomTraits::Compute_area_2;
     using Squared_distance_2 = typename GeomTraits::Compute_squared_distance_2;
     /// \endcond
@@ -263,8 +262,10 @@ namespace Barycentric_coordinates {
           return max_speed_weights(normalize, query, weights);
         }
 
-        default:
+        default: {
+          internal::get_default(m_polygon.size(), weights);
           return weights;
+        }
       }
       return weights;
     }

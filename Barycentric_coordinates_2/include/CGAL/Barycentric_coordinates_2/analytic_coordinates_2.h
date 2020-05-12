@@ -1043,6 +1043,232 @@ namespace Barycentric_coordinates {
       polygon, query, coordinates, GeomTraits(), policy);
   }
 
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    \brief computes 2D mean value weights.
+
+    This function computes 2D mean value weights at a given `query` point
+    with respect to the vertices of a simple `polygon`, that is one
+    weight per vertex. The weights are returned in `weights`.
+
+    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
+    If one needs a flexible API, please refer to that class.
+
+    \tparam PointRange
+    is a model of `ConstRange`.
+
+    \tparam OutputIterator
+    is an output iterator whose value type is `GeomTraits::FT`.
+
+    \tparam GeomTraits
+    is a model of `BarycentricTraits_2`.
+
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a simple polygon.
+
+    \param query
+    A query point.
+
+    \param weights
+    An output iterator that stores the computed weights.
+
+    \param traits
+    An instance of `GeomTraits`.
+
+    \param policy
+    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+
+    \return an output iterator.
+
+    \pre `polygon.size() >= 3`
+    \pre `polygon is simple`
+  */
+  template<
+  typename PointRange,
+  typename OutputIterator,
+  typename GeomTraits>
+  OutputIterator mean_value_weights_2(
+    const PointRange& polygon,
+    const typename GeomTraits::Point_2& query,
+    OutputIterator weights,
+    const GeomTraits traits,
+    const Computation_policy policy =
+    Computation_policy::DEFAULT) {
+
+    Mean_value_weights_2<GeomTraits> mean_value(
+      polygon, policy, traits);
+    return mean_value(query, weights);
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    \brief computes 2D mean value weights.
+
+    This function computes 2D mean value weights at a given `query` point
+    with respect to the vertices of a simple `polygon`, that is one
+    weight per vertex. The weights are returned in `weights`.
+
+    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
+    If one needs a flexible API, please refer to that class.
+
+    This function infers a traits class from the `Point_2` class.
+
+    \tparam PointRange
+    is a model of `ConstRange`.
+
+    \tparam OutputIterator
+    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a simple polygon.
+
+    \param query
+    A query point.
+
+    \param weights
+    An output iterator that stores the computed weights.
+
+    \param policy
+    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+
+    \return an output iterator.
+
+    \pre `polygon.size() >= 3`
+    \pre `polygon is simple`
+  */
+  template<
+  typename PointRange,
+  typename Point_2,
+  typename OutputIterator>
+  OutputIterator mean_value_weights_2(
+    const PointRange& polygon,
+    const Point_2& query,
+    OutputIterator weights,
+    const Computation_policy policy =
+    Computation_policy::DEFAULT) {
+
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    return mean_value_weights_2(
+      polygon, query, weights, GeomTraits(), policy);
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    \brief computes 2D mean value coordinates.
+
+    This function computes 2D mean value coordinates at a given `query` point
+    with respect to the vertices of a simple `polygon`, that is one
+    coordinate per vertex. The coordinates are returned in `coordinates`.
+
+    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
+    If one needs a flexible API, please refer to that class.
+
+    \tparam PointRange
+    is a model of `ConstRange`.
+
+    \tparam OutputIterator
+    is an output iterator whose value type is `GeomTraits::FT`.
+
+    \tparam GeomTraits
+    is a model of `BarycentricTraits_2`.
+
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a simple polygon.
+
+    \param query
+    A query point.
+
+    \param coordinates
+    An output iterator that stores the computed coordinates.
+
+    \param traits
+    An instance of `GeomTraits`.
+
+    \param policy
+    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+
+    \return an output iterator.
+
+    \pre `polygon.size() >= 3`
+    \pre `polygon is simple`
+  */
+  template<
+  typename PointRange,
+  typename OutputIterator,
+  typename GeomTraits>
+  OutputIterator mean_value_coordinates_2(
+    const PointRange& polygon,
+    const typename GeomTraits::Point_2& query,
+    OutputIterator coordinates,
+    const GeomTraits traits,
+    const Computation_policy policy =
+    Computation_policy::DEFAULT) {
+
+    Mean_value_weights_2<GeomTraits> mean_value(
+      polygon, policy, traits);
+    return mean_value.coordinates(query, coordinates);
+  }
+
+  /*!
+    \ingroup PkgBarycentricCoordinates2RefFunctions
+
+    \brief computes 2D mean value coordinates.
+
+    This function computes 2D mean value coordinates at a given `query` point
+    with respect to the vertices of a simple `polygon`, that is one
+    coordinate per vertex. The coordinates are returned in `coordinates`.
+
+    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
+    If one needs a flexible API, please refer to that class.
+
+    This function infers a traits class from the `Point_2` class.
+
+    \tparam PointRange
+    is a model of `ConstRange`.
+
+    \tparam OutputIterator
+    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a simple polygon.
+
+    \param query
+    A query point.
+
+    \param coordinates
+    An output iterator that stores the computed coordinates.
+
+    \param policy
+    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+
+    \return an output iterator.
+
+    \pre `polygon.size() >= 3`
+    \pre `polygon is simple`
+  */
+  template<
+  typename PointRange,
+  typename Point_2,
+  typename OutputIterator>
+  OutputIterator mean_value_coordinates_2(
+    const PointRange& polygon,
+    const Point_2& query,
+    OutputIterator coordinates,
+    const Computation_policy policy =
+    Computation_policy::DEFAULT) {
+
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    return mean_value_coordinates_2(
+      polygon, query, coordinates, GeomTraits(), policy);
+  }
+
 } // namespace Barycentric_coordinates
 } // namespace CGAL
 
