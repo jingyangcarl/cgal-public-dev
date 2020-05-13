@@ -68,7 +68,7 @@ namespace Barycentric_coordinates {
     using GT = GeomTraits;
 
     struct VI {
-      bool is_boundary = false;
+      bool is_on_boundary = false;
       std::size_t index = std::size_t(-1);
       std::vector<std::size_t> neighbors;
     };
@@ -156,8 +156,8 @@ namespace Barycentric_coordinates {
       create_triangulation();
       refine_triangulation(
         shape_size, list_of_seeds);
-      create_neighbors();
       check_boundaries();
+      create_neighbors();
     }
 
     /*!
@@ -235,7 +235,7 @@ namespace Barycentric_coordinates {
 
       CGAL_precondition(
         query_index >= 0 && query_index < number_of_vertices());
-      return m_vhs[query_index]->info().is_boundary;
+      return m_vhs[query_index]->info().is_on_boundary;
     }
 
     /*!
@@ -385,59 +385,64 @@ namespace Barycentric_coordinates {
       CGAL_assertion(m_vhs.size() == m_cdt.number_of_vertices());
     }
 
+    void check_boundaries() {
+
+      for (std::size_t i = 0; i < m_vhs.size(); ++i) {
+        const auto vh = m_vhs[i];
+        vh->info().is_on_boundary = false;
+
+        auto face = m_cdt.incident_faces(vh);
+        CGAL_assertion(!face.is_empty());
+        const auto end = face;
+
+        do {
+          if (!face->is_in_domain()) {
+            vh->info().is_on_boundary = true; break;
+          } ++face;
+        } while (face != end);
+      }
+    }
+
     void create_neighbors() {
 
       for (std::size_t i = 0; i < m_vhs.size(); ++i) {
         const auto vh = m_vhs[i];
 
-        const std::size_t ref_index = vh->info().index;
-        auto face = m_cdt.incident_faces(vh);
-        const auto end = face;
-        CGAL_assertion(!face.is_empty());
+        auto edge = m_cdt.incident_edges(vh);
+        CGAL_assertion(!edge.is_empty());
+        auto end = edge;
 
-        std::set<std::size_t> neighbors;
-        do {
-          if (face->is_in_domain()) {
+        // Move the pointer to the most left boundary face.
+        if (vh->info().is_on_boundary) {
+          do {
+            const auto fh = edge->first;
+            if (!fh->is_in_domain()) {
+              end = edge; break;
+            } ++edge;
+          } while (edge != end);
+          do {
+            const auto fh = edge->first;
+            if (fh->is_in_domain()) {
+              end = edge; break;
+            } ++edge;
+          } while (edge != end);
+        }
 
-            const std::size_t i0 = face->vertex(0)->info().index;
-            CGAL_assertion(i0 != std::size_t(-1));
-            const std::size_t i1 = face->vertex(1)->info().index;
-            CGAL_assertion(i1 != std::size_t(-1));
-            const std::size_t i2 = face->vertex(2)->info().index;
-            CGAL_assertion(i2 != std::size_t(-1));
-
-            if (i0 != ref_index) neighbors.insert(i0);
-            if (i1 != ref_index) neighbors.insert(i1);
-            if (i2 != ref_index) neighbors.insert(i2);
-
-          } ++face;
-        } while (face != end);
-        CGAL_assertion(neighbors.size() > 0);
-
+        // We then traverse edges in the counterclockwise order.
         vh->info().neighbors.clear();
-        vh->info().neighbors.reserve(neighbors.size());
-        for (const std::size_t neighbor : neighbors)
-          vh->info().neighbors.push_back(neighbor);
-        CGAL_assertion(
-          vh->info().neighbors.size() == neighbors.size());
-      }
-    }
-
-    void check_boundaries() {
-
-      for (std::size_t i = 0; i < m_vhs.size(); ++i) {
-        const auto vh = m_vhs[i];
-        vh->info().is_boundary = false;
-
-        auto face = m_cdt.incident_faces(vh);
-        const auto end = face;
-        CGAL_assertion(!face.is_empty());
-
         do {
-          if (!face->is_in_domain()) {
-            vh->info().is_boundary = true; break;
-          } ++face;
-        } while (face != end);
+          const auto fh = edge->first;
+          const auto nh = fh->vertex(edge->second);
+
+          if (fh->is_in_domain())
+            vh->info().neighbors.push_back(nh->info().index);
+          else {
+            vh->info().neighbors.push_back(nh->info().index);
+            break;
+          } ++edge;
+        } while (edge != end);
+        CGAL_assertion(
+          vh->info().neighbors.size() > 0);
       }
     }
 

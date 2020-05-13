@@ -39,20 +39,6 @@ int main() {
   Domain domain(polygon);
   domain.initialize(0.01, list_of_seeds);
 
-  /// remove below!
-  domain.export_triangulation("/Users/monet/Documents/gsoc/gbc/logs/domain");
-  std::vector<Point_2> bounds;
-  std::vector<std::size_t> neighbors;
-  for (std::size_t k = 0; k < domain.number_of_vertices(); ++k) {
-    if (domain.is_on_boundary(k)) {
-      domain(k, neighbors);
-      for (const std::size_t neighbor : neighbors)
-        bounds.push_back(domain.vertex(neighbor));
-    }
-  }
-  domain.export_points(bounds, "/Users/monet/Documents/gsoc/gbc/logs/bounds");
-  /// remove above!
-
   // Compute harmonic coordinates at the vertices of the domain.
   Harmonic harmonic(domain, polygon);
   harmonic.compute();
