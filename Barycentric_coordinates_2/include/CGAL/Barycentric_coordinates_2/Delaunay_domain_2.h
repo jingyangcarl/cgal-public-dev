@@ -44,10 +44,10 @@ namespace Barycentric_coordinates {
 
     \brief 2D Delaunay domain restricted to a simple polygon.
 
-    This class implements a discretized domain of a simple polygon, where
-    space partition is represented as a constrained Delaunay triangulation.
-    The constraints are the polygon edges. The triangle size is controlled
-    by the user-defined parameter.
+    This class implements a discretized domain restricted to a simple polygon.
+    The interior part of the input polygon is triangulated and refined with respect
+    to the user-defined shape size parameter. The final triangulation is a constrained
+    Delaunay triangulation, where the constraints are the polygon edges.
 
     Internally, the package \ref PkgMesh2 is used. See it for more details.
 
@@ -68,14 +68,16 @@ namespace Barycentric_coordinates {
     using GT = GeomTraits;
 
     struct VI {
-      internal::Edge_case type = internal::Edge_case::UNBOUNDED;
+      bool is_boundary = false;
       std::size_t index = std::size_t(-1);
+      std::vector<std::size_t> neighbors;
     };
 
     using FB  = CGAL::Delaunay_mesh_face_base_2<GeomTraits>;
     using VB  = CGAL::Triangulation_vertex_base_with_info_2<VI, GeomTraits>;
     using TDS = CGAL::Triangulation_data_structure_2<VB, FB>;
-    using CDT = CGAL::Constrained_Delaunay_triangulation_2<GeomTraits, TDS>;
+    using TAG = CGAL::Exact_predicates_tag;
+    using CDT = CGAL::Constrained_Delaunay_triangulation_2<GeomTraits, TDS, TAG>;
 
     using Vertex_handle = typename CDT::Vertex_handle;
 
@@ -137,167 +139,119 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief creates a constrained Delaunay triangulation restricted to
-      the input polygon.
+      \brief creates a refined Delaunay triangulation restricted
+      to the input polygon.
 
       \param shape_size
-      A shape size bound. See `Delaunay_mesh_size_criteria_2`.
+      A shape size bound. See `Delaunay_mesh_size_criteria_2` for more details.
 
       \param list_of_seeds
       Contains seed points indicating, which parts of the input polygon
       should be partitioned and subdivided.
     */
-    void create(
+    void initialize(
       const FT shape_size,
       const std::list<Point_2>& list_of_seeds) {
 
-      // Create Delaunay triangulation.
-      m_cdt.clear(); m_vhs.clear();
-      m_vhs.reserve(m_polygon.size());
-      for (const auto& vertex : m_polygon)
-        m_vhs.push_back(m_cdt.insert(vertex));
-
-      for(std::size_t i = 0; i < m_vhs.size(); ++i) {
-        const std::size_t ip = (i + 1) % m_vhs.size();
-        m_cdt.insert_constraint(m_vhs[i], m_vhs[ip]);
-      }
-
-      // Refine this triangulation.
-      Mesher mesher(m_cdt);
-      mesher.set_seeds(list_of_seeds.begin(), list_of_seeds.end(), true);
-      mesher.set_criteria(Criteria(shape_size, shape_size));
-      mesher.refine_mesh();
-
-      // Find interior points.
-      std::set<Vertex_handle> vhs;
-      for (auto fh = m_cdt.finite_faces_begin();
-      fh != m_cdt.finite_faces_end(); ++fh) {
-        if (fh->is_in_domain()) {
-          vhs.insert(fh->vertex(0));
-          vhs.insert(fh->vertex(1));
-          vhs.insert(fh->vertex(2));
-        }
-      }
-
-      m_vhs.clear(); std::size_t count = 0;
-      for (auto vh : vhs) {
-        const auto result = internal::locate_wrt_polygon_2(
-          m_polygon, vh->point(), m_traits);
-        const auto location = (*result).first;
-
-        if (
-          location == internal::Query_point_location::ON_VERTEX ||
-          location == internal::Query_point_location::ON_EDGE)
-          vh->info().type = internal::Edge_case::BOUNDARY;
-
-        if (
-          location == internal::Query_point_location::ON_BOUNDED_SIDE)
-          vh->info().type = internal::Edge_case::INTERIOR;
-
-        /*
-        CGAL_assertion(
-          location != Query_point_location::ON_UNBOUNDED_SIDE); */
-
-        vh->info().index = count;
-        m_vhs.push_back(vh); ++count;
-      }
+      create_triangulation();
+      refine_triangulation(
+        shape_size, list_of_seeds);
+      create_neighbors();
+      check_boundaries();
     }
 
     /*!
-      \brief computes all triangle barycenters.
+      \brief computes barycenters of all generated triangles.
 
       \param barycenters
       An `std::vector` that stores the computed barycenters.
-
-      \warning `create()` should be called before calling this method!
     */
     void barycenters(
       std::vector<Point_2>& barycenters) const {
 
-      if (m_cdt.number_of_faces() == 0)
-        return;
+      const std::size_t num_faces = get_number_of_faces();
+      if (num_faces == 0) return;
 
       barycenters.clear();
-      barycenters.reserve(m_cdt.number_of_faces());
+      barycenters.reserve(num_faces);
 
       for (auto fh = m_cdt.finite_faces_begin();
       fh != m_cdt.finite_faces_end(); ++fh) {
+        if (!fh->is_in_domain()) continue;
+
         const Point_2 b = CGAL::barycenter(
         fh->vertex(0)->point(), FT(1),
         fh->vertex(1)->point(), FT(1),
         fh->vertex(2)->point(), FT(1));
         barycenters.push_back(b);
       }
+      CGAL_assertion(barycenters.size() == num_faces);
     }
 
     /*!
-      \brief implements `DiscretizedDomain_2::number_of_vertices()`.
+      \brief returns the number of triangulation vertices.
 
-      This function returns the number of vertices in the discretized domain.
+      This function implements `DiscretizedDomain_2::number_of_vertices()`.
     */
     const std::size_t number_of_vertices() const {
+
+      CGAL_assertion(
+        m_vhs.size() == m_cdt.number_of_vertices());
       return m_vhs.size();
     }
 
     /*!
-      \brief implements `DiscretizedDomain_2::vertex()`.
-
-      This function returns a vertex of the discretized domain with
+      \brief returns a const reference to the triangulation vertex with
       the index `query_index`.
+
+      This function implements `DiscretizedDomain_2::vertex()`.
 
       \param query_index
       An index of the requested vertex.
 
       \pre `query_index >= 0 && query_index < number_of_vertices()`
-
-      \warning `create()` should be called before calling this method!
     */
     const Point_2& vertex(
       const std::size_t query_index) const {
 
       CGAL_precondition(
         query_index >= 0 && query_index < number_of_vertices());
-      const auto vh = m_vhs[query_index];
-      return vh->point();
+      return m_vhs[query_index]->point();
     }
 
     /*!
-      \brief implements `DiscretizedDomain_2::is_on_boundary()`.
+      \brief controls if the triangulation vertex with the index `query_index`
+      is on the polygon boundary.
 
-      This function controls if the vertex of the discretized domain with the
-      index `query_index` is on the boundary of the `polygon`.
+      This function implements `DiscretizedDomain_2::is_on_boundary()`.
 
       \param query_index
       An index of the query vertex.
 
       \pre `query_index >= 0 && query_index < number_of_vertices()`
-
-      \warning `create()` should be called before calling this method!
     */
     const bool is_on_boundary(
       const std::size_t query_index) const {
 
       CGAL_precondition(
         query_index >= 0 && query_index < number_of_vertices());
-      const auto vh = m_vhs[query_index];
-      return vh->info().type == internal::Edge_case::BOUNDARY;
+      return m_vhs[query_index]->info().is_boundary;
     }
 
     /*!
-      \brief implements `DiscretizedDomain_2::operator()()`.
+      \brief returns the one-ring neighborhood of the triangulation vertex
+      with the index `query_index`.
 
-      This function returns a one-ring neighborhood of the vertex of the
-      discretized domain with the index `query_index`.
+      This function implements `DiscretizedDomain_2::operator()()`.
 
       \param query_index
-      A query vertex.
+      An index of the query vertex.
 
       \param neighbors
-      Stores indices of all direct neighbors of the query vertex.
+      Stores indices of the vertices, which from the one-ring neighborhood
+      of the query vertex.
 
       \pre `query_index >= 0 && query_index < number_of_vertices()`
-
-      \warning `create()` should be called before calling this method!
     */
     void operator()(
       const std::size_t query_index,
@@ -305,59 +259,85 @@ namespace Barycentric_coordinates {
 
       CGAL_precondition(
         query_index >= 0 && query_index < number_of_vertices());
-
-      neighbors.clear();
       const auto vh = m_vhs[query_index];
-      CGAL_assertion(vh->info().type == internal::Edge_case::INTERIOR);
-
-      auto circ = m_cdt.incident_vertices(vh);
-      const auto end = circ;
-      CGAL_assertion(!circ.is_empty());
-
-      do {
-        CGAL_assertion(
-          circ->info().type == internal::Edge_case::INTERIOR ||
-          circ->info().type == internal::Edge_case::BOUNDARY);
-        CGAL_assertion(
-          !m_cdt.is_infinite(circ));
-
-        neighbors.push_back(circ->info().index);
-        ++circ;
-      } while (circ != end);
-
-      CGAL_assertion(neighbors.size() > 0);
+      neighbors = vh->info().neighbors;
     }
 
     /*!
-      \brief implements `DiscretizedDomain_2::locate()`.
+      \brief locates a triangle that contains a given query point.
 
-      This function locates a query point in the discretized domain.
+      If `triangle` is empty, the query point does not belong to the domain.
+
+      This function implements `DiscretizedDomain_2::locate()`.
 
       \param query
       A query point.
 
       \param triangle
-      Stores indices of the triangle that contains `query`.
-
-      \pre `query_index >= 0 && query_index < number_of_vertices()`
-
-      \warning `create()` should be called before calling this method!
+      Stores indices of the vertices, which form a triangle, that contains
+      the query point.
     */
-    bool locate(
+    void locate(
       const Point_2& query,
       std::vector<std::size_t>& triangle) const {
 
       triangle.clear();
       const auto fh = m_cdt.locate(query);
-      for (std::size_t i = 0; i < 3; ++i) {
-        const auto vh = fh->vertex(i);
-        if (
-          vh->info().type == internal::Edge_case::INTERIOR ||
-          vh->info().type == internal::Edge_case::BOUNDARY )
-          triangle.push_back(vh->info().index);
+      if (fh->is_in_domain()) {
+        for (std::size_t i = 0; i < 3; ++i)
+          triangle.push_back(fh->vertex(i)->info().index);
       }
-      return triangle.size() == 3;
     }
+
+    /// \cond SKIP_IN_MANUAL
+    void export_points(
+      const std::vector<Point_2>& points,
+      const std::string file_path) const {
+
+      std::stringstream out;
+      out.precision(20);
+      const std::size_t num_vertices = points.size();
+      add_ply_header_points(num_vertices, out);
+
+      for (const auto& point : points)
+        out << point << " 0 0 0 0" << std::endl;
+      save(out, file_path + ".ply");
+    }
+
+    void export_triangulation(
+      const std::string file_path) const {
+
+      std::stringstream out;
+      out.precision(20);
+      const std::size_t num_faces = get_number_of_faces();
+      add_ply_header_mesh(num_faces * 3, num_faces, out);
+
+      for (auto fh = m_cdt.finite_faces_begin();
+      fh != m_cdt.finite_faces_end(); ++fh) {
+        if (!fh->is_in_domain()) continue;
+
+        const auto& p0 = fh->vertex(0)->point();
+        const auto& p1 = fh->vertex(1)->point();
+        const auto& p2 = fh->vertex(2)->point();
+
+        out << p0.x() << " " << p0.y() << " 0" << std::endl;
+        out << p1.x() << " " << p1.y() << " 0" << std::endl;
+        out << p2.x() << " " << p2.y() << " 0" << std::endl;
+      }
+
+      std::size_t i = 0;
+      for (auto fh = m_cdt.finite_faces_begin();
+      fh != m_cdt.finite_faces_end(); ++fh) {
+        if (!fh->is_in_domain()) continue;
+
+        out << 3 << " "
+        << i + 0 << " " << i + 1 << " " << i + 2 << " "
+        << "0 0 0" << std::endl;
+        i += 3;
+      }
+      save(out, file_path + ".ply");
+    }
+    /// \endcond
 
   private:
 
@@ -366,6 +346,163 @@ namespace Barycentric_coordinates {
     std::vector<Point_2> m_polygon;
     std::vector<Vertex_handle> m_vhs;
     CDT m_cdt;
+
+    void create_triangulation() {
+
+      m_cdt.clear(); m_vhs.clear();
+      m_vhs.reserve(m_polygon.size());
+      for (const auto& vertex : m_polygon)
+        m_vhs.push_back(m_cdt.insert(vertex));
+
+      CGAL_assertion(m_vhs.size() == m_polygon.size());
+      CGAL_assertion(m_vhs.size() == m_cdt.number_of_vertices());
+
+      for (std::size_t i = 0; i < m_vhs.size(); ++i) {
+        const std::size_t ip = (i + 1) % m_vhs.size();
+        if (m_vhs[i] != m_vhs[ip])
+          m_cdt.insert_constraint(m_vhs[i], m_vhs[ip]);
+      }
+    }
+
+    void refine_triangulation(
+      const FT shape_size,
+      const std::list<Point_2>& list_of_seeds) {
+
+      Mesher mesher(m_cdt);
+      mesher.set_seeds(list_of_seeds.begin(), list_of_seeds.end(), true);
+      mesher.set_criteria(Criteria(shape_size, shape_size));
+      mesher.refine_mesh();
+
+      m_vhs.clear();
+      m_vhs.reserve(m_cdt.number_of_vertices());
+
+      std::size_t count = 0;
+      for (auto vh = m_cdt.finite_vertices_begin();
+      vh != m_cdt.finite_vertices_end(); ++vh, ++count) {
+        vh->info().index = count;
+        m_vhs.push_back(vh);
+      }
+      CGAL_assertion(m_vhs.size() == m_cdt.number_of_vertices());
+    }
+
+    void create_neighbors() {
+
+      for (std::size_t i = 0; i < m_vhs.size(); ++i) {
+        const auto vh = m_vhs[i];
+
+        const std::size_t ref_index = vh->info().index;
+        auto face = m_cdt.incident_faces(vh);
+        const auto end = face;
+        CGAL_assertion(!face.is_empty());
+
+        std::set<std::size_t> neighbors;
+        do {
+          if (face->is_in_domain()) {
+
+            const std::size_t i0 = face->vertex(0)->info().index;
+            CGAL_assertion(i0 != std::size_t(-1));
+            const std::size_t i1 = face->vertex(1)->info().index;
+            CGAL_assertion(i1 != std::size_t(-1));
+            const std::size_t i2 = face->vertex(2)->info().index;
+            CGAL_assertion(i2 != std::size_t(-1));
+
+            if (i0 != ref_index) neighbors.insert(i0);
+            if (i1 != ref_index) neighbors.insert(i1);
+            if (i2 != ref_index) neighbors.insert(i2);
+
+          } ++face;
+        } while (face != end);
+        CGAL_assertion(neighbors.size() > 0);
+
+        vh->info().neighbors.clear();
+        vh->info().neighbors.reserve(neighbors.size());
+        for (const std::size_t neighbor : neighbors)
+          vh->info().neighbors.push_back(neighbor);
+        CGAL_assertion(
+          vh->info().neighbors.size() == neighbors.size());
+      }
+    }
+
+    void check_boundaries() {
+
+      for (std::size_t i = 0; i < m_vhs.size(); ++i) {
+        const auto vh = m_vhs[i];
+        vh->info().is_boundary = false;
+
+        auto face = m_cdt.incident_faces(vh);
+        const auto end = face;
+        CGAL_assertion(!face.is_empty());
+
+        do {
+          if (!face->is_in_domain()) {
+            vh->info().is_boundary = true; break;
+          } ++face;
+        } while (face != end);
+      }
+    }
+
+    const std::size_t get_number_of_faces() const {
+
+      std::size_t num_faces = 0;
+      for (auto fh = m_cdt.finite_faces_begin();
+      fh != m_cdt.finite_faces_end(); ++fh) {
+        if (!fh->is_in_domain()) continue;
+        ++num_faces;
+      }
+      return num_faces;
+    }
+
+    void add_ply_header_points(
+      const std::size_t num_vertices,
+      std::stringstream& out) const {
+
+      out <<
+			"ply" << std::endl <<
+			"format ascii 1.0" << std::endl <<
+			"element vertex " << num_vertices << std::endl <<
+			"property double x" << std::endl <<
+			"property double y" << std::endl <<
+			"property double z" << std::endl <<
+			"property uchar red"   << std::endl <<
+			"property uchar green" << std::endl <<
+			"property uchar blue"  << std::endl <<
+			"end_header" << std::endl;
+    }
+
+    void add_ply_header_mesh(
+      const std::size_t num_vertices,
+      const std::size_t num_faces,
+      std::stringstream& out) const {
+
+      out <<
+			"ply" << std::endl <<
+			"format ascii 1.0" << std::endl <<
+			"element vertex " << num_vertices << std::endl <<
+			"property double x" << std::endl <<
+			"property double y" << std::endl <<
+			"property double z" << std::endl <<
+			"element face " << num_faces << std::endl <<
+			"property list uchar int vertex_indices" << std::endl <<
+			"property uchar red"   << std::endl <<
+			"property uchar green" << std::endl <<
+			"property uchar blue"  << std::endl <<
+			"end_header" << std::endl;
+    }
+
+    void save(
+      const std::stringstream& out,
+      const std::string file_path) const {
+
+      std::ofstream file(
+        file_path.c_str(), std::ios_base::out);
+      if (!file) {
+        std::cerr << std::endl <<
+          "ERROR: Error saving file " << file_path
+        << "!" << std::endl << std::endl;
+      }
+      file << out.str();
+      file.close();
+    }
   };
 
 } // namespace Barycentric_coordinates

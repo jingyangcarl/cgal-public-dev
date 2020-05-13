@@ -23,23 +23,23 @@ int main() {
   // Note that z-coordinate of each vertex represents the height function.
   // Projection in 2D is performed automatically by the Projection traits class.
   const std::vector<Point> polygon = {
-    Point(0.03, 0.05, 0.000), Point(0.07, 0.04, 10.00), Point(0.10, 0.04, 20.00),
-    Point(0.14, 0.04, 30.00), Point(0.17, 0.07, 40.00), Point(0.19, 0.09, 50.00),
-    Point(0.22, 0.11, 60.00), Point(0.25, 0.11, 70.00), Point(0.27, 0.10, 80.00),
-    Point(0.30, 0.07, 90.00), Point(0.31, 0.04, 100.0), Point(0.34, 0.03, 110.0),
-    Point(0.37, 0.02, 120.0), Point(0.40, 0.03, 130.0), Point(0.42, 0.04, 140.0),
-    Point(0.44, 0.07, 150.0), Point(0.45, 0.10, 160.0), Point(0.46, 0.13, 170.0),
-    Point(0.46, 0.19, 180.0), Point(0.47, 0.26, 190.0), Point(0.47, 0.31, 200.0),
-    Point(0.47, 0.35, 210.0), Point(0.45, 0.37, 220.0), Point(0.41, 0.38, 230.0),
-    Point(0.38, 0.37, 240.0), Point(0.35, 0.36, 250.0), Point(0.32, 0.35, 260.0),
-    Point(0.30, 0.37, 270.0), Point(0.28, 0.39, 280.0), Point(0.25, 0.40, 290.0),
-    Point(0.23, 0.39, 300.0), Point(0.21, 0.37, 310.0), Point(0.21, 0.34, 320.0),
-    Point(0.23, 0.32, 330.0), Point(0.24, 0.29, 340.0), Point(0.27, 0.24, 350.0),
-    Point(0.29, 0.21, 360.0), Point(0.29, 0.18, 370.0), Point(0.26, 0.16, 380.0),
-    Point(0.24, 0.17, 390.0), Point(0.23, 0.19, 400.0), Point(0.24, 0.22, 410.0),
-    Point(0.24, 0.25, 420.0), Point(0.21, 0.26, 430.0), Point(0.17, 0.26, 440.0),
-    Point(0.12, 0.24, 450.0), Point(0.07, 0.20, 460.0), Point(0.03, 0.15, 470.0),
-    Point(0.01, 0.10, 480.0), Point(0.02, 0.07, 490.0)
+    Point(0.03, 0.05, 0.00), Point(0.07, 0.04, 0.02), Point(0.10, 0.04, 0.04),
+    Point(0.14, 0.04, 0.06), Point(0.17, 0.07, 0.08), Point(0.20, 0.09, 0.10),
+    Point(0.22, 0.11, 0.12), Point(0.25, 0.11, 0.14), Point(0.27, 0.10, 0.16),
+    Point(0.30, 0.07, 0.18), Point(0.31, 0.04, 0.20), Point(0.34, 0.03, 0.22),
+    Point(0.37, 0.02, 0.24), Point(0.40, 0.03, 0.26), Point(0.42, 0.04, 0.28),
+    Point(0.44, 0.07, 0.30), Point(0.45, 0.10, 0.32), Point(0.46, 0.13, 0.34),
+    Point(0.46, 0.19, 0.36), Point(0.47, 0.26, 0.38), Point(0.47, 0.31, 0.40),
+    Point(0.47, 0.35, 0.42), Point(0.45, 0.37, 0.44), Point(0.41, 0.38, 0.46),
+    Point(0.38, 0.37, 0.48), Point(0.35, 0.36, 0.50), Point(0.32, 0.35, 0.52),
+    Point(0.30, 0.37, 0.54), Point(0.28, 0.39, 0.56), Point(0.25, 0.40, 0.58),
+    Point(0.23, 0.39, 0.60), Point(0.21, 0.37, 0.62), Point(0.21, 0.34, 0.64),
+    Point(0.23, 0.32, 0.66), Point(0.24, 0.29, 0.68), Point(0.27, 0.24, 0.70),
+    Point(0.29, 0.21, 0.72), Point(0.29, 0.18, 0.74), Point(0.26, 0.16, 0.76),
+    Point(0.24, 0.17, 0.78), Point(0.23, 0.19, 0.80), Point(0.24, 0.22, 0.82),
+    Point(0.24, 0.25, 0.84), Point(0.21, 0.26, 0.86), Point(0.17, 0.26, 0.88),
+    Point(0.12, 0.24, 0.90), Point(0.07, 0.20, 0.92), Point(0.03, 0.15, 0.94),
+    Point(0.01, 0.10, 0.96), Point(0.02, 0.07, 0.98)
   };
 
   // Instantiate a Delaunay domain.
@@ -47,20 +47,13 @@ int main() {
   list_of_seeds.push_back(Point(0.1, 0.1, 0.0));
 
   Domain domain(polygon);
-  domain.create(0.05, list_of_seeds);
+  domain.initialize(0.05, list_of_seeds);
 
   // Associate each polygon vertex with the corresponding function value.
   Vertex_function_value vertex_function_value;
   for(const auto& vertex : polygon)
     vertex_function_value.insert(
       std::make_pair(vertex, vertex.z()));
-
-  std::vector<Point_with_coordinate> boundary;
-  boundary.resize(polygon.size());
-
-  // Use it to store all generated interior points with the interpolated data.
-  std::vector<Point> queries;
-  queries.reserve(domain.number_of_vertices());
 
   // Instantiate the class with the mean value weights.
   Mean_value mean_value(polygon);
@@ -69,6 +62,13 @@ int main() {
   // from the polygon boundary to its interior.
   std::vector<FT> coordinates;
   coordinates.reserve(polygon.size());
+
+  std::vector<Point_with_coordinate> boundary;
+  boundary.resize(polygon.size());
+
+  std::vector<Point> queries;
+  queries.reserve(domain.number_of_vertices());
+
   for (std::size_t i = 0; i < domain.number_of_vertices(); ++i) {
     const auto& query = domain.vertex(i);
 

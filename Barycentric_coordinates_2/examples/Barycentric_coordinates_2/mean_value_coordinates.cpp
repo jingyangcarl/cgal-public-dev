@@ -40,7 +40,7 @@ int main() {
   for (const auto& query : interior_points) {
     coordinates.clear();
     CGAL::Barycentric_coordinates::mean_value_coordinates_2(
-    star_shaped, query, std::back_inserter(coordinates), policy);
+      star_shaped, query, std::back_inserter(coordinates), policy);
 
     // Output mean value coordinates.
     for (std::size_t i = 0; i < coordinates.size() - 1; ++i)

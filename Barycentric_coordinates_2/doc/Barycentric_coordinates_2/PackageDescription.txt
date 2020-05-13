@@ -54,7 +54,6 @@ from the Package \ref PkgInterpolation2.}
 - `AnalyticWeights_2`
 - `BarycentricTraits_2`
 - `DiscretizedDomain_2`
-- `SparseLinearSolver_2`
 
 ## Generalized Weights ##
 - `CGAL::Barycentric_coordinates::Wachspress_weights_2<GeomTraits>`
@@ -63,7 +62,7 @@ from the Package \ref PkgInterpolation2.}
 
 ## Harmonic Coordinates ##
 - `CGAL::Barycentric_coordinates::Delaunay_domain_2<GeomTraits>`
-- `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<GeomTraits, Domain, Solver>`
+- `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Domain, GeomTraits>`
 
 ## Enumerations ##
 - `CGAL::Barycentric_coordinates::Computation_policy`

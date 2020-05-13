@@ -34,6 +34,8 @@
 #include <vector>
 #include <utility>
 #include <iterator>
+#include <sstream>
+#include <fstream>
 #include <tuple>
 
 // Boost headers.
@@ -224,6 +226,43 @@ namespace internal {
 
   template<typename GeomTraits>
   boost::optional< std::pair<Query_point_location, std::size_t> >
+  get_edge_index_harmonic(
+    const std::vector<typename GeomTraits::Point_2>& polygon,
+    const typename GeomTraits::Point_2& query,
+    const GeomTraits traits) {
+
+    using FT = typename GeomTraits::FT;
+    using Vector_2 = typename GeomTraits::Vector_2;
+    using Segment_2 = typename GeomTraits::Segment_2;
+
+    CGAL_precondition(polygon.size() >= 3);
+    const std::size_t n = polygon.size();
+
+    const FT tol = FT(1) / FT(100000);
+    for (std::size_t i = 0; i < n; ++i) {
+      const Segment_2 segment = Segment_2(query, polygon[i]);
+      const FT r = segment.squared_length();
+      if (CGAL::abs(r) < tol)
+        return std::make_pair(Query_point_location::ON_VERTEX, i);
+    }
+
+    for (std::size_t i = 0; i < n; ++i) {
+      const std::size_t ip = (i + 1) % n;
+
+      const Vector_2 s1 = Vector_2(query, polygon[i]);
+      const Vector_2 s2 = Vector_2(query, polygon[ip]);
+
+      const FT A = CGAL::determinant(s1, s2) / FT(2);
+      const FT D = CGAL::scalar_product(s1, s2);
+
+      if (CGAL::abs(A) < tol && D < FT(0))
+        return std::make_pair(Query_point_location::ON_EDGE, i);
+    }
+    return boost::none;
+  }
+
+  template<typename GeomTraits>
+  boost::optional< std::pair<Query_point_location, std::size_t> >
   get_edge_index(
     const std::vector<typename GeomTraits::Point_2>& polygon,
     const typename GeomTraits::Point_2& query,
@@ -247,33 +286,6 @@ namespace internal {
           polygon[i], query, polygon[ip]))
         return std::make_pair(Query_point_location::ON_EDGE, i);
     }
-
-    /* // Should be removed!
-    using FT = typename GeomTraits::FT;
-    using Vector_2 = typename GeomTraits::Vector_2;
-    using Segment_2 = typename GeomTraits::Segment_2;
-
-    const FT tol = FT(1) / FT(100000);
-    for (std::size_t i = 0; i < n; ++i) {
-      const Segment_2 segment = Segment_2(query, polygon[i]);
-      const FT r = segment.squared_length();
-      if (CGAL::abs(r) < tol)
-        return std::make_pair(Query_point_location::ON_VERTEX, i);
-    }
-
-    for (std::size_t i = 0; i < n; ++i) {
-      const std::size_t ip = (i + 1) % n;
-
-      const Vector_2 s1 = Vector_2(query, polygon[i]);
-      const Vector_2 s2 = Vector_2(query, polygon[ip]);
-
-      const FT A = CGAL::determinant(s1, s2) / FT(2);
-      const FT D = CGAL::scalar_product(s1, s2);
-
-      if (CGAL::abs(A) < tol && D < FT(0))
-        return std::make_pair(Query_point_location::ON_EDGE, i);
-    } */
-
     return boost::none;
   }
 

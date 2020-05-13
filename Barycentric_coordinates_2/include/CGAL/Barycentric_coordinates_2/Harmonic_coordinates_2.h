@@ -55,22 +55,18 @@ namespace Barycentric_coordinates {
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2`
     is used.
 
-    \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
-
     \tparam Domain
     is a model of `DiscretizedDomain_2`. For the moment, we only support domains
     with triangular finite elements.
 
-    \tparam Solver
-    is a model of `SparseLinearSolver_2`.
+    \tparam GeomTraits
+    is a model of `BarycentricTraits_2`.
 
     \cgalModels `AnalyticWeights_2`
   */
   template<
-  typename GeomTraits,
   typename Domain,
-  typename Solver>
+  typename GeomTraits>
   class Harmonic_coordinates_2 {
 
   public:
@@ -80,7 +76,6 @@ namespace Barycentric_coordinates {
 
     /// \cond SKIP_IN_MANUAL
     using D  = Domain;
-    using S  = Solver;
     using GT = GeomTraits;
     /// \endcond
 
@@ -116,14 +111,11 @@ namespace Barycentric_coordinates {
       is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
       value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
-      \param polygon
-      An instance of `Polygon` with the vertices of a simple polygon.
-
       \param domain
       An instance of `Domain`.
 
-      \param solver
-      An instance of `Solver`.
+      \param polygon
+      An instance of `Polygon` with the vertices of a simple polygon.
 
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
@@ -139,13 +131,11 @@ namespace Barycentric_coordinates {
     typename Polygon,
     typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Harmonic_coordinates_2(
-      const Polygon& polygon,
       const Domain& domain,
-      Solver& solver,
+      const Polygon& polygon,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
     m_domain(domain),
-    m_solver(solver),
     m_traits(traits) {
 
       m_polygon.clear();
@@ -200,7 +190,8 @@ namespace Barycentric_coordinates {
       const std::size_t n = m_polygon.size();
 
       m_element.clear();
-      const bool is_in_domain = m_domain.locate(query, m_element);
+      m_domain.locate(query, m_element);
+      const bool is_in_domain = ( m_element.size() != 0 );
       if (!is_in_domain || m_element.size() > 3) {
         internal::get_default(n, coordinates);
         return coordinates;
@@ -336,7 +327,7 @@ namespace Barycentric_coordinates {
 
         if (m_domain.is_on_boundary(i)) {
           const auto& query = m_domain.vertex(i);
-          const auto edge_found = internal::get_edge_index(
+          const auto edge_found = internal::get_edge_index_harmonic(
             m_polygon, query, m_traits);
           assert(edge_found);
 
@@ -446,7 +437,6 @@ namespace Barycentric_coordinates {
 
     // Fields.
     const Domain& m_domain;
-    Solver& m_solver;
     const GeomTraits m_traits;
 
     std::vector<Point_2> m_polygon;
@@ -459,8 +449,11 @@ namespace Barycentric_coordinates {
     void solve_linear_system(
       const MatrixFT& A, const VectorFT& b, VectorFT& x) const {
 
-      m_solver.compute(A);
-      x = m_solver.solve(b);
+      using Solver = Eigen::SimplicialLDLT<
+      Eigen::SparseMatrix<typename GeomTraits::FT> >;
+      Solver solver;
+      solver.compute(A);
+      x = solver.solve(b);
     }
   };
 

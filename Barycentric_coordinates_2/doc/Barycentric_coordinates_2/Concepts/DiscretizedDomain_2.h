@@ -3,7 +3,11 @@
 \cgalConcept
 
 A concept that describes the set of methods that should be defined for all
-discretized domains restricted to a simple polygon.
+discretized domains obtained by meshing the interior part of a simple polygon.
+After meshing, the interior part of the polygon is split into multiple finite
+elements, which share common edges and vertices. These finite elements are then
+used to approximate certain types of generalized barycentric coordinate functions.
+The domain is bounded by the polygon.
 
 \cgalHasModel
 - `CGAL::Barycentric_coordinates::Delaunay_domain_2`
@@ -13,14 +17,15 @@ class DiscretizedDomain_2 {
 public:
 
   /*!
-    returns the number of vertices in the domain.
+    returns the number of vertices after meshing the domain.
   */
   const std::size_t number_of_vertices() const {
 
   }
 
   /*!
-    returns a const reference to the vertex with the index `query_index`.
+    returns a const reference of type `Point_2` to the vertex with
+    the index `query_index`.
   */
   const Point_2& vertex(
     const std::size_t query_index) const {
@@ -29,7 +34,7 @@ public:
 
   /*!
     controls if the vertex with the index `query_index` is on the
-    boundary of the polygon.
+    boundary of the domain.
   */
   const bool is_on_boundary(
     const std::size_t query_index) const {
@@ -37,8 +42,8 @@ public:
   }
 
   /*!
-    fills `neighbors` with the indices of all vertices, which are connected to the
-    vertex with the index `query_index`.
+    fills `neighbors` with the indices of the vertices, which from the one-ring
+    neighborhood of the vertex with the index `query_index`.
   */
   void operator()(
     const std::size_t query_index,
@@ -47,12 +52,13 @@ public:
   }
 
   /*!
-    fills `element` with the indices of all vertices, which are vertices of the
-    element that contains `query`, returns true if `query` belongs to the domain.
+    fills `indices` with the indices of the vertices, which form a finite element
+    of the domain, that contains a `query` point, if no indices are found, the
+    `query` point does not belong to the domain.
   */
-  bool locate(
+  void locate(
     const Point_2& query,
-    std::vector<std::size_t>& element) {
+    std::vector<std::size_t>& indices) {
 
   }
 };
