@@ -593,7 +593,10 @@ namespace Barycentric_coordinates {
     weight per vertex. The weights are returned in `weights`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     \tparam PointRange
     is a model of `ConstRange`.
@@ -653,7 +656,10 @@ namespace Barycentric_coordinates {
     weight per vertex. The weights are returned in `weights`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     This function infers a traits class from the `Point_2` class.
 
@@ -708,7 +714,10 @@ namespace Barycentric_coordinates {
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     \tparam PointRange
     is a model of `ConstRange`.
@@ -768,7 +777,10 @@ namespace Barycentric_coordinates {
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     This function infers a traits class from the `Point_2` class.
 
@@ -823,7 +835,10 @@ namespace Barycentric_coordinates {
     weight per vertex. The weights are returned in `weights`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     \tparam PointRange
     is a model of `ConstRange`.
@@ -883,7 +898,10 @@ namespace Barycentric_coordinates {
     weight per vertex. The weights are returned in `weights`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     This function infers a traits class from the `Point_2` class.
 
@@ -938,7 +956,10 @@ namespace Barycentric_coordinates {
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     \tparam PointRange
     is a model of `ConstRange`.
@@ -998,7 +1019,10 @@ namespace Barycentric_coordinates {
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     This function infers a traits class from the `Point_2` class.
 
@@ -1053,7 +1077,10 @@ namespace Barycentric_coordinates {
     weight per vertex. The weights are returned in `weights`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     \tparam PointRange
     is a model of `ConstRange`.
@@ -1112,7 +1139,10 @@ namespace Barycentric_coordinates {
     weight per vertex. The weights are returned in `weights`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     This function infers a traits class from the `Point_2` class.
 
@@ -1166,7 +1196,10 @@ namespace Barycentric_coordinates {
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     \tparam PointRange
     is a model of `ConstRange`.
@@ -1225,7 +1258,10 @@ namespace Barycentric_coordinates {
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
     Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
-    If one needs a flexible API, please refer to that class.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
 
     This function infers a traits class from the `Point_2` class.
 

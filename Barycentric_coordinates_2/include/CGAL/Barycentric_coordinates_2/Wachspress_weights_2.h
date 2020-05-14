@@ -46,7 +46,7 @@ namespace Barycentric_coordinates {
     to get the corresponding Wachspress coordinates.
 
     Wachspress coordinates are well-defined and non-negative in the closure
-    of a strictly convex polygon.
+    of a strictly convex polygon. The coordinates are computed analytically.
 
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
@@ -157,6 +157,8 @@ namespace Barycentric_coordinates {
       point with respect to the vertices of the input polygon. If `query` belongs to
       the polygon boundary, the returned weights are normalized.
 
+      The number of weights equals to the number of the polygon vertices.
+
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
 
@@ -183,6 +185,8 @@ namespace Barycentric_coordinates {
       This function fills `coordinates` with 2D Wachspress coordinates computed at the `query`
       point with respect to the vertices of the input polygon.
 
+      The number of coordinates equals to the number of the polygon vertices.
+
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
 
@@ -201,6 +205,30 @@ namespace Barycentric_coordinates {
 
       const bool normalize = true;
       return compute(normalize, query, coordinates);
+    }
+
+    /// @}
+
+    /// \name Memory Management
+    /// @{
+
+    /*!
+      \brief clears all internal data structures.
+    */
+    void clear() {
+      A.clear();
+      C.clear();
+      w.clear();
+    }
+
+    /*!
+      \brief releases all memory that is used internally.
+    */
+    void release_memory() {
+      clear();
+      A.shrink_to_fit();
+      C.shrink_to_fit();
+      w.shrink_to_fit();
     }
 
     /// @}

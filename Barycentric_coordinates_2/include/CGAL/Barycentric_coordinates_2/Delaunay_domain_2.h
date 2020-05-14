@@ -160,6 +160,11 @@ namespace Barycentric_coordinates {
       create_neighbors();
     }
 
+    /// @}
+
+    /// \name Access
+    /// @{
+
     /*!
       \brief computes barycenters of all generated triangles.
 
@@ -289,6 +294,29 @@ namespace Barycentric_coordinates {
       }
     }
 
+    /// @}
+
+    /// \name Memory Management
+    /// @{
+
+    /*!
+      \brief clears all internal data structures.
+    */
+    void clear() {
+      m_vhs.clear();
+      m_cdt.clear();
+    }
+
+    /*!
+      \brief releases all memory that is used internally.
+    */
+    void release_memory() {
+      clear();
+      m_vhs.shrink_to_fit();
+    }
+
+    /// @}
+
     /// \cond SKIP_IN_MANUAL
     void export_points(
       const std::vector<Point_2>& points,
@@ -343,9 +371,11 @@ namespace Barycentric_coordinates {
 
     // Fields.
     const GeomTraits m_traits;
-    std::vector<Point_2> m_polygon;
-    std::vector<Vertex_handle> m_vhs;
+
     CDT m_cdt;
+    std::vector<Vertex_handle> m_vhs;
+
+    std::vector<Point_2> m_polygon;
 
     void create_triangulation() {
 

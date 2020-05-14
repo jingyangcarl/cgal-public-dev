@@ -46,7 +46,8 @@ namespace Barycentric_coordinates {
     to get the corresponding discrete harmonic coordinates.
 
     Discrete harmonic coordinates are well-defined in the closure of a strictly
-    convex polygon but they are not necesserily positive.
+    convex polygon but they are not necesserily positive. The coordinates are
+    computed analytically.
 
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
@@ -160,6 +161,8 @@ namespace Barycentric_coordinates {
       point with respect to the vertices of the input polygon. If `query` belongs to
       the polygon boundary, the returned weights are normalized.
 
+      The number of weights equals to the number of the polygon vertices.
+
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
 
@@ -186,6 +189,8 @@ namespace Barycentric_coordinates {
       This function fills `coordinates` with 2D discrete harmonic coordinates computed at the `query`
       point with respect to the vertices of the input polygon.
 
+      The number of coordinates equals to the number of the polygon vertices.
+
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
 
@@ -204,6 +209,32 @@ namespace Barycentric_coordinates {
 
       const bool normalize = true;
       return compute(normalize, query, coordinates);
+    }
+
+    /// @}
+
+    /// \name Memory Management
+    /// @{
+
+    /*!
+      \brief clears all internal data structures.
+    */
+    void clear() {
+      r.clear();
+      A.clear();
+      B.clear();
+      w.clear();
+    }
+
+    /*!
+      \brief releases all memory that is used internally.
+    */
+    void release_memory() {
+      clear();
+      r.shrink_to_fit();
+      A.shrink_to_fit();
+      B.shrink_to_fit();
+      w.shrink_to_fit();
     }
 
     /// @}

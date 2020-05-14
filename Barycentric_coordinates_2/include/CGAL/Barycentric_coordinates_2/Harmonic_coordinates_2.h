@@ -46,18 +46,23 @@ namespace Barycentric_coordinates {
 
     \brief 2D harmonic coordinates.
 
-    This class implements 2D harmonic coordinate functions ( \cite cgal:bc:hf-mvcapp-06,
-    \cite cgal:bc:jmdgs-hc-06 ), which can be evaluated at any point inside a polygon.
+    This class implements 2D harmonic coordinate functions ( \cite cgal:bc:fhk-gcbcocp-06,
+    \cite cgal:bc:jmdgs-hcfca-07 ), which can be evaluated at any point inside a polygon.
 
     Harmonic coordinates are well-defined and non-negative in the closure
-    of any simple polygon.
+    of any simple polygon, however they cannot be computed analytically and hence
+    they are approximated. The classical way to approximate these coordinates is
+    by discretizing over the space of piecewise linear functions with respect to
+    a partition of the polygon's interior domain, e.g. a triangulation.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2`
-    is used.
+    Once computed at the vertices of the discretized domain, the coordinate functions
+    can be evaluated at any point inside a polygon by locating the finite element that
+    contains a query point and linearly interpolating within this element. That is why
+    this class is also a model of the concept `AnalyticWeights_2`.
 
     \tparam Domain
     is a model of `DiscretizedDomain_2`. For the moment, we only support domains
-    with triangular finite elements.
+    whose partition's finite elements are triangles.
 
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
@@ -112,7 +117,7 @@ namespace Barycentric_coordinates {
       value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
       \param domain
-      An instance of `Domain`.
+      An instance of `Domain` with a partition of the interior part of a simple polygon.
 
       \param polygon
       An instance of `Polygon` with the vertices of a simple polygon.
@@ -144,9 +149,6 @@ namespace Barycentric_coordinates {
         m_polygon.push_back(get(vertex_map, item));
       CGAL_precondition(m_polygon.size() >= 3);
 
-      m_b.reserve(3);
-      m_element.reserve(3);
-
       CGAL_precondition(
         CGAL::is_simple_2(m_polygon.begin(), m_polygon.end(), m_traits));
     }
@@ -157,17 +159,17 @@ namespace Barycentric_coordinates {
     /// @{
 
     /*!
-      \brief implements `AnalyticWeights_2::operator()()`.
+      \brief evaluates 2D harmonic coordinates.
 
-      This function fills `coordinates` with harmonic coordinates
-      evaluated at the point `query` with respect to the vertices of the input polygon.
-      Evaluation is performed by locating an element in the input domain that contains
-      `query` and then interpolating harmonic coordinates within this element.
+      This function fills `coordinates` with harmonic coordinates evaluated at the `query`
+      point with respect to the vertices of the input polygon. Evaluation is performed
+      by locating the finite element in the input domain that contains `query` and then
+      linearly interpolating harmonic coordinates within this element.
 
-      If query is not inside the input domain, all coordinates are set to zero. If the
-      located element has more than 3 vertices, all coordinates are set to zero.
+      If `query` does not belong to the input domain or the located element has more than
+      3 vertices, all coordinates are set to zero.
 
-      Internally, `CGAL::Barycentric_coordinates::triangle_coordinates_2` are used.
+      The number of coordinates equals to the number of the polygon vertices.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
@@ -178,9 +180,7 @@ namespace Barycentric_coordinates {
       \param coordinates
       An output iterator that stores the computed coordinates.
 
-      \pre `element.size() == 3`
-
-      \warning `compute()` should be called before calling this method!
+      \return an output iterator.
     */
     template<typename OutputIterator>
     OutputIterator operator()(
@@ -209,76 +209,59 @@ namespace Barycentric_coordinates {
       const auto& p1 = m_domain.vertex(i1);
       const auto& p2 = m_domain.vertex(i2);
 
-      m_b.clear();
+      m_coordinates.clear();
       CGAL::Barycentric_coordinates::internal::planar_coordinates_2(
-        p0, p1, p2, query, std::back_inserter(m_b), m_traits);
-      CGAL_assertion(m_b.size() == 3);
+        p0, p1, p2, query, std::back_inserter(m_coordinates), m_traits);
+      CGAL_assertion(m_coordinates.size() == 3);
 
       CGAL_assertion(
-        m_coordinates.size() == m_domain.number_of_vertices());
-      const auto& hm0 = m_coordinates.at(i0);
-      const auto& hm1 = m_coordinates.at(i1);
-      const auto& hm2 = m_coordinates.at(i2);
+        m_harmonic.size() == m_domain.number_of_vertices());
+      const auto& hm0 = m_harmonic.at(i0);
+      const auto& hm1 = m_harmonic.at(i1);
+      const auto& hm2 = m_harmonic.at(i2);
 
+      const auto& b = m_coordinates;
       std::vector<FT> result(n, FT(0));
       for (std::size_t k = 0; k < n; ++k)
-        *(coordinates++) = hm0[k] * m_b[0] + hm1[k] * m_b[1] + hm2[k] * m_b[2];
+        *(coordinates++) = hm0[k] * b[0] + hm1[k] * b[1] + hm2[k] * b[2];
       return coordinates;
     }
 
     /*!
-      \brief fills `coordinates` with harmonic coordinates computed at the
+      \brief returns 2D harmonic coordinates.
+
+      This function fills `coordinates` with harmonic coordinates computed at the
       vertex of the input domain with the index `query_index`.
+
+      The number of coordinates equals to the number of the polygon vertices.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
 
-      \param query
-      A domain vertex index.
+      \param query_index
+      A domain's vertex index.
 
       \param coordinates
       An output iterator that stores the computed coordinates.
+
+      \return an output iterator.
 
       \pre `query >= 0 && query < domain.number_of_vertices()`
-
-      \warning `compute()` should be called before calling this method!
     */
     template<typename OutputIterator>
     OutputIterator coordinates(
-      const std::size_t query,
-      OutputIterator coordinates) const {
+      const std::size_t query_index,
+      OutputIterator coordinates) {
 
       CGAL_precondition(
-        query >= 0 && query < m_domain.number_of_vertices());
-      CGAL_precondition(
-        m_coordinates.size() == m_domain.number_of_vertices());
-
-      const auto& bs = m_coordinates.at(query);
-      for (const FT& b : bs)
-        *(coordinates++) = b;
-      return coordinates;
-    }
-
-    /*!
-      \brief fills `coordinates` with harmonic coordinates computed at all the
-      vertices of the input domain.
-
-      \tparam OutputIterator
-      is an output iterator whose value type is `std::vector<FT>`.
-
-      \param coordinates
-      An output iterator that stores the computed coordinates.
-
-      \warning `compute()` should be called before calling this method!
-    */
-    template<typename OutputIterator>
-    OutputIterator coordinates(
-      OutputIterator coordinates) const {
-
+        query_index >= 0 && query_index < m_domain.number_of_vertices());
       CGAL_assertion(
-        m_coordinates.size() == m_domain.number_of_vertices());
-      for (const auto& b : m_coordinates)
-        *(coordinates++) = b;
+        m_harmonic.size() == m_domain.number_of_vertices());
+
+      const auto& hms = m_harmonic[query_index];
+      for (const FT hm : hms)
+        *(coordinates++) = hm;
+      return coordinates;
     }
 
     /// @}
@@ -287,7 +270,7 @@ namespace Barycentric_coordinates {
     /// @{
 
     /*!
-      computes harmonic coordinates at the vertices of the input domain.
+      \brief computes 2D harmonic coordinates at the vertices of the input domain.
     */
     void compute() {
 
@@ -319,11 +302,11 @@ namespace Barycentric_coordinates {
       std::vector<FT> lambda;
       lambda.reserve(n);
 
-      m_coordinates.clear();
-      m_coordinates.reserve(N);
+      m_harmonic.clear();
+      m_harmonic.reserve(N);
 
       for (std::size_t i = 0; i < N; ++i) {
-        m_coordinates.push_back(empty_vec);
+        m_harmonic.push_back(empty_vec);
 
         if (m_domain.is_on_boundary(i)) {
           const auto& query = m_domain.vertex(i);
@@ -403,9 +386,9 @@ namespace Barycentric_coordinates {
       for (std::size_t k = 0; k < n; ++k) {
         for (std::size_t i = 0; i < N; ++i) {
           if (m_domain.is_on_boundary(i))
-            m_coordinates[i][k] = boundary(indices[i], k);
+            m_harmonic[i][k] = boundary(indices[i], k);
           else
-            m_coordinates[i][k] = x(indices[i], k);
+            m_harmonic[i][k] = x(indices[i], k);
         }
       }
     }
@@ -416,19 +399,22 @@ namespace Barycentric_coordinates {
     /// @{
 
     /*!
-      clears all internal data structures.
+      \brief clears all internal data structures.
     */
     void clear() {
-      m_coordinates.clear();
       m_element.clear();
-      m_b.clear();
+      m_coordinates.clear();
+      m_harmonic.clear();
     }
 
     /*!
-      releases all memory that is used internally.
+      \brief releases all memory that is used internally.
     */
     void release_memory() {
+      clear();
+      m_element.shrink_to_fit();
       m_coordinates.shrink_to_fit();
+      m_harmonic.shrink_to_fit();
     }
 
     /// @}
@@ -439,11 +425,16 @@ namespace Barycentric_coordinates {
     const Domain& m_domain;
     const GeomTraits m_traits;
 
-    std::vector<Point_2> m_polygon;
-    std::vector< std::vector<FT> > m_coordinates;
-
-    std::vector<FT> m_b;
+    // Indices of the finite element.
     std::vector<std::size_t> m_element;
+
+    // Barycentric coordinates of the query point.
+    std::vector<FT> m_coordinates;
+
+    // Harmonic coordinates for all domain vertices.
+    std::vector< std::vector<FT> > m_harmonic;
+
+    std::vector<Point_2> m_polygon;
 
     // Function that solves the linear system.
     void solve_linear_system(

@@ -4,6 +4,7 @@
 
 A concept that describes the set of methods that should be defined for all
 discretized domains obtained by meshing the interior part of a simple polygon.
+
 After meshing, the interior part of the polygon is split into multiple finite
 elements, which share common edges and vertices. These finite elements are then
 used to approximate certain types of generalized barycentric coordinate functions.
@@ -43,7 +44,8 @@ public:
 
   /*!
     fills `neighbors` with the indices of the vertices, which from the one-ring
-    neighborhood of the vertex with the index `query_index`.
+    neighborhood of the vertex with the index `query_index`, the neighbors have to
+    be in the counterclockwise order and form a simple polygon.
   */
   void operator()(
     const std::size_t query_index,

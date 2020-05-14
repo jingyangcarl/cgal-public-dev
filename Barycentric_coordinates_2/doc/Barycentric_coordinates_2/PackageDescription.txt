@@ -72,4 +72,8 @@ from the Package \ref PkgInterpolation2.}
 - `CGAL::Barycentric_coordinates::triangle_coordinates_2()`
 - `CGAL::Barycentric_coordinates::wachspress_weights_2()`
 - `CGAL::Barycentric_coordinates::wachspress_coordinates_2()`
+- `CGAL::Barycentric_coordinates::discrete_harmonic_weights_2()`
+- `CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_2()`
+- `CGAL::Barycentric_coordinates::mean_value_weights_2()`
+- `CGAL::Barycentric_coordinates::mean_value_coordinates_2()`
 */
