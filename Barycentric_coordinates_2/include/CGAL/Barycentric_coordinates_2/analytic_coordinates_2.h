@@ -641,7 +641,7 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Wachspress_weights_2<GeomTraits> wachspress(
+    Wachspress_weights_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
     return wachspress(query, weights);
   }
@@ -762,7 +762,7 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Wachspress_weights_2<GeomTraits> wachspress(
+    Wachspress_weights_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
     return wachspress.coordinates(query, coordinates);
   }
@@ -883,7 +883,7 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Discrete_harmonic_weights_2<GeomTraits> discrete_harmonic(
+    Discrete_harmonic_weights_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
     return discrete_harmonic(query, weights);
   }
@@ -1004,7 +1004,7 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Discrete_harmonic_weights_2<GeomTraits> discrete_harmonic(
+    Discrete_harmonic_weights_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
     return discrete_harmonic.coordinates(query, coordinates);
   }
@@ -1124,7 +1124,7 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Mean_value_weights_2<GeomTraits> mean_value(
+    Mean_value_weights_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
     return mean_value(query, weights);
   }
@@ -1243,7 +1243,7 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Mean_value_weights_2<GeomTraits> mean_value(
+    Mean_value_weights_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
     return mean_value.coordinates(query, coordinates);
   }

@@ -51,12 +51,22 @@ namespace Barycentric_coordinates {
 
     Internally, the package \ref PkgMesh2 is used. See it for more details.
 
+    \tparam Polygon
+    is a model of `ConstRange`.
+
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
 
+    \tparam VertexMap
+    is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
     \cgalModels `DiscretizedDomain_2`
   */
-  template<typename GeomTraits>
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
   class Delaunay_domain_2 {
 
   public:
@@ -65,7 +75,9 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
+    using Polygon_ = Polygon;
     using GT = GeomTraits;
+    using Vertex_map = VertexMap;
 
     struct VI {
       bool is_on_boundary = false;
@@ -99,13 +111,6 @@ namespace Barycentric_coordinates {
     /*!
       \brief initializes all internal data structures.
 
-      \tparam Polygon
-      is a model of `ConstRange`.
-
-      \tparam VertexMap
-      is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
-      value type is `Point_2`. The default is `CGAL::Identity_property_map`.
-
       \param polygon
       An instance of `Polygon` with the vertices of a simple polygon.
 
@@ -119,9 +124,6 @@ namespace Barycentric_coordinates {
       \pre `polygon.size() >= 3`
       \pre `polygon is simple`
     */
-    template<
-    typename Polygon,
-    typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Delaunay_domain_2(
       const Polygon& polygon,
       const GeomTraits traits = GeomTraits(),
@@ -139,8 +141,11 @@ namespace Barycentric_coordinates {
     }
 
     /*!
-      \brief creates a refined Delaunay triangulation restricted
-      to the input polygon.
+      \brief creates a refined Delaunay triangulation restricted to the input polygon.
+
+      After the construction is completed, the first n vertices are the polygon vertices,
+      the next m vertices are the vertices generated along the polygon boundary,
+      the last k vertices are the vertices generated in the interior part of the polygon.
 
       \param shape_size
       A shape size bound. See `Delaunay_mesh_size_criteria_2` for more details.
@@ -149,7 +154,7 @@ namespace Barycentric_coordinates {
       Contains seed points indicating, which parts of the input polygon
       should be partitioned and subdivided.
     */
-    void initialize(
+    void create(
       const FT shape_size,
       const std::list<Point_2>& list_of_seeds) {
 

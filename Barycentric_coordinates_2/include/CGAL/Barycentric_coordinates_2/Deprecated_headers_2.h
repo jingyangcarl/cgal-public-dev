@@ -1,4 +1,4 @@
-// Copyright (c) 2014 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2019 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -20,22 +20,17 @@
 // Author(s)     : Dmitry Anisimov, David Bommes, Kai Hormann, Pierre Alliez
 //
 
-#ifndef CGAL_BARYCENTRIC_COORDINATES_2_H
-#define CGAL_BARYCENTRIC_COORDINATES_2_H
+#ifndef CGAL_BARYCENTRIC_DEPRECATED_HEADERS_2_H
+#define CGAL_BARYCENTRIC_DEPRECATED_HEADERS_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
-#include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
-#include <CGAL/Barycentric_coordinates_2/analytic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Wachspress_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Discrete_harmonic_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Segment_coordinates_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Triangle_coordinates_2_depr.h>
+#include <CGAL/Barycentric_coordinates_2/deprecated/Generalized_barycentric_coordinates_2_depr.h>
 
-#include <CGAL/Barycentric_coordinates_2/Wachspress_weights_2.h>
-#include <CGAL/Barycentric_coordinates_2/Mean_value_weights_2.h>
-#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_weights_2.h>
-
-#include <CGAL/Barycentric_coordinates_2/Delaunay_domain_2.h>
-#include <CGAL/Barycentric_coordinates_2/Harmonic_coordinates_2.h>
-
-// Deprecated headers.
-// #include <CGAL/Barycentric_coordinates_2/Deprecated_headers_2.h>
-
-#endif // CGAL_BARYCENTRIC_COORDINATES_2_H
+#endif // CGAL_BARYCENTRIC_DEPRECATED_HEADERS_2_H

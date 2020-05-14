@@ -49,12 +49,22 @@ namespace Barycentric_coordinates {
     convex polygon but they are not necesserily positive. The coordinates are
     computed analytically.
 
+    \tparam Polygon
+    is a model of `ConstRange`.
+
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
 
+    \tparam VertexMap
+    is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
     \cgalModels `AnalyticWeights_2`
   */
-  template<typename GeomTraits>
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
   class Discrete_harmonic_weights_2 {
 
   public:
@@ -63,7 +73,10 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
+    using Polygon_ = Polygon;
     using GT = GeomTraits;
+    using Vertex_map = VertexMap;
+
     using Area_2 = typename GeomTraits::Compute_area_2;
     using Squared_distance_2 = typename GeomTraits::Compute_squared_distance_2;
     /// \endcond
@@ -85,13 +98,6 @@ namespace Barycentric_coordinates {
       This class implements the behavior of discrete harmonic weights
       for 2D query points.
 
-      \tparam Polygon
-      is a model of `ConstRange`.
-
-      \tparam VertexMap
-      is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
-      value type is `Point_2`. The default is `CGAL::Identity_property_map`.
-
       \param polygon
       An instance of `Polygon` with the vertices of a strictly convex polygon.
 
@@ -110,9 +116,6 @@ namespace Barycentric_coordinates {
       \pre `polygon is simple`
       \pre `polygon is strictly convex`
     */
-    template<
-    typename Polygon,
-    typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Discrete_harmonic_weights_2(
       const Polygon& polygon,
       const Computation_policy policy

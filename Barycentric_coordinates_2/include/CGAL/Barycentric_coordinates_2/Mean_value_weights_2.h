@@ -54,12 +54,22 @@ namespace Barycentric_coordinates {
     non-negative in the kernel of a star-shaped polygon. The coordinates are
     computed analytically.
 
+    \tparam Polygon
+    is a model of `ConstRange`.
+
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
 
+    \tparam VertexMap
+    is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
     \cgalModels `AnalyticWeights_2`
   */
-  template<typename GeomTraits>
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
   class Mean_value_weights_2 {
 
   public:
@@ -68,7 +78,10 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
+    using Polygon_ = Polygon;
     using GT = GeomTraits;
+    using Vertex_map = VertexMap;
+
     using Vector_2 = typename GeomTraits::Vector_2;
     using Area_2 = typename GeomTraits::Compute_area_2;
     using Squared_length_2 = typename GeomTraits::Compute_squared_length_2;
@@ -94,13 +107,6 @@ namespace Barycentric_coordinates {
       This class implements the behavior of mean value weights
       for 2D query points.
 
-      \tparam Polygon
-      is a model of `ConstRange`.
-
-      \tparam VertexMap
-      is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
-      value type is `Point_2`. The default is `CGAL::Identity_property_map`.
-
       \param polygon
       An instance of `Polygon` with the vertices of a simple polygon.
 
@@ -118,9 +124,6 @@ namespace Barycentric_coordinates {
       \pre `polygon.size() >= 3`
       \pre `polygon is simple`
     */
-    template<
-    typename Polygon,
-    typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Mean_value_weights_2(
       const Polygon& polygon,
       const Computation_policy policy

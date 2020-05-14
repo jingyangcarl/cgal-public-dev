@@ -18,8 +18,8 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_WACHSPRESS_2_DEPR_H
-#define CGAL_WACHSPRESS_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_WACHSPRESS_2_DEPR_H
+#define CGAL_BARYCENTRIC_WACHSPRESS_2_DEPR_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
@@ -60,7 +60,7 @@ namespace Barycentric_coordinates_depr {
 
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
-\cgalModels `BarycentricCoordinates_2_depr`
+\cgalModels `BarycentricCoordinates_2`
 
 \pre The provided polygon is strictly convex.
 
@@ -429,4 +429,4 @@ private:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_WACHSPRESS_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_WACHSPRESS_2_DEPR_H

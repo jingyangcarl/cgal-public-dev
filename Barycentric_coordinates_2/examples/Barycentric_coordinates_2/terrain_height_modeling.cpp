@@ -10,8 +10,9 @@ using Projection = CGAL::Projection_traits_xy_3<Kernel>;
 using FT    = typename Projection::FT;
 using Point = typename Projection::Point_2;
 
-using Domain     = CGAL::Barycentric_coordinates::Delaunay_domain_2<Projection>;
-using Mean_value = CGAL::Barycentric_coordinates::Mean_value_weights_2<Projection>;
+using Polygon    = std::vector<Point>;
+using Domain     = CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, Projection>;
+using Mean_value = CGAL::Barycentric_coordinates::Mean_value_weights_2<Polygon, Projection>;
 
 using Vertex_function_value = std::map<Point, FT, typename Projection::Less_xy_2>;
 using Function_value_access = CGAL::Data_access<Vertex_function_value>;
@@ -47,7 +48,7 @@ int main() {
   list_of_seeds.push_back(Point(0.1, 0.1, 0.0));
 
   Domain domain(polygon);
-  domain.initialize(0.05, list_of_seeds);
+  domain.create(0.05, list_of_seeds);
 
   // Associate each polygon vertex with the corresponding function value.
   Vertex_function_value vertex_function_value;

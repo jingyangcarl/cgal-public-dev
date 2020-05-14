@@ -56,13 +56,13 @@ from the Package \ref PkgInterpolation2.}
 - `DiscretizedDomain_2`
 
 ## Generalized Weights ##
-- `CGAL::Barycentric_coordinates::Wachspress_weights_2<GeomTraits>`
-- `CGAL::Barycentric_coordinates::Mean_value_weights_2<GeomTraits>`
-- `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<GeomTraits>`
+- `CGAL::Barycentric_coordinates::Wachspress_weights_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Barycentric_coordinates::Mean_value_weights_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Polygon, GeomTraits, VertexMap>`
 
 ## Harmonic Coordinates ##
-- `CGAL::Barycentric_coordinates::Delaunay_domain_2<GeomTraits>`
-- `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Domain, GeomTraits>`
+- `CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, GeomTraits, VertexMap>`
 
 ## Enumerations ##
 - `CGAL::Barycentric_coordinates::Computation_policy`

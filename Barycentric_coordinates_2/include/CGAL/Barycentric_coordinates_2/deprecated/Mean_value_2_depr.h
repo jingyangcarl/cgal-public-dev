@@ -18,8 +18,8 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_MEAN_VALUE_2_DEPR_H
-#define CGAL_MEAN_VALUE_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPR_H
+#define CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPR_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
@@ -112,7 +112,7 @@ public:
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
-\cgalModels `BarycentricCoordinates_2_depr`
+\cgalModels `BarycentricCoordinates_2`
 
 */
 template<class Traits>
@@ -514,4 +514,4 @@ private:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_MEAN_VALUE_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_MEAN_VALUE_2_DEPR_H

@@ -2,8 +2,8 @@
 \ingroup PkgBarycentricCoordinates2RefConcepts
 \cgalConcept
 
-Requirements of the template parameter `Coordinate_2` for the class
-`CGAL::Barycentric_coordinates_depr::Generalized_barycentric_coordinates_2`.
+A concept that describes the set of methods that should be defined for all coordinate
+models used to parameterize the class `CGAL::Barycentric_coordinates_depr::Generalized_barycentric_coordinates_2`.
 
 \cgalHasModel `CGAL::Barycentric_coordinates_depr::Wachspress_2`
 \cgalHasModel `CGAL::Barycentric_coordinates_depr::Mean_value_2`
@@ -11,7 +11,7 @@ Requirements of the template parameter `Coordinate_2` for the class
 
 \deprecated This part of the package is deprecated since the version 5.1 of \cgal.
 */
-class BarycentricCoordinates_2_depr {
+class BarycentricCoordinates_2 {
 
 public:
 
@@ -24,7 +24,7 @@ public:
 		range of vertices of the type `Traits::Point_2` stored in a container of the
 		type <a href="http://en.cppreference.com/w/cpp/container/vector">`std::vector`</a>.
 	*/
-	BarycentricCoordinates_2_depr(
+	BarycentricCoordinates_2(
 		const std::vector<Traits::Point_2> &vertices,
 		const Traits &barycentric_traits) {
 
@@ -80,4 +80,4 @@ public:
 
 /// @}
 
-}; /* end BarycentricCoordinates_2_depr */
+}; /* end BarycentricCoordinates_2 */

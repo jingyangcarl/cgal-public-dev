@@ -65,6 +65,9 @@ namespace Barycentric_coordinates {
     contains a query point and linearly interpolating within this element. That is why
     this class is also a model of the concept `AnalyticWeights_2`.
 
+    \tparam Polygon
+    is a model of `ConstRange`.
+
     \tparam Domain
     is a model of `DiscretizedDomain_2`. For the moment, we only support domains
     whose partition's finite elements are triangles.
@@ -72,11 +75,17 @@ namespace Barycentric_coordinates {
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
 
+    \tparam VertexMap
+    is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
     \cgalModels `AnalyticWeights_2`
   */
   template<
+  typename Polygon,
   typename Domain,
-  typename GeomTraits>
+  typename GeomTraits,
+  typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
   class Harmonic_coordinates_2 {
 
   public:
@@ -85,8 +94,10 @@ namespace Barycentric_coordinates {
     /// @{
 
     /// \cond SKIP_IN_MANUAL
-    using D  = Domain;
+    using Polygon_ = Polygon;
+    using Domain_ = Domain;
     using GT = GeomTraits;
+    using Vertex_map = VertexMap;
     /// \endcond
 
     /// Number type.
@@ -98,8 +109,8 @@ namespace Barycentric_coordinates {
     /// \cond SKIP_IN_MANUAL
     using Vector_2 = typename GeomTraits::Vector_2;
 
-    using MatrixFT  = Eigen::SparseMatrix<FT>;
     using VectorFT  = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
+    using MatrixFT  = Eigen::SparseMatrix<FT>;
     using TripletFT = Eigen::Triplet<FT>;
     using Solver    = Eigen::SimplicialLDLT<MatrixFT>;
     /// \endcond
@@ -114,13 +125,6 @@ namespace Barycentric_coordinates {
 
       This class implements the behavior of harmonic coordinates
       for 2D query points.
-
-      \tparam Polygon
-      is a model of `ConstRange`.
-
-      \tparam VertexMap
-      is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
-      value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
       \param domain
       An instance of `Domain` with a partition of the interior part of a simple polygon.
@@ -138,12 +142,9 @@ namespace Barycentric_coordinates {
       \pre `polygon.size() >= 3`
       \pre `polygon is simple`
     */
-    template<
-    typename Polygon,
-    typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
     Harmonic_coordinates_2(
-      const Domain& domain,
       const Polygon& polygon,
+      const Domain& domain,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
     m_domain(domain),

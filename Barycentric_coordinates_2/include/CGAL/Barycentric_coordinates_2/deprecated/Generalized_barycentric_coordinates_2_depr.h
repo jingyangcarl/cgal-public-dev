@@ -18,8 +18,8 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_DEPR_H
-#define CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPR_H
+#define CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPR_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
@@ -55,7 +55,7 @@ namespace Barycentric_coordinates_depr {
 
  * \deprecated This part of the package is deprecated since the version 5.1 of \cgal.
 
-\tparam Coordinate_2 must be a model of the concept `BarycentricCoordinates_2_depr`.
+\tparam Coordinate_2 must be a model of the concept `BarycentricCoordinates_2`.
 
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
@@ -601,4 +601,4 @@ private:
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_GENERALIZED_BARYCENTRIC_COORDINATES_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_GENERALIZED_COORDINATES_2_DEPR_H

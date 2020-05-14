@@ -17,7 +17,8 @@ struct Info {
 using Vertex_with_info = std::pair<Point_2, Info>;
 using Vertex_map = CGAL::First_of_pair_property_map<Vertex_with_info>;
 
-using Discrete_harmonic = CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Kernel>;
+using Polygon = std::vector<Vertex_with_info>;
+using Discrete_harmonic = CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Polygon, Kernel, Vertex_map>;
 using Policy = CGAL::Barycentric_coordinates::Computation_policy;
 
 int main() {
@@ -26,7 +27,7 @@ int main() {
   Vertex_map vertex_map;
 
   // Construct a unit square.
-  const std::list<Vertex_with_info> square = {
+  const std::vector<Vertex_with_info> square = {
     std::make_pair(Point_2(0, 0), Info("1")), std::make_pair(Point_2(1, 0), Info("2")),
     std::make_pair(Point_2(1, 1), Info("3")), std::make_pair(Point_2(0, 1), Info("4"))
   };

@@ -18,8 +18,8 @@
 //
 // Author(s) : Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez.
 
-#ifndef CGAL_TRIANGLE_COORDINATES_2_DEPR_H
-#define CGAL_TRIANGLE_COORDINATES_2_DEPR_H
+#ifndef CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPR_H
+#define CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPR_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
@@ -267,4 +267,4 @@ template<class Traits>
 
 #include <CGAL/enable_warnings.h>
 
-#endif // CGAL_TRIANGLE_COORDINATES_2_DEPR_H
+#endif // CGAL_BARYCENTRIC_TRIANGLE_COORDINATES_2_DEPR_H

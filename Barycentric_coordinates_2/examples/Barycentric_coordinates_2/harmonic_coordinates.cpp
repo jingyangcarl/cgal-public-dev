@@ -6,8 +6,9 @@
 using Kernel  = CGAL::Simple_cartesian<double>;
 using Point_2 = Kernel::Point_2;
 
-using Domain   = CGAL::Barycentric_coordinates::Delaunay_domain_2<Kernel>;
-using Harmonic = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Domain, Kernel>;
+using Polygon  = std::vector<Point_2>;
+using Domain   = CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, Kernel>;
+using Harmonic = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, Kernel>;
 
 int main() {
 
@@ -37,24 +38,11 @@ int main() {
   list_of_seeds.push_back(Point_2(0.1, 0.1));
 
   Domain domain(polygon);
-  domain.initialize(0.01, list_of_seeds);
+  domain.create(0.01, list_of_seeds);
 
   // Compute harmonic coordinates at the vertices of the domain.
-  Harmonic harmonic(domain, polygon);
+  Harmonic harmonic(polygon, domain);
   harmonic.compute();
-
-  // remove below!
-  // domain.export_triangulation("/Users/monet/Documents/gsoc/gbc/logs/domain");
-  // std::vector<double> b;
-  // std::vector<typename Kernel::Point_3> points;
-  // for (std::size_t k = 0; k < domain.number_of_vertices(); ++k) {
-  //   b.clear();
-  //   const auto& p = domain.vertex(k);
-  //   harmonic.coordinates(k, std::back_inserter(b));
-  //   points.push_back(typename Kernel::Point_3(p.x(), p.y(), b[0]));
-  // }
-  // domain.export_points_3(points, "/Users/monet/Documents/gsoc/gbc/logs/hm0");
-  // remove above!
 
   // Use it to store coordinates.
   std::vector<double> coordinates;
