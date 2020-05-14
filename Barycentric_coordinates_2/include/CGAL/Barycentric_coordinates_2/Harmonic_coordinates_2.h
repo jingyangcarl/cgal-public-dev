@@ -38,6 +38,11 @@
 // Harmonic coordinates for character articulation.
 // ACM Transactions on Graphics, 26(3):71:1-9, 2007.".
 
+// Todo:
+// * check the function get_edge_index_exact()
+// * try to use the class with DH coordinates instead of cotangent weights
+// * try to avoid using lambda, alpha_cot, and beta_cot temporary containers
+
 namespace CGAL {
 namespace Barycentric_coordinates {
 
@@ -96,6 +101,7 @@ namespace Barycentric_coordinates {
     using MatrixFT  = Eigen::SparseMatrix<FT>;
     using VectorFT  = Eigen::Matrix<FT, Eigen::Dynamic, Eigen::Dynamic>;
     using TripletFT = Eigen::Triplet<FT>;
+    using Solver    = Eigen::SimplicialLDLT<MatrixFT>;
     /// \endcond
 
     /// @}
@@ -191,8 +197,7 @@ namespace Barycentric_coordinates {
 
       m_element.clear();
       m_domain.locate(query, m_element);
-      const bool is_in_domain = ( m_element.size() != 0 );
-      if (!is_in_domain || m_element.size() > 3) {
+      if (m_element.size() != 3) {
         internal::get_default(n, coordinates);
         return coordinates;
       }
@@ -214,16 +219,28 @@ namespace Barycentric_coordinates {
         p0, p1, p2, query, std::back_inserter(m_coordinates), m_traits);
       CGAL_assertion(m_coordinates.size() == 3);
 
-      CGAL_assertion(
-        m_harmonic.size() == m_domain.number_of_vertices());
-      const auto& hm0 = m_harmonic.at(i0);
-      const auto& hm1 = m_harmonic.at(i1);
-      const auto& hm2 = m_harmonic.at(i2);
-
       const auto& b = m_coordinates;
-      std::vector<FT> result(n, FT(0));
-      for (std::size_t k = 0; k < n; ++k)
-        *(coordinates++) = hm0[k] * b[0] + hm1[k] * b[1] + hm2[k] * b[2];
+      CGAL_assertion(b[0] >= FT(0) && b[0] <= FT(1));
+      CGAL_assertion(b[1] >= FT(0) && b[1] <= FT(1));
+      CGAL_assertion(b[2] >= FT(0) && b[2] <= FT(1));
+
+      CGAL_assertion(m_boundary.rows() > 0);
+      CGAL_assertion(m_interior.rows() > 0);
+
+      FT hm0 = FT(0), hm1 = FT(0), hm2 = FT(0);
+      for (std::size_t k = 0; k < n; ++k) {
+        if (m_domain.is_on_boundary(i0)) hm0 = m_boundary(m_indices[i0], k);
+        else hm0 = m_interior(m_indices[i0], k);
+        if (m_domain.is_on_boundary(i1)) hm1 = m_boundary(m_indices[i1], k);
+        else hm1 = m_interior(m_indices[i1], k);
+        if (m_domain.is_on_boundary(i2)) hm2 = m_boundary(m_indices[i2], k);
+        else hm2 = m_interior(m_indices[i2], k);
+
+        CGAL_assertion(hm0 >= FT(0) && hm0 <= FT(1));
+        CGAL_assertion(hm1 >= FT(0) && hm1 <= FT(1));
+        CGAL_assertion(hm2 >= FT(0) && hm2 <= FT(1));
+        *(coordinates++) = hm0 * b[0] + hm1 * b[1] + hm2 * b[2];
+      }
       return coordinates;
     }
 
@@ -255,12 +272,18 @@ namespace Barycentric_coordinates {
 
       CGAL_precondition(
         query_index >= 0 && query_index < m_domain.number_of_vertices());
-      CGAL_assertion(
-        m_harmonic.size() == m_domain.number_of_vertices());
+      CGAL_assertion(m_boundary.rows() > 0);
+      CGAL_assertion(m_interior.rows() > 0);
 
-      const auto& hms = m_harmonic[query_index];
-      for (const FT hm : hms)
-        *(coordinates++) = hm;
+      // Save harmonic coordinates.
+      const std::size_t n = m_polygon.size();
+      if (m_domain.is_on_boundary(query_index)) {
+        for (std::size_t k = 0; k < n; ++k)
+          *(coordinates++) = m_boundary(m_indices[query_index], k);
+      } else {
+        for (std::size_t k = 0; k < n; ++k)
+          *(coordinates++) = m_interior(m_indices[query_index], k);
+      }
       return coordinates;
     }
 
@@ -277,120 +300,25 @@ namespace Barycentric_coordinates {
       const std::size_t n = m_polygon.size();
       const std::size_t N = m_domain.number_of_vertices();
 
-      std::vector<std::size_t> indices;
-      indices.reserve(N);
+      // Create an index map. It splits interior and boundary vertices.
+      const auto pair = create_indices(m_indices);
 
-      std::size_t numB = 0, numI = 0;
-      for (std::size_t i = 0; i < N; ++i) {
-        if (m_domain.is_on_boundary(i)) {
-          indices.push_back(numB); ++numB;
-        } else {
-          indices.push_back(numI); ++numI;
-        }
-      }
+      // Initialize all containers.
+      const std::size_t numB = pair.first;
+      m_boundary = VectorFT(numB, n); // boundary
 
-      VectorFT boundary(numB, n);
-      MatrixFT A(numI, numI);
-      VectorFT x = VectorFT::Zero(numI, n);
-      VectorFT b = VectorFT::Zero(numI, n);
+      const std::size_t numI = pair.second;
+      m_interior = VectorFT::Zero(numI, n); // interior
 
-      std::vector<FT> empty_vec;
-      empty_vec.reserve(n);
-      internal::get_default(
-        n, std::back_inserter(empty_vec));
+      MatrixFT A(numI, numI); // a sparse matrix
+      VectorFT b = VectorFT::Zero(numI, n); // the right side
 
-      std::vector<FT> lambda;
-      lambda.reserve(n);
-
-      m_harmonic.clear();
-      m_harmonic.reserve(N);
-
-      for (std::size_t i = 0; i < N; ++i) {
-        m_harmonic.push_back(empty_vec);
-
-        if (m_domain.is_on_boundary(i)) {
-          const auto& query = m_domain.vertex(i);
-          const auto edge_found = internal::get_edge_index_harmonic(
-            m_polygon, query, m_traits);
-          assert(edge_found);
-
-          const auto location = (*edge_found).first;
-          const auto index = (*edge_found).second;
-
-          lambda.clear();
-          internal::boundary_coordinates_2(
-            m_polygon, query, location, index,
-            std::back_inserter(lambda), m_traits);
-
-          for (std::size_t k = 0; k < n; ++k)
-            boundary(indices[i], k) = lambda[k];
-        }
-      }
-
-      std::vector<TripletFT> triplet_list;
-      triplet_list.reserve(numI * 7);
-
-      std::vector<std::size_t> neighbors;
-      std::vector<FT> alpha_cot, beta_cot;
-
-      for (std::size_t i = 0; i < N; ++i) {
-        if (!m_domain.is_on_boundary(i)) {
-          const auto& query = m_domain.vertex(i);
-
-          neighbors.clear();
-          m_domain(i, neighbors);
-          const std::size_t nn = neighbors.size();
-
-          alpha_cot.clear(); beta_cot.clear();
-          for (std::size_t j = 0; j < nn; ++j) {
-            const std::size_t jp = (j + 1) % nn;
-
-            const auto& p1 = m_domain.vertex(neighbors[j]);
-            const auto& p2 = m_domain.vertex(neighbors[jp]);
-
-            Vector_2 s1 = query - p1;
-            Vector_2 s2 = p2 - p1;
-            alpha_cot.push_back(internal::cotangent_2(s2, s1, m_traits));
-
-            s1 = p1 - p2;
-            s2 = query - p2;
-            beta_cot.push_back(internal::cotangent_2(s2, s1, m_traits));
-          }
-
-          FT W = FT(0);
-          for (std::size_t j = 0; j < nn; ++j) {
-            const std::size_t jp  = (j + 1) % nn;
-            const std::size_t idx = neighbors[jp];
-
-            const FT w = -( alpha_cot[j] + beta_cot[jp] );
-            W -= w;
-
-            if (m_domain.is_on_boundary(idx)) {
-              for (std::size_t k = 0; k < n; ++k)
-                b(indices[i], k) -= boundary(indices[idx], k) * w;
-            } else {
-              triplet_list.push_back(
-                TripletFT(indices[i], indices[idx], w));
-            }
-          }
-          triplet_list.push_back(
-            TripletFT(indices[i], indices[i], W));
-        }
-      }
-
-      A.setFromTriplets(
-        triplet_list.begin(), triplet_list.end());
-      A.makeCompressed();
-      solve_linear_system(A, b, x);
-
-      for (std::size_t k = 0; k < n; ++k) {
-        for (std::size_t i = 0; i < N; ++i) {
-          if (m_domain.is_on_boundary(i))
-            m_harmonic[i][k] = boundary(indices[i], k);
-          else
-            m_harmonic[i][k] = x(indices[i], k);
-        }
-      }
+      // Compute harmonic coordinates.
+      set_boundary_vector(
+        numB, m_indices, m_boundary);
+      set_harmonic_data(
+        numI, m_indices, m_boundary, A, b);
+      solve_linear_system(A, b, m_interior);
     }
 
     /// @}
@@ -402,9 +330,11 @@ namespace Barycentric_coordinates {
       \brief clears all internal data structures.
     */
     void clear() {
+      m_indices.clear();
       m_element.clear();
       m_coordinates.clear();
-      m_harmonic.clear();
+      m_interior.clear();
+      m_boundary.clear();
     }
 
     /*!
@@ -412,9 +342,9 @@ namespace Barycentric_coordinates {
     */
     void release_memory() {
       clear();
+      m_indices.shrink_to_fit();
       m_element.shrink_to_fit();
       m_coordinates.shrink_to_fit();
-      m_harmonic.shrink_to_fit();
     }
 
     /// @}
@@ -431,17 +361,157 @@ namespace Barycentric_coordinates {
     // Barycentric coordinates of the query point.
     std::vector<FT> m_coordinates;
 
-    // Harmonic coordinates for all domain vertices.
-    std::vector< std::vector<FT> > m_harmonic;
+    // Harmonic coordinates are stored separately
+    // for interior and boundary vertices.
+    VectorFT m_interior, m_boundary;
+
+    // Splits boundary and interior vertices.
+    std::vector<std::size_t> m_indices;
 
     std::vector<Point_2> m_polygon;
 
-    // Function that solves the linear system.
+    std::pair<std::size_t, std::size_t> create_indices(
+      std::vector<std::size_t>& indices) const {
+
+      const std::size_t N = m_domain.number_of_vertices();
+
+      // Create an index map.
+      indices.clear();
+      indices.reserve(N);
+      std::size_t numB = 0, numI = 0;
+      for (std::size_t i = 0; i < N; ++i) {
+        if (m_domain.is_on_boundary(i)) {
+          indices.push_back(numB); ++numB;
+        } else {
+          indices.push_back(numI); ++numI;
+        }
+      }
+
+      CGAL_assertion(indices.size() == N);
+      return std::make_pair(numB, numI);
+    }
+
+    void set_boundary_vector(
+      const std::size_t numB,
+      const std::vector<std::size_t>& indices,
+      VectorFT& boundary) const {
+
+      const std::size_t n = m_polygon.size();
+      const std::size_t N = m_domain.number_of_vertices();
+
+      // Initialize temporary containers.
+      // Can I remove this lambda?
+      std::vector<FT> lambda;
+      lambda.reserve(n);
+
+      // Traverse boundary vertices of the domain.
+      for (std::size_t i = 0; i < N; ++i) {
+        if (m_domain.is_on_boundary(i)) {
+          const auto& query = m_domain.vertex(i);
+
+          // Find index of the polygon edge that contains the boundary vertex.
+          const auto edge_is_found =
+            internal::get_edge_index_approximate(m_polygon, query, m_traits);
+          CGAL_assertion(static_cast<bool>(edge_is_found));
+          const auto location = (*edge_is_found).first;
+          const auto index = (*edge_is_found).second;
+
+          // Compute barycentric boundary coordinates.
+          lambda.clear();
+          internal::boundary_coordinates_2(
+            m_polygon, query, location, index,
+            std::back_inserter(lambda), m_traits);
+
+          // Set boundary vector.
+          for (std::size_t k = 0; k < n; ++k)
+            boundary(indices[i], k) = lambda[k];
+        }
+      }
+    }
+
+    // Can I use here the class for discrete harmonic coordinates?
+    void set_harmonic_data(
+      const std::size_t numI,
+      const std::vector<std::size_t>& indices,
+      const VectorFT& boundary,
+      MatrixFT& A,
+      VectorFT& b) const {
+
+      const std::size_t n = m_polygon.size();
+      const std::size_t N = m_domain.number_of_vertices();
+
+      // Initialize temporary containers.
+      // 7 is an average number of neighbors.
+      std::vector<TripletFT> triplet_list;
+      triplet_list.reserve(numI * 7);
+
+      std::vector<std::size_t> neighbors;
+      neighbors.reserve(7);
+
+      std::vector<FT> alpha_cot, beta_cot;
+      alpha_cot.reserve(7);
+      beta_cot.reserve(7);
+
+      // Traverse interior vertices of the domain.
+      for (std::size_t i = 0; i < N; ++i) {
+        if (!m_domain.is_on_boundary(i)) {
+          const auto& query = m_domain.vertex(i);
+
+          // Find one-ring neighborhood of the interior vertex.
+          neighbors.clear();
+          m_domain(i, neighbors);
+          const std::size_t nn = neighbors.size(); // nn is about 7
+          CGAL_assertion(nn > 0);
+
+          // Compute discrete harmonic weights.
+          alpha_cot.clear(); beta_cot.clear();
+          for (std::size_t j = 0; j < nn; ++j) {
+            const std::size_t jp = (j + 1) % nn;
+
+            const auto& p1 = m_domain.vertex(neighbors[j]);
+            const auto& p2 = m_domain.vertex(neighbors[jp]);
+
+            Vector_2 s1 = query - p1;
+            Vector_2 s2 = p2 - p1;
+            alpha_cot.push_back(internal::cotangent_2(s2, s1, m_traits));
+
+            s1 = p1 - p2;
+            s2 = query - p2;
+            beta_cot.push_back(internal::cotangent_2(s2, s1, m_traits));
+          }
+
+          // Set the right side vector b of the system
+          // and fill in a triplet list.
+          FT W = FT(0);
+          for (std::size_t j = 0; j < nn; ++j) {
+            const std::size_t jp  = (j + 1) % nn;
+            const std::size_t idx = neighbors[jp];
+
+            const FT w = -(alpha_cot[j] + beta_cot[jp]);
+            W -= w;
+
+            if (m_domain.is_on_boundary(idx)) {
+              for (std::size_t k = 0; k < n; ++k)
+                b(indices[i], k) -= boundary(indices[idx], k) * w;
+            } else {
+              triplet_list.push_back(
+                TripletFT(indices[i], indices[idx], w));
+            }
+          }
+          triplet_list.push_back(
+            TripletFT(indices[i], indices[i], W));
+        }
+      }
+
+      // Set the sparse matrix A. The left side of the system.
+      A.setFromTriplets(
+        triplet_list.begin(), triplet_list.end());
+      A.makeCompressed();
+    }
+
     void solve_linear_system(
       const MatrixFT& A, const VectorFT& b, VectorFT& x) const {
 
-      using Solver = Eigen::SimplicialLDLT<
-      Eigen::SparseMatrix<typename GeomTraits::FT> >;
       Solver solver;
       solver.compute(A);
       x = solver.solve(b);

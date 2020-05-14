@@ -226,44 +226,47 @@ namespace internal {
 
   template<typename GeomTraits>
   boost::optional< std::pair<Query_point_location, std::size_t> >
-  get_edge_index_harmonic(
+  get_edge_index_approximate(
     const std::vector<typename GeomTraits::Point_2>& polygon,
     const typename GeomTraits::Point_2& query,
     const GeomTraits traits) {
 
     using FT = typename GeomTraits::FT;
     using Vector_2 = typename GeomTraits::Vector_2;
-    using Segment_2 = typename GeomTraits::Segment_2;
+
+    const auto cross_product_2 = traits.compute_determinant_2_object();
+    const auto scalar_product_2 = traits.compute_scalar_product_2_object();
+    const auto squared_distance_2 = traits.compute_squared_distance_2_object();
 
     CGAL_precondition(polygon.size() >= 3);
     const std::size_t n = polygon.size();
 
-    const FT tol = FT(1) / FT(100000);
-    for (std::size_t i = 0; i < n; ++i) {
-      const Segment_2 segment = Segment_2(query, polygon[i]);
-      const FT r = segment.squared_length();
-      if (CGAL::abs(r) < tol)
-        return std::make_pair(Query_point_location::ON_VERTEX, i);
-    }
+    const FT half = FT(1) / FT(2);
+    const FT tolerance = FT(1) / FT(100000);
 
     for (std::size_t i = 0; i < n; ++i) {
+      const FT r = squared_distance_2(query, polygon[i]);
+      if (r < tolerance)
+        return std::make_pair(Query_point_location::ON_VERTEX, i);
+
       const std::size_t ip = (i + 1) % n;
 
       const Vector_2 s1 = Vector_2(query, polygon[i]);
       const Vector_2 s2 = Vector_2(query, polygon[ip]);
 
-      const FT A = CGAL::determinant(s1, s2) / FT(2);
-      const FT D = CGAL::scalar_product(s1, s2);
+      const FT A = half * cross_product_2(s1, s2);
+      const FT D = scalar_product_2(s1, s2);
 
-      if (CGAL::abs(A) < tol && D < FT(0))
+      if (CGAL::abs(A) < tolerance && D < FT(0))
         return std::make_pair(Query_point_location::ON_EDGE, i);
     }
     return boost::none;
   }
 
+  // Why this one does not work for harmonic coordinates?
   template<typename GeomTraits>
   boost::optional< std::pair<Query_point_location, std::size_t> >
-  get_edge_index(
+  get_edge_index_exact(
     const std::vector<typename GeomTraits::Point_2>& polygon,
     const typename GeomTraits::Point_2& query,
     const GeomTraits traits) {
@@ -306,7 +309,7 @@ namespace internal {
       case CGAL::ON_UNBOUNDED_SIDE:
         return std::make_pair(Query_point_location::ON_UNBOUNDED_SIDE, std::size_t(-1));
       case CGAL::ON_BOUNDARY:
-        return get_edge_index(polygon, query, traits);
+        return get_edge_index_exact(polygon, query, traits);
       default:
         return std::make_pair(Query_point_location::UNSPECIFIED, std::size_t(-1));
     }

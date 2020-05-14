@@ -318,7 +318,7 @@ namespace Barycentric_coordinates {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
-    void export_points(
+    void export_points_2(
       const std::vector<Point_2>& points,
       const std::string file_path) const {
 
@@ -329,6 +329,21 @@ namespace Barycentric_coordinates {
 
       for (const auto& point : points)
         out << point << " 0 0 0 0" << std::endl;
+      save(out, file_path + ".ply");
+    }
+
+    template<typename Point_3>
+    void export_points_3(
+      const std::vector<Point_3>& points,
+      const std::string file_path) const {
+
+      std::stringstream out;
+      out.precision(20);
+      const std::size_t num_vertices = points.size();
+      add_ply_header_points(num_vertices, out);
+
+      for (const auto& point : points)
+        out << point << " 0 0 0" << std::endl;
       save(out, file_path + ".ply");
     }
 

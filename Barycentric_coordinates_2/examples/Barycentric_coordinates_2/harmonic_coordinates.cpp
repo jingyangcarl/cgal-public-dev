@@ -43,16 +43,31 @@ int main() {
   Harmonic harmonic(domain, polygon);
   harmonic.compute();
 
+  // remove below!
+  // domain.export_triangulation("/Users/monet/Documents/gsoc/gbc/logs/domain");
+  // std::vector<double> b;
+  // std::vector<typename Kernel::Point_3> points;
+  // for (std::size_t k = 0; k < domain.number_of_vertices(); ++k) {
+  //   b.clear();
+  //   const auto& p = domain.vertex(k);
+  //   harmonic.coordinates(k, std::back_inserter(b));
+  //   points.push_back(typename Kernel::Point_3(p.x(), p.y(), b[0]));
+  // }
+  // domain.export_points_3(points, "/Users/monet/Documents/gsoc/gbc/logs/hm0");
+  // remove above!
+
   // Use it to store coordinates.
   std::vector<double> coordinates;
   coordinates.reserve(polygon.size());
 
   // Compute harmonic coordinates.
+  // We output only the first 20 results.
+  std::cout.precision(1);
   std::cout << std::endl <<
     "harmonic coordinates (computed): "
   << std::endl << std::endl;
 
-  for (std::size_t k = 0; k < domain.number_of_vertices(); ++k) {
+  for (std::size_t k = 0; k < 20; ++k) {
     coordinates.clear();
     harmonic.coordinates(k, std::back_inserter(coordinates));
     for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
@@ -61,17 +76,17 @@ int main() {
   }
 
   // Evaluate harmonic coordinates at the barycenters of the domain triangles.
+  // We output only the first 20 results.
   std::cout << std::endl <<
-    "harmonic coordinates (evaluated) at: "
+    "harmonic coordinates (evaluated): "
   << std::endl << std::endl;
 
   std::vector<Point_2> barycenters;
   domain.barycenters(barycenters);
-  for (const auto& barycenter : barycenters) {
-    coordinates.clear();
-    harmonic(barycenter, std::back_inserter(coordinates));
 
-    std::cout << "(" << barycenter << "): ";
+  for (std::size_t k = 0; k < 20; ++k) {
+    coordinates.clear();
+    harmonic(barycenters[k], std::back_inserter(coordinates));
     for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
       std::cout << coordinates[i] << ", ";
     std::cout << coordinates[coordinates.size() - 1] << std::endl;

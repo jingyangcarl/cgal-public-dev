@@ -60,9 +60,15 @@ typedef unspecified_type Compute_squared_length_2;
 
 /*!
   A model of this concept must provide an FT operator(const Vector_2& p, const Vector_2& q)
-  that returns the scalar product between the vectors p and q.
+  that returns the scalar product of the vectors p and q.
 */
 typedef unspecified_type Compute_scalar_product_2;
+
+/*!
+  A model of this concept must provide an FT operator(const Vector_2& p, const Vector_2& q)
+  that returns the determinant of the vectors p and q.
+*/
+typedef unspecified_type Compute_determinant_2;
 
 /// @}
 
