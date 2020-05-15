@@ -10,9 +10,9 @@ using Projection = CGAL::Projection_traits_xy_3<Kernel>;
 using FT    = typename Projection::FT;
 using Point = typename Projection::Point_2;
 
-using Polygon    = std::vector<Point>;
-using Domain     = CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, Projection>;
-using Mean_value = CGAL::Barycentric_coordinates::Mean_value_weights_2<Polygon, Projection>;
+using Polygon = std::vector<Point>;
+using Domain  = CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, Projection>;
+using MVC     = CGAL::Barycentric_coordinates::Mean_value_weights_2<Polygon, Projection>;
 
 using Vertex_function_value = std::map<Point, FT, typename Projection::Less_xy_2>;
 using Function_value_access = CGAL::Data_access<Vertex_function_value>;
@@ -40,7 +40,7 @@ int main() {
     Point(0.24, 0.17, 0.78), Point(0.23, 0.19, 0.80), Point(0.24, 0.22, 0.82),
     Point(0.24, 0.25, 0.84), Point(0.21, 0.26, 0.86), Point(0.17, 0.26, 0.88),
     Point(0.12, 0.24, 0.90), Point(0.07, 0.20, 0.92), Point(0.03, 0.15, 0.94),
-    Point(0.01, 0.10, 0.96), Point(0.02, 0.07, 0.98)
+    Point(0.01, 0.10, 0.97), Point(0.02, 0.07, 1.00)
   };
 
   // Instantiate a Delaunay domain.
@@ -57,7 +57,7 @@ int main() {
       std::make_pair(vertex, vertex.z()));
 
   // Instantiate the class with the mean value weights.
-  Mean_value mean_value(polygon);
+  MVC mean_value(polygon);
 
   // Compute mean value coordinates and use them to interpolate data
   // from the polygon boundary to its interior.

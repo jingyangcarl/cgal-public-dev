@@ -6,9 +6,9 @@
 using Kernel  = CGAL::Simple_cartesian<double>;
 using Point_2 = Kernel::Point_2;
 
-using Polygon  = std::vector<Point_2>;
-using Domain   = CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, Kernel>;
-using Harmonic = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, Kernel>;
+using Polygon = std::vector<Point_2>;
+using Domain  = CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, Kernel>;
+using HMC     = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, Kernel>;
 
 int main() {
 
@@ -41,7 +41,7 @@ int main() {
   domain.create(0.01, list_of_seeds);
 
   // Compute harmonic coordinates at the vertices of the domain.
-  Harmonic harmonic(polygon, domain);
+  HMC harmonic(polygon, domain);
   harmonic.compute();
 
   // Use it to store coordinates.

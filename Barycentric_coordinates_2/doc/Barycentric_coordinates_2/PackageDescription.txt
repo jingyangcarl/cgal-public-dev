@@ -34,10 +34,9 @@ Deprecated classes and functions.
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov, David Bommes, Kai Hormann, and Pierre Alliez}
 \cgalPkgDesc{This package offers an efficient and
-robust implementation of two-dimensional generalized barycentric coordinates defined
-for simple two-dimensional polygons. If coordinates with respect to multivariate
-scattered points instead of a polygon are required, please refer to natural neighbor coordinates
-from the Package \ref PkgInterpolation2.}
+robust implementation of 2D generalized barycentric coordinates defined for simple 2D
+polygons. If coordinates with respect to multivariate scattered points instead of a polygon
+are required, please refer to natural neighbor coordinates from the Package \ref PkgInterpolation2.}
 \cgalPkgManuals{Chapter_2D_Generalized_Barycentric_Coordinates, PkgBarycentricCoordinates2Ref}
 \cgalPkgSummaryEnd
 

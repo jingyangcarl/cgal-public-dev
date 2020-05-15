@@ -261,7 +261,14 @@ namespace Barycentric_coordinates {
       switch (m_computation_policy) {
 
         case Computation_policy::PRECISE_COMPUTATION: {
-          return max_precision_weights(normalize, query, weights);
+          if (normalize) {
+            return max_precision_weights(normalize, query, weights);
+          } else {
+            std::cerr << "WARNING: you can't use the precise version of unnormalized weights! ";
+            std::cerr << "They are not valid weights!" << std::endl;
+            internal::get_default(m_polygon.size(), weights);
+            return weights;
+          }
         }
 
         case Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
@@ -270,8 +277,15 @@ namespace Barycentric_coordinates {
             return weights;
           if (edge_case == internal::Edge_case::UNBOUNDED)
             std::cerr << std::endl <<
-            "query does not belong to the polygon" << std::endl;
-          return max_precision_weights(normalize, query, weights);
+            "WARNING: query does not belong to the polygon" << std::endl;
+          if (normalize) {
+            return max_precision_weights(normalize, query, weights);
+          } else {
+            std::cerr << "WARNING: you can't use the precise version of unnormalized weights! ";
+            std::cerr << "They are not valid weights!" << std::endl;
+            internal::get_default(m_polygon.size(), weights);
+            return weights;
+          }
         }
 
         case Computation_policy::FAST_COMPUTATION: {

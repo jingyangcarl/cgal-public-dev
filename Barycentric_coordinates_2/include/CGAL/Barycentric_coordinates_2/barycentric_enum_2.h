@@ -40,40 +40,41 @@ namespace Barycentric_coordinates {
 
 /*!
   `Computation_policy` provides a way to choose an asymptotic time complexity
-  of the algorithm.
+  of the algorithm and its precision.
 */
 enum class Computation_policy {
 
   /*!
-    Computation is very precise but has typically a quadratic time complexity
-    with respect to the number of the polygon vertices. In addition,
-    each query point is controlled for different edge cases, which slows down
-    the computation. This is the default strategy.
+    Computation is very precise but has a quadratic time complexity with respect
+    to the number of the polygon vertices. In addition, we check a position of
+    the query point with respect to the polygon and use different computation
+    strategies for different positions. This is the default policy.
   */
   PRECISE_COMPUTATION_WITH_EDGE_CASES = 0,
 
   /*!
-    Computation is very precise but has typically a quadratic time complexity
-    with respect to the number of the polygon vertices.
+    Computation is very precise but has a quadratic time complexity with respect
+    to the number of the polygon vertices. No extra checks are carried on.
   */
   PRECISE_COMPUTATION = 1,
 
   /*!
-    Computation has typically a linear time complexity with respect to the
-    number of the polygon vertices, but may be less precise. In addition,
-    each query point is controlled for different edge cases, which slows down
-    the computation.
+    Computation has a linear time complexity with respect to the number of the
+    polygon vertices, but may suffer imprecision near the polygon boundary. In
+    addition, we check a position of the query point with respect to the polygon
+    and use different computation strategies for different positions.
   */
   FAST_COMPUTATION_WITH_EDGE_CASES = 2,
 
   /*!
-    Computation has typically a linear time complexity with respect to the
-    number of the polygon vertices, but may be less precise.
+    Computation has a linear time complexity with respect to the number of the
+    polygon vertices, but may suffer imprecision near the polygon boundary.
+    No extra checks are carried on.
   */
   FAST_COMPUTATION = 3,
 
   /*!
-    The default value is `PRECISE_COMPUTATION_WITH_EDGE_CASES`.
+    The default policy is `PRECISE_COMPUTATION_WITH_EDGE_CASES`.
   */
   DEFAULT = PRECISE_COMPUTATION_WITH_EDGE_CASES
 };

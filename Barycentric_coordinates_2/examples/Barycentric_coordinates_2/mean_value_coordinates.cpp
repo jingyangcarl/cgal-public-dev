@@ -24,9 +24,9 @@ int main() {
     Point_2(0.55,  0.11) };
 
   // Choose a computation policy.
-  // We speed up the computation using the O(n) algorithm without checking for
-  // edge cases since we know that all our points are strictly interior.
-  const Policy policy = Policy::FAST_COMPUTATION;
+  // We do not check for edge cases since we know
+  // that all our points are strictly interior.
+  const Policy policy = Policy::PRECISE_COMPUTATION;
 
   // Create an std::vector to store coordinates.
   std::vector<FT> coordinates;

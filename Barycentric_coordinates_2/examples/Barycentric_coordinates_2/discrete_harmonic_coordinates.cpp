@@ -15,11 +15,11 @@ struct Info {
 };
 
 using Vertex_with_info = std::pair<Point_2, Info>;
-using Vertex_map = CGAL::First_of_pair_property_map<Vertex_with_info>;
+using Vertex_map       = CGAL::First_of_pair_property_map<Vertex_with_info>;
 
 using Polygon = std::vector<Vertex_with_info>;
-using Discrete_harmonic = CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Polygon, Kernel, Vertex_map>;
-using Policy = CGAL::Barycentric_coordinates::Computation_policy;
+using DHC     = CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Polygon, Kernel, Vertex_map>;
+using Policy  = CGAL::Barycentric_coordinates::Computation_policy;
 
 int main() {
 
@@ -34,9 +34,9 @@ int main() {
 
   // Instantiate the class with discrete harmonic weights.
   // We do not check for edge cases since we know the exact positions
-  // of all our points.
-  const Policy policy = Policy::PRECISE_COMPUTATION;
-  Discrete_harmonic discrete_harmonic(square, policy, kernel, vertex_map);
+  // of all our points. We speed up the computation by using the O(n) algorithm.
+  const Policy policy = Policy::FAST_COMPUTATION;
+  DHC discrete_harmonic(square, policy, kernel, vertex_map);
 
   // Instantiate the center point of the unit square.
   const Point_2 center(FT(1) / FT(2), FT(1) / FT(2));

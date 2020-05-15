@@ -552,7 +552,7 @@ namespace Barycentric_coordinates {
         file_path.c_str(), std::ios_base::out);
       if (!file) {
         std::cerr << std::endl <<
-          "ERROR: Error saving file " << file_path
+          "ERROR: error saving file " << file_path
         << "!" << std::endl << std::endl;
       }
       file << out.str();
