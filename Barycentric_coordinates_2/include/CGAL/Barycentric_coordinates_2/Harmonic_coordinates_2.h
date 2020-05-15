@@ -66,7 +66,7 @@ namespace Barycentric_coordinates {
     this class is also a model of the concept `AnalyticWeights_2`.
 
     \tparam Polygon
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam Domain
     is a model of `DiscretizedDomain_2`. For the moment, we only support domains
@@ -147,17 +147,16 @@ namespace Barycentric_coordinates {
       const Domain& domain,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
+    m_polygon(polygon),
     m_domain(domain),
-    m_traits(traits) {
-
-      m_polygon.clear();
-      m_polygon.reserve(polygon.size());
-      for (const auto& item : polygon)
-        m_polygon.push_back(get(vertex_map, item));
-      CGAL_precondition(m_polygon.size() >= 3);
+    m_traits(traits),
+    m_vertex_map(vertex_map) {
 
       CGAL_precondition(
-        CGAL::is_simple_2(m_polygon.begin(), m_polygon.end(), m_traits));
+        polygon.size() >= 3);
+      CGAL_precondition(
+        internal::is_simple_2(polygon, traits, vertex_map));
+      clear();
     }
 
     /// @}
@@ -194,6 +193,15 @@ namespace Barycentric_coordinates {
       const Point_2& query,
       OutputIterator coordinates) {
 
+      CGAL_precondition(
+        m_setup_is_called &&
+        m_factorize_is_called &&
+        m_solve_is_called);
+      if (!(
+        m_setup_is_called &&
+        m_factorize_is_called &&
+        m_solve_is_called)) return coordinates;
+
       const std::size_t n = m_polygon.size();
 
       m_element.clear();
@@ -225,8 +233,8 @@ namespace Barycentric_coordinates {
       CGAL_assertion(b[1] >= FT(0) && b[1] <= FT(1));
       CGAL_assertion(b[2] >= FT(0) && b[2] <= FT(1));
 
-      CGAL_assertion(m_boundary.rows() > 0);
-      CGAL_assertion(m_interior.rows() > 0);
+      CGAL_assertion(m_boundary.size() > 0);
+      CGAL_assertion(m_interior.size() > 0);
 
       FT hm0 = FT(0), hm1 = FT(0), hm2 = FT(0);
       for (std::size_t k = 0; k < n; ++k) {
@@ -272,9 +280,18 @@ namespace Barycentric_coordinates {
       OutputIterator coordinates) {
 
       CGAL_precondition(
+        m_setup_is_called &&
+        m_factorize_is_called &&
+        m_solve_is_called);
+      if (!(
+        m_setup_is_called &&
+        m_factorize_is_called &&
+        m_solve_is_called)) return coordinates;
+
+      CGAL_precondition(
         query_index >= 0 && query_index < m_domain.number_of_vertices());
-      CGAL_assertion(m_boundary.rows() > 0);
-      CGAL_assertion(m_interior.rows() > 0);
+      CGAL_assertion(m_boundary.size() > 0);
+      CGAL_assertion(m_interior.size() > 0);
 
       // Save harmonic coordinates.
       const std::size_t n = m_polygon.size();
@@ -297,7 +314,27 @@ namespace Barycentric_coordinates {
       \brief computes 2D harmonic coordinates at the vertices of the input domain.
     */
     void compute() {
+      setup(); // compute harmonic data
+      factorize(); // factorize the matrix A
+      solve(); // solve the linear system Ax = b
+    }
 
+    /// @}
+
+    /// \name Step by Step Computation
+    /// @{
+
+    /*!
+      \brief computes all necessary harmonic data.
+
+      This function fills in the left side matrix A and the right side vector b
+      of the linear system Ax = b. The matrix A is a sparse symmetric positive
+      definite matrix. The solution vector x of this system gives the harmonic
+      coordinates at the vertices of the input domain.
+    */
+    void setup() {
+
+      if (m_setup_is_called) return;
       const std::size_t n = m_polygon.size();
       const std::size_t N = m_domain.number_of_vertices();
 
@@ -311,15 +348,42 @@ namespace Barycentric_coordinates {
       const std::size_t numI = pair.second;
       m_interior = VectorFT::Zero(numI, n); // interior
 
-      MatrixFT A(numI, numI); // a sparse matrix
-      VectorFT b = VectorFT::Zero(numI, n); // the right side
+      m_A = MatrixFT(numI, numI); // a sparse matrix
+      m_b = VectorFT::Zero(numI, n); // boundary conditions
 
       // Compute harmonic coordinates.
       set_boundary_vector(
         numB, m_indices, m_boundary);
       set_harmonic_data(
-        numI, m_indices, m_boundary, A, b);
-      solve_linear_system(A, b, m_interior);
+        numI, m_indices, m_boundary, m_A, m_b);
+      m_setup_is_called = true;
+    }
+
+    /*!
+      \brief factorizes the matrix A.
+
+      \pre `setup() is called`
+    */
+    void factorize() {
+      if (m_factorize_is_called) return;
+      CGAL_precondition(m_setup_is_called);
+      m_solver_ptr = std::make_shared<Solver>();
+      m_solver_ptr->compute(m_A);
+      m_factorize_is_called = true;
+    }
+
+    /*!
+      \brief solves the linear system Ax = b.
+
+      \pre `factorize() is called`
+    */
+    void solve() {
+      if (m_solve_is_called) return;
+      CGAL_precondition(m_factorize_is_called);
+      m_interior = m_solver_ptr->solve(m_b);
+      m_A.resize(0, 0); m_b.resize(0, 0);
+      m_solver_ptr = nullptr;
+      m_solve_is_called = true;
     }
 
     /// @}
@@ -334,8 +398,11 @@ namespace Barycentric_coordinates {
       m_indices.clear();
       m_element.clear();
       m_coordinates.clear();
-      m_interior.clear();
-      m_boundary.clear();
+      m_boundary.resize(0, 0);
+      m_interior.resize(0, 0);
+      m_setup_is_called = false;
+      m_factorize_is_called = false;
+      m_solve_is_called = false;
     }
 
     /*!
@@ -353,8 +420,10 @@ namespace Barycentric_coordinates {
   private:
 
     // Fields.
+    const Polygon& m_polygon;
     const Domain& m_domain;
     const GeomTraits m_traits;
+    const VertexMap m_vertex_map;
 
     // Indices of the finite element.
     std::vector<std::size_t> m_element;
@@ -369,7 +438,17 @@ namespace Barycentric_coordinates {
     // Splits boundary and interior vertices.
     std::vector<std::size_t> m_indices;
 
-    std::vector<Point_2> m_polygon;
+    // Tags.
+    bool m_setup_is_called;
+    bool m_factorize_is_called;
+    bool m_solve_is_called;
+
+    // Temporary data.
+    MatrixFT m_A;
+    VectorFT m_b;
+
+    // Sparse solver;
+    std::shared_ptr<Solver> m_solver_ptr;
 
     std::pair<std::size_t, std::size_t> create_indices(
       std::vector<std::size_t>& indices) const {
@@ -412,7 +491,8 @@ namespace Barycentric_coordinates {
 
           // Find index of the polygon edge that contains the boundary vertex.
           const auto edge_is_found =
-            internal::get_edge_index_approximate(m_polygon, query, m_traits);
+            internal::get_edge_index_approximate(
+              m_polygon, query, m_traits, m_vertex_map);
           CGAL_assertion(static_cast<bool>(edge_is_found));
           const auto location = (*edge_is_found).first;
           const auto index = (*edge_is_found).second;
@@ -421,7 +501,7 @@ namespace Barycentric_coordinates {
           lambda.clear();
           internal::boundary_coordinates_2(
             m_polygon, query, location, index,
-            std::back_inserter(lambda), m_traits);
+            std::back_inserter(lambda), m_traits, m_vertex_map);
 
           // Set boundary vector.
           for (std::size_t k = 0; k < n; ++k)
@@ -508,14 +588,6 @@ namespace Barycentric_coordinates {
       A.setFromTriplets(
         triplet_list.begin(), triplet_list.end());
       A.makeCompressed();
-    }
-
-    void solve_linear_system(
-      const MatrixFT& A, const VectorFT& b, VectorFT& x) const {
-
-      Solver solver;
-      solver.compute(A);
-      x = solver.solve(b);
     }
   };
 

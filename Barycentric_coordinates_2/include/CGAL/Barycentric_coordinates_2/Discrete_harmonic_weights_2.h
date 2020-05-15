@@ -50,7 +50,7 @@ namespace Barycentric_coordinates {
     computed analytically.
 
     \tparam Polygon
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
@@ -147,9 +147,10 @@ namespace Barycentric_coordinates {
         m_is_strictly_convex_polygon = true;
 
       CGAL_precondition(
-        CGAL::is_simple_2(m_polygon.begin(), m_polygon.end(), m_traits));
+        internal::is_simple_2(polygon, traits, vertex_map));
       CGAL_precondition(
         m_is_strictly_convex_polygon);
+      clear();
     }
 
     /// @}
@@ -283,7 +284,7 @@ namespace Barycentric_coordinates {
           const auto edge_case = verify(query, weights);
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
-          if (edge_case == internal::Edge_case::UNBOUNDED)
+          if (edge_case == internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon" << std::endl;
           if (normalize) {
@@ -304,7 +305,7 @@ namespace Barycentric_coordinates {
           const auto edge_case = verify(query, weights);
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
-          if (edge_case == internal::Edge_case::UNBOUNDED)
+          if (edge_case == internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
             "query does not belong to the polygon" << std::endl;
           return max_speed_weights(normalize, query, weights);
@@ -327,13 +328,13 @@ namespace Barycentric_coordinates {
         m_polygon, query, m_traits);
 
       if (!result)
-        return internal::Edge_case::UNBOUNDED;
+        return internal::Edge_case::EXTERIOR;
 
       const internal::Query_point_location location = (*result).first;
       const std::size_t index = (*result).second;
 
       if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE)
-        return internal::Edge_case::UNBOUNDED;
+        return internal::Edge_case::EXTERIOR;
 
       if (
         location == internal::Query_point_location::ON_VERTEX ||

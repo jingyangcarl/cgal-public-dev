@@ -452,7 +452,7 @@ namespace Barycentric_coordinates {
     Internally, `CGAL::Barycentric_coordinates::segment_coordinates_2()` are used.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -497,25 +497,17 @@ namespace Barycentric_coordinates {
     const GeomTraits traits,
     const VertexMap vertex_map) {
 
-    CGAL_precondition(polygon.size() >= 3);
-    using Point_2 = typename GeomTraits::Point_2;
-    std::vector<Point_2> poly;
-    poly.reserve(polygon.size());
-    for (const auto& item : polygon)
-      poly.push_back(get(vertex_map, item));
-
     const auto result =
-    internal::locate_wrt_polygon_2(poly, query, traits);
+    internal::locate_wrt_polygon_2(polygon, query, traits, vertex_map);
     auto location = (*result).first;
-    auto index    = (*result).second;
+    auto index = (*result).second;
 
     if (!result) {
-      location = internal::Query_point_location::UNSPECIFIED;
       index = std::size_t(-1);
+      location = internal::Query_point_location::UNSPECIFIED;
     }
-
     return internal::boundary_coordinates_2(
-      poly, query, location, index, coordinates, traits);
+      polygon, query, location, index, coordinates, traits, vertex_map);
   }
 
   /*!
@@ -537,7 +529,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam Point_2
     is a point type.
@@ -599,7 +591,7 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -664,7 +656,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
@@ -720,7 +712,7 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -785,7 +777,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
@@ -841,7 +833,7 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -906,7 +898,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
@@ -962,7 +954,7 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -1027,7 +1019,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
@@ -1083,7 +1075,7 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -1147,7 +1139,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
@@ -1202,7 +1194,7 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `GeomTraits::FT`.
@@ -1266,7 +1258,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
     is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.

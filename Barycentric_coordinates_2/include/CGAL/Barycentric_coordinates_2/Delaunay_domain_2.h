@@ -52,7 +52,7 @@ namespace Barycentric_coordinates {
     Internally, the package \ref PkgMesh2 is used. See it for more details.
 
     \tparam Polygon
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
@@ -128,16 +128,15 @@ namespace Barycentric_coordinates {
       const Polygon& polygon,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
-    m_traits(traits) {
-
-      m_polygon.clear();
-      m_polygon.reserve(polygon.size());
-      for (const auto& item : polygon)
-        m_polygon.push_back(get(vertex_map, item));
-      CGAL_precondition(m_polygon.size() >= 3);
+    m_polygon(polygon),
+    m_traits(traits),
+    m_vertex_map(vertex_map) {
 
       CGAL_precondition(
-        CGAL::is_simple_2(m_polygon.begin(), m_polygon.end(), m_traits));
+        polygon.size() >= 3);
+      CGAL_precondition(
+        internal::is_simple_2(polygon, traits, vertex_map));
+      clear();
     }
 
     /*!
@@ -390,25 +389,29 @@ namespace Barycentric_coordinates {
   private:
 
     // Fields.
+    const Polygon& m_polygon;
     const GeomTraits m_traits;
+    const VertexMap m_vertex_map;
 
     CDT m_cdt;
     std::vector<Vertex_handle> m_vhs;
 
-    std::vector<Point_2> m_polygon;
-
     void create_triangulation() {
 
+      const std::size_t n = m_polygon.size();
       m_cdt.clear(); m_vhs.clear();
-      m_vhs.reserve(m_polygon.size());
-      for (const auto& vertex : m_polygon)
-        m_vhs.push_back(m_cdt.insert(vertex));
+      m_vhs.reserve(n);
 
-      CGAL_assertion(m_vhs.size() == m_polygon.size());
-      CGAL_assertion(m_vhs.size() == m_cdt.number_of_vertices());
+      for (std::size_t i = 0; i < n; ++i) {
+        const auto& p = get(m_vertex_map, *(m_polygon.begin() + i));
+        m_vhs.push_back(m_cdt.insert(p));
+      }
 
-      for (std::size_t i = 0; i < m_vhs.size(); ++i) {
-        const std::size_t ip = (i + 1) % m_vhs.size();
+      CGAL_assertion(m_vhs.size() == n);
+      CGAL_assertion(m_cdt.number_of_vertices() == n);
+
+      for (std::size_t i = 0; i < n; ++i) {
+        const std::size_t ip = (i + 1) % n;
         if (m_vhs[i] != m_vhs[ip])
           m_cdt.insert_constraint(m_vhs[i], m_vhs[ip]);
       }

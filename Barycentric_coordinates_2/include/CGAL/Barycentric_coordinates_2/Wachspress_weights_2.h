@@ -49,7 +49,7 @@ namespace Barycentric_coordinates {
     of a strictly convex polygon. The coordinates are computed analytically.
 
     \tparam Polygon
-    is a model of `ConstRange`.
+    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
     is a model of `BarycentricTraits_2`.
@@ -120,22 +120,17 @@ namespace Barycentric_coordinates {
       = Computation_policy::DEFAULT,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
+    m_polygon(polygon),
     m_computation_policy(policy),
     m_traits(traits),
+    m_vertex_map(vertex_map),
     m_area_2(m_traits.compute_area_2_object()) {
 
-      m_polygon.clear();
-      m_polygon.reserve(polygon.size());
-      for (const auto& item : polygon)
-        m_polygon.push_back(get(vertex_map, item));
-      CGAL_precondition(m_polygon.size() >= 3);
-
-      A.resize(m_polygon.size());
-      C.resize(m_polygon.size());
-      w.resize(m_polygon.size());
+      CGAL_precondition(
+        polygon.size() >= 3);
 
       const internal::Polygon_type polygon_type =
-        internal::polygon_type_2(m_polygon, m_traits);
+        internal::polygon_type_2(polygon, traits, vertex_map);
 
       if (polygon_type != internal::Polygon_type::STRICTLY_CONVEX)
         m_is_strictly_convex_polygon = false;
@@ -143,9 +138,10 @@ namespace Barycentric_coordinates {
         m_is_strictly_convex_polygon = true;
 
       CGAL_precondition(
-        CGAL::is_simple_2(m_polygon.begin(), m_polygon.end(), m_traits));
+        internal::is_simple_2(polygon, traits, vertex_map));
       CGAL_precondition(
         m_is_strictly_convex_polygon);
+      clear();
     }
 
     /// @}
@@ -222,6 +218,9 @@ namespace Barycentric_coordinates {
       A.clear();
       C.clear();
       w.clear();
+      A.resize(m_polygon.size());
+      C.resize(m_polygon.size());
+      w.resize(m_polygon.size());
     }
 
     /*!
@@ -239,16 +238,15 @@ namespace Barycentric_coordinates {
   private:
 
     // Fields.
+    const Polygon& m_polygon;
+    const Computation_policy m_computation_policy;
+    const GeomTraits m_traits;
+    const VertexMap m_vertex_map;
+    const Area_2 m_area_2;
+
     std::vector<FT> A;
     std::vector<FT> C;
     std::vector<FT> w;
-
-    const Computation_policy m_computation_policy;
-    const GeomTraits m_traits;
-
-    const Area_2 m_area_2;
-
-    std::vector<Point_2> m_polygon;
     bool m_is_strictly_convex_polygon;
 
     // Functions.
@@ -275,7 +273,7 @@ namespace Barycentric_coordinates {
           const auto edge_case = verify(query, weights);
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
-          if (edge_case == internal::Edge_case::UNBOUNDED)
+          if (edge_case == internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon" << std::endl;
           if (normalize) {
@@ -296,7 +294,7 @@ namespace Barycentric_coordinates {
           const auto edge_case = verify(query, weights);
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
-          if (edge_case == internal::Edge_case::UNBOUNDED)
+          if (edge_case == internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
             "query does not belong to the polygon" << std::endl;
           return max_speed_weights(normalize, query, weights);
@@ -316,22 +314,22 @@ namespace Barycentric_coordinates {
       OutputIterator weights) const {
 
       const auto result = internal::locate_wrt_polygon_2(
-        m_polygon, query, m_traits);
+        m_polygon, query, m_traits, m_vertex_map);
 
       if (!result)
-        return internal::Edge_case::UNBOUNDED;
+        return internal::Edge_case::EXTERIOR;
 
       const internal::Query_point_location location = (*result).first;
       const std::size_t index = (*result).second;
 
       if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE)
-        return internal::Edge_case::UNBOUNDED;
+        return internal::Edge_case::EXTERIOR;
 
       if (
         location == internal::Query_point_location::ON_VERTEX ||
         location == internal::Query_point_location::ON_EDGE ) {
         internal::boundary_coordinates_2(
-          m_polygon, query, location, index, weights, m_traits);
+          m_polygon, query, location, index, weights, m_traits, m_vertex_map);
         return internal::Edge_case::BOUNDARY;
       }
 
@@ -349,30 +347,42 @@ namespace Barycentric_coordinates {
 
       // Compute areas A following the area notation from [1].
       // Split the loop to make this computation faster.
-      A[0] = m_area_2(m_polygon[0], m_polygon[1], query);
-      for (std::size_t i = 1; i < n-1; ++i)
-        A[i] = m_area_2(m_polygon[i], m_polygon[i+1], query);
-      A[n-1] = m_area_2(m_polygon[n-1], m_polygon[0], query);
+      const auto& p1 = get(m_vertex_map, *(m_polygon.begin() + 0));
+      const auto& p2 = get(m_vertex_map, *(m_polygon.begin() + 1));
+      A[0] = m_area_2(p1, p2, query);
+
+      for (std::size_t i = 1; i < n - 1; ++i) {
+        const auto& pi1 = get(m_vertex_map, *(m_polygon.begin() + (i + 0)));
+        const auto& pi2 = get(m_vertex_map, *(m_polygon.begin() + (i + 1)));
+        A[i] = m_area_2(pi1, pi2, query);
+      }
+
+      const auto& pn = get(m_vertex_map, *(m_polygon.begin() + (n - 1)));
+      A[n - 1] = m_area_2(pn, p1, query);
 
       // Initialize weights with areas C following the area notation from [1].
       // Then we multiply them by areas A as in the formula (5) from [1].
       // We also split the loop.
-      w[0] = m_area_2(m_polygon[n-1], m_polygon[0], m_polygon[1]);
-      for(std::size_t j = 1; j < n-1; ++j)
+      w[0] = m_area_2(pn, p1, p2);
+      for(std::size_t j = 1; j < n - 1; ++j)
         w[0] *= A[j];
 
-      for(std::size_t i = 1; i < n-1; ++i) {
-        w[i] = m_area_2(m_polygon[i-1], m_polygon[i], m_polygon[i+1]);
+      for(std::size_t i = 1; i < n - 1; ++i) {
+        const auto& pi0 = get(m_vertex_map, *(m_polygon.begin() + (i - 1)));
+        const auto& pi1 = get(m_vertex_map, *(m_polygon.begin() + (i + 0)));
+        const auto& pi2 = get(m_vertex_map, *(m_polygon.begin() + (i + 1)));
+        w[i] = m_area_2(pi0, pi1, pi2);
 
-        for (std::size_t j = 0; j < i-1; ++j)
+        for (std::size_t j = 0; j < i - 1; ++j)
           w[i] *= A[j];
-        for (std::size_t j = i+1; j < n; ++j)
+        for (std::size_t j = i + 1; j < n; ++j)
           w[i] *= A[j];
       }
 
-      w[n-1] = m_area_2(m_polygon[n-2], m_polygon[n-1], m_polygon[0]);
-      for (std::size_t j = 0; j < n-2; ++j)
-        w[n-1] *= A[j];
+      const auto& pm = get(m_vertex_map, *(m_polygon.begin() + (n - 2)));
+      w[n - 1] = m_area_2(pm, pn, p1);
+      for (std::size_t j = 0; j < n - 2; ++j)
+        w[n - 1] *= A[j];
 
       // Normalize if necessary.
       if (normalize)
@@ -396,28 +406,37 @@ namespace Barycentric_coordinates {
 
       // Compute areas A and C following the area notation from [1].
       // Split the loop to make this computation faster.
-      A[0] = m_area_2(m_polygon[0], m_polygon[1], query);
-      C[0] = m_area_2(m_polygon[n-1], m_polygon[0], m_polygon[1]);
+      const auto& p1 = get(m_vertex_map, *(m_polygon.begin() + 0));
+      const auto& p2 = get(m_vertex_map, *(m_polygon.begin() + 1));
+      const auto& pn = get(m_vertex_map, *(m_polygon.begin() + (n - 1)));
+      const auto& pm = get(m_vertex_map, *(m_polygon.begin() + (n - 2)));
 
-      for (std::size_t i = 1; i < n-1; ++i) {
-        A[i] = m_area_2(m_polygon[i], m_polygon[i+1], query);
-        C[i] = m_area_2(m_polygon[i-1], m_polygon[i], m_polygon[i+1]);
+      A[0] = m_area_2(p1, p2, query);
+      C[0] = m_area_2(pn, p1, p2);
+
+      for (std::size_t i = 1; i < n - 1; ++i) {
+        const auto& pi0 = get(m_vertex_map, *(m_polygon.begin() + (i - 1)));
+        const auto& pi1 = get(m_vertex_map, *(m_polygon.begin() + (i + 0)));
+        const auto& pi2 = get(m_vertex_map, *(m_polygon.begin() + (i + 1)));
+
+        A[i] = m_area_2(pi1, pi2, query);
+        C[i] = m_area_2(pi0, pi1, pi2);
       }
 
-      A[n-1] = m_area_2(m_polygon[n-1], m_polygon[0], query);
-      C[n-1] = m_area_2(m_polygon[n-2], m_polygon[n-1], m_polygon[0]);
+      A[n - 1] = m_area_2(pn, p1, query);
+      C[n - 1] = m_area_2(pm, pn, p1);
 
       // Compute unnormalized weights following the formula (28) from [1].
-      CGAL_assertion(A[n-1] != FT(0) && A[0] != FT(0));
-      w[0] = C[0] / (A[n-1] * A[0]);
+      CGAL_assertion(A[n - 1] != FT(0) && A[0] != FT(0));
+      w[0] = C[0] / (A[n - 1] * A[0]);
 
-      for (std::size_t i = 1; i < n-1; ++i) {
-        CGAL_assertion(A[i-1] != FT(0) && A[i] != FT(0));
-        w[i] = C[i] / (A[i-1] * A[i]);
+      for (std::size_t i = 1; i < n - 1; ++i) {
+        CGAL_assertion(A[i - 1] != FT(0) && A[i] != FT(0));
+        w[i] = C[i] / (A[i - 1] * A[i]);
       }
 
-      CGAL_assertion(A[n-2] != FT(0) && A[n-1] != FT(0));
-      w[n-1] = C[n-1] / (A[n-2] * A[n-1]);
+      CGAL_assertion(A[n - 2] != FT(0) && A[n - 1] != FT(0));
+      w[n - 1] = C[n - 1] / (A[n - 2] * A[n - 1]);
 
       // Normalize if necessary.
       if (normalize)

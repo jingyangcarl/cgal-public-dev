@@ -54,7 +54,7 @@ enum class Computation_policy {
 
   /*!
     Computation is very precise but has a quadratic time complexity with respect
-    to the number of the polygon vertices. No extra checks are carried on.
+    to the number of the polygon vertices. No extra checks are carried out.
   */
   PRECISE_COMPUTATION = 1,
 
@@ -69,7 +69,7 @@ enum class Computation_policy {
   /*!
     Computation has a linear time complexity with respect to the number of the
     polygon vertices, but may suffer imprecision near the polygon boundary.
-    No extra checks are carried on.
+    No extra checks are carried out.
   */
   FAST_COMPUTATION = 3,
 

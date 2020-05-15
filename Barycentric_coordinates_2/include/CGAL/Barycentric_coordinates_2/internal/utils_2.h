@@ -34,6 +34,7 @@
 #include <vector>
 #include <utility>
 #include <iterator>
+#include <iostream>
 #include <sstream>
 #include <fstream>
 #include <tuple>
@@ -48,7 +49,6 @@
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Polygon_2_algorithms.h>
 
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
@@ -56,6 +56,13 @@
 namespace CGAL {
 namespace Barycentric_coordinates {
 namespace internal {
+
+  enum class Edge_case {
+
+    EXTERIOR = 0, // exterior part of the polygon
+    BOUNDARY = 1, // boundary part of the polygon
+    INTERIOR = 2  // interior part of the polygon
+  };
 
   enum class Query_point_location {
 
@@ -65,14 +72,26 @@ namespace internal {
     // Query point is located on the edge of the polygon.
     ON_EDGE = 1,
 
-    // Query point is located in the polygon interior.
+    // Query point is located in the polygon's interior.
     ON_BOUNDED_SIDE = 2,
 
-    // Query point is located in the polygon exterior.
+    // Query point is located in the polygon's exterior.
     ON_UNBOUNDED_SIDE = 3,
 
     // Location is unspecified. Leads to all coordinates being set to zero.
     UNSPECIFIED = 4
+  };
+
+  enum class Polygon_type {
+
+    // Concave polygon = non-convex polygon.
+    CONCAVE = 0,
+
+    // This is a convex polygon with collinear vertices.
+    WEAKLY_CONVEX = 1,
+
+    // This is a convex polygon without collinear vertices.
+    STRICTLY_CONVEX = 2
   };
 
   template<typename GeomTraits>
@@ -118,11 +137,20 @@ namespace internal {
     }
   };
 
+  template<typename OutputIterator>
+  void get_default(
+    const std::size_t n,
+    OutputIterator output) {
+
+    for (std::size_t i = 0; i < n; ++i)
+      *(output++) = 0;
+  }
+
   template<typename FT>
   void normalize(std::vector<FT>& values) {
 
     FT sum = FT(0);
-    for (const auto& value : values)
+    for (const FT value : values)
       sum += value;
 
     CGAL_assertion(sum != FT(0));
@@ -130,14 +158,8 @@ namespace internal {
       return;
 
     const FT inv_sum = FT(1) / sum;
-    for (auto& value : values)
+    for (FT& value : values)
       value *= inv_sum;
-  }
-
-  template<typename OutputIterator>
-  void get_default(const std::size_t size, OutputIterator output) {
-    for (std::size_t i = 0; i < size; ++i)
-      *(output++) = 0;
   }
 
   template<
@@ -224,12 +246,16 @@ namespace internal {
     return coordinates;
   }
 
-  template<typename GeomTraits>
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap>
   boost::optional< std::pair<Query_point_location, std::size_t> >
   get_edge_index_approximate(
-    const std::vector<typename GeomTraits::Point_2>& polygon,
+    const Polygon& polygon,
     const typename GeomTraits::Point_2& query,
-    const GeomTraits traits) {
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
 
     using FT = typename GeomTraits::FT;
     using Vector_2 = typename GeomTraits::Vector_2;
@@ -243,16 +269,20 @@ namespace internal {
 
     const FT half = FT(1) / FT(2);
     const FT tolerance = FT(1) / FT(100000);
+    const FT sq_tolerance = tolerance * tolerance;
 
     for (std::size_t i = 0; i < n; ++i) {
-      const FT r = squared_distance_2(query, polygon[i]);
-      if (r < tolerance)
+      const auto& p1 = get(vertex_map, *(polygon.begin() + i));
+
+      const FT sq_r = squared_distance_2(query, p1);
+      if (sq_r < sq_tolerance)
         return std::make_pair(Query_point_location::ON_VERTEX, i);
 
       const std::size_t ip = (i + 1) % n;
+      const auto& p2 = get(vertex_map, *(polygon.begin() + ip));
 
-      const Vector_2 s1 = Vector_2(query, polygon[i]);
-      const Vector_2 s2 = Vector_2(query, polygon[ip]);
+      const Vector_2 s1 = Vector_2(query, p1);
+      const Vector_2 s2 = Vector_2(query, p2);
 
       const FT A = half * cross_product_2(s1, s2);
       const FT D = scalar_product_2(s1, s2);
@@ -264,12 +294,16 @@ namespace internal {
   }
 
   // Why this one does not work for harmonic coordinates?
-  template<typename GeomTraits>
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap>
   boost::optional< std::pair<Query_point_location, std::size_t> >
   get_edge_index_exact(
-    const std::vector<typename GeomTraits::Point_2>& polygon,
+    const Polygon& polygon,
     const typename GeomTraits::Point_2& query,
-    const GeomTraits traits) {
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
 
     const auto collinear_2 = traits.collinear_2_object();
     const auto collinear_are_ordered_along_line_2 =
@@ -278,78 +312,106 @@ namespace internal {
 
     const std::size_t n = polygon.size();
     for (std::size_t i = 0; i < n; ++i) {
-      if (polygon[i] == query)
+      const auto& p1 = get(vertex_map, *(polygon.begin() + i));
+
+      if (p1 == query)
         return std::make_pair(Query_point_location::ON_VERTEX, i);
 
       const std::size_t ip = (i + 1) % n;
+      const auto& p2 = get(vertex_map, *(polygon.begin() + ip));
+
       if (
-        collinear_2(
-          polygon[i], polygon[ip], query) &&
-        collinear_are_ordered_along_line_2(
-          polygon[i], query, polygon[ip]))
+        collinear_2(p1, p2, query) &&
+        collinear_are_ordered_along_line_2(p1, query, p2)) {
+
         return std::make_pair(Query_point_location::ON_EDGE, i);
+      }
     }
     return boost::none;
   }
 
-  template<typename GeomTraits>
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap>
+  Edge_case bounded_side_2(
+    const Polygon& polygon,
+    const typename GeomTraits::Point_2& query,
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
+
+    return Edge_case::INTERIOR;
+  }
+
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap>
   boost::optional< std::pair<Query_point_location, std::size_t> >
   locate_wrt_polygon_2(
-    const std::vector<typename GeomTraits::Point_2>& polygon,
+    const Polygon& polygon,
     const typename GeomTraits::Point_2& query,
-    const GeomTraits traits) {
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
 
-    const auto type = CGAL::bounded_side_2(
-      polygon.begin(), polygon.end(), query, traits);
+    const Edge_case type = bounded_side_2(
+      polygon, query, traits, vertex_map);
 
     // Locate point with respect to different polygon locations.
     switch (type) {
-      case CGAL::ON_BOUNDED_SIDE:
+      case Edge_case::INTERIOR:
         return std::make_pair(Query_point_location::ON_BOUNDED_SIDE, std::size_t(-1));
-      case CGAL::ON_UNBOUNDED_SIDE:
+      case Edge_case::EXTERIOR:
         return std::make_pair(Query_point_location::ON_UNBOUNDED_SIDE, std::size_t(-1));
-      case CGAL::ON_BOUNDARY:
-        return get_edge_index_exact(polygon, query, traits);
+      case Edge_case::BOUNDARY:
+        return get_edge_index_exact(polygon, query, traits, vertex_map);
       default:
         return std::make_pair(Query_point_location::UNSPECIFIED, std::size_t(-1));
     }
     return boost::none;
   }
 
-  enum class Polygon_type {
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap>
+  bool is_convex_2(
+    const Polygon& polygon,
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
 
-    // Concave polygon = non-convex polygon.
-    CONCAVE = 0,
+    return true;
+  }
 
-    // This is a convex polygon with collinear vertices.
-    WEAKLY_CONVEX = 1,
-
-    // This is a convex polygon without collinear vertices.
-    STRICTLY_CONVEX = 2
-  };
-
-  template<typename GeomTraits>
-  Polygon_type
-  polygon_type_2(
-    const std::vector<typename GeomTraits::Point_2>& polygon,
-    const GeomTraits traits) {
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap>
+  Polygon_type polygon_type_2(
+    const Polygon& polygon,
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
 
     using Point_2 = typename GeomTraits::Point_2;
     const auto collinear_2 = traits.collinear_2_object();
     CGAL_precondition(polygon.size() >= 3);
 
     // First, test the polygon on convexity.
-    if (CGAL::is_convex_2(polygon.begin(), polygon.end(), traits)) {
+    if (is_convex_2(polygon, traits, vertex_map)) {
 
       // Test all the consequent triplets of the polygon vertices on collinearity.
       // In case we find at least one, return WEAKLY_CONVEX polygon.
       const std::size_t n = polygon.size();
       for (std::size_t i = 0; i < n; ++i) {
+        const auto& p1 = get(vertex_map, *(polygon.begin() + i));
 
         const std::size_t im = (i + n - 1) % n;
         const std::size_t ip = (i + 1) % n;
 
-        if (collinear_2(polygon[im], polygon[i], polygon[ip]))
+        const auto& p0 = get(vertex_map, *(polygon.begin() + im));
+        const auto& p2 = get(vertex_map, *(polygon.begin() + ip));
+
+        if (collinear_2(p0, p1, p2))
           return Polygon_type::WEAKLY_CONVEX;
       }
       // Otherwise, return STRICTLY_CONVEX polygon.
@@ -360,13 +422,16 @@ namespace internal {
   }
 
   template<
+  typename Polygon,
   typename OutputIterator,
-  typename GeomTraits>
+  typename GeomTraits,
+  typename VertexMap>
   std::pair<OutputIterator, bool> coordinates_on_last_edge_2(
-    const std::vector<typename GeomTraits::Point_2>& polygon,
+    const Polygon& polygon,
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
-    const GeomTraits traits) {
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
 
     using FT = typename GeomTraits::FT;
     const std::size_t n = polygon.size();
@@ -374,8 +439,11 @@ namespace internal {
     std::vector<FT> b;
     b.reserve(2);
 
-    const auto& source = polygon[n - 1];
-    const auto& target = polygon[0];
+    const std::size_t isource = n - 1;
+    const std::size_t itarget = 0;
+
+    const auto& source = get(vertex_map, *(polygon.begin() + isource));
+    const auto& target = get(vertex_map, *(polygon.begin() + itarget));
 
     linear_coordinates_2(
       source, target, query, std::back_inserter(b), traits);
@@ -388,15 +456,18 @@ namespace internal {
   }
 
   template<
+  typename Polygon,
   typename OutputIterator,
-  typename GeomTraits>
+  typename GeomTraits,
+  typename VertexMap>
   std::pair<OutputIterator, bool> boundary_coordinates_2(
-    const std::vector<typename GeomTraits::Point_2>& polygon,
+    const Polygon& polygon,
     const typename GeomTraits::Point_2& query,
     const Query_point_location location,
     const std::size_t index,
     OutputIterator coordinates,
-    const GeomTraits traits) {
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
 
     using FT = typename GeomTraits::FT;
     const std::size_t n = polygon.size();
@@ -420,7 +491,7 @@ namespace internal {
 
         if (index == n - 1)
           return coordinates_on_last_edge_2(
-            polygon, query, coordinates, traits);
+            polygon, query, coordinates, traits, vertex_map);
 
         const std::size_t indexp = (index + 1) % n;
 
@@ -444,31 +515,35 @@ namespace internal {
     return std::make_pair(coordinates, false);
   }
 
-  enum class Edge_case {
-
-    UNBOUNDED = 0, // point is on the unbounded side of the polygon
-    BOUNDARY  = 1, // point is on the boundary of the polygon
-    INTERIOR  = 2  // point is in the interior of the polygon
-  };
-
   // Do we need it at all? Can we use DH weights inside Harmonic coordinates?
   template<typename GeomTraits>
-  typename GeomTraits::FT
-  cotangent_2(
+  typename GeomTraits::FT cotangent_2(
     const typename GeomTraits::Vector_2& v1,
     const typename GeomTraits::Vector_2& v2,
     const GeomTraits traits) {
 
     using FT = typename GeomTraits::FT;
+    const auto cross_product_2 = traits.compute_determinant_2_object();
     const auto scalar_product_2 = traits.compute_scalar_product_2_object();
-    const auto cross_product_2  = traits.compute_determinant_2_object();
 
-    const FT dot = scalar_product_2(v1, v2);
     const FT det = cross_product_2(v1, v2);
+    const FT dot = scalar_product_2(v1, v2);
 
     const FT cot_denominator = CGAL::abs(det);
     CGAL_assertion(cot_denominator != FT(0));
     return dot / cot_denominator;
+  }
+
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap>
+  bool is_simple_2(
+    const Polygon& polygon,
+    const GeomTraits traits,
+    const VertexMap vertex_map) {
+
+    return true;
   }
 
 } // namespace internal
