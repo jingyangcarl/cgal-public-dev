@@ -31,10 +31,6 @@ int main() {
   // that contains all the generated points.
   CGAL::convex_hull_2(
     queries.begin(), queries.end(), std::back_inserter(convex));
-  const std::size_t num_vertices = convex.size();
-
-  convex.clear();
-  convex = { Point_2(0, 0), Point_2(1, 0), Point_2(1, 1), Point_2(0, 1) };
 
   // Compute Wachspress coordinates for all query points.
   std::cout << std::endl <<
@@ -46,9 +42,8 @@ int main() {
 
   for (const auto& query : queries) {
     coordinates.clear();
-    const Point_2 p = Point_2(0.5, 0.5);
     CGAL::Barycentric_coordinates::wachspress_coordinates_2(
-      convex, p, std::back_inserter(coordinates));
+      convex, query, std::back_inserter(coordinates));
 
     for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
       std::cout << coordinates[i] << ", ";

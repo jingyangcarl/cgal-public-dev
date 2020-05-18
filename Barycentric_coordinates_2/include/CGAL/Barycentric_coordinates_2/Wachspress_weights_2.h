@@ -128,20 +128,12 @@ namespace Barycentric_coordinates {
 
       CGAL_precondition(
         polygon.size() >= 3);
-
-      const internal::Polygon_type polygon_type =
-        internal::polygon_type_2(polygon, traits, vertex_map);
-
-      if (polygon_type != internal::Polygon_type::STRICTLY_CONVEX)
-        m_is_strictly_convex_polygon = false;
-      else
-        m_is_strictly_convex_polygon = true;
-
       CGAL_precondition(
         internal::is_simple_2(polygon, traits, vertex_map));
       CGAL_precondition(
-        m_is_strictly_convex_polygon);
-      clear();
+        internal::polygon_type_2(polygon, traits, vertex_map) ==
+        internal::Polygon_type::STRICTLY_CONVEX);
+      resize();
     }
 
     /// @}
@@ -208,33 +200,6 @@ namespace Barycentric_coordinates {
 
     /// @}
 
-    /// \name Memory Management
-    /// @{
-
-    /*!
-      \brief clears all internal data structures.
-    */
-    void clear() {
-      A.clear();
-      C.clear();
-      w.clear();
-      A.resize(m_polygon.size());
-      C.resize(m_polygon.size());
-      w.resize(m_polygon.size());
-    }
-
-    /*!
-      \brief releases all memory that is used internally.
-    */
-    void release_memory() {
-      clear();
-      A.shrink_to_fit();
-      C.shrink_to_fit();
-      w.shrink_to_fit();
-    }
-
-    /// @}
-
   private:
 
     // Fields.
@@ -250,6 +215,12 @@ namespace Barycentric_coordinates {
     bool m_is_strictly_convex_polygon;
 
     // Functions.
+    void resize() {
+      A.resize(m_polygon.size());
+      C.resize(m_polygon.size());
+      w.resize(m_polygon.size());
+    }
+
     template<typename OutputIterator>
     OutputIterator compute(
       const bool normalize,
@@ -315,13 +286,11 @@ namespace Barycentric_coordinates {
 
       const auto result = internal::locate_wrt_polygon_2(
         m_polygon, query, m_traits, m_vertex_map);
-
       if (!result)
         return internal::Edge_case::EXTERIOR;
 
-      const internal::Query_point_location location = (*result).first;
+      const auto location = (*result).first;
       const std::size_t index = (*result).second;
-
       if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE)
         return internal::Edge_case::EXTERIOR;
 
@@ -332,7 +301,6 @@ namespace Barycentric_coordinates {
           m_polygon, query, location, index, weights, m_traits, m_vertex_map);
         return internal::Edge_case::BOUNDARY;
       }
-
       return internal::Edge_case::INTERIOR;
     }
 
@@ -409,7 +377,6 @@ namespace Barycentric_coordinates {
       const auto& p1 = get(m_vertex_map, *(m_polygon.begin() + 0));
       const auto& p2 = get(m_vertex_map, *(m_polygon.begin() + 1));
       const auto& pn = get(m_vertex_map, *(m_polygon.begin() + (n - 1)));
-      const auto& pm = get(m_vertex_map, *(m_polygon.begin() + (n - 2)));
 
       A[0] = m_area_2(p1, p2, query);
       C[0] = m_area_2(pn, p1, p2);
@@ -423,6 +390,7 @@ namespace Barycentric_coordinates {
         C[i] = m_area_2(pi0, pi1, pi2);
       }
 
+      const auto& pm = get(m_vertex_map, *(m_polygon.begin() + (n - 2)));
       A[n - 1] = m_area_2(pn, p1, query);
       C[n - 1] = m_area_2(pm, pn, p1);
 
