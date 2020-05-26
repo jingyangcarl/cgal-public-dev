@@ -10,6 +10,7 @@
 // CGAL includes.
 #include <CGAL/IO/io.h>
 #include <CGAL/property_map.h>
+#include <CGAL/squared_distance_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -34,7 +35,7 @@ namespace Examples {
       return out.str();
     }
 
-    void export_polylines(
+    void export_segments(
       const std::vector<Segment_2>& segments,
       const std::string path) {
 
@@ -57,7 +58,7 @@ namespace Examples {
       std::vector<Segment_2> edges;
       for (const std::size_t seg_index : group)
         edges.push_back(segments[seg_index]);
-      export_polylines(edges, path);
+      export_segments(edges, path);
     }
 
     void export_closed_contour(
@@ -78,7 +79,7 @@ namespace Examples {
         const auto& q = contour[ip];
         segments.push_back(Segment_2(p, q));
       }
-      export_polylines(segments, name);
+      export_segments(segments, name);
     }
 
     void export_open_contour(
@@ -99,7 +100,48 @@ namespace Examples {
         const auto& q = contour[ip];
         segments.push_back(Segment_2(p, q));
       }
-      export_polylines(segments, name);
+      export_segments(segments, name);
+    }
+
+    void export_eps_segments(
+      const std::vector<Segment_2>& segments,
+      const std::string path,
+      FT scale = FT(100)) {
+
+      if (segments.size() == 0)
+        return;
+
+      // Compute bounding box.
+      clear();
+      Point_2 minb, maxb;
+      bounding_box(segments, minb, maxb);
+
+      // Estimate eps parameters.
+      const FT length = static_cast<FT>(
+        CGAL::sqrt(CGAL::to_double(CGAL::squared_distance(minb, maxb))));
+      if (length < FT(10) && scale == FT(1)) scale *= FT(1000);
+      const FT line_width = FT(1);
+      const bool dashed = false;
+
+      // Set eps header.
+      set_eps_header(
+        minb.x() * scale,
+        minb.y() * scale,
+        maxb.x() * scale,
+        maxb.y() * scale,
+        "segments");
+
+      // Start private namespace.
+      out << "0 dict begin gsave" << std::endl << std::endl;
+
+      // Draw segments.
+      for (const auto& segment : segments)
+        draw_segment(segment, scale, line_width, dashed);
+
+      // Finish private namespace.
+      out << "grestore end" << std::endl << std::endl;
+      out << "%%EOF" << std::endl;
+      save(path + ".eps");
     }
 
   private:
@@ -115,7 +157,7 @@ namespace Examples {
       std::ofstream file(path.c_str(), std::ios_base::out);
       CGAL::set_ascii_mode(file);
       if (!file) {
-        std::cout <<
+        std::cerr <<
           "Error: cannot save the file: " << path << std::endl; return;
       }
 
@@ -141,6 +183,72 @@ namespace Examples {
         out << std::endl;
       }
       save(path + ".polylines");
+    }
+
+    void bounding_box(
+      const std::vector<Segment_2>& segments,
+      Point_2& minb, Point_2& maxb) const {
+
+      const std::size_t n = segments.size();
+      FT minx =  FT(1000000000000);
+      FT miny =  FT(1000000000000);
+      FT maxx = -FT(1000000000000);
+      FT maxy = -FT(1000000000000);
+
+      for (const auto& segment : segments) {
+        const auto& source = segment.source();
+        const auto& target = segment.target();
+
+        minx = CGAL::min(minx, source.x());
+        maxx = CGAL::max(maxx, source.x());
+        miny = CGAL::min(miny, source.y());
+        maxy = CGAL::max(maxy, source.y());
+
+        minx = CGAL::min(minx, target.x());
+        maxx = CGAL::max(maxx, target.x());
+        miny = CGAL::min(miny, target.y());
+        maxy = CGAL::max(maxy, target.y());
+      }
+
+      minb = Point_2(minx, miny);
+      maxb = Point_2(maxx, maxy);
+    }
+
+    void set_eps_header(
+      const FT llx,
+      const FT lly,
+      const FT urx,
+      const FT ury,
+      const std::string title) {
+
+      out << "%!PS-Adobe-3.0 EPSF-3.0" << std::endl;
+      out << "%%BoundingBox: " << llx << " " << lly << " " << urx << " " << ury << std::endl;
+      out << "%%Pages: 1" << std::endl;
+      out << "%%Creator: Dmitry Anisimov, rudanston@gmail.com" << std::endl;
+      out << "%%Title: " << title.c_str() << std::endl;
+      out << "%%EndComments" << std::endl;
+      out << "%%EndProlog" << std::endl << std::endl;
+      out << "%%Page: 1 1" << std::endl << std::endl;
+    }
+
+    void draw_segment(
+      const Segment_2& segment,
+      const FT scale,
+      const FT line_width,
+      const bool dashed) {
+
+      const auto& source = segment.source();
+      const auto& target = segment.target();
+
+      out << source.x() * scale << " " << source.y() * scale << " moveto" << std::endl;
+      out << target.x() * scale << " " << target.y() * scale << " lineto" << std::endl;
+      out << 0.0 << " setgray" << std::endl;
+
+      if (dashed) out << "[4 1] 0 setdash" << std::endl;
+      else out << "[] 0 setdash" << std::endl;
+
+      out << line_width << " setlinewidth" << std::endl;
+      out << "stroke" << std::endl << std::endl;
     }
   };
 
