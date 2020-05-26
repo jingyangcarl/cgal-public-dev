@@ -18,22 +18,22 @@ using Points_2  = std::vector<Point_2>;
 using Segments = std::vector<Segment_2>;
 using Segment_map = CGAL::Identity_property_map<Segment_2>;
 
-using Neighbor_query = 
+using Neighbor_query =
   CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments, Segment_map>;
-using Angle_regularization = 
+using Angle_regularization =
   CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments, Segment_map>;
-using Offset_regularization = 
+using Offset_regularization =
   CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments, Segment_map>;
 
-using Quadratic_program = 
+using Quadratic_program =
   CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
 
-using QP_angle_regularizer = 
+using QP_angle_regularizer =
   CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Angle_regularization, Quadratic_program>;
-using QP_offset_regularizer = 
+using QP_offset_regularizer =
   CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Offset_regularization, Quadratic_program>;
 
-using Saver = 
+using Saver =
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
   Segments segments;
   segments.reserve(lines.size());
   Point_2 source, target;
-  for (std::size_t i = 0; i < lines.size(); ++i) {  
+  for (std::size_t i = 0; i < lines.size(); ++i) {
     CGAL::Shape_regularization::Examples::boundary_points_on_line_2(
       regions[i], lines[i], source, target);
     segments.push_back(Segment_2(source, target));
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
   Quadratic_program qp_angles;
   Neighbor_query neighbor_query(segments, segment_map);
   neighbor_query.create_unique_group();
-  
+
   const FT max_angle_2 = FT(80);
   Angle_regularization angle_regularization(
     segments, CGAL::parameters::max_angle(max_angle_2), segment_map);
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
     segments, neighbor_query, angle_regularization, qp_angles);
   qp_angle_regularizer.regularize();
 
-  std::cout << "* number of modified segments (angles) = " << 
+  std::cout << "* number of modified segments (angles) = " <<
     angle_regularization.number_of_modified_segments() << std::endl;
 
   // Offset regularization.
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
     segments, neighbor_query, offset_regularization, qp_offsets);
   qp_offset_regularizer.regularize();
 
-  std::cout << "* number of modified segments (offsets) = " << 
+  std::cout << "* number of modified segments (offsets) = " <<
     offset_regularization.number_of_modified_segments() << std::endl;
 
   // Save regularized segments.

@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_2_segments() { 
+void test_2_segments() {
 
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
@@ -34,12 +34,12 @@ void test_2_segments() {
     Segment_2(Point_2(FT(3) / FT(2), 4), Point_2(FT(3) / FT(2), 5))
   };
   assert(segments.size() == 2);
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/2_input");
 
   NQ neighbor_query(segments, smap);
   neighbor_query.create_unique_group();
-  
+
   const FT max_angle_2 = FT(5);
   AR angle_regularization(
     segments, CGAL::parameters::max_angle(max_angle_2), smap);
@@ -58,10 +58,10 @@ void test_2_segments() {
   angle_regularization.orthogonal_groups(
     std::back_inserter(orthogonal_groups));
 
-  const std::size_t num_segments_angles = 
+  const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/2_angles");
 
   assert(segments.size() == 2);
@@ -94,10 +94,10 @@ void test_2_segments() {
   offset_regularization.collinear_groups(
     std::back_inserter(collinear_groups));
 
-  const std::size_t num_segments_offsets = 
+  const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/2_offsets");
 
   assert(segments.size() == 2);
@@ -112,7 +112,7 @@ void test_2_segments() {
 
 int main() {
   test_2_segments< CGAL::Simple_cartesian<double> >();
-  test_2_segments< CGAL::Exact_predicates_inexact_constructions_kernel >(); 
+  test_2_segments< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_2_segments< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_2_segments: SUCCESS" << std::endl;
   return EXIT_SUCCESS;

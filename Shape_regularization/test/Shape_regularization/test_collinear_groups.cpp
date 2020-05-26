@@ -8,8 +8,8 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_collinear_groups() { 
-  
+void test_collinear_groups() {
+
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
@@ -33,9 +33,9 @@ void test_collinear_groups() {
 
     Segment_2(Point_2(7, 2), Point_2(5, 4)) // top right group
   };
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/cg_input");
-  
+
   const CG grouping(
     segments, CGAL::parameters::all_default());
   std::vector<Indices> groups;

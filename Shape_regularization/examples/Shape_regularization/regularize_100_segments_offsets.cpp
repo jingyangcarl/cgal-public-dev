@@ -11,19 +11,19 @@ using Segment_2 = typename Kernel::Segment_2;
 using Indices   = std::vector<std::size_t>;
 using Segments  = std::vector<Segment_2>;
 
-using Parallel_groups = 
+using Parallel_groups =
   CGAL::Shape_regularization::Segments::Parallel_groups_2<Kernel, Segments>;
 
-using Neighbor_query = 
+using Neighbor_query =
   CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using Offset_regularization = 
+using Offset_regularization =
   CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
-using Quadratic_program = 
+using Quadratic_program =
   CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
-using QP_offset_regularizer = 
+using QP_offset_regularizer =
   CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Offset_regularization, Quadratic_program>;
 
-using Saver = 
+using Saver =
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
   // Create parallel groups.
   const FT max_angle_2 = FT(1);
-  const Parallel_groups grouping(segments, 
+  const Parallel_groups grouping(segments,
   CGAL::parameters::max_angle(max_angle_2));
   std::vector<Indices> parallel_groups;
   grouping.groups(
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     segments, neighbor_query, offset_regularization, qp_offsets);
   qp_offset_regularizer.regularize();
 
-  std::cout << "* number of modified segments = " << 
+  std::cout << "* number of modified segments = " <<
     offset_regularization.number_of_modified_segments() << std::endl;
 
   // Save regularized segments.

@@ -17,10 +17,10 @@ if(CGAL_FOUND)
   if(osqp_FOUND)
     message(STATUS "Found OSQP")
 
-    set(targets 
+    set(targets
     benchmark_contours
     benchmark_qp_segments)
-    
+
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")
       if(TARGET ${target})
@@ -32,6 +32,6 @@ if(CGAL_FOUND)
     message(STATUS "NOTICE: OSQP was not found. OSQP benchmarks won't be available.")
   endif()
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()

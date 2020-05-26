@@ -39,24 +39,24 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief An offset-based regularization type for 2D segments that preserves 
+    \brief An offset-based regularization type for 2D segments that preserves
     collinearity relationships.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam SegmentMap 
-    must be a model of `LvaluePropertyMap` whose key type is the value type of the `InputRange` 
-    and value type is `GeomTraits::Segment_2`. %Default is the 
+    \tparam SegmentMap
+    must be a model of `LvaluePropertyMap` whose key type is the value type of the `InputRange`
+    and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
     \cgalModels `RegularizationType`
   */
   template<
-  typename GeomTraits, 
+  typename GeomTraits,
   typename InputRange,
   typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
   class Offset_regularization_2 {
@@ -64,7 +64,7 @@ namespace Segments {
 
     /// \name Types
     /// @{
-    
+
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
@@ -95,19 +95,19 @@ namespace Segments {
       \tparam NamedParameters
       a sequence of \ref sr_namedparameters "Named Parameters".
 
-      \param input_range 
+      \param input_range
       an instance of `InputRange` with 2D segments
 
       \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters"
       among the ones listed below
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`, 
+      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`,
       if not provided, the default is used
 
       \cgalNamedParamsBegin
-        \cgalParamBegin{max_offset} 
+        \cgalParamBegin{max_offset}
           max offset deviation in meters between two segments, the default is 0.5 meters
         \cgalParamEnd
       \cgalNamedParamsEnd
@@ -122,7 +122,7 @@ namespace Segments {
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
     m_segment_map(segment_map),
-    m_num_modified_segments(0) { 
+    m_num_modified_segments(0) {
 
       CGAL_precondition(input_range.size() > 1);
       const FT max_offset = parameters::choose_parameter(
@@ -137,11 +137,11 @@ namespace Segments {
       }
       clear();
     }
-    
+
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief calculates the target value between 2 segments, which are
@@ -157,7 +157,7 @@ namespace Segments {
       \pre `j >= 0 && j < input_range.size()`
     */
     FT target(
-      const std::size_t i, 
+      const std::size_t i,
       const std::size_t j) {
 
       CGAL_precondition(i >= 0 && i < m_input_range.size());
@@ -169,7 +169,7 @@ namespace Segments {
       const auto& wrapj = m_wraps[j];
       CGAL_assertion(wrapj.is_used);
 
-      const FT target_value = 
+      const FT target_value =
         wrapi.ref_coords.y() - wrapj.ref_coords.y();
       return target_value;
     }
@@ -182,7 +182,7 @@ namespace Segments {
     }
 
     /*!
-      \brief applies new positions computed by the QP solver 
+      \brief applies new positions computed by the QP solver
       to the initial segments.
 
       \param solution
@@ -204,25 +204,25 @@ namespace Segments {
         const Vector_2 final_normal = Vector_2(
           -direction.dy(), direction.dx());
 
-        const auto& segment = get(m_segment_map, 
+        const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
         const auto& source = segment.source();
         const auto& target = segment.target();
 
         const Point_2 new_source = Point_2(
-          source.x() + difference * final_normal.x(), 
+          source.x() + difference * final_normal.x(),
           source.y() + difference * final_normal.y());
         const Point_2 new_target = Point_2(
-          target.x() + difference * final_normal.x(), 
+          target.x() + difference * final_normal.x(),
           target.y() + difference * final_normal.y());
-      
+
         const FT bx = (new_source.x() + new_target.x()) / FT(2);
         const FT by = (new_source.y() + new_target.y()) / FT(2);
         wrap.barycenter = Point_2(bx, by);
         wrap.c = -wrap.a * bx - wrap.b * by;
 
         const Segment_2 modified = Segment_2(new_source, new_target);
-        put(m_segment_map, 
+        put(m_segment_map,
           *(m_input_range.begin() + seg_index), modified);
         ++m_num_modified_segments;
       }
@@ -230,24 +230,24 @@ namespace Segments {
     /// @}
 
     /// \name Miscellaneous
-    /// @{ 
+    /// @{
 
     /*!
       \brief returns indices of collinear segments organized into groups.
 
-      \tparam OutputIterator 
+      \tparam OutputIterator
       must be a model of `OutputIterator`
 
       \param groups
-      an instance of `OutputIterator`, 
+      an instance of `OutputIterator`,
       whose value type is `std::vector<std::size_t>`
     */
     template<typename OutputIterator>
     OutputIterator collinear_groups(OutputIterator groups) const {
 
       const Collinear_groups_2 grouping(
-        m_input_range, 
-        CGAL::parameters::max_offset(m_max_offset), 
+        m_input_range,
+        CGAL::parameters::max_offset(m_max_offset),
         m_segment_map);
       return grouping.groups(groups);
     }
@@ -255,7 +255,7 @@ namespace Segments {
     /*!
       \brief inserts a group of segments from `input_range`.
 
-      \tparam IndexRange 
+      \tparam IndexRange
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
       The value type is `std::size_t`.
 
@@ -266,10 +266,10 @@ namespace Segments {
     */
     template<typename IndexRange>
   	void add_group(
-      const IndexRange& index_range) { 
-      if (index_range.size() < 2) 
+      const IndexRange& index_range) {
+      if (index_range.size() < 2)
         return;
-      
+
       Indices group;
       group.reserve(index_range.size());
       for (const auto seg_index : index_range)
@@ -281,13 +281,13 @@ namespace Segments {
     /*!
       \brief inserts all input segments from `input_range` as one unique group.
 
-      For more details, 
+      For more details,
       see `CGAL::Shape_regularization::Segments::Offset_regularization_2::add_group()`.
 
       \pre `m_input_range.size() > 1`
     */
     void create_unique_group() {
-      
+
       CGAL_precondition(m_input_range.size() > 1);
       if (m_input_range.size() < 2) return;
 
@@ -306,7 +306,7 @@ namespace Segments {
     /// @}
 
     /// \name Internal data management
-    /// @{ 
+    /// @{
 
     /*!
       \brief clears all internal data structures.
@@ -322,7 +322,7 @@ namespace Segments {
 
     // EXTRA METHODS TO TEST THE CLASS!
     /// \cond SKIP_IN_MANUAL
-    const std::size_t number_of_groups() const { 
+    const std::size_t number_of_groups() const {
       return m_num_groups;
     }
     /// \endcond
@@ -348,13 +348,13 @@ namespace Segments {
           seg_index >= 0 && seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
 
-        const auto& segment = 
+        const auto& segment =
           get(m_segment_map, *(m_input_range.begin() + seg_index));
         wrap.set_qp(seg_index, segment);
 
         if (i == 0) frame_origin = wrap.barycenter;
         wrap.set_ref_coords(frame_origin);
-      } 
+      }
     }
   };
 

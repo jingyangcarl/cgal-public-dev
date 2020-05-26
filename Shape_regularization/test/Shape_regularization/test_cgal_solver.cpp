@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_cgal_solver() { 
+void test_cgal_solver() {
 
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
@@ -35,12 +35,12 @@ void test_cgal_solver() {
   };
 
   assert(segments.size() == 4);
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/cgal_input");
 
   NQ neighbor_query(segments, smap);
   neighbor_query.create_unique_group();
-  
+
   const FT max_angle_2 = FT(5);
   AR angle_regularization(
     segments, CGAL::parameters::max_angle(max_angle_2), smap);
@@ -59,10 +59,10 @@ void test_cgal_solver() {
   angle_regularization.orthogonal_groups(
     std::back_inserter(orthogonal_groups));
 
-  const std::size_t num_segments_angles = 
+  const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/cgal_angles");
 
   assert(segments.size() == 4);
@@ -73,7 +73,7 @@ void test_cgal_solver() {
 
 int main() {
   test_cgal_solver< CGAL::Simple_cartesian<double> >();
-  test_cgal_solver< CGAL::Exact_predicates_inexact_constructions_kernel >(); 
+  test_cgal_solver< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_cgal_solver< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_cgal_solver: SUCCESS" << std::endl;
   return EXIT_SUCCESS;

@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_user_defined_directions() { 
+void test_user_defined_directions() {
 
   using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
@@ -18,17 +18,17 @@ void test_user_defined_directions() {
   using Contour = std::vector<Point_2>;
   using Point_map = CGAL::Identity_property_map<Point_2>;
   using UD = SR::Contours::User_defined_directions_2<Traits, Contour, Point_map>;
-  
+
   Saver saver;
   Point_map pmap;
   const Contour contour = {
-    Point_2( 1, 1), Point_2(4, 1), 
+    Point_2( 1, 1), Point_2(4, 1),
     Point_2( 4, 4), Point_2(7, 1),
     Point_2(10, 4), Point_2(7, 7),
     Point_2(1, 7)
   };
   assert(contour.size() == 7);
-  // saver.export_closed_contour(contour, 
+  // saver.export_closed_contour(contour,
   //   "/Users/monet/Documents/gsoc/ggr/logs/ud_input");
 
   const std::vector<Direction_2> dirs = {
@@ -42,9 +42,9 @@ void test_user_defined_directions() {
   UD open_directions(
     dirs, contour, !is_closed, pmap);
 
-  const std::size_t num_closed_directions = 
+  const std::size_t num_closed_directions =
     closed_directions.number_of_directions();
-  const std::size_t num_open_directions = 
+  const std::size_t num_open_directions =
     open_directions.number_of_directions();
 
   assert(num_closed_directions == 2);
@@ -60,7 +60,7 @@ void test_user_defined_directions() {
 
 int main() {
   test_user_defined_directions< CGAL::Simple_cartesian<double> >();
-  test_user_defined_directions< CGAL::Exact_predicates_inexact_constructions_kernel >(); 
+  test_user_defined_directions< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_user_defined_directions< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_user_defined_directions: SUCCESS" << std::endl;
   return EXIT_SUCCESS;

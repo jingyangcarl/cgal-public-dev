@@ -26,10 +26,10 @@ namespace Tests {
     using Segment_2 = typename Traits::Segment_2;
     using Polyline = std::vector<Point_3>;
 
-    Saver() { 
-      out.precision(20); 
+    Saver() {
+      out.precision(20);
     }
- 
+
     inline std::string data() const {
       return out.str();
     }
@@ -37,12 +37,12 @@ namespace Tests {
     void export_polylines(
       const std::vector<Segment_2>& segments,
       const std::string path) {
-      
+
       std::vector<Polyline> polylines(segments.size());
       for (std::size_t i = 0; i < segments.size(); ++i) {
         const auto& s = segments[i].source();
         const auto& t = segments[i].target();
-        
+
         polylines[i].push_back(Point_3(s.x(), s.y(), FT(0)));
         polylines[i].push_back(Point_3(t.x(), t.y(), FT(0)));
       }
@@ -53,7 +53,7 @@ namespace Tests {
       const std::vector<Segment_2>& segments,
       const std::vector<std::size_t>& group,
       const std::string path) {
-      
+
       std::vector<Segment_2> edges;
       for (const std::size_t seg_index : group)
         edges.push_back(segments[seg_index]);
@@ -61,7 +61,7 @@ namespace Tests {
     }
 
     void export_closed_contour(
-      const std::vector<Point_2>& contour, 
+      const std::vector<Point_2>& contour,
       const std::string name) {
 
       if (contour.size() == 0)
@@ -82,7 +82,7 @@ namespace Tests {
     }
 
     void export_open_contour(
-      const std::vector<Point_2>& contour, 
+      const std::vector<Point_2>& contour,
       const std::string name) {
 
       if (contour.size() == 0)
@@ -111,16 +111,16 @@ namespace Tests {
 
     void save(
       const std::string path) const {
-      
+
       std::ofstream file(path.c_str(), std::ios_base::out);
       CGAL::set_ascii_mode(file);
       if (!file) {
-        std::cout << 
+        std::cout <<
           "Error: cannot save the file: " << path << std::endl; return;
       }
-      
+
       file << data() << std::endl; file.close();
-      std::cout << 
+      std::cout <<
         "* data are saved in " << path << std::endl;
     }
 

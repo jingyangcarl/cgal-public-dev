@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_neighbor_query() { 
+void test_neighbor_query() {
 
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
@@ -31,7 +31,7 @@ void test_neighbor_query() {
     Segment_2(Point_2(3, 3), Point_2(1, 3)),
     Segment_2(Point_2(1, 3), Point_2(1, 1))
   };
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/nq_input");
 
   std::vector<Indices> groups(2);
@@ -40,7 +40,7 @@ void test_neighbor_query() {
 
   NQ neighbor_query(segments);
   neighbor_query.create_unique_group();
-  
+
   // Check unique group.
   Segments edges;
   neighbor_query.get_edges(edges);
@@ -74,7 +74,7 @@ void test_neighbor_query() {
   assert(edges.size() == 5);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
-  
+
   // Add groups consequently.
   neighbor_query.clear();
   neighbor_query.add_group(groups[0]);

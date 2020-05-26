@@ -33,21 +33,21 @@ namespace Contours {
 
   /*!
     \ingroup PkgShapeRegularizationRefContours
-    
+
     \brief Sets multiple user-defined principal directions of the contour.
 
-    This algorithm finds the best-fit edges of the contour with respect to the 
+    This algorithm finds the best-fit edges of the contour with respect to the
     user-defined principal directions and sets all other necessary data.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
     \tparam InputRange
     must be a model of `ConstRange`.
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input 
-    range and value type is `GeomTraits::Point_2`. %Default is the 
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Point_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
     \cgalModels `ContourDirections`
@@ -88,7 +88,7 @@ namespace Contours {
       \param input_range
       a const range of points, which form a contour
 
-      \param is_closed 
+      \param is_closed
       indicates whether the contour is closed or open
 
       \param point_map
@@ -108,7 +108,7 @@ namespace Contours {
       const bool is_closed,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
-    m_point_map(point_map) { 
+    m_point_map(point_map) {
 
       CGAL_precondition(input_range.size() >= 2);
       CGAL_precondition(direction_range.size() > 0);
@@ -116,7 +116,7 @@ namespace Contours {
       if (is_closed)
         estimate_closed(
           direction_range, m_bounds, m_directions, m_assigned);
-      else 
+      else
         estimate_open(
           direction_range, m_bounds, m_directions, m_assigned);
 
@@ -137,7 +137,7 @@ namespace Contours {
       \brief orients a given `segment` with the index `query_index` with respect
       to the best user-defined principal direction.
 
-      \param query_index an index of the `segment` in the input contour, in other words, 
+      \param query_index an index of the `segment` in the input contour, in other words,
       the segment's source point is the point in the contour with the index `query_index`
 
       \param segment a segment to be oriented
@@ -212,7 +212,7 @@ namespace Contours {
       bounds.clear(); bounds.reserve(directions.size());
       for (std::size_t i = 0; i < directions.size(); ++i)
         bounds.push_back(std::make_pair(FT(45), FT(45)));
-      
+
       assigned.clear(); assigned.resize(wraps.size());
       m_base.set_directions(directions, wraps, assigned);
 
@@ -244,7 +244,7 @@ namespace Contours {
       bounds.clear(); bounds.reserve(directions.size());
       for (std::size_t i = 0; i < directions.size(); ++i)
         bounds.push_back(std::make_pair(FT(45), FT(45)));
-      
+
       assigned.clear(); assigned.resize(wraps.size());
       m_base.set_directions(directions, wraps, assigned);
 

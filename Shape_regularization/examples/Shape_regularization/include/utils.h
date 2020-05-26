@@ -40,10 +40,10 @@ void initialize_contour(
   file.precision(20);
 
   if (!file) {
-    std::cerr << 
+    std::cerr <<
     "Error: cannot read the file with data!" << std::endl;
-    std::cout << 
-    "You can either create a symlink to the data folder or provide this file by hand." 
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
     << std::endl << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -63,27 +63,27 @@ void initialize_contour(
 
 double get_coefficient_value(
   const double theta, double& iterator) {
-  
+
   if (
-    theta == 0.0 || 
-    theta == CGAL_PI / 2.0 || 
-    theta == CGAL_PI || 
+    theta == 0.0 ||
+    theta == CGAL_PI / 2.0 ||
+    theta == CGAL_PI ||
     theta == 3.0 * CGAL_PI / 2.0) {
-    
+
     iterator = 0.0;
   } else if (
-    theta == CGAL_PI / 4.0 || 
-    theta == 3.0 * CGAL_PI / 4.0 || 
-    theta == 5.0 * CGAL_PI / 4.0 || 
+    theta == CGAL_PI / 4.0 ||
+    theta == 3.0 * CGAL_PI / 4.0 ||
+    theta == 5.0 * CGAL_PI / 4.0 ||
     theta == 7.0 * CGAL_PI / 4.0) {
-    
+
     iterator = 0.22;
   } else if (
-    (theta > 0.0 && theta < CGAL_PI / 4.0) || 
-    (theta > CGAL_PI / 2.0 && theta < 3.0 * CGAL_PI / 4.0) || 
-    (theta > CGAL_PI && theta < 5.0 * CGAL_PI / 4.0) || 
+    (theta > 0.0 && theta < CGAL_PI / 4.0) ||
+    (theta > CGAL_PI / 2.0 && theta < 3.0 * CGAL_PI / 4.0) ||
+    (theta > CGAL_PI && theta < 5.0 * CGAL_PI / 4.0) ||
     (theta > 3.0 * CGAL_PI / 2.0 && theta < 7.0 * CGAL_PI / 4.0)) {
-    
+
     iterator += 0.02;
   } else
     iterator -= 0.02;
@@ -108,7 +108,7 @@ void create_example_offsets(
   while (theta < 2.0 * CGAL_PI) {
     const double st = std::sin(theta);
     const double ct = std::cos(theta);
-    
+
     const Point_2 a = Point_2(0.0, 0.0);
     const Point_2 b = Point_2(ct, st);
 
@@ -159,7 +159,7 @@ void create_example_angles(
 template<typename Segment_2>
 void create_example_15(
   std::vector<Segment_2>& segments) {
-  
+
   using Traits = typename Kernel_traits<Segment_2>::Kernel;
   using Point_2 = typename Traits::Point_2;
 
@@ -214,13 +214,13 @@ void boundary_points_on_line_2(
   using Vector_2 = typename Traits::Vector_2;
 
   const FT max_value = FT(1000000000000);
-  
+
   FT min_proj_value =  max_value;
   FT max_proj_value = -max_value;
 
   const Vector_2 ref_vector = line.to_vector();
   const Point_2& ref_point  = points[0];
-  
+
   for (const auto& point : points) {
     const Vector_2 curr_vector(ref_point, point);
     const FT value = CGAL::scalar_product(curr_vector, ref_vector);
@@ -243,10 +243,10 @@ void initialize_regions(
   file.precision(20);
 
   if (!file) {
-    std::cout << 
+    std::cout <<
     "Error: cannot read the file with data!" << std::endl;
-    std::cout << 
-    "You can either create a symlink to the data folder or provide this file by hand." 
+    std::cout <<
+    "You can either create a symlink to the data folder or provide this file by hand."
     << std::endl << std::endl;
     exit(EXIT_FAILURE);
   }

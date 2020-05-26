@@ -51,7 +51,7 @@ namespace internal {
 
     using FT_pair = std::pair<FT, FT>;
     using Segments_2 = std::vector<Segment_2>;
-    
+
     using Segment_wrapper_2 = typename Base::Segment_wrapper_2;
     using Segment_wrappers_2 = typename Base::Segment_wrappers_2;
 
@@ -59,7 +59,7 @@ namespace internal {
       const Contour_directions& estimator,
       const FT max_offset_2) :
     m_estimator(estimator),
-    m_max_offset_2(max_offset_2) 
+    m_max_offset_2(max_offset_2)
     { }
 
     template<
@@ -78,7 +78,7 @@ namespace internal {
     template<typename OutputIterator>
     void regularize(
       OutputIterator contour) {
-      
+
       CGAL_assertion(m_wraps.size() >= 2);
       if (m_wraps.size() < 2) return;
 
@@ -106,7 +106,7 @@ namespace internal {
     const Contour_directions& m_estimator;
     const FT m_max_offset_2;
     const Base m_base;
-    
+
     std::vector<Segment_wrapper_2> m_wraps;
 
     const bool verbose() const {
@@ -134,7 +134,7 @@ namespace internal {
       std::vector<Segment_wrappers_2> groups;
       create_consecutive_groups(wraps, groups);
       if (verbose())
-        std::cout << 
+        std::cout <<
           "* number of consecutive groups = " << groups.size() << std::endl;
 
       // Optimize all groups with at least two collinear segments.
@@ -147,7 +147,7 @@ namespace internal {
         }
       }
       if (verbose())
-        std::cout << 
+        std::cout <<
           "* number of optimized groups = " << count << std::endl;
 
       // Update segments.
@@ -169,11 +169,11 @@ namespace internal {
       for (std::size_t i = 0; i < n - 1; ++i) {
         auto& wrapi = wraps[i];
         if (wrapi.is_used) continue;
-        
-        group.clear(); 
+
+        group.clear();
         wrapi.is_used = true;
         group.push_back(wrapi);
-        
+
         const std::size_t ip = i + 1;
         for (std::size_t j = ip; j < n; ++j) {
           auto& wrapj = wraps[j];
@@ -183,7 +183,7 @@ namespace internal {
 
           if (angle_2 <= m_base.get_angle_threshold_2()) {
             wrapj.is_used = true;
-            group.push_back(wrapj); 
+            group.push_back(wrapj);
           } else break;
         }
         groups.push_back(group);
@@ -210,7 +210,7 @@ namespace internal {
       const std::size_t n = wraps.size();
       for (std::size_t i = 0; i < n; ++i) {
         auto& wrap = wraps[i];
-        
+
         // Add a collinear segment.
         wrap.index = count; ++count;
         wrap.is_used = false;
@@ -228,7 +228,7 @@ namespace internal {
         const std::size_t groupi = wrapi.group;
         const std::size_t groupj = wrapj.group;
         if (groupi != groupj) {
-          
+
           const Line_2 line = Line_2(
             wrapj.segment.source(), wrapj.segment.target());
           const auto source = internal::middle_point_2(
@@ -247,8 +247,8 @@ namespace internal {
 
     bool connect_contour(
       std::vector<Segment_wrapper_2>& wraps) const {
-      
-      if (wraps.size() < 1) 
+
+      if (wraps.size() < 1)
         return false;
 
       bool success = false;
@@ -256,7 +256,7 @@ namespace internal {
       if (!success) return false;
 
       if (verbose())
-        std::cout << "* number of clean segments = " << 
+        std::cout << "* number of clean segments = " <<
         wraps.size() << std::endl;
 
       // Do we need it here?
@@ -272,7 +272,7 @@ namespace internal {
       // Clean.
       m_base.remove_zero_length_segments(wraps);
       if (wraps.size() < 1) return false;
-      
+
       // Filter out wrong segments.
       filter_out_wrong_segments(wraps);
       if (wraps.size() < 1) return false;
@@ -296,17 +296,17 @@ namespace internal {
         CGAL_assertion(parallel.size() != 0);
         if (!success) return;
 
-        Segment_2 segment; 
+        Segment_2 segment;
         m_base.parallel_segments_to_segment(parallel, segment);
         if (parallel.size() > 1) {
-          
+
           Segment_wrapper_2 wrap;
           wrap.segment = segment;
           wrap.index = count; ++count;
           filtered.push_back(wrap);
 
         } else if (parallel.size() == 1) {
-          
+
           auto& wrap = parallel[0];
           wrap.index = count; ++count;
           filtered.push_back(wrap);
@@ -321,10 +321,10 @@ namespace internal {
       const std::vector<Segment_wrapper_2>& wraps,
       std::vector<Segment_wrapper_2>& parallel,
       std::size_t& seed) const {
-        
+
       parallel.clear();
       const std::size_t n = wraps.size();
-      
+
       std::size_t i = seed;
       bool next_is_parallel = false;
       std::size_t count = 0;
@@ -355,12 +355,12 @@ namespace internal {
 
       const std::size_t n = wraps.size();
       for (std::size_t i = 0; i < n; ++i) {
-        
+
         std::size_t im = std::size_t(-1);
         if (i > 0) im = i - 1;
         std::size_t ip = std::size_t(-1);
         if (i < n - 1) ip = i + 1;
-        
+
         auto& si = wraps[i].segment;
 
         if (im == std::size_t(-1) && ip == std::size_t(-1))
@@ -371,7 +371,7 @@ namespace internal {
           m_base.intersect_segment(si, sp);
           continue;
         }
-        
+
         if (im != std::size_t(-1) && ip == std::size_t(-1)) {
           const auto& sm = wraps[im].segment;
           m_base.intersect_segment(sm, si);

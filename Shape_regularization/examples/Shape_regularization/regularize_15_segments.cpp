@@ -11,22 +11,22 @@ using Segment_2 = typename Kernel::Segment_2;
 using Indices   = std::vector<std::size_t>;
 using Segments  = std::vector<Segment_2>;
 
-using Neighbor_query = 
+using Neighbor_query =
   CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using Angle_regularization = 
+using Angle_regularization =
   CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments>;
-using Offset_regularization = 
+using Offset_regularization =
   CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
 
-using Quadratic_program = 
+using Quadratic_program =
   CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
 
-using QP_angle_regularizer = 
+using QP_angle_regularizer =
   CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Angle_regularization, Quadratic_program>;
-using QP_offset_regularizer = 
+using QP_offset_regularizer =
   CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Offset_regularization, Quadratic_program>;
 
-using Saver = 
+using Saver =
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   CGAL::Shape_regularization::Examples::
   create_example_15(segments);
 
-  // We create three groups of segments: 
+  // We create three groups of segments:
   // outer, top and bottom rhombuses.
   std::vector<Indices> groups(3);
   groups[0] = {0, 1, 2, 3, 4, 5, 6}; // outer
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     segments, neighbor_query, angle_regularization, qp_angles);
   qp_angle_regularizer.regularize();
 
-  std::cout << "* number of modified segments (angles) = " << 
+  std::cout << "* number of modified segments (angles) = " <<
     angle_regularization.number_of_modified_segments() << std::endl;
 
   // Offset regularization.
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     segments, neighbor_query, offset_regularization, qp_offsets);
   qp_offset_regularizer.regularize();
 
-  std::cout << "* number of modified segments (offsets) = " << 
+  std::cout << "* number of modified segments (offsets) = " <<
     offset_regularization.number_of_modified_segments() << std::endl;
 
   // Save regularized segments.

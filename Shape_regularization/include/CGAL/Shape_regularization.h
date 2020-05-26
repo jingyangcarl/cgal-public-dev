@@ -28,7 +28,7 @@
 #include <CGAL/Shape_regularization/Contour_regularization_2.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
 
-#include <CGAL/Shape_regularization/Segments/Delaunay_neighbor_query_2.h> 
+#include <CGAL/Shape_regularization/Segments/Delaunay_neighbor_query_2.h>
 #include <CGAL/Shape_regularization/Segments/Angle_regularization_2.h>
 #include <CGAL/Shape_regularization/Segments/Offset_regularization_2.h>
 #include <CGAL/Shape_regularization/Segments/Parallel_groups_2.h>

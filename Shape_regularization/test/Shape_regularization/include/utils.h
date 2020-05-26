@@ -33,7 +33,7 @@ void check_reference_values(
 
     const auto point1 = segment.source().x() + segment.source().y();
     const auto point2 = segment.target().x() + segment.target().y();
-    
+
     const int key = static_cast<int>(floor(
       CGAL::to_double(point1 + point2)));
     // std::cout << key << std::endl;
@@ -43,27 +43,27 @@ void check_reference_values(
 
 double get_coefficient_value(
   const double theta, double& iterator) {
-  
+
   if (
-    theta == 0.0 || 
-    theta == CGAL_PI / 2.0 || 
-    theta == CGAL_PI || 
+    theta == 0.0 ||
+    theta == CGAL_PI / 2.0 ||
+    theta == CGAL_PI ||
     theta == 3.0 * CGAL_PI / 2.0) {
-    
+
     iterator = 0.0;
   } else if (
-    theta == CGAL_PI / 4.0 || 
-    theta == 3.0 * CGAL_PI / 4.0 || 
-    theta == 5.0 * CGAL_PI / 4.0 || 
+    theta == CGAL_PI / 4.0 ||
+    theta == 3.0 * CGAL_PI / 4.0 ||
+    theta == 5.0 * CGAL_PI / 4.0 ||
     theta == 7.0 * CGAL_PI / 4.0) {
-    
+
     iterator = 0.22;
   } else if (
-    (theta > 0.0 && theta < CGAL_PI / 4.0) || 
-    (theta > CGAL_PI / 2.0 && theta < 3.0 * CGAL_PI / 4.0) || 
-    (theta > CGAL_PI && theta < 5.0 * CGAL_PI / 4.0) || 
+    (theta > 0.0 && theta < CGAL_PI / 4.0) ||
+    (theta > CGAL_PI / 2.0 && theta < 3.0 * CGAL_PI / 4.0) ||
+    (theta > CGAL_PI && theta < 5.0 * CGAL_PI / 4.0) ||
     (theta > 3.0 * CGAL_PI / 2.0 && theta < 7.0 * CGAL_PI / 4.0)) {
-    
+
     iterator += 0.02;
   } else
     iterator -= 0.02;
@@ -88,7 +88,7 @@ void create_example_offsets(
   while (theta < 2.0 * CGAL_PI) {
     const double st = std::sin(theta);
     const double ct = std::cos(theta);
-    
+
     const Point_2 a = Point_2(0.0, 0.0);
     const Point_2 b = Point_2(ct, st);
 

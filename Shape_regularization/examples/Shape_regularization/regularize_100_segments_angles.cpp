@@ -11,16 +11,16 @@ using Segment_2 = typename Kernel::Segment_2;
 using Indices   = std::vector<std::size_t>;
 using Segments  = std::vector<Segment_2>;
 
-using Neighbor_query = 
+using Neighbor_query =
   CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using Angle_regularization = 
+using Angle_regularization =
   CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments>;
-using Quadratic_program = 
+using Quadratic_program =
   CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
-using QP_angle_regularizer = 
+using QP_angle_regularizer =
   CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Angle_regularization, Quadratic_program>;
 
-using Saver = 
+using Saver =
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
     segments, neighbor_query, angle_regularization, qp_angles);
   qp_angle_regularizer.regularize();
 
-  std::cout << "* number of modified segments = " << 
+  std::cout << "* number of modified segments = " <<
     angle_regularization.number_of_modified_segments() << std::endl;
 
   // Save regularized segments.

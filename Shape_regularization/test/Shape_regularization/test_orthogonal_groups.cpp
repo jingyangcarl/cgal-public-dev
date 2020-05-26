@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_orthogonal_groups() { 
+void test_orthogonal_groups() {
 
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
@@ -32,9 +32,9 @@ void test_orthogonal_groups() {
     Segment_2(Point_2( 8, 3), Point_2(10, FT(52) / FT(10))), // top right group
     Segment_2(Point_2(12, 2), Point_2(10, 4))
   };
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/og_input");
-  
+
   const OG grouping(
     segments, CGAL::parameters::all_default());
   std::vector<Indices> groups;

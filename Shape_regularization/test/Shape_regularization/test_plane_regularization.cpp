@@ -22,15 +22,15 @@ using Efficient_RANSAC = CGAL::Shape_detection::Efficient_RANSAC<Traits>;
 
 template<typename OutputIterator>
 void generate_random_points(
-  const Point& origin, 
-  const Vector& base1, 
+  const Point& origin,
+  const Vector& base1,
   const Vector& base2,
-  const std::size_t nb_pts, 
+  const std::size_t nb_pts,
   OutputIterator output) {
-  
+
   Vector normal = CGAL::cross_product(base1, base2);
   normal /= std::sqrt(normal * normal);
-  
+
   // Vector noise = 0.00001 * normal;
   for (std::size_t i = 0; i < nb_pts; ++i) {
     const Point point = origin
@@ -45,10 +45,10 @@ double to_rad(const double deg) { return deg * CGAL_PI / 180.0; }
 double to_deg(const double rad) { return rad * 180.0 / CGAL_PI; }
 
 void rotate_vector(
-  Vector& vector, 
-  const int axis, 
+  Vector& vector,
+  const int axis,
   const double angle) {
-  
+
   const double cos_a = std::cos(angle);
   const double sin_a = std::sin(angle);
 
@@ -77,7 +77,7 @@ void rotate_vector(
 
 std::vector<Plane> get_ransac_planes(
   const Efficient_RANSAC& ransac) {
-  
+
   std::vector<Plane> planes;
   for (const auto& shape : ransac.shapes()) {
     planes.push_back((Plane)(*(dynamic_cast<
@@ -87,9 +87,9 @@ std::vector<Plane> get_ransac_planes(
 }
 
 bool planes_difference(
-  const Plane& a, 
+  const Plane& a,
   const Plane& b) {
-  
+
   return (
     (std::fabs(a.a() - b.a()) > 1e-6) ||
     (std::fabs(a.b() - b.b()) > 1e-6) ||
@@ -98,39 +98,39 @@ bool planes_difference(
 }
 
 void check_ransac_size(
-  const Efficient_RANSAC& ransac, 
+  const Efficient_RANSAC& ransac,
   const std::size_t nb) {
-  
+
   if (ransac.shapes().size() != nb) {
-    std::cerr << "Error: " << ransac.shapes().size() << 
+    std::cerr << "Error: " << ransac.shapes().size() <<
     " detected plane(s) instead of " << nb << "." << std::endl;
     abort();
   }
 }
 
 void check_planes_unchanged(
-  const std::vector<Plane>& before, 
+  const std::vector<Plane>& before,
   const std::vector<Plane>& after) {
-  
+
   for (std::size_t i = 0; i < before.size(); ++i)
     if (planes_difference(before[i], after[i]))
-      std::cerr << "Error: [" << before[i] << 
+      std::cerr << "Error: [" << before[i] <<
       "] was altered as [" << after[i] << "]" << std::endl;
 }
 
 void check_planes_changed(
-  const std::vector<Plane>& before, 
+  const std::vector<Plane>& before,
   const std::vector<Plane>& after) {
-  
+
   for (std::size_t i = 0; i < before.size(); ++i)
     if (planes_difference(before[i], after[i]))
       return;
-  std::cerr << "Error: no plane has been altered by regularization" << 
+  std::cerr << "Error: no plane has been altered by regularization" <<
   " while at least one should have." << std::endl;
 }
 
 int main() {
-  
+
   Vector vx(1.0, 0.0, 0.0),
          vy(0.0, 1.0, 0.0),
          vz(0.0, 0.0, 1.0);

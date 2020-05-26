@@ -7,8 +7,8 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_with_name() { 
-  
+void test_with_name() {
+
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
@@ -16,12 +16,12 @@ void test_with_name() {
   using Saver     = SR::Tests::Saver<Traits>;
 
   // To be added!
-  
+
 }
 
 int main() {
   test_with_name< CGAL::Simple_cartesian<double> >();
   test_with_name< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_with_name< CGAL::Exact_predicates_exact_constructions_kernel >(); 
+  test_with_name< CGAL::Exact_predicates_exact_constructions_kernel >();
   return EXIT_SUCCESS;
 }

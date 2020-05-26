@@ -11,14 +11,14 @@ Concepts used to parameterize the classes from `CGAL::Shape_regularization`.
 \defgroup PkgShapeRegularizationRefSolvers Solvers
 \ingroup PkgShapeRegularizationRef
 
-Models that can be used with the class `CGAL::Shape_regularization::QP_regularization` 
+Models that can be used with the class `CGAL::Shape_regularization::QP_regularization`
 to solve the corresponding QP problem.
 
 
 \defgroup PkgShapeRegularizationRefSegments Segments
 \ingroup PkgShapeRegularizationRef
 
-Models that can be used with the class `CGAL::Shape_regularization::QP_regularization` 
+Models that can be used with the class `CGAL::Shape_regularization::QP_regularization`
 to regularize segments.
 
 
@@ -36,8 +36,8 @@ to regularize contours.
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge}
-\cgalPkgDesc{This CGAL package enables to regularize a set of 2D segments in the plane, both open 
-and closed contours, and a set of planes in 3D such that all input objects are 
+\cgalPkgDesc{This CGAL package enables to regularize a set of 2D segments in the plane, both open
+and closed contours, and a set of planes in 3D such that all input objects are
 rotated and aligned with respect to the user-specified conditions.}
 \cgalPkgManuals{Chapter_Shape_Regularization, PkgShapeRegularizationRef}
 \cgalPkgSummaryEnd

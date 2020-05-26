@@ -2,37 +2,37 @@
 \ingroup PkgShapeRegularizationRefConcepts
 \cgalConcept
 
-A concept that describes the set of methods used by the class 
-`CGAL::Shape_regularization::QP_regularization` to access various data 
+A concept that describes the set of methods used by the class
+`CGAL::Shape_regularization::QP_regularization` to access various data
 required for setting up the the global regularization problem.
 
-\cgalHasModel 
-- `CGAL::Shape_regularization::Segments::Angle_regularization_2`, 
+\cgalHasModel
+- `CGAL::Shape_regularization::Segments::Angle_regularization_2`,
 - `CGAL::Shape_regularization::Segments::Offset_regularization_2`.
 */
 class RegularizationType {
 
 public:
 
-  /*!  
+  /*!
   returns the max bound on an item value that is regularized.
 
-  `CGAL::Shape_regularization::QP_regularization` calls this function for each item 
+  `CGAL::Shape_regularization::QP_regularization` calls this function for each item
   with the index `query_index` that participates in the regularization process.
   */
   typename GeomTraits::FT bound(
-    const std::size_t query_index) const { 
+    const std::size_t query_index) const {
 
   }
 
-  /*!  
+  /*!
     returns an objective function value between two items, which are direct neighbors.
 
-    `CGAL::Shape_regularization::QP_regularization` calls this function for each neighbor pair 
+    `CGAL::Shape_regularization::QP_regularization` calls this function for each neighbor pair
     `i <-> j` that participates in the regularization process.
   */
   typename GeomTraits::FT target(
-    const std::size_t i, 
+    const std::size_t i,
     const std::size_t j) {
 
   }
@@ -43,11 +43,11 @@ public:
     `CGAL::Shape_regularization::QP_regularization` calls this function once after
     the global regularization QP problem has been solved.
 
-    The `solution` vector contains values, one value per one regularized item. These 
+    The `solution` vector contains values, one value per one regularized item. These
     values depend on what is being regularized, they could be angles or offsets for example.
   */
   void update(
     const std::vector<GeomTraits::FT>& solution) {
-    
+
   }
 };

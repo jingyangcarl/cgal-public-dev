@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_100_segments_angles() { 
+void test_100_segments_angles() {
 
   using FT        = typename Traits::FT;
   using Segment_2 = typename Traits::Segment_2;
@@ -29,12 +29,12 @@ void test_100_segments_angles() {
   Segments segments;
   SR::Tests::create_example_angles(segments);
   assert(segments.size() == 100);
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/100a_input");
 
   NQ neighbor_query(segments, smap);
   neighbor_query.create_unique_group();
-  
+
   const FT max_angle_2 = FT(40);
   AR angle_regularization(
     segments, CGAL::parameters::max_angle(max_angle_2), smap);
@@ -55,7 +55,7 @@ void test_100_segments_angles() {
   //   output.clear();
   //   for (const std::size_t idx : parallel_group)
   //     output.push_back(segments[idx]);
-  //   saver.export_polylines(output, 
+  //   saver.export_polylines(output,
   //   "/Users/monet/Documents/gsoc/ggr/logs/output_" + std::to_string(i));
   // }
 
@@ -63,10 +63,10 @@ void test_100_segments_angles() {
   angle_regularization.orthogonal_groups(
     std::back_inserter(orthogonal_groups));
 
-  const std::size_t num_segments_angles = 
+  const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/100a_angles");
 
   assert(segments.size() == 100);
@@ -77,7 +77,7 @@ void test_100_segments_angles() {
 
 int main() {
   test_100_segments_angles< CGAL::Simple_cartesian<double> >();
-  test_100_segments_angles< CGAL::Exact_predicates_inexact_constructions_kernel >(); 
+  test_100_segments_angles< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_100_segments_angles< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_100_segments_angles: SUCCESS" << std::endl;
   return EXIT_SUCCESS;

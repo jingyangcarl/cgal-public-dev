@@ -1,5 +1,5 @@
 * Add benchmarks.
 * Remove all unnecessary functions.
 * Improve the contour base algorithm.
-* When adding the QP_solver concept, I should put it in the Solver_interface 
+* When adding the QP_solver concept, I should put it in the Solver_interface
 and refactor the MixedIntegerConcept, too.

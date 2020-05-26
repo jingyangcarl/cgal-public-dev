@@ -31,14 +31,14 @@
 #include <CGAL/Shape_regularization/internal/utils.h>
 
 namespace CGAL {
-namespace Shape_regularization {  
+namespace Shape_regularization {
 
   /*!
     \ingroup PkgShapeRegularizationRefSolvers
-    
+
     \brief wraps the external OSQP solver.
 
-    This class wraps the external \ref thirdpartyOSQP "OSQP solver" 
+    This class wraps the external \ref thirdpartyOSQP "OSQP solver"
     and sets all its parameters to default.
 
     \tparam FT
@@ -50,16 +50,16 @@ namespace Shape_regularization {
   class OSQP_quadratic_program {
     // row, col, value
     using Triplet = std::tuple<std::size_t, std::size_t, FT>;
-    
+
   public:
-    
+
     /// \name Initialization
     /// @{
 
     /*!
       \brief initializes all internal data structures.
     */
-    OSQP_quadratic_program() 
+    OSQP_quadratic_program()
     { }
 
     /// @}
@@ -91,14 +91,14 @@ namespace Shape_regularization {
     }
 
     void set_d(
-      const std::size_t, 
-      const std::size_t, 
+      const std::size_t,
+      const std::size_t,
       const FT val) {
       P_vec.push_back(val);
     }
 
     void set_c(
-      const std::size_t, 
+      const std::size_t,
       const FT val) {
       q_vec.push_back(val);
     }
@@ -108,14 +108,14 @@ namespace Shape_regularization {
     }
 
     void set_a(
-      const std::size_t j, 
-      const std::size_t i, 
+      const std::size_t j,
+      const std::size_t i,
       const FT val) {
       A_vec.push_back(std::make_tuple(i, j, val));
     }
-    
+
     void set_b(
-      const std::size_t, 
+      const std::size_t,
       const FT val) {
       l_vec.push_back(-internal::max_value<FT>());
       u_vec.push_back(val);
@@ -126,8 +126,8 @@ namespace Shape_regularization {
     }
 
     void set_u(
-      const std::size_t, 
-      const bool, 
+      const std::size_t,
+      const bool,
       const FT val) {
       u_vec.push_back(val);
     }
@@ -223,7 +223,7 @@ namespace Shape_regularization {
     std::vector<FT> P_vec, q_vec, l_vec, u_vec;
 
     void finalize_qp_data() {
-      
+
       const std::size_t n = P_vec.size();
       const std::size_t s = A_vec.size() / 3;
       A_vec.reserve(A_vec.size() + n);
@@ -239,7 +239,7 @@ namespace Shape_regularization {
 
       std::size_t count = 0;
       const std::size_t num_cols = std::get<1>(A_vec.back());
-      for (std::size_t ref_col = 0; 
+      for (std::size_t ref_col = 0;
       ref_col <= num_cols; ++ref_col) {
         for (std::size_t i = 0; i < A_vec.size(); ++i) {
           const std::size_t col = std::get<1>(A_vec[i]);
@@ -263,8 +263,8 @@ namespace Shape_regularization {
     }
 
     void set_P_data(
-      c_float *P_x, 
-      c_int   *P_i, 
+      c_float *P_x,
+      c_int   *P_i,
       c_int   *P_p) const {
 
       const std::size_t n = P_vec.size();
@@ -280,16 +280,16 @@ namespace Shape_regularization {
     }
 
     void set_A_data(
-      c_float *A_x, 
-      c_int   *A_i, 
+      c_float *A_x,
+      c_int   *A_i,
       c_int   *A_p) const {
 
       A_p[0] = 0;
       std::size_t count = 0;
       const std::size_t num_cols = std::get<1>(A_vec.back());
-      for (std::size_t ref_col = 0; 
+      for (std::size_t ref_col = 0;
       ref_col <= num_cols; ++ref_col) {
-        
+
         std::size_t num_rows = 0;
         for (std::size_t i = 0; i < A_vec.size(); ++i) {
           const std::size_t row = std::get<0>(A_vec[i]);
@@ -297,7 +297,7 @@ namespace Shape_regularization {
           const double val = CGAL::to_double(std::get<2>(A_vec[i]));
 
           if (col == ref_col) {
-            A_i[count] = row; A_x[count] = val; 
+            A_i[count] = row; A_x[count] = val;
             ++count; ++num_rows;
           }
         }
@@ -306,15 +306,15 @@ namespace Shape_regularization {
     }
 
     void set_qlu_data(
-      c_float *q_x, 
-      c_float *l_x, 
+      c_float *q_x,
+      c_float *l_x,
       c_float *u_x) const {
 
       CGAL_assertion(l_vec.size() == u_vec.size());
       const std::size_t n = q_vec.size();
       const std::size_t m = l_vec.size();
       CGAL_assertion(n <= m);
-      
+
       for (std::size_t i = 0; i < m; ++i) {
         if (i < n) q_x[i] = CGAL::to_double(q_vec[i]);
         l_x[i] = CGAL::to_double(l_vec[i]);

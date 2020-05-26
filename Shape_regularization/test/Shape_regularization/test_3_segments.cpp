@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_3_segments() { 
+void test_3_segments() {
 
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
@@ -35,12 +35,12 @@ void test_3_segments() {
     Segment_2(Point_2(0             , FT(11) / FT(10)), Point_2(FT(2) / FT(10), FT(11) / FT(10)))
   };
   assert(segments.size() == 3);
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/3_input");
 
   NQ neighbor_query(segments, smap);
   neighbor_query.create_unique_group();
-  
+
   const FT max_angle_2 = FT(10);
   AR angle_regularization(
     segments, CGAL::parameters::max_angle(max_angle_2), smap);
@@ -59,10 +59,10 @@ void test_3_segments() {
   angle_regularization.orthogonal_groups(
     std::back_inserter(orthogonal_groups));
 
-  const std::size_t num_segments_angles = 
+  const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/3_angles");
 
   assert(segments.size() == 3);
@@ -96,10 +96,10 @@ void test_3_segments() {
   offset_regularization.collinear_groups(
     std::back_inserter(collinear_groups));
 
-  const std::size_t num_segments_offsets = 
+  const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/3_offsets");
 
   assert(segments.size() == 3);
@@ -110,7 +110,7 @@ void test_3_segments() {
 
 int main() {
   test_3_segments< CGAL::Simple_cartesian<double> >();
-  test_3_segments< CGAL::Exact_predicates_inexact_constructions_kernel >(); 
+  test_3_segments< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_3_segments< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_3_segments: SUCCESS" << std::endl;
   return EXIT_SUCCESS;

@@ -17,7 +17,7 @@ if(CGAL_FOUND)
   if(osqp_FOUND)
     message(STATUS "Found OSQP")
 
-    set(targets 
+    set(targets
     test_neighbor_query
     test_parallel_groups
     test_collinear_groups
@@ -37,7 +37,7 @@ if(CGAL_FOUND)
     test_longest_direction
     test_multiple_directions
     test_user_defined_directions)
-    
+
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")
       if(TARGET ${target})
@@ -49,6 +49,6 @@ if(CGAL_FOUND)
     message(STATUS "NOTICE: OSQP was not found. OSQP tests won't be available.")
   endif()
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()

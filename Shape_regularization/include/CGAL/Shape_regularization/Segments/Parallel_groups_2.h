@@ -38,18 +38,18 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief Organizes segments with a similar orientation into groups of 
+    \brief Organizes segments with a similar orientation into groups of
     parallel segments.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam SegmentMap 
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
-    and value type is `GeomTraits::Segment_2`. %Default is the 
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
+    and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
   */
   template<
@@ -87,20 +87,20 @@ namespace Segments {
       \tparam NamedParameters
       a sequence of \ref sr_namedparameters "Named Parameters".
 
-      \param input_range 
+      \param input_range
       an instance of `InputRange` with 2D segments
 
       \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters"
       among the ones listed below
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
+      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`,
       if not provided, the default is used
 
       \cgalNamedParamsBegin
-        \cgalParamBegin{max_angle} 
-          max angle deviation in degrees between two segments, the default is 5 degrees 
+        \cgalParamBegin{max_angle}
+          max angle deviation in degrees between two segments, the default is 5 degrees
         \cgalParamEnd
       \cgalNamedParamsEnd
 
@@ -110,8 +110,8 @@ namespace Segments {
     template<typename NamedParameters>
     Parallel_groups_2(
       const InputRange& input_range,
-      const NamedParameters np, 
-      const SegmentMap segment_map = SegmentMap()) : 
+      const NamedParameters np,
+      const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
     m_segment_map(segment_map) {
 
@@ -126,16 +126,16 @@ namespace Segments {
     /// @}
 
     // \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief returns indices of parallel segments organized into groups.
 
-      \tparam OutputIterator 
+      \tparam OutputIterator
       must be a model of `OutputIterator`
 
       \param groups
-      an instance of OutputIterator, 
+      an instance of OutputIterator,
       whose value type is `std::vector<std::size_t>`
 
       \return an output iterator
@@ -153,12 +153,12 @@ namespace Segments {
   private:
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
-    
+
     FT m_max_angle;
     std::vector<Indices> m_parallel_groups;
 
     void make_parallel_groups() {
-      
+
       m_parallel_groups.clear();
       std::vector<bool> states(m_input_range.size(), false);
       Indices parallel_group;
@@ -188,10 +188,10 @@ namespace Segments {
         const auto& sj = get(
           m_segment_map, *(m_input_range.begin() + j));
 
-        const FT angle_2 = 
+        const FT angle_2 =
           CGAL::abs(internal::angle_2(si, sj));
         if (angle_2 <= m_max_angle) {
-          
+
           states[j] = true;
           parallel_group.push_back(j);
         }

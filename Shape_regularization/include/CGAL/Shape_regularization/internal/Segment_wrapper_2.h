@@ -39,14 +39,14 @@ namespace internal {
     using Point_2 = typename Traits::Point_2;
     using Segment_2 = typename Traits::Segment_2;
     using Direction_2  = typename Traits::Direction_2;
-    
+
     std::size_t index = std::size_t(-1);
     bool is_used = false;
 
     Point_2 barycenter, ref_coords;
     FT orientation, length, a, b, c;
     Direction_2 direction;
-    
+
     Segment_2 segment;
     std::size_t group = std::size_t(-1);
     bool is_valid_direction = false;
@@ -70,7 +70,7 @@ namespace internal {
     void set_direction(
       const Segment_2& segment) {
       auto v = segment.to_vector();
-      direction = internal::direction_2(v); 
+      direction = internal::direction_2(v);
     }
 
     void set_orientation(
@@ -83,10 +83,10 @@ namespace internal {
 
     void set_abc(
       const Segment_2& segment) {
-      
+
       set_barycenter(segment);
       set_orientation(segment);
-      
+
       const double angle_rad = CGAL::to_double(
         orientation * static_cast<FT>(CGAL_PI) / FT(180));
       a = -static_cast<FT>(std::sin(angle_rad));
@@ -97,7 +97,7 @@ namespace internal {
     void set_qp(
       const std::size_t index_,
       const Segment_2& segment) {
-      
+
       set_index(index_);
       set_length(segment);
       set_abc(segment);
@@ -111,12 +111,12 @@ namespace internal {
     }
 
     Segment_2 orient() const {
-      
+
       FT x1, y1, x2, y2;
       if (
-        CGAL::abs(direction.dx()) > 
-        CGAL::abs(direction.dy())) { 
-        
+        CGAL::abs(direction.dx()) >
+        CGAL::abs(direction.dy())) {
+
         x1 = barycenter.x() - length * direction.dx() / FT(2);
         x2 = barycenter.x() + length * direction.dx() / FT(2);
         y1 = (-c - a * x1) / b;
@@ -129,9 +129,9 @@ namespace internal {
       }
       const Point_2 source = Point_2(x1, y1);
       const Point_2 target = Point_2(x2, y2);
-      
+
       return Segment_2(source, target);
-    } 
+    }
   };
 
 } // namespace internal

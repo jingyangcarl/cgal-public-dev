@@ -49,7 +49,7 @@ namespace PL {
 
   template<typename Traits>
   struct Plane_cluster {
-    
+
     bool is_free;
     std::vector<std::size_t> planes;
     std::vector<std::size_t> coplanar_group;
@@ -59,14 +59,14 @@ namespace PL {
     typename Traits::FT area;
     typename Traits::FT cosangle_centroid;
 
-    Plane_cluster(): 
-      is_free(true), 
+    Plane_cluster():
+      is_free(true),
       normal(
         typename Traits::FT(0),
         typename Traits::FT(0),
-        typename Traits::FT(1)), 
-      cosangle_symmetry(typename Traits::FT(0)), 
-      area(typename Traits::FT(0)), 
+        typename Traits::FT(1)),
+      cosangle_symmetry(typename Traits::FT(0)),
+      area(typename Traits::FT(0)),
       cosangle_centroid(typename Traits::FT(0))
     { }
   };
@@ -109,13 +109,13 @@ namespace PL {
     } else return n;
   }
 
-  template<typename Traits>  
+  template<typename Traits>
   typename Traits::Vector_3 regularize_normals_from_prior(
     const typename Traits::Vector_3& np,
     const typename Traits::Vector_3& n,
     const typename Traits::Vector_3& symmetry_direction,
     const typename Traits::FT cos_symmetry) {
-    
+
     typedef typename Traits::FT FT;
     typedef typename Traits::Point_3 Point;
     typedef typename Traits::Vector_3 Vector;
@@ -125,7 +125,7 @@ namespace PL {
     const Plane plane_orthogonality(CGAL::ORIGIN, np);
     const Point pt_symmetry = CGAL::ORIGIN + cos_symmetry * symmetry_direction;
     const Plane plane_symmetry(pt_symmetry, symmetry_direction);
-      
+
     Line line;
     const CGAL::Object ob_1 = CGAL::intersection(plane_orthogonality, plane_symmetry);
     if (!assign(line, ob_1))
@@ -136,11 +136,11 @@ namespace PL {
 
     if (R <= 1) { // 2 (or 1) possible points intersecting the unit sphere and line
       const FT delta = std::sqrt (FT(1) - R);
-      Vector line_vector(line); 
+      Vector line_vector(line);
       line_vector /= CGAL::sqrt(line_vector * line_vector);
       const Point pt1 = projected_origin + delta * line_vector;
       const Point pt2 = projected_origin - delta * line_vector;
-        
+
       const Point pt_n = CGAL::ORIGIN + n;
       if (CGAL::squared_distance(pt_n, pt1) <= CGAL::squared_distance(pt_n, pt2))
         return Vector(CGAL::ORIGIN, pt1);
@@ -197,13 +197,13 @@ namespace PL {
 
     typedef typename Traits::FT FT;
     typedef typename Traits::Vector_3 Vector;
-    
+
     // Find pairs of epsilon-parallel primitives and store them in parallel_planes.
     std::vector< std::vector<std::size_t> > parallel_planes(planes.size());
     for (std::size_t i = 0; i < std::size_t(planes.size()); ++i) {
       const auto it = planes.begin() + i;
       const Vector v1 = get(plane_map, *it).orthogonal_vector();
-            
+
       for (std::size_t j = 0; j < std::size_t(planes.size()); ++j) {
         if (i == j) continue;
 
@@ -218,7 +218,7 @@ namespace PL {
     std::vector<bool> is_available(planes.size(), true);
     for (std::size_t i = 0; i < std::size_t(planes.size()); ++i) {
       if (is_available[i]) {
-        const auto& plane = get(plane_map, *(planes.begin() + i));    
+        const auto& plane = get(plane_map, *(planes.begin() + i));
         is_available[i] = false;
 
         clusters.push_back(Plane_cluster<Traits>());
@@ -226,9 +226,9 @@ namespace PL {
 
         // Initialize containers.
         clu.planes.push_back(i);
-                
+
         std::vector<std::size_t> index_container_former_ring_parallel;
-        index_container_former_ring_parallel.push_back(i);        
+        index_container_former_ring_parallel.push_back(i);
         std::list<std::size_t> index_container_current_ring_parallel;
 
         // Propagate over the pairs of epsilon-parallel primitives.
@@ -242,24 +242,24 @@ namespace PL {
             const std::size_t plane_index = index_container_former_ring_parallel[k];
             for (std::size_t l = 0; l < parallel_planes[plane_index].size(); ++l) {
               const std::size_t it = parallel_planes[plane_index][l];
-                        
-              Vector normal_it = 
+
+              Vector normal_it =
                 get(plane_map, *(planes.begin() + it)).orthogonal_vector();
-              if (is_available[it] && 
-                CGAL::abs(normal_it * clu.normal) > FT(1) - tolerance_cosangle) {	
-                
+              if (is_available[it] &&
+                CGAL::abs(normal_it * clu.normal) > FT(1) - tolerance_cosangle) {
+
                 propagation = true;
                 index_container_current_ring_parallel.push_back(it);
                 is_available[it] = false;
-                                
+
                 if (clu.normal * normal_it < FT(0))
                   normal_it = -normal_it;
 
                 clu.normal = FT(clu.area) * clu.normal + FT(areas[it]) * normal_it;
-                const FT norm = FT(1) / CGAL::sqrt(clu.normal.squared_length()); 
+                const FT norm = FT(1) / CGAL::sqrt(clu.normal.squared_length());
                 clu.normal = norm * clu.normal;
                 clu.area += areas[it];
-              }	
+              }
             }
           }
 
@@ -291,25 +291,25 @@ namespace PL {
     std::vector<Plane_cluster<Traits> >& clusters,
     const typename Traits::FT tolerance_cosangle,
     const typename Traits::FT tolerance_cosangle_ortho) {
-    
+
     typedef typename Traits::FT FT;
-    
+
     std::vector<FT> cosangle_centroids;
     std::vector<std::size_t> list_cluster_index;
     for (std::size_t i = 0; i < clusters.size(); ++i)
       list_cluster_index.push_back(static_cast<std::size_t>(-1));
-        
+
     std::size_t mean_index = 0;
     for (std::size_t i = 0; i < clusters.size(); ++i) {
       if (list_cluster_index[i] == static_cast<std::size_t>(-1)) {
         list_cluster_index[i] = mean_index;
         FT mean = clusters[i].area * clusters[i].cosangle_symmetry;
         FT mean_area = clusters[i].area;
-                
+
         for (std::size_t j = i + 1; j < clusters.size(); ++j) {
-          if (list_cluster_index[j] == static_cast<std::size_t>(-1) && 
+          if (list_cluster_index[j] == static_cast<std::size_t>(-1) &&
             CGAL::abs(clusters[j].cosangle_symmetry - mean / mean_area) < tolerance_cosangle_ortho) {
-            
+
             list_cluster_index[j] = mean_index;
             mean_area += clusters[j].area;
             mean += clusters[j].area * clusters[j].cosangle_symmetry;
@@ -336,10 +336,10 @@ namespace PL {
   void subgraph_mutually_orthogonal_clusters(
     std::vector< Plane_cluster<Traits> >& clusters,
     const typename Traits::Vector_3& symmetry_direction) {
-    
+
     typedef typename Traits::FT FT;
     typedef typename Traits::Vector_3 Vector;
-    
+
     std::vector< std::vector<std::size_t> > subgraph_clusters;
     std::vector<std::size_t> subgraph_clusters_max_area_index;
 
@@ -379,7 +379,7 @@ namespace PL {
                   max_area = clusters[cluster_index_2].area;
                   index_max_area = cluster_index_2;
                 }
-              }	
+              }
             }
           }
 
@@ -387,7 +387,7 @@ namespace PL {
           index_container_former_ring.clear();
           for (auto it = index_container_current_ring.begin();
             it != index_container_current_ring.end(); ++it) {
-            
+
             index_container_former_ring.push_back(*it);
             index_container.push_back(*it);
           }
@@ -404,7 +404,7 @@ namespace PL {
     // largest cluster is excluded and then store them in subgraph_clusters_prop.
     std::vector< std::vector<std::size_t> > subgraph_clusters_prop;
     for (std::size_t i = 0; i < subgraph_clusters.size(); ++i) {
-      
+
       const std::size_t index = subgraph_clusters_max_area_index[i];
       std::vector<std::size_t> subgraph_clusters_prop_temp;
       for (std::size_t j = 0; j < subgraph_clusters[i].size(); ++j)
@@ -447,7 +447,7 @@ namespace PL {
           const std::size_t cluster_index_1 = index_container_former_ring[k];
 
           for (std::size_t j = 0; j < clusters[cluster_index_1].orthogonal_clusters.size(); ++j) {
-            const std::size_t cluster_index_2 = clusters[cluster_index_1].orthogonal_clusters[j];						
+            const std::size_t cluster_index_2 = clusters[cluster_index_1].orthogonal_clusters[j];
             if (clusters[cluster_index_2].is_free) {
               propagation = true;
               index_container_current_ring.push_back(cluster_index_2);
@@ -461,14 +461,14 @@ namespace PL {
 
               clusters[cluster_index_2].normal = new_vect;
             }
-          }	
+          }
         }
-        
+
         // Update containers.
         index_container_former_ring.clear();
         for (auto it = index_container_current_ring.begin();
           it != index_container_current_ring.end(); ++it) {
-          
+
           index_container_former_ring.push_back(*it);
           index_container.push_back(*it);
         }
@@ -476,7 +476,7 @@ namespace PL {
       } while (propagation);
     }
   }
-  
+
 } // namespace PL
 } // namespace internal
 
@@ -503,14 +503,14 @@ namespace Planes {
     const bool regularize_orthogonality,
     const bool regularize_coplanarity,
     const bool regularize_axis_symmetry,
-    typename GeomTraits::FT tolerance_angle 
+    typename GeomTraits::FT tolerance_angle
       = typename GeomTraits::FT(25),
-    const typename GeomTraits::FT tolerance_coplanarity 
+    const typename GeomTraits::FT tolerance_coplanarity
       = typename GeomTraits::FT(1) / typename GeomTraits::FT(100),
     const typename GeomTraits::Vector_3 symmetry_direction
       = typename GeomTraits::Vector_3(
-        typename GeomTraits::FT(0), 
-        typename GeomTraits::FT(0), 
+        typename GeomTraits::FT(0),
+        typename GeomTraits::FT(0),
         typename GeomTraits::FT(1))) {
 
     using Kernel = GeomTraits;
@@ -529,9 +529,9 @@ namespace Planes {
 
     tolerance_angle *= static_cast<FT>(CGAL_PI) / FT(180);
     const FT tolerance_cosangle = FT(FT(1) - std::cos(tolerance_angle));
-    const FT tolerance_cosangle_ortho = 
+    const FT tolerance_cosangle_ortho =
       FT(std::cos((FT(1) / FT(2)) * static_cast<FT>(CGAL_PI) - FT(tolerance_angle)));
-        
+
     // Cluster the parallel primitives and store them in clusters,
     // compute the normal, size and cos angle to the symmetry direction of each cluster.
     std::vector<Plane_cluster> clusters;
@@ -545,14 +545,14 @@ namespace Planes {
       for (std::size_t i = 0; i < clusters.size(); ++i) {
         for (std::size_t j = i + 1; j < clusters.size(); ++j) {
           if (CGAL::abs(clusters[i].normal * clusters[j].normal) < tolerance_cosangle_ortho) {
-            
+
             clusters[i].orthogonal_clusters.push_back(j);
             clusters[j].orthogonal_clusters.push_back(i);
           }
         }
       }
     }
-        
+
     if (regularize_axis_symmetry) {
       // Cluster the symmetry cos angle and store their centroids in
       // cosangle_centroids and the centroid index of each cluster in
@@ -560,13 +560,13 @@ namespace Planes {
       internal::PL::cluster_symmetric_cosangles<Kernel>(
         clusters, tolerance_cosangle, tolerance_cosangle_ortho);
     }
-    
+
     // Find subgraphs of mutually orthogonal clusters (store indices of
     // clusters in subgraph_clusters), and select the cluster of the largest area.
     if (regularize_orthogonality || regularize_axis_symmetry)
       internal::PL::subgraph_mutually_orthogonal_clusters<Kernel>(
         clusters, (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
-        
+
     // Recompute optimal plane for each primitive after the normal regularization.
     for (std::size_t i = 0; i < clusters.size(); ++i) {
       Vector vec_reg = clusters[i].normal;
@@ -596,9 +596,9 @@ namespace Planes {
           const std::size_t index_prim = clusters[i].planes[j];
 
           if (clusters[i].coplanar_group[j] == static_cast<std::size_t>(-1)) {
-            const Plane& plane = get(plane_map, *(planes.begin() + index_prim));      
+            const Plane& plane = get(plane_map, *(planes.begin() + index_prim));
             clusters[i].coplanar_group[j] = cop_index;
-                    
+
             const Point pt_reg = plane.projection(centroids[index_prim]);
             const Plane plan_reg(pt_reg, vec_reg);
 
@@ -614,22 +614,22 @@ namespace Planes {
                   clusters[i].coplanar_group[k] = cop_index;
               }
             }
-            ++cop_index; 
+            ++cop_index;
           }
         }
-          
+
         // Regularize primitive positions by computing barycenter of the coplanar planes.
         std::vector<Point> pt_bary(cop_index, Point(FT(0), FT(0), FT(0)));
         std::vector<FT> area(cop_index, FT(0));
         for (std::size_t j = 0; j < clusters[i].planes.size (); ++j) {
           const std::size_t index_prim = clusters[i].planes[j];
           const std::size_t group = clusters[i].coplanar_group[j];
-                
-          const Point pt_reg = get(plane_map, 
+
+          const Point pt_reg = get(plane_map,
             *(planes.begin() + index_prim)).projection(centroids[index_prim]);
 
           pt_bary[group] = CGAL::barycenter(
-            pt_bary[group], area[group], pt_reg, areas[index_prim]); 
+            pt_bary[group], area[group], pt_reg, areas[index_prim]);
           area[group] += areas[index_prim];
         }
 
@@ -638,7 +638,7 @@ namespace Planes {
           const std::size_t group = clusters[i].coplanar_group[j];
           const Plane plane_reg(pt_bary[group], vec_reg);
 
-          if (get(plane_map, 
+          if (get(plane_map,
           *(planes.begin() + index_prim)).orthogonal_vector()
           * plane_reg.orthogonal_vector() < 0)
             put(plane_map, *(planes.begin() + index_prim), plane_reg.opposite());
@@ -675,13 +675,13 @@ namespace Planes {
     const bool regularize_coplanarity,
     const bool regularize_axis_symmetry,
     const typename Kernel_traits<
-      typename boost::property_traits<PointMap>::value_type>::Kernel::FT tolerance_angle = 
+      typename boost::property_traits<PointMap>::value_type>::Kernel::FT tolerance_angle =
       CGAL_TYPENAME_FOR_MSC Kernel_traits<
         typename boost::property_traits<PointMap>::value_type>::Kernel::FT(25),
     const typename Kernel_traits<
-      typename boost::property_traits<PointMap>::value_type>::Kernel::FT tolerance_coplanarity = 
+      typename boost::property_traits<PointMap>::value_type>::Kernel::FT tolerance_coplanarity =
       CGAL_TYPENAME_FOR_MSC Kernel_traits<
-        typename boost::property_traits<PointMap>::value_type>::Kernel::FT(1) / 
+        typename boost::property_traits<PointMap>::value_type>::Kernel::FT(1) /
       CGAL_TYPENAME_FOR_MSC Kernel_traits<
         typename boost::property_traits<PointMap>::value_type>::Kernel::FT(100),
     const typename Kernel_traits<
@@ -710,18 +710,18 @@ namespace Planes {
   #endif
   /// \endcond
 
-  /// \ingroup PkgShapeRegularizationRef  
+  /// \ingroup PkgShapeRegularizationRef
   /*!
     \brief Hierarchical plane regularization.
 
     Given a set of detected planes with their corresponding inlier sets,
-    this function enables to regularize the planes: 
+    this function enables to regularize the planes:
     - %Planes, which are near parallel, are made parallel.
     - %Planes, which are near orthogonal, are made exactly orthogonal.
     - Parallel planes, which are near coplanar, are made exactly coplanar.
     - %Planes, which are near symmetrical with respect to a user-defined axis, are made exactly symmetrical.
 
-    %Planes are directly modified. Points are left unaltered, as well as their 
+    %Planes are directly modified. Points are left unaltered, as well as their
     relationship to the planes (no transfer of a point from a primitive plane to another).
 
     The implementation follows \cgalCite{cgal:vla-lod-15}.
@@ -745,20 +745,20 @@ namespace Planes {
 
     \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
 
-    \param np optional sequence of \ref sr_namedparameters "Named Parameters" 
+    \param np optional sequence of \ref sr_namedparameters "Named Parameters"
     among the ones listed below:
-    
+
     \cgalNamedParamsBegin
-      \cgalParamBegin{plane_index_map} 
-        a property map that associates the index of a point in the input range 
+      \cgalParamBegin{plane_index_map}
+        a property map that associates the index of a point in the input range
         to the index of plane (-1 if point is not assigned to a plane), no default value
       \cgalParamEnd
       \cgalParamBegin{max_angle}
-        max angle in degrees between plane normals used for parallelism, 
+        max angle in degrees between plane normals used for parallelism,
         orthogonality, and axis symmetry, the default is 25 degrees
       \cgalParamEnd
       \cgalParamBegin{max_offset}
-        max distance in meters between two parallel planes such that 
+        max distance in meters between two parallel planes such that
         they are considered coplanar, the default is 0.01 meters
       \cgalParamEnd
       \cgalParamBegin{regularize_parallelism}
@@ -777,7 +777,7 @@ namespace Planes {
         an axis for symmetry regularization, the default is Z axis
       \cgalParamEnd
     \cgalNamedParamsEnd
-  */ 
+  */
   template<
   typename PlaneRange,
   typename PlaneMap,
@@ -790,7 +790,7 @@ namespace Planes {
     const PointRange& points,
     const PointMap point_map,
     const NamedParameters np) {
-    
+
     using parameters::get_parameter;
     using parameters::choose_parameter;
     using PlaneIndexMap = typename CGAL::Point_set_processing_3::
@@ -800,7 +800,7 @@ namespace Planes {
       !(boost::is_same<PlaneIndexMap,
       typename CGAL::Point_set_processing_3::GetPlaneIndexMap<NamedParameters>::NoMap>::value),
       "Error: no index map found!");
-    const PlaneIndexMap index_map = 
+    const PlaneIndexMap index_map =
       choose_parameter(get_parameter(np, internal_np::plane_index_map), PlaneIndexMap());
 
     using Kernel = typename Kernel_traits<
@@ -810,26 +810,26 @@ namespace Planes {
     using Vector_3 = typename Kernel::Vector_3;
 
     const bool reg_prll = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize_parallelism), 
+      parameters::get_parameter(np, internal_np::regularize_parallelism),
       true);
     const bool reg_orth = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize_orthogonality), 
+      parameters::get_parameter(np, internal_np::regularize_orthogonality),
       true);
     const bool reg_copl = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize_coplanarity), 
+      parameters::get_parameter(np, internal_np::regularize_coplanarity),
       true);
     const bool reg_symm = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::regularize_axis_symmetry), 
+      parameters::get_parameter(np, internal_np::regularize_axis_symmetry),
       true);
 
     const FT tol_angle = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::max_angle), 
+      parameters::get_parameter(np, internal_np::max_angle),
       FT(25));
     const FT tol_copln = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::max_offset), 
+      parameters::get_parameter(np, internal_np::max_offset),
       FT(1) / FT(100));
     const Vector_3 sym_dir = parameters::choose_parameter(
-      parameters::get_parameter(np, internal_np::symmetry_direction), 
+      parameters::get_parameter(np, internal_np::symmetry_direction),
       Vector_3(FT(0), FT(0), FT(1)));
 
     regularize_planes(

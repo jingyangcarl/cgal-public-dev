@@ -22,11 +22,11 @@ struct Custom_neighbor_query_2 {
 
 struct Custom_regularization_2 {
   FT bound(
-    const std::size_t query_index) const { 
+    const std::size_t query_index) const {
     return FT(5); // max angle change
   }
   FT target(
-    const std::size_t query_index_i, 
+    const std::size_t query_index_i,
     const std::size_t query_index_j) {
     return FT(0); // 0 angle change
   }
@@ -54,10 +54,10 @@ public:
   void  set_l(const std::size_t, const bool, const FT) { }
   void  set_u(const std::size_t, const bool, const FT) { }
 
-  bool solve(std::vector<NT>& solution) { 
+  bool solve(std::vector<NT>& solution) {
     solution.clear();
     solution.resize(3, NT(0)); // 3 = 2 segments + 1 edge between them
-    return true; 
+    return true;
   }
 };
 
@@ -70,26 +70,26 @@ public:
 #define USER_SOLVER
 
 #if defined(OSQP_SOLVER)
-using Quadratic_program = 
+using Quadratic_program =
   CGAL::Shape_regularization::OSQP_quadratic_program<FT>; // OSQP sparse solver
 #endif
 #if defined(CGAL_SOLVER)
-using Quadratic_program = 
+using Quadratic_program =
   CGAL::Shape_regularization::CGAL_quadratic_program<FT>; // CGAL dense solver
 #endif
 #if defined(USER_SOLVER)
-using Quadratic_program = 
+using Quadratic_program =
   CGAL::Shape_regularization::USER_quadratic_program<FT>; // USER custom solver
 #endif
 
 using NQ = CGAL::Shape_regularization::Custom_neighbor_query_2;
 using RT = CGAL::Shape_regularization::Custom_regularization_2;
 using QP = Quadratic_program;
-using Regularizer = 
+using Regularizer =
   CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, RT, QP>;
 
 int main(int argc, char *argv[]) {
-  
+
   NQ neighbor_query;
   RT angle_regularization;
   QP quadratic_program;

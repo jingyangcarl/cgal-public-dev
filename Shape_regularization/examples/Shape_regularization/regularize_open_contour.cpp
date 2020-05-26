@@ -11,13 +11,13 @@ using Point_2 = typename Kernel::Point_2;
 using Contour = std::vector<Point_2>;
 
 using Point_map = CGAL::Identity_property_map<Point_2>;
-using Contour_directions = 
+using Contour_directions =
   CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour, Point_map>;
-using Contour_regularizer = 
-  CGAL::Shape_regularization::Contour_regularization_2<Kernel, Contour, Contour_directions, 
+using Contour_regularizer =
+  CGAL::Shape_regularization::Contour_regularization_2<Kernel, Contour, Contour_directions,
   CGAL::Shape_regularization::OPEN, Point_map>;
 
-using Saver = 
+using Saver =
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   regularizer.regularize(
     std::back_inserter(regularized));
 
-  std::cout << "* number of directions = " << 
+  std::cout << "* number of directions = " <<
     directions.number_of_directions() << std::endl;
 
   // Save regularized contour.

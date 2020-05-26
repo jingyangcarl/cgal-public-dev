@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_parallel_groups() { 
+void test_parallel_groups() {
 
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
@@ -31,9 +31,9 @@ void test_parallel_groups() {
     Segment_2(Point_2(3, 5), Point_2(6, 7)), // top right group
     Segment_2(Point_2(7, 6), Point_2(4, 4))
   };
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/pg_input");
-  
+
   const PG grouping(
     segments, CGAL::parameters::all_default());
   std::vector<Indices> groups;

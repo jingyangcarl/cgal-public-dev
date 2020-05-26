@@ -8,8 +8,8 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_100_segments_offsets() { 
-  
+void test_100_segments_offsets() {
+
   using FT        = typename Traits::FT;
   using Segment_2 = typename Traits::Segment_2;
   using Indices   = std::vector<std::size_t>;
@@ -30,13 +30,13 @@ void test_100_segments_offsets() {
   Segments segments;
   SR::Tests::create_example_offsets(segments);
   assert(segments.size() == 100);
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/100o_input");
 
   const FT max_angle_2 = FT(1);
   PG grouping(
-    segments, 
-    CGAL::parameters::max_angle(max_angle_2), 
+    segments,
+    CGAL::parameters::max_angle(max_angle_2),
     smap);
 
   std::vector<Indices> parallel_groups;
@@ -49,7 +49,7 @@ void test_100_segments_offsets() {
   //   output.clear();
   //   for (const std::size_t idx : parallel_group)
   //     output.push_back(segments[idx]);
-  //   saver.export_polylines(output, 
+  //   saver.export_polylines(output,
   //   "/Users/monet/Documents/gsoc/ggr/logs/output_" + std::to_string(i));
   // }
 
@@ -75,10 +75,10 @@ void test_100_segments_offsets() {
   offset_regularization.collinear_groups(
     std::back_inserter(collinear_groups));
 
-  const std::size_t num_segments_offsets = 
+  const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/100o_offsets");
 
   assert(segments.size() == 100);
@@ -88,7 +88,7 @@ void test_100_segments_offsets() {
 
 int main() {
   test_100_segments_offsets< CGAL::Simple_cartesian<double> >();
-  test_100_segments_offsets< CGAL::Exact_predicates_inexact_constructions_kernel >(); 
+  test_100_segments_offsets< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_100_segments_offsets< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_100_segments_offsets: SUCCESS" << std::endl;
   return EXIT_SUCCESS;

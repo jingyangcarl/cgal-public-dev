@@ -39,18 +39,18 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief Organizes segments with a similar orientation into groups of 
+    \brief Organizes segments with a similar orientation into groups of
     collinear segments.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam SegmentMap 
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
-    and value type is `GeomTraits::Segment_2`. %Default is the 
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
+    and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
   */
   template<
@@ -89,19 +89,19 @@ namespace Segments {
       \tparam NamedParameters
       a sequence of \ref sr_namedparameters "Named Parameters".
 
-      \param input_range 
+      \param input_range
       an instance of `InputRange` with 2D segments
 
       \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters"
       among the ones listed below
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`, 
+      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`,
       if not provided, the default is used
 
       \cgalNamedParamsBegin
-        \cgalParamBegin{max_offset} 
+        \cgalParamBegin{max_offset}
           max offset deviation in meters between two segments, the default is 0.2 meters
         \cgalParamEnd
       \cgalNamedParamsEnd
@@ -112,8 +112,8 @@ namespace Segments {
     template<typename NamedParameters>
     Collinear_groups_2(
       const InputRange& input_range,
-      const NamedParameters np, 
-      const SegmentMap segment_map = SegmentMap()) : 
+      const NamedParameters np,
+      const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
     m_segment_map(segment_map),
     m_grouping(
@@ -130,16 +130,16 @@ namespace Segments {
     /// @}
 
     // \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief returns indices of collinear segments organized into groups.
 
-      \tparam OutputIterator 
+      \tparam OutputIterator
       must be a model of `OutputIterator`
 
       \param groups
-      an instance of OutputIterator, 
+      an instance of OutputIterator,
       whose value type is `std::vector<std::size_t>`
 
       \return an output iterator
@@ -158,17 +158,17 @@ namespace Segments {
     const Input_range& m_input_range;
     const Segment_map m_segment_map;
     const Parallel_groups_2 m_grouping;
-    
+
     FT m_max_offset;
     std::vector<Indices> m_collinear_groups;
 
     void make_collinear_groups() {
-      
+
       std::vector<Indices> parallel_groups;
       m_grouping.groups(
         std::back_inserter(parallel_groups));
       m_collinear_groups.reserve(parallel_groups.size());
-      
+
       Indices collinear_group;
       std::vector<bool> states;
 
@@ -179,7 +179,7 @@ namespace Segments {
         states.clear();
         states.resize(parallel_group.size(), false);
         handle_parallel_group(
-          parallel_group, sq_max_dist, 
+          parallel_group, sq_max_dist,
           states, collinear_group);
       }
       CGAL_assertion(
@@ -194,18 +194,18 @@ namespace Segments {
 
       for (std::size_t i = 0; i < parallel_group.size(); ++i) {
         if (states[i]) continue;
-        
+
         const std::size_t si_index = parallel_group[i];
-        const auto& si = get(m_segment_map, 
+        const auto& si = get(m_segment_map,
           *(m_input_range.begin() + si_index));
-        
+
         states[i] = true;
         collinear_group.clear();
         collinear_group.push_back(si_index);
 
         const Line_2 line = Line_2(si.source(), si.target());
         traverse_group(
-          i, line, parallel_group, sq_max_dist, 
+          i, line, parallel_group, sq_max_dist,
           states, collinear_group);
         m_collinear_groups.push_back(collinear_group);
       }
@@ -221,15 +221,15 @@ namespace Segments {
 
       for (std::size_t j = i + 1; j < parallel_group.size(); ++j) {
         if (states[j]) continue;
-        
+
         const std::size_t sj_index = parallel_group[j];
-        const auto& sj = get(m_segment_map, 
+        const auto& sj = get(m_segment_map,
           *(m_input_range.begin() + sj_index));
-        
+
         const auto p = internal::middle_point_2(
           sj.source(), sj.target());
         const auto q = line.projection(p);
-        
+
         const FT sq_dist = CGAL::squared_distance(p, q);
         if (sq_dist <= sq_max_dist) {
           states[j] = true;

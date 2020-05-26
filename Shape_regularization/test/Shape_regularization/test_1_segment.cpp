@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_1_segment() { 
+void test_1_segment() {
 
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
@@ -33,12 +33,12 @@ void test_1_segment() {
     Segment_2(Point_2(1, 1), Point_2(1, 4))
   };
   assert(segments.size() == 1);
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/1_input");
 
   NQ neighbor_query(segments, smap);
   neighbor_query.create_unique_group();
-  
+
   AR angle_regularization(
     segments, CGAL::parameters::all_default(), smap);
   angle_regularization.create_unique_group();
@@ -56,10 +56,10 @@ void test_1_segment() {
   angle_regularization.orthogonal_groups(
     std::back_inserter(orthogonal_groups));
 
-  const std::size_t num_segments_angles = 
+  const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/1_angles");
 
   assert(segments.size() == 1);
@@ -85,10 +85,10 @@ void test_1_segment() {
   offset_regularization.collinear_groups(
     std::back_inserter(collinear_groups));
 
-  const std::size_t num_segments_offsets = 
+  const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments, 
+  // saver.export_polylines(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/1_offsets");
 
   assert(segments.size() == 1);
@@ -98,7 +98,7 @@ void test_1_segment() {
 
 int main() {
   test_1_segment< CGAL::Simple_cartesian<double> >();
-  test_1_segment< CGAL::Exact_predicates_inexact_constructions_kernel >(); 
+  test_1_segment< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_1_segment< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_1_segment: SUCCESS" << std::endl;
   return EXIT_SUCCESS;

@@ -33,21 +33,21 @@ namespace Contours {
 
   /*!
     \ingroup PkgShapeRegularizationRefContours
-    
+
     \brief Estimates the longest principal direction of the contour.
 
     This algorithm finds the longest contour edge and sets it as the principal
     direction of the contour.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
     \tparam InputRange
     must be a model of `ConstRange`.
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input 
-    range and value type is `GeomTraits::Point_2`. %Default is the 
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Point_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
     \cgalModels `ContourDirections`
@@ -81,7 +81,7 @@ namespace Contours {
       \param input_range
       a const range of points, which form a contour
 
-      \param is_closed 
+      \param is_closed
       indicates whether the contour is closed or open
 
       \param point_map
@@ -95,13 +95,13 @@ namespace Contours {
       const bool is_closed,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
-    m_point_map(point_map) { 
+    m_point_map(point_map) {
 
       CGAL_precondition(
         m_input_range.size() >= 2);
       if (is_closed)
         estimate_closed(m_bounds, m_directions, m_assigned);
-      else 
+      else
         estimate_open(m_bounds, m_directions, m_assigned);
 
       if (verbose()) {
@@ -118,10 +118,10 @@ namespace Contours {
     /// @{
 
     /*!
-      \brief orients a given `segment` with the index `query_index` with respect 
+      \brief orients a given `segment` with the index `query_index` with respect
       to the longest principal direction.
 
-      \param query_index an index of the `segment` in the input contour, in other words, 
+      \param query_index an index of the `segment` in the input contour, in other words,
       the segment's source point is the point in the contour with the index `query_index`
 
       \param segment a segment to be oriented
@@ -211,7 +211,7 @@ namespace Contours {
       const std::size_t ip = (i + 1) % n;
       const auto& source = get(m_point_map, *(m_input_range.begin() + i));
       const auto& target = get(m_point_map, *(m_input_range.begin() + ip));
-      
+
       const Segment_2 segment = Segment_2(source, target);
       auto v = segment.to_vector();
       return internal::direction_2(v);

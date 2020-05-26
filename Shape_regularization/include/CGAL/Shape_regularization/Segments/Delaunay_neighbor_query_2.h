@@ -38,28 +38,28 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief A neighbor query based on a Delaunay triangulation, which enables to 
+    \brief A neighbor query based on a Delaunay triangulation, which enables to
     find the nearest neighbors in a set of `GeomTraits::Segment_2`.
 
-    This class returns indices of the nearest neighbors of a query segment 
+    This class returns indices of the nearest neighbors of a query segment
     in a set of 2D segments.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam SegmentMap 
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange` 
-    and value type is `GeomTraits::Segment_2`. %Default is the 
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
+    and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
     \cgalModels `NeighborQuery`
   */
   template<
-    typename GeomTraits, 
-    typename InputRange, 
+    typename GeomTraits,
+    typename InputRange,
     typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
   class Delaunay_neighbor_query_2 {
 
@@ -87,31 +87,31 @@ namespace Segments {
     /*!
       \brief initializes all internal data structures.
 
-      \param input_range 
+      \param input_range
       an instance of `InputRange` with 2D segments
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`, 
+      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`,
       if not provided, the default is used
 
       \pre `input_range.size() > 1`
     */
     Delaunay_neighbor_query_2(
-      const InputRange& input_range, 
+      const InputRange& input_range,
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
-    m_segment_map(segment_map) { 
-      
+    m_segment_map(segment_map) {
+
       CGAL_precondition(input_range.size() > 1); clear();
     }
 
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
-      \brief returns indices of segments, which are direct neighbors of 
+      \brief returns indices of segments, which are direct neighbors of
       the query segment.
 
       \param query_index
@@ -123,9 +123,9 @@ namespace Segments {
       \pre `query_index >= 0 && query_index < input_range.size()`
     */
     void operator()(
-      const std::size_t query_index, 
-      std::vector<std::size_t>& neighbors) { 
-      
+      const std::size_t query_index,
+      std::vector<std::size_t>& neighbors) {
+
       neighbors.clear();
       CGAL_precondition(
         m_groups.size() == m_input_range.size());
@@ -138,13 +138,13 @@ namespace Segments {
     /// @}
 
     /// \name Utilities
-    /// @{ 
+    /// @{
 
     /*!
-      \brief inserts a group of segments from `input_range` and computes their 
+      \brief inserts a group of segments from `input_range` and computes their
       neighbors within the group.
 
-      \tparam IndexRange 
+      \tparam IndexRange
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
       The value type is `std::size_t`.
 
@@ -155,10 +155,10 @@ namespace Segments {
     */
     template<typename IndexRange>
   	void add_group(
-      const IndexRange& index_range) { 
-      if (index_range.size() < 2) 
+      const IndexRange& index_range) {
+      if (index_range.size() < 2)
         return;
-      
+
       Indices group;
       group.reserve(index_range.size());
       for (const std::size_t seg_index : index_range)
@@ -172,11 +172,11 @@ namespace Segments {
     /*!
       \brief inserts all input segments from `input_range` as one unique group.
 
-      For more details, 
+      For more details,
       see `CGAL::Shape_regularization::Delaunay_neighbor_query_2::add_group()`.
     */
     void create_unique_group() {
-      
+
       CGAL_precondition(m_input_range.size() > 1);
       if (m_input_range.size() < 2) return;
 
@@ -188,7 +188,7 @@ namespace Segments {
     /// @}
 
     /// \name Internal data management
-    /// @{ 
+    /// @{
 
     /*!
       \brief clears all internal data structures.
@@ -206,7 +206,7 @@ namespace Segments {
 
     // EXTRA METHODS TO TEST THE CLASS!
     /// \cond SKIP_IN_MANUAL
-    const std::size_t number_of_groups() const { 
+    const std::size_t number_of_groups() const {
       return m_num_groups;
     }
 
@@ -262,7 +262,7 @@ namespace Segments {
     void add_neighbors() {
 
       CGAL_assertion(m_groups.size() == m_input_range.size());
-      for (auto vit = m_delaunay.finite_vertices_begin(); 
+      for (auto vit = m_delaunay.finite_vertices_begin();
       vit != m_delaunay.finite_vertices_end(); ++vit) {
 
         const std::size_t seg_index_1 = vit->info();
@@ -276,7 +276,7 @@ namespace Segments {
         do {
           if (!m_delaunay.is_infinite(vc)) {
             const std::size_t seg_index_2 = vc->info();
-            CGAL_assertion( 
+            CGAL_assertion(
               seg_index_2 >= 0 && seg_index_2 < m_groups.size());
             neighbors.push_back(seg_index_2);
           }
@@ -289,7 +289,7 @@ namespace Segments {
     // ALL BELOW USED ONLY FOR TESTING!
     void build_graph_of_neighbors(
       std::set<Size_pair>& graph) {
-      
+
       Size_pair pair;
       Indices neighbors;
       graph.clear();
@@ -298,8 +298,8 @@ namespace Segments {
       for (std::size_t i = 0; i < m_groups.size(); ++i) {
         operator()(i, neighbors);
         for (const std::size_t neighbor : neighbors) {
-          i < neighbor ? 
-          pair = std::make_pair(i, neighbor) : 
+          i < neighbor ?
+          pair = std::make_pair(i, neighbor) :
           pair = std::make_pair(neighbor, i);
           graph.insert(pair);
         }

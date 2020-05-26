@@ -32,24 +32,24 @@ namespace Shape_regularization {
 
   /*!
     \ingroup PkgShapeRegularizationRef
-    
-    \brief Shape regularization algorithm based on the quadratic programming 
+
+    \brief Shape regularization algorithm based on the quadratic programming
     global optimization.
 
-    Given a quadratic programming solver via the class `QPSolver`, this version of the 
-    shape regularization algorithm enables to regularize a set of user-defined 
+    Given a quadratic programming solver via the class `QPSolver`, this version of the
+    shape regularization algorithm enables to regularize a set of user-defined
     items provided a way
-    - to access neighbors of each item via the `NeighborQuery` class; 
+    - to access neighbors of each item via the `NeighborQuery` class;
     - to obtain a max bound for each item via the `RegularizationType` class;
     - to obtain a target value for each pair of neighbor items via the `RegularizationType` class.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
-    
-    \tparam InputRange 
+
+    \tparam InputRange
     must be a model of `ConstRange`.
 
-    \tparam NeighborQuery 
+    \tparam NeighborQuery
     must be a model of `NeighborQuery`.
 
     \tparam RegularizationType
@@ -61,7 +61,7 @@ namespace Shape_regularization {
   template<
   typename GeomTraits,
   typename InputRange,
-  typename NeighborQuery, 
+  typename NeighborQuery,
   typename RegularizationType,
   typename QPSolver>
   class QP_regularization {
@@ -76,12 +76,12 @@ namespace Shape_regularization {
       const FT val_neg, val_pos;
 
       Parameters():
-      weight(FT(100000)), 
-      lambda(FT(4) / FT(5)), 
+      weight(FT(100000)),
+      lambda(FT(4) / FT(5)),
       neg_inf(-internal::max_value<FT>()),
       pos_inf(+internal::max_value<FT>()),
       val_pos(FT(+2) * lambda),
-      val_neg(FT(-2) * lambda) 
+      val_neg(FT(-2) * lambda)
       { }
     };
 
@@ -103,16 +103,16 @@ namespace Shape_regularization {
 
     /*!
       \brief initializes all internal data structures.
-      
-      \param input_range 
+
+      \param input_range
       a const range of input items for shape regularization
 
-      \param neighbor_query 
-      an instance of `NeighborQuery` that is used internally to 
+      \param neighbor_query
+      an instance of `NeighborQuery` that is used internally to
       access item's neighbors
 
-      \param regularization_type 
-      an instance of `RegularizationType` that is used internally to 
+      \param regularization_type
+      an instance of `RegularizationType` that is used internally to
       obtain bounds and target values of the items
 
       \param quadratic_program
@@ -121,8 +121,8 @@ namespace Shape_regularization {
       \pre `input_range.size() > 1`
     */
     QP_regularization(
-      const InputRange& input_range, 
-      NeighborQuery& neighbor_query, 
+      const InputRange& input_range,
+      NeighborQuery& neighbor_query,
       RegularizationType& regularization_type,
       QPSolver& quadratic_program) :
     m_input_range(input_range),
@@ -130,20 +130,20 @@ namespace Shape_regularization {
     m_regularization_type(regularization_type),
     m_quadratic_program(quadratic_program),
     m_parameters(Parameters()),
-    m_max_bound(-FT(1)) { 
-      
+    m_max_bound(-FT(1)) {
+
       CGAL_precondition(input_range.size() > 1);
     }
 
     /// @}
 
-    /// \name Access 
+    /// \name Regularization
     /// @{
 
     /*!
       \brief runs the shape regularization algorithm.
     */
-    void regularize() { 
+    void regularize() {
       if (m_input_range.size() < 2) return;
 
       // Graph = edges connecting neighbor segments.
@@ -165,9 +165,9 @@ namespace Shape_regularization {
 
       // Solve.
       std::vector<FT> solution;
-      solve_quadratic_program( 
+      solve_quadratic_program(
         m_quadratic_program, solution);
-      if (solution.size() != m_input_range.size() + m_targets.size()) 
+      if (solution.size() != m_input_range.size() + m_targets.size())
         return;
 
       // Update.
@@ -189,7 +189,7 @@ namespace Shape_regularization {
     std::map<Size_pair, FT> m_targets;
 
     void build_graph_of_neighbors() {
-      
+
       Size_pair pair;
       Indices neighbors;
       m_graph.clear();
@@ -197,8 +197,8 @@ namespace Shape_regularization {
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
         m_neighbor_query(i, neighbors);
         for (const std::size_t neighbor : neighbors) {
-          i < neighbor ? 
-          pair = std::make_pair(i, neighbor) : 
+          i < neighbor ?
+          pair = std::make_pair(i, neighbor) :
           pair = std::make_pair(neighbor, i);
           m_graph.insert(pair);
         }
@@ -207,7 +207,7 @@ namespace Shape_regularization {
     }
 
     void obtain_bounds() {
-      
+
       m_bounds.clear();
       m_bounds.reserve(m_input_range.size());
       m_max_bound = -FT(1);
@@ -224,14 +224,14 @@ namespace Shape_regularization {
     }
 
     void obtain_targets() {
-      
+
       m_targets.clear();
       for(const auto& pair : m_graph) {
         const std::size_t i = pair.first;
-        const std::size_t j = pair.second; 
+        const std::size_t j = pair.second;
 
         const FT target = m_regularization_type.target(i, j);
-        if (CGAL::abs(target) < 
+        if (CGAL::abs(target) <
           m_regularization_type.bound(i) + m_regularization_type.bound(j)) {
           m_targets[pair] = target;
         }
@@ -241,7 +241,7 @@ namespace Shape_regularization {
 
     void set_qp_data(
       Quadratic_program& qp) const {
-      
+
       const std::size_t k = m_input_range.size(); // k segments
       const std::size_t e = m_targets.size(); // e graph edges
       const std::size_t n = k + e; // number of variables
@@ -255,15 +255,15 @@ namespace Shape_regularization {
     }
 
     void set_quadratic_term(
-      const std::size_t n, 
+      const std::size_t n,
       const std::size_t k,
       Quadratic_program& qp) const {
-      
+
       qp.reserve_d(n);
       for (std::size_t i = 0; i < n; ++i) {
         FT val = FT(0);
         if (i < k) {
-          val = FT(2) * m_parameters.weight * (FT(1) - m_parameters.lambda) / 
+          val = FT(2) * m_parameters.weight * (FT(1) - m_parameters.lambda) /
             (m_bounds[i] * m_bounds[i] * FT(k));
         }
         qp.set_d(i, i, val);
@@ -271,15 +271,15 @@ namespace Shape_regularization {
     }
 
     void set_linear_term(
-      const std::size_t n, 
+      const std::size_t n,
       const std::size_t k,
       Quadratic_program& qp) const {
-      
+
       qp.reserve_c(n);
       for (std::size_t i = 0; i < n; ++i) {
         FT val = FT(0);
         if (i >= k) {
-          val = m_parameters.lambda * m_parameters.weight / 
+          val = m_parameters.lambda * m_parameters.weight /
             (FT(4) * m_max_bound * FT(n - k));
         }
         qp.set_c(i, val);
@@ -288,16 +288,16 @@ namespace Shape_regularization {
 
     void set_constant_term(
       Quadratic_program& qp) const {
-      
+
       const FT val = FT(0);
       qp.set_c0(val);
     }
 
-    void set_constraint_matrix( 
-      const std::size_t n, 
+    void set_constraint_matrix(
+      const std::size_t n,
       const std::size_t k,
       Quadratic_program& qp) const {
-      
+
       if (n < k) return;
       std::size_t it = 0;
       std::size_t ij = k;
@@ -320,8 +320,8 @@ namespace Shape_regularization {
     }
 
     void set_constraint_bounds(
-      const std::size_t m, 
-      const std::size_t k, 
+      const std::size_t m,
+      const std::size_t k,
       const std::size_t e,
       Quadratic_program& qp) const {
 
@@ -338,7 +338,7 @@ namespace Shape_regularization {
           } else {
             qp.set_b(i, m_parameters.val_pos * val); ++tit;
           }
-        } 
+        }
         else if (i < 2 * e + k) {
           const std::size_t idx = i - 2 * e;
           qp.set_l(idx, true, -FT(1) * m_max_bound);
@@ -356,7 +356,7 @@ namespace Shape_regularization {
       std::vector<FT>& solution) {
 
       std::size_t n = m_input_range.size() + m_targets.size();
-      
+
       solution.clear();
       solution.reserve(n);
 

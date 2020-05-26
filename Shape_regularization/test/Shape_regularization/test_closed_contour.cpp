@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_closed_contour() { 
+void test_closed_contour() {
 
   using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
@@ -19,7 +19,7 @@ void test_closed_contour() {
 
   using CD = SR::Contours::Longest_direction_2<Traits, Contour, Point_map>;
   using CR = SR::Contour_regularization_2<Traits, Contour, CD, SR::CLOSED, Point_map>;
-  
+
   Saver saver;
   Point_map pmap;
   const Contour contour = {
@@ -28,7 +28,7 @@ void test_closed_contour() {
     Point_2(1, 1), Point_2(0, 1)
   };
   assert(contour.size() == 6);
-  // saver.export_closed_contour(contour, 
+  // saver.export_closed_contour(contour,
   //   "/Users/monet/Documents/gsoc/ggr/logs/cl_input");
 
   const bool is_closed = true;
@@ -40,19 +40,19 @@ void test_closed_contour() {
   std::vector<Point_2> regularized;
   regularizer.regularize(
     std::back_inserter(regularized));
-  const std::size_t num_directions = 
+  const std::size_t num_directions =
     directions.number_of_directions();
-  
-  // saver.export_closed_contour(regularized, 
+
+  // saver.export_closed_contour(regularized,
   //   "/Users/monet/Documents/gsoc/ggr/logs/cl_output");
-  
+
   assert(num_directions == 1);
   assert(regularized.size() == 4);
 }
 
 int main() {
   test_closed_contour< CGAL::Simple_cartesian<double> >();
-  test_closed_contour< CGAL::Exact_predicates_inexact_constructions_kernel >(); 
+  test_closed_contour< CGAL::Exact_predicates_inexact_constructions_kernel >();
   test_closed_contour< CGAL::Exact_predicates_exact_constructions_kernel >();
   std::cout << "test_closed_contour: SUCCESS" << std::endl;
   return EXIT_SUCCESS;

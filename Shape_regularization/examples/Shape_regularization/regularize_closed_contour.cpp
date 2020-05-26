@@ -10,13 +10,13 @@ using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Contour = std::vector<Point_2>;
 
-using Contour_directions = 
+using Contour_directions =
   CGAL::Shape_regularization::Contours::Multiple_directions_2<Kernel, Contour>;
-using Contour_regularizer = 
-  CGAL::Shape_regularization::Contour_regularization_2<Kernel, Contour, Contour_directions, 
+using Contour_regularizer =
+  CGAL::Shape_regularization::Contour_regularization_2<Kernel, Contour, Contour_directions,
   CGAL::Shape_regularization::CLOSED>;
 
-using Saver = 
+using Saver =
   CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   std::string path = "data/contour.polylines";
   if (argc > 1) path = argv[1];
   Saver saver;
-  
+
   // Set parameters.
   const FT min_length_2 = FT(2);
   const FT  max_angle_2 = FT(20);
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
   regularizer.regularize(
     std::back_inserter(regularized));
 
-  std::cout << "* number of directions = " << 
+  std::cout << "* number of directions = " <<
     directions.number_of_directions() << std::endl;
 
   // Save regularized contour.

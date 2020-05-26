@@ -40,24 +40,24 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief An angle-based regularization type for 2D segments that preserves 
+    \brief An angle-based regularization type for 2D segments that preserves
     parallelism and orthogonality relationships.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
-    \tparam InputRange 
+    \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam SegmentMap 
-    must be a model of `LvaluePropertyMap` whose key type is the value type of the input 
-    range and value type is `GeomTraits::Segment_2`. %Default is the 
+    \tparam SegmentMap
+    must be a model of `LvaluePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
     \cgalModels `RegularizationType`
   */
   template<
-  typename GeomTraits, 
+  typename GeomTraits,
   typename InputRange,
   typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
   class Angle_regularization_2 {
@@ -65,7 +65,7 @@ namespace Segments {
 
     /// \name Types
     /// @{
-  
+
     /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
@@ -96,20 +96,20 @@ namespace Segments {
       \tparam NamedParameters
       a sequence of \ref sr_namedparameters "Named Parameters".
 
-      \param input_range 
+      \param input_range
       an instance of `InputRange` with 2D segments
 
       \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters"
       among the ones listed below
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`, 
+      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`,
       if not provided, the default is used
 
       \cgalNamedParamsBegin
-        \cgalParamBegin{max_angle} 
-          max angle deviation in degrees between two segments, the default is 25 degrees 
+        \cgalParamBegin{max_angle}
+          max angle deviation in degrees between two segments, the default is 25 degrees
         \cgalParamEnd
       \cgalNamedParamsEnd
 
@@ -118,12 +118,12 @@ namespace Segments {
     */
     template<typename NamedParameters>
     Angle_regularization_2(
-      InputRange& input_range, 
+      InputRange& input_range,
       const NamedParameters np,
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
-    m_segment_map(segment_map) { 
-      
+    m_segment_map(segment_map) {
+
       CGAL_precondition(input_range.size() > 1);
       const FT max_angle = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_angle), FT(25));
@@ -141,7 +141,7 @@ namespace Segments {
     /// @}
 
     /// \name Access
-    /// @{ 
+    /// @{
 
     /*!
       \brief calculates the target value between 2 segments, which are
@@ -157,13 +157,13 @@ namespace Segments {
       \pre `j >= 0 && j < input_range.size()`
     */
     FT target(
-      const std::size_t i, 
+      const std::size_t i,
       const std::size_t j) {
 
       CGAL_precondition(i >= 0 && i < m_input_range.size());
       CGAL_precondition(j >= 0 && j < m_input_range.size());
       CGAL_assertion(m_wraps.size() == m_input_range.size());
-      
+
       const auto& wrapi = m_wraps[i];
       CGAL_assertion(wrapi.is_used);
       const auto& wrapj = m_wraps[j];
@@ -175,7 +175,7 @@ namespace Segments {
 
       const FT to_lower = FT(90) * (static_cast<FT>(diff_90) + FT(0)) - diff_ij;
       const FT to_upper = FT(90) * (static_cast<FT>(diff_90) + FT(1)) - diff_ij;
-      
+
       const FT abs_lower = CGAL::abs(to_lower);
       const FT abs_upper = CGAL::abs(to_upper);
       const FT angle = abs_lower < abs_upper ? to_lower : to_upper;
@@ -191,7 +191,7 @@ namespace Segments {
     }
 
     /*!
-      \brief applies new orientations computed by the QP solver 
+      \brief applies new orientations computed by the QP solver
       to the initial segments.
 
       \param solution
@@ -206,8 +206,8 @@ namespace Segments {
       for (auto& wrap : m_wraps) {
         if (!wrap.is_used) continue;
 
-        const std::size_t seg_index = wrap.index; 
-        wrap.orientation += solution[seg_index]; 
+        const std::size_t seg_index = wrap.index;
+        wrap.orientation += solution[seg_index];
         const double angle_rad = internal::radians_2(wrap.orientation);
 
         const FT x = static_cast<FT>(std::cos(angle_rad));
@@ -221,8 +221,8 @@ namespace Segments {
         wrap.a = orth.dx();
         wrap.b = orth.dy();
         wrap.c = -wrap.a * wrap.barycenter.x() - wrap.b * wrap.barycenter.y();
-        
-        put(m_segment_map, 
+
+        put(m_segment_map,
           *(m_input_range.begin() + seg_index), wrap.orient());
         ++m_num_modified_segments;
       }
@@ -231,24 +231,24 @@ namespace Segments {
     /// @}
 
     /// \name Miscellaneous
-    /// @{ 
+    /// @{
 
     /*!
       \brief returns indices of orthogonal segments organized into groups.
 
-      \tparam OutputIterator 
+      \tparam OutputIterator
       must be a model of `OutputIterator`
 
       \param groups
-      an instance of `OutputIterator`, 
+      an instance of `OutputIterator`,
       whose value type is `std::vector<std::size_t>`
     */
     template<typename OutputIterator>
     OutputIterator orthogonal_groups(OutputIterator groups) const {
 
       const Orthogonal_groups_2 grouping(
-        m_input_range, 
-        CGAL::parameters::max_angle(m_max_angle), 
+        m_input_range,
+        CGAL::parameters::max_angle(m_max_angle),
         m_segment_map);
       return grouping.groups(groups);
     }
@@ -256,19 +256,19 @@ namespace Segments {
     /*!
       \brief returns indices of parallel segments organized into groups.
 
-      \tparam OutputIterator 
+      \tparam OutputIterator
       must be a model of `OutputIterator`
 
       \param groups
-      an instance of `OutputIterator`, 
+      an instance of `OutputIterator`,
       whose value type is `std::vector<std::size_t>`
     */
     template<typename OutputIterator>
     OutputIterator parallel_groups(OutputIterator groups) const {
 
       const Parallel_groups_2 grouping(
-        m_input_range, 
-        CGAL::parameters::max_angle(m_max_angle), 
+        m_input_range,
+        CGAL::parameters::max_angle(m_max_angle),
         m_segment_map);
       return grouping.groups(groups);
     }
@@ -276,7 +276,7 @@ namespace Segments {
     /*!
       \brief inserts a group of segments from `input_range`.
 
-      \tparam IndexRange 
+      \tparam IndexRange
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
       The value type is `std::size_t`.
 
@@ -287,10 +287,10 @@ namespace Segments {
     */
     template<typename IndexRange>
   	void add_group(
-      const IndexRange& index_range) { 
-      if (index_range.size() < 2) 
+      const IndexRange& index_range) {
+      if (index_range.size() < 2)
         return;
-      
+
       Indices group;
       group.reserve(index_range.size());
       for (const auto seg_index : index_range)
@@ -302,13 +302,13 @@ namespace Segments {
     /*!
       \brief inserts all input segments from `input_range` as one unique group.
 
-      For more details, 
+      For more details,
       see `CGAL::Shape_regularization::Segments::Angle_regularization_2::add_group()`.
 
       \pre `m_input_range.size() > 1`
     */
     void create_unique_group() {
-      
+
       CGAL_precondition(m_input_range.size() > 1);
       if (m_input_range.size() < 2) return;
 
@@ -327,7 +327,7 @@ namespace Segments {
     /// @}
 
     /// \name Internal data management
-    /// @{ 
+    /// @{
 
     /*!
       \brief clears all internal data structures.
@@ -343,7 +343,7 @@ namespace Segments {
 
     // EXTRA METHODS TO TEST THE CLASS!
     /// \cond SKIP_IN_MANUAL
-    const std::size_t number_of_groups() const { 
+    const std::size_t number_of_groups() const {
       return m_num_groups;
     }
     /// \endcond
@@ -351,10 +351,10 @@ namespace Segments {
   private:
     Input_range& m_input_range;
     const Segment_map m_segment_map;
-    
+
     FT m_max_angle;
     std::vector<Segment_wrapper_2> m_wraps;
-    
+
     std::size_t m_num_modified_segments;
     std::size_t m_num_groups;
 
@@ -367,7 +367,7 @@ namespace Segments {
           seg_index >= 0 && seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
 
-        const auto& segment = get(m_segment_map, 
+        const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
         wrap.set_qp(seg_index, segment);
       }

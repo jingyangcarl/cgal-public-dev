@@ -32,11 +32,11 @@
 #include <CGAL/Shape_regularization/internal/utils.h>
 
 namespace CGAL {
-namespace Shape_regularization {  
+namespace Shape_regularization {
 
   /*!
     \ingroup PkgShapeRegularizationRefSolvers
-    
+
     \brief wraps the \cgal QP solver.
 
     This class wraps the \ref PkgQPSolver "CGAL solver"
@@ -59,10 +59,10 @@ namespace Shape_regularization {
     /*!
       \brief initializes all internal data structures.
     */
-    CGAL_quadratic_program() : 
+    CGAL_quadratic_program() :
       m_quadratic_program(
-        CGAL::SMALLER, 
-        true, 
+        CGAL::SMALLER,
+        true,
         -internal::max_value<FT>(),
         true,
         +internal::max_value<FT>())
@@ -79,14 +79,14 @@ namespace Shape_regularization {
     void reserve_u(const std::size_t) { }
 
     void set_d(
-      const std::size_t i, 
-      const std::size_t j, 
+      const std::size_t i,
+      const std::size_t j,
       const FT val) {
       m_quadratic_program.set_d(i, j, val);
     }
 
     void set_c(
-      const std::size_t j, 
+      const std::size_t j,
       const FT val) {
       m_quadratic_program.set_c(j, val);
     }
@@ -96,28 +96,28 @@ namespace Shape_regularization {
     }
 
     void set_a(
-      const std::size_t j, 
-      const std::size_t i, 
+      const std::size_t j,
+      const std::size_t i,
       const FT val) {
       m_quadratic_program.set_a(j, i, val);
     }
-    
+
     void set_b(
-      const std::size_t i, 
+      const std::size_t i,
       const FT val) {
       m_quadratic_program.set_b(i, val);
     }
 
     void set_l(
-      const std::size_t j, 
-      const bool is_finite, 
+      const std::size_t j,
+      const bool is_finite,
       const FT val) {
       m_quadratic_program.set_l(j, is_finite, val);
     }
 
     void set_u(
-      const std::size_t j, 
-      const bool is_finite, 
+      const std::size_t j,
+      const bool is_finite,
       const FT val) {
       m_quadratic_program.set_u(j, is_finite, val);
     }
@@ -134,7 +134,7 @@ namespace Shape_regularization {
       std::vector<FT>& solution) {
 
       auto s = CGAL::solve_quadratic_program(m_quadratic_program, FT());
-      for (auto x = s.variable_values_begin(); 
+      for (auto x = s.variable_values_begin();
       x != s.variable_values_end(); ++x)
         solution.push_back(static_cast<FT>(
           CGAL::to_double(*x)));

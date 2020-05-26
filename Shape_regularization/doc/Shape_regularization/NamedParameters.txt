@@ -2,9 +2,9 @@
 \defgroup sr_namedparameters Parameters
 \ingroup PkgShapeRegularizationRef
 
-In this package, all parameters are implemented as BGL optional named parameters 
-(see \ref BGLNamedParameters for more information on how to use them). The sequence 
-of named parameters starts with `CGAL::parameters::`. Using `CGAL::parameters::all_default()` 
+In this package, all parameters are implemented as BGL optional named parameters
+(see \ref BGLNamedParameters for more information on how to use them). The sequence
+of named parameters starts with `CGAL::parameters::`. Using `CGAL::parameters::all_default()`
 indicates that default values of optional parameters shall be used.
 
 This package offers the following named parameters:
@@ -30,9 +30,9 @@ min length of an item in meters\n
 \cgalNPEnd
 
 \cgalNPBegin{plane_index_map} \anchor SR_plane_index_map
-a property map that associates the index of a point in the input range to 
+a property map that associates the index of a point in the input range to
 the index of a plane (-1 if the point is not assigned to a plane)\n
-<b>Type:</b> a model of `ReadablePropertyMap` with `std::size_t` as key type and 
+<b>Type:</b> a model of `ReadablePropertyMap` with `std::size_t` as key type and
 `int` as value type\n
 <b>Default:</b> no default value
 \cgalNPEnd

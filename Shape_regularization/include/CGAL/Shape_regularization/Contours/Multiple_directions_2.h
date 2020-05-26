@@ -37,22 +37,22 @@ namespace Contours {
 
   /*!
     \ingroup PkgShapeRegularizationRefContours
-    
-    \brief Estimates possibly multiple principal directions of the contour 
+
+    \brief Estimates possibly multiple principal directions of the contour
     based on the user-defined min length and max angle bounds.
 
-    This algorithm finds the best-fit edges of the contour with respect to the 
+    This algorithm finds the best-fit edges of the contour with respect to the
     user-defined conditions and sets them as its principal directions.
 
-    \tparam GeomTraits 
+    \tparam GeomTraits
     must be a model of `Kernel`.
 
     \tparam InputRange
     must be a model of `ConstRange`.
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input 
-    range and value type is `GeomTraits::Point_2`. %Default is the 
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Point_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
     \cgalModels `ContourDirections`
@@ -91,22 +91,22 @@ namespace Contours {
       a const range of points, which form a contour
 
       \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters" 
+      optional sequence of \ref sr_namedparameters "Named Parameters"
       among the ones listed below
 
-      \param is_closed 
+      \param is_closed
       indicates whether the contour is closed or open
 
       \param point_map
       an instance of `PointMap`, if not provided, the default is used
 
       \cgalNamedParamsBegin
-        \cgalParamBegin{max_angle} 
-          max angle deviation in degrees between a contour edge and a given 
+        \cgalParamBegin{max_angle}
+          max angle deviation in degrees between a contour edge and a given
           principal direction, the default is 25 degrees
         \cgalParamEnd
-        \cgalParamBegin{min_length} 
-          min length in meters of a contour edge whose direction can be taken 
+        \cgalParamBegin{min_length}
+          min length in meters of a contour edge whose direction can be taken
           as a principal direction, the default is 3 meters
         \cgalParamEnd
       \cgalNamedParamsEnd
@@ -121,7 +121,7 @@ namespace Contours {
       const NamedParameters np,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
-    m_point_map(point_map) { 
+    m_point_map(point_map) {
 
       CGAL_precondition(input_range.size() >= 2);
       m_min_length_2 = parameters::choose_parameter(
@@ -132,12 +132,12 @@ namespace Contours {
       CGAL_precondition(
         m_min_length_2 >= FT(0));
       CGAL_precondition(
-        m_max_angle_2 >= FT(0) && 
+        m_max_angle_2 >= FT(0) &&
         m_max_angle_2 <= FT(90));
 
       if (is_closed)
         estimate_closed(m_bounds, m_directions, m_assigned);
-      else 
+      else
         estimate_open(m_bounds, m_directions, m_assigned);
 
       if (verbose()) {
@@ -157,7 +157,7 @@ namespace Contours {
       \brief orients a given `segment` with the index `query_index` with respect
       to the best found principal direction.
 
-      \param query_index an index of the `segment` in the input contour, in other words, 
+      \param query_index an index of the `segment` in the input contour, in other words,
       the segment's source point is the point in the contour with the index `query_index`
 
       \param segment a segment to be oriented
