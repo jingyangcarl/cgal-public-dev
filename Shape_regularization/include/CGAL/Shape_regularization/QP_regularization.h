@@ -118,21 +118,26 @@ namespace Shape_regularization {
       \param quadratic_program
       an instance of `QPSolver` to solve the quadratic programming problem
 
+      \param traits
+      an instance of `GeomTraits`
+
       \pre `input_range.size() > 1`
     */
     QP_regularization(
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       RegularizationType& regularization_type,
-      QPSolver& quadratic_program) :
+      QPSolver& quadratic_program,
+      const GeomTraits traits) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_regularization_type(regularization_type),
     m_quadratic_program(quadratic_program),
-    m_parameters(Parameters()),
-    m_max_bound(-FT(1)) {
+    m_traits(traits),
+    m_parameters(Parameters()) {
 
       CGAL_precondition(input_range.size() > 1);
+      clear();
     }
 
     /// @}
@@ -176,11 +181,35 @@ namespace Shape_regularization {
 
     /// @}
 
+    /// \name Memory Management
+    /// @{
+
+    /*!
+      \brief clears all internal data structures.
+    */
+    void clear() {
+      m_graph.clear();
+      m_bounds.clear();
+      m_targets.clear();
+      m_max_bound = -FT(1);
+    }
+
+    /*!
+      \brief releases all memory that is used internally.
+    */
+    void release_memory() {
+      clear();
+      m_bounds.shrink_to_fit();
+    }
+
+    /// @}
+
   private:
     const Input_range& m_input_range;
     Neighbor_query& m_neighbor_query;
     Regularization_type& m_regularization_type;
     Quadratic_program& m_quadratic_program;
+    const Traits m_traits;
     const Parameters m_parameters;
 
     FT m_max_bound;

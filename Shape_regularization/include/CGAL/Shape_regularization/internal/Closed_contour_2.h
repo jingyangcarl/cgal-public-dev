@@ -32,13 +32,13 @@ namespace Shape_regularization {
 namespace internal {
 
   template<
-  typename GeomTraits,
-  typename ContourDirections>
+  typename ContourDirections,
+  typename GeomTraits>
   class Closed_contour_2 {
 
   public:
-    using Traits = GeomTraits;
     using Contour_directions = ContourDirections;
+    using Traits = GeomTraits;
 
     using FT = typename Traits::FT;
     using Point_2 = typename Traits::Point_2;
@@ -76,11 +76,11 @@ namespace internal {
     }
 
     template<typename OutputIterator>
-    void regularize(
+    OutputIterator regularize(
       OutputIterator contour) {
 
       CGAL_assertion(m_wraps.size() >= 3);
-      if (m_wraps.size() < 3) return;
+      if (m_wraps.size() < 3) return contour;
 
       rotate_contour(m_wraps);
       if (verbose())
@@ -88,18 +88,18 @@ namespace internal {
           m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
 
       bool success = optimize_contour(m_max_offset_2, m_wraps);
-      if (!success) return;
+      if (!success) return contour;
       if (verbose())
         m_base.export_polylines(
           m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/optimized");
 
       success = connect_contour(m_wraps);
-      if (!success) return;
+      if (!success) return contour;
       if (verbose())
         m_base.export_polylines(
           m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/connected");
 
-      update_input(m_wraps, contour);
+      return update_input(m_wraps, contour);
     }
 
   private:
@@ -379,7 +379,7 @@ namespace internal {
     }
 
     template<typename OutputIterator>
-    void update_input(
+    OutputIterator update_input(
       const std::vector<Segment_wrapper_2>& wraps,
       OutputIterator contour) const {
 
@@ -387,6 +387,7 @@ namespace internal {
         const auto& wrap = wraps[i];
         *(++contour) = wrap.segment.source();
       }
+      return contour;
     }
   };
 

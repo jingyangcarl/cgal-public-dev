@@ -43,7 +43,7 @@ namespace Contours {
     must be a model of `Kernel`.
 
     \tparam InputRange
-    must be a model of `ConstRange`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam PointMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -145,6 +145,8 @@ namespace Contours {
 
     /*!
       \brief returns the number of principal directions of the contour.
+
+      The returned number is always one.
     */
     const std::size_t number_of_directions() const {
       return m_directions.size();

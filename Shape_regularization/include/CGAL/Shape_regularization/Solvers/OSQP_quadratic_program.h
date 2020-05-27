@@ -34,7 +34,7 @@ namespace CGAL {
 namespace Shape_regularization {
 
   /*!
-    \ingroup PkgShapeRegularizationRefSolvers
+    \ingroup PkgShapeRegularizationRef
 
     \brief wraps the external OSQP solver.
 

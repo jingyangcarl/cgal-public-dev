@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   };
 
   Regularizer regularizer(
-    segments, neighbor_query, angle_regularization, quadratic_program);
+    segments, neighbor_query, angle_regularization, quadratic_program, Kernel());
   regularizer.regularize();
 
   std::cout << "* regularized 2 segments" << std::endl;

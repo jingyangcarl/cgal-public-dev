@@ -43,7 +43,7 @@ namespace Contours {
     must be a model of `Kernel`.
 
     \tparam InputRange
-    must be a model of `ConstRange`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam PointMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -103,9 +103,9 @@ namespace Contours {
     */
     template<typename DirectionRange>
     User_defined_directions_2(
-      const DirectionRange& direction_range,
       const InputRange& input_range,
       const bool is_closed,
+      const DirectionRange& direction_range,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
     m_point_map(point_map) {
@@ -161,6 +161,8 @@ namespace Contours {
 
     /*!
       \brief returns the number of principal directions of the contour.
+
+      The returned number equals to the number of the user-defined directions.
     */
     const std::size_t number_of_directions() const {
       return m_directions.size();
@@ -208,6 +210,7 @@ namespace Contours {
       directions.clear(); directions.reserve(direction_range.size());
       for (const auto& direction : direction_range)
         directions.push_back(direction);
+      CGAL_assertion(directions.size() == direction_range.size());
 
       bounds.clear(); bounds.reserve(directions.size());
       for (std::size_t i = 0; i < directions.size(); ++i)
@@ -240,6 +243,7 @@ namespace Contours {
       directions.clear(); directions.reserve(direction_range.size());
       for (const auto& direction : direction_range)
         directions.push_back(direction);
+      CGAL_assertion(directions.size() == direction_range.size());
 
       bounds.clear(); bounds.reserve(directions.size());
       for (std::size_t i = 0; i < directions.size(); ++i)

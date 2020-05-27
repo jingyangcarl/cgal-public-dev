@@ -10,8 +10,7 @@
 #include <CGAL/Shape_regularization/regularize_planes.h>
 
 // Typedefs.
-using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
-
+using Kernel   = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT       = typename Kernel::FT;
 using Point_3  = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
@@ -22,9 +21,9 @@ using Pwn_vector        = std::vector<Point_with_normal>;
 using Point_map  = CGAL::First_of_pair_property_map<Point_with_normal>;
 using Normal_map = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
-using Traits = CGAL::Shape_detection::Efficient_RANSAC_traits<Kernel, Pwn_vector, Point_map, Normal_map>;
-using Efficient_RANSAC = CGAL::Shape_detection::Efficient_RANSAC<Traits>;
-using Plane = CGAL::Shape_detection::Plane<Traits>;
+using Traits    = CGAL::Shape_detection::Efficient_RANSAC_traits<Kernel, Pwn_vector, Point_map, Normal_map>;
+using RANSAC    = CGAL::Shape_detection::Efficient_RANSAC<Traits>;
+using Plane     = CGAL::Shape_detection::Plane<Traits>;
 using Plane_map = CGAL::Shape_detection::Plane_map<Traits>;
 
 int main(int argc, char** argv) {
@@ -51,7 +50,7 @@ int main(int argc, char** argv) {
   file.close();
 
   // Call RANSAC shape detection with planes.
-  Efficient_RANSAC efficient_ransac;
+  RANSAC efficient_ransac;
   efficient_ransac.set_input(points);
   efficient_ransac.add_shape_factory<Plane>();
   efficient_ransac.detect();

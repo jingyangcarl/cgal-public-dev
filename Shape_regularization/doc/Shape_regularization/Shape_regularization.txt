@@ -13,10 +13,10 @@ A set of 2D segments before and after regularization.
 
 \section Shape_Regularization_Intro Introduction
 
-This \cgal package enables to regularize a set of 2D segments in the plane, both open
-and closed contours, and a set of planes in 3D such that all input objects are
-rotated and aligned with respect to the user-specified conditions. This package can also
-be used in conjunction with the \ref PkgShapeDetection "Shape Detection" package.
+This CGAL package enables to regularize a set of segments and open or closed contours in 2D,
+and a set of planes in 3D such that all input objects are rotated and aligned with respect
+to the user-defined conditions. This package can also be used in conjunction with
+the \ref PkgShapeDetection "Shape Detection" package.
 
 
 \section QP_Regularization QP Regularization

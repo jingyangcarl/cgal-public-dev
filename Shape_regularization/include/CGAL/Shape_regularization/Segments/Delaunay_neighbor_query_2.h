@@ -102,7 +102,38 @@ namespace Segments {
     m_input_range(input_range),
     m_segment_map(segment_map) {
 
-      CGAL_precondition(input_range.size() > 1); clear();
+      CGAL_precondition(
+        input_range.size() > 1);
+      clear();
+      create_unique_group();
+    }
+
+    /*!
+      \brief inserts a group of segments from `input_range` and computes their
+      neighbors within the group.
+
+      \tparam IndexRange
+      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+      The value type is `std::size_t`.
+
+      \param index_range
+      a const range of segment indices
+
+      \pre `index_range.size() > 1`
+    */
+    template<typename IndexRange>
+  	void add_group(
+      const IndexRange& index_range) {
+
+      if (m_is_first_call) {
+        clear();
+        m_is_first_call = false;
+      }
+
+      if (index_range.size() < 2) return;
+      build_delaunay_triangulation(index_range);
+      add_neighbors();
+      ++m_num_groups;
     }
 
     /// @}
@@ -137,69 +168,17 @@ namespace Segments {
 
     /// @}
 
-    /// \name Utilities
-    /// @{
-
-    /*!
-      \brief inserts a group of segments from `input_range` and computes their
-      neighbors within the group.
-
-      \tparam IndexRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-      The value type is `std::size_t`.
-
-      \param index_range
-      a const range of segment indices
-
-      \pre `index_range.size() > 1`
-    */
-    template<typename IndexRange>
-  	void add_group(
-      const IndexRange& index_range) {
-      if (index_range.size() < 2)
-        return;
-
-      Indices group;
-      group.reserve(index_range.size());
-      for (const std::size_t seg_index : index_range)
-        group.push_back(seg_index);
-
-      build_delaunay_triangulation(group);
-      add_neighbors();
-      ++m_num_groups;
-    }
-
-    /*!
-      \brief inserts all input segments from `input_range` as one unique group.
-
-      For more details,
-      see `CGAL::Shape_regularization::Delaunay_neighbor_query_2::add_group()`.
-    */
-    void create_unique_group() {
-
-      CGAL_precondition(m_input_range.size() > 1);
-      if (m_input_range.size() < 2) return;
-
-      Indices group(m_input_range.size());
-      std::iota(group.begin(), group.end(), 0);
-      add_group(group);
-    }
-
-    /// @}
-
-    /// \name Internal data management
+    /// \name Memory Management
     /// @{
 
     /*!
       \brief clears all internal data structures.
     */
     void clear() {
-
-      m_groups.clear();
       m_num_groups = 0;
-      CGAL_precondition(m_input_range.size() > 1);
-      if (m_input_range.size() < 2) return;
-      m_groups.resize(m_input_range.size());
+      m_is_first_call = true;
+      for (auto& group : m_groups)
+        group.clear();
     }
 
     /// @}
@@ -242,12 +221,31 @@ namespace Segments {
     Delaunay_triangulation m_delaunay;
     std::vector<Indices> m_groups;
     std::size_t m_num_groups;
+    bool m_is_first_call;
 
+    void create_unique_group() {
+
+      CGAL_precondition(m_input_range.size() > 1);
+      if (m_input_range.size() < 2) return;
+
+      m_groups.clear();
+      m_groups.resize(m_input_range.size());
+
+      Indices group(m_input_range.size());
+      std::iota(group.begin(), group.end(), 0);
+      build_delaunay_triangulation(group);
+      add_neighbors();
+      m_num_groups = 1;
+    }
+
+    template<typename IndexRange>
     void build_delaunay_triangulation(
-      const Indices& group) {
+      const IndexRange& index_range) {
 
       m_delaunay.clear();
-      for (const std::size_t seg_index : group) {
+      for (const auto seg_index : index_range) {
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < m_input_range.size());
 
         const auto& segment = get(
           m_segment_map, *(m_input_range.begin() + seg_index));
@@ -269,6 +267,7 @@ namespace Segments {
         CGAL_assertion(
           seg_index_1 >= 0 && seg_index_1 < m_groups.size());
         auto& neighbors = m_groups[seg_index_1];
+        neighbors.clear();
 
         auto vc = m_delaunay.incident_vertices(vit);
         if (vc.is_empty()) return;

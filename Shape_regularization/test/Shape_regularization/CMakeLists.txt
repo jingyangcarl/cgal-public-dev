@@ -41,7 +41,7 @@ if(CGAL_FOUND)
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")
       if(TARGET ${target})
-        target_link_libraries(${target} PUBLIC osqp::osqp)
+        target_link_libraries(${target} PUBLIC ${OSQP_LIBRARIES})
       endif()
     endforeach()
 

@@ -19,16 +19,17 @@ if(CGAL_FOUND)
 
     set(targets
     regularize_framework
-    regularize_15_segments
+    # regularize_15_segments
     regularize_100_segments_angles
-    regularize_100_segments_offsets
+    # regularize_100_segments_offsets
     regularize_simple
-    regularize_real_data_2)
+    # regularize_real_data_2
+    )
 
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")
       if(TARGET ${target})
-        target_link_libraries(${target} PUBLIC osqp::osqp)
+        target_link_libraries(${target} PUBLIC ${OSQP_LIBRARIES})
       endif()
     endforeach()
   else()

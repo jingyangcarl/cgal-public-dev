@@ -16,7 +16,7 @@
 // $Id$
 // SPDX-License-Identifier: GPL-3.0+
 //
-// Author(s)     : Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge
+// Author(s)     : Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, Florent Lafarge
 //
 
 #ifndef CGAL_SHAPE_REGULARIZATION_HEADERS_H
@@ -24,19 +24,11 @@
 
 // #include <CGAL/license/Shape_regularization.h>
 
-#include <CGAL/Shape_regularization/QP_regularization.h>
-#include <CGAL/Shape_regularization/Contour_regularization_2.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
+#include <CGAL/Shape_regularization/regularize_segments.h>
+#include <CGAL/Shape_regularization/regularize_contours.h>
 
-#include <CGAL/Shape_regularization/Segments/Delaunay_neighbor_query_2.h>
-#include <CGAL/Shape_regularization/Segments/Angle_regularization_2.h>
-#include <CGAL/Shape_regularization/Segments/Offset_regularization_2.h>
-#include <CGAL/Shape_regularization/Segments/Parallel_groups_2.h>
-
-#include <CGAL/Shape_regularization/Contours/Longest_direction_2.h>
-#include <CGAL/Shape_regularization/Contours/Multiple_directions_2.h>
-#include <CGAL/Shape_regularization/Contours/User_defined_directions_2.h>
-
+#include <CGAL/Shape_regularization/QP_regularization.h>
 #include <CGAL/Shape_regularization/Solvers/CGAL_quadratic_program.h>
 #include <CGAL/Shape_regularization/Solvers/OSQP_quadratic_program.h>
 

@@ -34,6 +34,7 @@
 
 namespace CGAL {
 namespace Shape_regularization {
+namespace internal {
 
   /// \cond SKIP_IN_MANUAL
   struct CLOSED { };
@@ -48,42 +49,32 @@ namespace Shape_regularization {
 
     This algorithm enables to regularize both open and closed contours.
 
-    \tparam GeomTraits
-    must be a model of `Kernel`.
-
-    \tparam InputRange
-    must be a model of `ConstRange`.
+    \tparam ContourTag
+    must be either `CGAL::Shape_regularization::CLOSED` or `CGAL::Shape_regularization::OPEN`.
 
     \tparam ContourDirections
     must be a model of `ContourDirections`.
 
-    \tparam ContourTag
-    must be either `CGAL::Shape_regularization::CLOSED` or `CGAL::Shape_regularization::OPEN`.
-
-    \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Point_2`. %Default is the
-    `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
+    \tparam GeomTraits
+    must be a model of `Kernel`.
   */
   template<
-  typename GeomTraits,
-  typename InputRange,
-  typename ContourDirections,
   typename ContourTag,
-  typename PointMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
+  typename ContourDirections,
+  typename GeomTraits>
   class Contour_regularization_2 {
 
   public:
     /// \cond SKIP_IN_MANUAL
-    using Traits = GeomTraits;
-    using Contour_directions = ContourDirections;
     using Contour_tag = ContourTag;
+    using Contour_directions = ContourDirections;
+    using Traits = GeomTraits;
 
     using FT = typename Traits::FT;
     using Regularization = typename std::conditional<
       std::is_same<ContourTag, CLOSED>::value,
-      internal::Closed_contour_2<Traits, Contour_directions>,
-      internal::Open_contour_2<Traits, Contour_directions> >::type;
+      internal::Closed_contour_2<Contour_directions, Traits>,
+      internal::Open_contour_2<Contour_directions, Traits> >::type;
     /// \endcond
 
     /// \name Initialization
@@ -92,37 +83,48 @@ namespace Shape_regularization {
     /*!
       \brief initializes all internal data structures.
 
+      \tparam InputRange
+      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+      \tparam PointMap
+      must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+      range and value type is `GeomTraits::Point_2`.
+
       \tparam NamedParameters
       a sequence of \ref sr_namedparameters "Named Parameters".
+
+      \param directions
+      estimated contour directions
 
       \param input_range
       a const range of points, which form a contour
 
-      \param directions
-      estimated contour directions
+      \param point_map
+      an instance of `PointMap`
 
       \param np
       optional sequence of \ref sr_namedparameters "Named Parameters"
       among the ones listed below
 
-      \param point_map
-      an instance of `PointMap`, if not provided, the default is used
-
       \cgalNamedParamsBegin
         \cgalParamBegin{max_offset}
-          max offset deviation in meters between two contour edges, the default is 0.5 meters
+          max offset deviation between two contour edges, the default is 0.5
         \cgalParamEnd
       \cgalNamedParamsEnd
 
       \pre `input_range.size() >= 3` for closed contours
       \pre `input_range.size() >= 2` for open contours
     */
-    template<typename NamedParameters>
+    template<
+    typename InputRange,
+    typename PointMap,
+    typename NamedParameters>
     Contour_regularization_2(
-      const InputRange& input_range,
       const ContourDirections& directions,
+      const InputRange& input_range,
+      const PointMap point_map,
       const NamedParameters np,
-      const PointMap point_map = PointMap()) {
+      const GeomTraits&) {
 
       CGAL_precondition(input_range.size() >= 2);
       const FT max_offset_2 = parameters::choose_parameter(
@@ -148,12 +150,14 @@ namespace Shape_regularization {
 
       \param contour
       an `OutputIterator` with contour points
+
+      \return an output iterator.
     */
     template<typename OutputIterator>
-    void regularize(
+    OutputIterator regularize(
       OutputIterator contour) {
 
-      m_regularization->regularize(
+      return m_regularization->regularize(
         contour);
     }
 
@@ -163,6 +167,7 @@ namespace Shape_regularization {
     std::shared_ptr<Regularization> m_regularization;
   };
 
+} // namespace internal
 } // namespace Shape_regularization
 } // namespace CGAL
 
