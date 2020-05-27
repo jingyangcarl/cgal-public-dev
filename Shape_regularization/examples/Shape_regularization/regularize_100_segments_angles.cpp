@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
   // Save input segments.
   if (path != "") {
     const std::string full_path = path + "regularize_100_segments_angles_before";
-    saver.export_eps_segments(segments, full_path);
+    saver.export_eps_segments(segments, full_path, FT(1));
   }
 
   // Create a solver.
@@ -64,6 +64,6 @@ int main(int argc, char *argv[]) {
   // Save regularized segments.
   if (path != "") {
     const std::string full_path = path + "regularize_100_segments_angles_after";
-    saver.export_eps_segments(segments, full_path);
+    saver.export_eps_segments(segments, full_path, FT(1));
   }
 }

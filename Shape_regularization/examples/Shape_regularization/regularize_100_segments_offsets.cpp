@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
   // Save input segments.
   if (path != "") {
     const std::string full_path = path + "regularize_100_segments_offsets_before";
-    saver.export_eps_segments(segments, full_path);
+    saver.export_eps_segments(segments, full_path, FT(100));
   }
 
   // Create parallel groups.
@@ -78,6 +78,6 @@ int main(int argc, char *argv[]) {
   // Save regularized segments.
   if (path != "") {
     const std::string full_path = path + "regularize_100_segments_offsets_after";
-    saver.export_eps_segments(segments, full_path);
+    saver.export_eps_segments(segments, full_path, FT(100));
   }
 }

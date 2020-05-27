@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
   // Save input segments.
   if (argc > 2) {
     const std::string full_path = std::string(argv[2]) + "regularize_real_data_2_before";
-    saver.export_eps_segments(segments, full_path);
+    saver.export_eps_segments(segments, full_path, FT(3) / FT(2));
   }
 
   // Angle regularization.
@@ -118,6 +118,6 @@ int main(int argc, char *argv[]) {
   // Save regularized segments.
   if (argc > 2) {
     const std::string full_path = std::string(argv[2]) + "regularize_real_data_2_after";
-    saver.export_eps_segments(segments, full_path);
+    saver.export_eps_segments(segments, full_path, FT(3) / FT(2));
   }
 }

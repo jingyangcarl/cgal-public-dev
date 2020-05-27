@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   // Save input contour.
   if (argc > 2) {
     const std::string full_path = std::string(argv[2]) + "regularize_closed_contour_before";
-    saver.export_closed_contour(contour, full_path);
+    saver.export_eps_closed_contour(contour, full_path, FT(6));
   }
 
   // Regularize.
@@ -62,6 +62,6 @@ int main(int argc, char *argv[]) {
   // Save regularized contour.
   if (argc > 2) {
     const std::string full_path = std::string(argv[2]) + "regularize_closed_contour_after";
-    saver.export_closed_contour(regularized, full_path);
+    saver.export_eps_closed_contour(regularized, full_path, FT(6));
   }
 }

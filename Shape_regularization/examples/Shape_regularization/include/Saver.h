@@ -37,7 +37,8 @@ namespace Examples {
 
     void export_segments(
       const std::vector<Segment_2>& segments,
-      const std::string path) {
+      const std::string path,
+      const FT) {
 
       std::vector<Polyline> polylines(segments.size());
       for (std::size_t i = 0; i < segments.size(); ++i) {
@@ -55,15 +56,115 @@ namespace Examples {
       const std::vector<std::size_t>& group,
       const std::string path) {
 
+      const FT stub = FT(0);
       std::vector<Segment_2> edges;
       for (const std::size_t seg_index : group)
         edges.push_back(segments[seg_index]);
-      export_segments(edges, path);
+      export_segments(edges, path, stub);
     }
 
     void export_closed_contour(
       const std::vector<Point_2>& contour,
-      const std::string name) {
+      const std::string path,
+      const FT) {
+
+      if (contour.size() == 0)
+        return;
+
+      const FT stub = FT(0);
+      std::vector<Segment_2> segments;
+      const std::size_t n = contour.size();
+      segments.reserve(n);
+
+      for (std::size_t i = 0; i < n; ++i) {
+        const std::size_t ip = (i + 1) % n;
+
+        const auto& p = contour[i];
+        const auto& q = contour[ip];
+        segments.push_back(Segment_2(p, q));
+      }
+      export_segments(segments, path, stub);
+    }
+
+    void export_open_contour(
+      const std::vector<Point_2>& contour,
+      const std::string path,
+      const FT) {
+
+      if (contour.size() == 0)
+        return;
+
+      const FT stub = FT(0);
+      std::vector<Segment_2> segments;
+      const std::size_t n = contour.size();
+      segments.reserve(n - 1);
+
+      for (std::size_t i = 0; i < n - 1; ++i) {
+        const std::size_t ip = i + 1;
+
+        const auto& p = contour[i];
+        const auto& q = contour[ip];
+        segments.push_back(Segment_2(p, q));
+      }
+      export_segments(segments, path, stub);
+    }
+
+    void export_eps_segments(
+      const std::vector<Segment_2>& input,
+      const std::string path,
+      FT scale) {
+
+      if (input.size() == 0)
+        return;
+      clear();
+
+      // Compute barycenter.
+      Point_2 b;
+      compute_barycenter(input, b);
+
+      // Translate segments.
+      std::vector<Segment_2> segments;
+      translate_segments(input, b, segments);
+
+      // Compute bounding box.
+      Point_2 minb, maxb;
+      compute_bounding_box(segments, minb, maxb);
+
+      // Estimate eps parameters.
+      const FT length = static_cast<FT>(
+        CGAL::sqrt(CGAL::to_double(CGAL::squared_distance(minb, maxb))));
+      if (length < FT(10) && scale == FT(1)) scale *= FT(1000);
+
+      const FT radius = FT(1);
+      const FT line_width = FT(1);
+      const bool dashed = false;
+
+      // Set eps header.
+      set_eps_header(
+        minb.x() * scale, minb.y() * scale,
+        maxb.x() * scale, maxb.y() * scale,
+        "segments");
+
+      // Start private namespace.
+      out << "0 dict begin gsave" << std::endl << std::endl;
+
+      // Draw segments.
+      for (const auto& segment : segments) {
+        add_eps_segment(segment, scale, line_width, dashed);
+        add_eps_disc(segment.source(), radius, scale);
+        add_eps_disc(segment.target(), radius, scale);
+      }
+
+      // Finish private namespace.
+      out << "grestore end" << std::endl << std::endl;
+      out << "%%EOF" << std::endl;
+      save(path + ".eps");
+    }
+
+    void export_eps_closed_contour(
+      const std::vector<Point_2>& contour,
+      const std::string path,
+      FT scale) {
 
       if (contour.size() == 0)
         return;
@@ -79,12 +180,13 @@ namespace Examples {
         const auto& q = contour[ip];
         segments.push_back(Segment_2(p, q));
       }
-      export_segments(segments, name);
+      export_eps_segments(segments, path, scale);
     }
 
-    void export_open_contour(
+    void export_eps_open_contour(
       const std::vector<Point_2>& contour,
-      const std::string name) {
+      const std::string path,
+      FT scale) {
 
       if (contour.size() == 0)
         return;
@@ -100,48 +202,7 @@ namespace Examples {
         const auto& q = contour[ip];
         segments.push_back(Segment_2(p, q));
       }
-      export_segments(segments, name);
-    }
-
-    void export_eps_segments(
-      const std::vector<Segment_2>& segments,
-      const std::string path,
-      FT scale = FT(100)) {
-
-      if (segments.size() == 0)
-        return;
-
-      // Compute bounding box.
-      clear();
-      Point_2 minb, maxb;
-      bounding_box(segments, minb, maxb);
-
-      // Estimate eps parameters.
-      const FT length = static_cast<FT>(
-        CGAL::sqrt(CGAL::to_double(CGAL::squared_distance(minb, maxb))));
-      if (length < FT(10) && scale == FT(1)) scale *= FT(1000);
-      const FT line_width = FT(1);
-      const bool dashed = false;
-
-      // Set eps header.
-      set_eps_header(
-        minb.x() * scale,
-        minb.y() * scale,
-        maxb.x() * scale,
-        maxb.y() * scale,
-        "segments");
-
-      // Start private namespace.
-      out << "0 dict begin gsave" << std::endl << std::endl;
-
-      // Draw segments.
-      for (const auto& segment : segments)
-        draw_segment(segment, scale, line_width, dashed);
-
-      // Finish private namespace.
-      out << "grestore end" << std::endl << std::endl;
-      out << "%%EOF" << std::endl;
-      save(path + ".eps");
+      export_eps_segments(segments, path, scale);
     }
 
   private:
@@ -185,16 +246,47 @@ namespace Examples {
       save(path + ".polylines");
     }
 
-    void bounding_box(
+    void compute_barycenter(
+      const std::vector<Segment_2>& segments,
+      Point_2& b) const {
+
+      FT bx = FT(0), by = FT(0);
+      for (const auto& segment : segments) {
+        const auto& source = segment.source();
+        const auto& target = segment.target();
+
+        bx += source.x(); by += source.y();
+        bx += target.x(); by += target.y();
+      }
+      bx /= static_cast<FT>(segments.size() * 2);
+      by /= static_cast<FT>(segments.size() * 2);
+      b = Point_2(bx, by);
+    }
+
+    void translate_segments(
+      const std::vector<Segment_2>& input,
+      const Point_2& b,
+      std::vector<Segment_2>& segments) const {
+
+      segments.clear();
+      segments.reserve(input.size());
+
+      for (const auto& segment : input) {
+        const auto& source = segment.source();
+        const auto& target = segment.target();
+
+        segments.push_back(Segment_2(
+          Point_2(source.x() - b.x(), source.y() - b.y()),
+          Point_2(target.x() - b.x(), target.y() - b.y())));
+      }
+    }
+
+    void compute_bounding_box(
       const std::vector<Segment_2>& segments,
       Point_2& minb, Point_2& maxb) const {
 
-      const std::size_t n = segments.size();
-      FT minx =  FT(1000000000000);
-      FT miny =  FT(1000000000000);
-      FT maxx = -FT(1000000000000);
-      FT maxy = -FT(1000000000000);
-
+      FT minx = FT(1000000000000), maxx = -FT(1000000000000);
+      FT miny = FT(1000000000000), maxy = -FT(1000000000000);
       for (const auto& segment : segments) {
         const auto& source = segment.source();
         const auto& target = segment.target();
@@ -210,8 +302,9 @@ namespace Examples {
         maxy = CGAL::max(maxy, target.y());
       }
 
-      minb = Point_2(minx, miny);
-      maxb = Point_2(maxx, maxy);
+      const FT d = CGAL::abs(maxx - minx) / FT(10);
+      minb = Point_2(minx - d, miny - d);
+      maxb = Point_2(maxx + d, maxy + d);
     }
 
     void set_eps_header(
@@ -231,7 +324,7 @@ namespace Examples {
       out << "%%Page: 1 1" << std::endl << std::endl;
     }
 
-    void draw_segment(
+    void add_eps_segment(
       const Segment_2& segment,
       const FT scale,
       const FT line_width,
@@ -242,12 +335,29 @@ namespace Examples {
 
       out << source.x() * scale << " " << source.y() * scale << " moveto" << std::endl;
       out << target.x() * scale << " " << target.y() * scale << " lineto" << std::endl;
-      out << 0.0 << " setgray" << std::endl;
+      out << 0 << " setgray" << std::endl;
 
       if (dashed) out << "[4 1] 0 setdash" << std::endl;
       else out << "[] 0 setdash" << std::endl;
 
       out << line_width << " setlinewidth" << std::endl;
+      out << "stroke" << std::endl << std::endl;
+    }
+
+    void add_eps_disc(
+      const Point_2& center,
+      const FT radius,
+      const FT scale) {
+
+      out << 0 << " setgray" << std::endl;
+      out << "0 setlinewidth" << std::endl << std::endl;
+      out <<
+      center.x() * scale << " " <<
+      center.y() * scale << " " <<
+      radius << " 0 360 arc closepath" << std::endl << std::endl;
+      out << "gsave" << std::endl;
+      out << 0 << " setgray fill" << std::endl;
+      out << "grestore" << std::endl;
       out << "stroke" << std::endl << std::endl;
     }
   };
