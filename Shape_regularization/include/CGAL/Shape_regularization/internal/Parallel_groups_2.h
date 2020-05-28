@@ -33,7 +33,7 @@
 
 namespace CGAL {
 namespace Shape_regularization {
-namespace Segments {
+namespace internal {
 
   /*!
     \ingroup PkgShapeRegularizationRefSegments
@@ -49,13 +49,12 @@ namespace Segments {
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
-    and value type is `GeomTraits::Segment_2`. %Default is the
-    `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
+    and value type is `GeomTraits::Segment_2`.
   */
   template<
   typename GeomTraits,
   typename InputRange,
-  typename SegmentMap = CGAL::Identity_property_map<typename GeomTraits::Segment_2> >
+  typename SegmentMap>
   class Parallel_groups_2 {
 
   public:
@@ -95,8 +94,7 @@ namespace Segments {
       among the ones listed below
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`,
-      if not provided, the default is used
+      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`
 
       \cgalNamedParamsBegin
         \cgalParamBegin{max_angle}
@@ -111,7 +109,8 @@ namespace Segments {
     Parallel_groups_2(
       const InputRange& input_range,
       const NamedParameters np,
-      const SegmentMap segment_map = SegmentMap()) :
+      const SegmentMap segment_map,
+      const GeomTraits&) :
     m_input_range(input_range),
     m_segment_map(segment_map) {
 
@@ -135,10 +134,10 @@ namespace Segments {
       must be a model of `OutputIterator`
 
       \param groups
-      an instance of OutputIterator,
+      an instance of `OutputIterator`,
       whose value type is `std::vector<std::size_t>`
 
-      \return an output iterator
+      \return an output iterator.
     */
     template<typename OutputIterator>
     OutputIterator groups(OutputIterator groups) const {
@@ -199,7 +198,7 @@ namespace Segments {
     }
   };
 
-} // namespace Segments
+} // namespace internal
 } // namespace Shape_regularization
 } // namespace CGAL
 

@@ -30,7 +30,7 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
-#include <CGAL/Shape_regularization/Segments/Collinear_groups_2.h>
+#include <CGAL/Shape_regularization/internal/Collinear_groups_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -76,11 +76,11 @@ namespace Segments {
 
     /// \cond SKIP_IN_MANUAL
     using Point_2 = typename Traits::Point_2;
-    using Vector_2  = typename Traits::Vector_2;
+    using Vector_2 = typename Traits::Vector_2;
     using Segment_2 = typename Traits::Segment_2;
 
-    using Segment_wrapper_2 = typename internal::Segment_wrapper_2<Traits>;
-    using Collinear_groups_2 = Collinear_groups_2<Traits, Input_range, Segment_map>;
+    using Segment_wrapper_2 = internal::Segment_wrapper_2<Traits>;
+    using Collinear_groups_2 = internal::Collinear_groups_2<Traits, Input_range, Segment_map>;
     using Indices = std::vector<std::size_t>;
     /// \endcond
 
@@ -108,7 +108,7 @@ namespace Segments {
 
       \cgalNamedParamsBegin
         \cgalParamBegin{max_offset}
-          max offset deviation in meters between two segments, the default is 0.5 meters
+          max offset deviation between two segments, the default is 0.5
         \cgalParamEnd
       \cgalNamedParamsEnd
 
@@ -133,7 +133,7 @@ namespace Segments {
       m_max_offset = max_offset;
       if (m_max_offset < FT(0)) {
         std::cerr << "WARNING: The max offset bound has to be within [0, +inf)! ";
-        std::cerr << " Setting to the default value: 0.5 meters." << std::endl;
+        std::cerr << " Setting to the default value: 0.5." << std::endl;
         m_max_offset = FT(1) / FT(2);
       }
       clear();
@@ -278,7 +278,7 @@ namespace Segments {
       const Collinear_groups_2 grouping(
         m_input_range,
         CGAL::parameters::max_offset(m_max_offset),
-        m_segment_map);
+        m_segment_map, Traits());
       return grouping.groups(groups);
     }
 

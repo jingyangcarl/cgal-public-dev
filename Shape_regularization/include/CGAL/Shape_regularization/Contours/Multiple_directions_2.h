@@ -106,8 +106,8 @@ namespace Contours {
           principal direction, the default is 25 degrees
         \cgalParamEnd
         \cgalParamBegin{min_length}
-          min length in meters of a contour edge whose direction can be taken
-          as a principal direction, the default is 3 meters
+          min length of a contour edge whose direction can be taken
+          as a principal direction, the default is 3
         \cgalParamEnd
       \cgalNamedParamsEnd
 

@@ -204,7 +204,7 @@ The max angle bound is set to 40 degrees and the `CGAL::Simple_cartesian<double>
 
 This class aligns segments to preserve collinearity.
 In order to apply the offset regularization on a set of segments, the user has to:
-- specify the max offset bound that has to be within the interval [0, +inf) meters. If no bound is provided,
+- specify the max offset bound that has to be within the interval [0, +inf). If no bound is provided,
 a bound of 0.1 will be set as the default value.
 - add groups of parallel segments through the
 `CGAL::Shape_regularization::Segments::Offset_regularization_2::add_group()` method.
@@ -223,7 +223,7 @@ A set of 2D segments after the offset regularization.
 The following example demonstrates the usage of the shape regularization algorithm for offsets
 on a set of 100 parallel segments located in a circle. The class
 `CGAL::Shape_regularization::Segments::Parallel_groups_2` is used to obtain the groups
-of parallel segments. The max offset bound is set to 0.25 meters and the
+of parallel segments. The max offset bound is set to 0.25 and the
 `CGAL::Simple_cartesian<double>` kernel is used.
 
 \anchor QP_Parallel_Groups_Example
@@ -236,7 +236,7 @@ The following examples demonstrate the usage of the shape regularization algorit
 both angles and offsets sequentially.
 
 The first example contains 15 segments. The angle and offset regularizations
-are performed on these segments using the max bounds of 3.85 degrees and 0.1 meters respectively.
+are performed on these segments using the max bounds of 3.85 degrees and 0.1 respectively.
 The `CGAL::Exact_predicates_inexact_constructions_kernel` kernel is used. We also
 show here how to create and work with contextually similar groups of segments and
 regularize each group on its own. The defined groups are the outer boundary, top and
@@ -257,7 +257,7 @@ computed with the use of the \ref PkgShapeDetection package. Each group of
 points represents a line detected in the 2D point set. We fit a segment to each of
 these groups using the \ref PkgPrincipalComponentAnalysisD "Principal Component Analysis" package.
 The angle and offset regularizations are performed on these segments
-using the bounds of 60 degrees and 0.95 meters respectively.
+using the bounds of 60 degrees and 0.95 respectively.
 The `CGAL::Exact_predicates_inexact_constructions_kernel` kernel is used.
 
 \cgalFigureBegin{real_data_example_before, regularize_real_data_2_before.png}

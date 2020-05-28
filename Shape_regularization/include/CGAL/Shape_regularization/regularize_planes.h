@@ -314,8 +314,8 @@ namespace Planes {
         orthogonality, and axis symmetry, the default is 25 degrees
       \cgalParamEnd
       \cgalParamBegin{max_offset}
-        max distance in meters between two parallel planes such that
-        they are considered coplanar, the default is 0.01 meters
+        max distance between two parallel planes such that
+        they are considered coplanar, the default is 0.01
       \cgalParamEnd
       \cgalParamBegin{regularize_parallelism}
         selects whether parallelism is regularized or not, the default is `true`

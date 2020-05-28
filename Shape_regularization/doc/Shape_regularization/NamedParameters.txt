@@ -18,15 +18,15 @@ max angle bound between two items in degrees\n
 \cgalNPEnd
 
 \cgalNPBegin{max_offset} \anchor SR_max_offset
-max offset bound between two items in meters\n
+max offset bound between two items\n
 <b>Type:</b> floating point value\n
-<b>Default:</b> `{0.01, 0.2, 0.5} meters, depends on the class`
+<b>Default:</b> `{0.01, 0.2, 0.5}, depends on the class`
 \cgalNPEnd
 
 \cgalNPBegin{min_length} \anchor SR_min_length
-min length of an item in meters\n
+min length of an item\n
 <b>Type:</b> floating point value\n
-<b>Default:</b> `3 meters`
+<b>Default:</b> `3`
 \cgalNPEnd
 
 \cgalNPBegin{plane_index_map} \anchor SR_plane_index_map

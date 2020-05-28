@@ -10,7 +10,6 @@ using Segment_2 = typename Kernel::Segment_2;
 using Segments  = std::vector<Segment_2>;
 using Indices   = std::vector<std::size_t>;
 
-using PG    = CGAL::Shape_regularization::Segments::Parallel_groups_2<Kernel, Segments>;
 using NQ    = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
 using OR    = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
 using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
@@ -36,11 +35,10 @@ int main(int argc, char *argv[]) {
   // Find groups of parallel segments.
   const FT max_angle_2 = FT(1);
 
-  const PG grouping(segments,
-  CGAL::parameters::max_angle(max_angle_2));
   std::vector<Indices> pgroups;
-  grouping.groups(
-    std::back_inserter(pgroups));
+  CGAL::Shape_regularization::Segments::parallel_groups(
+    segments, std::back_inserter(pgroups),
+    CGAL::parameters::max_angle(max_angle_2));
 
   // Offset regularization.
   const FT max_offset_2 = FT(1) / FT(4);

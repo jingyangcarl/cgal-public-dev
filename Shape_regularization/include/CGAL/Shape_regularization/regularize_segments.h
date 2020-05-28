@@ -30,6 +30,10 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
+#include <CGAL/Shape_regularization/internal/Parallel_groups_2.h>
+#include <CGAL/Shape_regularization/internal/Orthogonal_groups_2.h>
+#include <CGAL/Shape_regularization/internal/Collinear_groups_2.h>
+
 #include <CGAL/Shape_regularization/QP_regularization.h>
 #include <CGAL/Shape_regularization/Solvers/OSQP_quadratic_program.h>
 
@@ -37,14 +41,57 @@
 #include <CGAL/Shape_regularization/Segments/Offset_regularization_2.h>
 #include <CGAL/Shape_regularization/Segments/Delaunay_neighbor_query_2.h>
 
-#include <CGAL/Shape_regularization/Segments/Parallel_groups_2.h>
-#include <CGAL/Shape_regularization/Segments/Orthogonal_groups_2.h>
-#include <CGAL/Shape_regularization/Segments/Collinear_groups_2.h>
-
 namespace CGAL {
 namespace Shape_regularization {
 namespace Segments {
 
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief regularizes a set of 2D segments.
+
+    This function enables to regularize 2D segments with respect to the
+    user-defined conditions.
+
+    The user has to provide the `NeighborQuery` model to access local neighbors
+    of a segment and `RegularizationType` model to define the type of regularities
+    that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
+    Please address that class for more information.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam NeighborQuery
+    must be a model of `NeighborQuery`.
+
+    \tparam RegularizationType
+    must be a model of `RegularizationType`.
+
+    \tparam QPSolver
+    must be a model of `QPSolver`.
+
+    \tparam GeomTraits
+    must be a model of `Kernel`.
+
+    \param input_range
+    a const range of input segments for shape regularization
+
+    \param neighbor_query
+    an instance of `NeighborQuery` that is used internally to
+    access neighbors of a segment
+
+    \param regularization_type
+    an instance of `RegularizationType` that is used internally to
+    obtain bounds and target values required by the regularization
+
+    \param quadratic_program
+    an instance of `QPSolver` to solve the quadratic programming problem
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \pre `input_range.size() > 1`
+  */
   template<
   typename InputRange,
   typename NeighborQuery,
@@ -67,6 +114,50 @@ namespace Segments {
     regularizer.regularize();
   }
 
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief regularizes a set of 2D segments.
+
+    This function enables to regularize 2D segments with respect to the
+    user-defined conditions.
+
+    The user has to provide the `NeighborQuery` model to access local neighbors
+    of a segment and `RegularizationType` model to define the type of regularities
+    that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
+    Please address that class for more information.
+
+    This function provides the default solver for the quadratic program that is
+    solved during regularization.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam NeighborQuery
+    must be a model of `NeighborQuery`.
+
+    \tparam RegularizationType
+    must be a model of `RegularizationType`.
+
+    \tparam GeomTraits
+    must be a model of `Kernel`.
+
+    \param input_range
+    a const range of input segments for shape regularization
+
+    \param neighbor_query
+    an instance of `NeighborQuery` that is used internally to
+    access neighbors of a segment
+
+    \param regularization_type
+    an instance of `RegularizationType` that is used internally to
+    obtain bounds and target values required by the regularization
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \pre `input_range.size() > 1`
+  */
   template<
   typename InputRange,
   typename NeighborQuery,
@@ -86,6 +177,45 @@ namespace Segments {
       input_range, neighbor_query, regularization_type, quadratic_program, traits);
   }
 
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief regularizes a set of 2D segments.
+
+    This function enables to regularize 2D segments with respect to the
+    user-defined conditions.
+
+    The user has to provide the `NeighborQuery` model to access local neighbors
+    of a segment and `RegularizationType` model to define the type of regularities
+    that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
+    Please address that class for more information.
+
+    This function provides the default solver for the quadratic program that is
+    solved during regularization. In addition, this function infers a traits class
+    from the `InputRange` iterator's value type.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam NeighborQuery
+    must be a model of `NeighborQuery`.
+
+    \tparam RegularizationType
+    must be a model of `RegularizationType`.
+
+    \param input_range
+    a const range of input segments for shape regularization
+
+    \param neighbor_query
+    an instance of `NeighborQuery` that is used internally to
+    access neighbors of a segment
+
+    \param regularization_type
+    an instance of `RegularizationType` that is used internally to
+    obtain bounds and target values required by the regularization
+
+    \pre `input_range.size() > 1`
+  */
   template<
   typename InputRange,
   typename NeighborQuery,
@@ -106,6 +236,429 @@ namespace Segments {
 
     regularize_segments(
       input_range, neighbor_query, regularization_type, quadratic_program, traits);
+  }
+
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief finds groups of parallel segments in a set of 2D segments.
+
+    This function enables to find groups of parallel segments
+    in a set of 2D segments. The groups are returned as vectors of indices.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    must be an output iterator whose value type is `std::vector<std::size_t>`.
+
+    \tparam NamedParameters
+    a sequence of \ref sr_namedparameters "Named Parameters".
+
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`.
+
+    \tparam GeomTraits
+    must be a model of `Kernel`.
+
+    \param input_range
+    a const range of input segments
+
+    \param groups
+    an output iterator with groups of segment indices
+
+    \param np
+    optional sequence of \ref sr_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \param segment_map
+    an instance of `SegmentMap`
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{max_angle}
+        max angle deviation in degrees between two segments, the default is 5 degrees
+      \cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \return an output iterator.
+
+    \pre `input_range.size() > 0`
+    \pre `max_angle >= 0 && max_angle <= 90`
+  */
+  template<
+  typename InputRange,
+  typename OutputIterator,
+  typename NamedParameters,
+  typename SegmentMap,
+  typename GeomTraits>
+  OutputIterator parallel_groups(
+    const InputRange& input_range,
+    OutputIterator groups,
+    const NamedParameters np,
+    const SegmentMap segment_map,
+    const GeomTraits traits) {
+
+    using Parallel_groups_2 = internal::Parallel_groups_2<
+      GeomTraits, InputRange, SegmentMap>;
+
+    Parallel_groups_2 grouping(
+      input_range, np, segment_map, traits);
+    return grouping.groups(groups);
+  }
+
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief finds groups of parallel segments in a set of 2D segments.
+
+    This function enables to find groups of parallel segments
+    in a set of 2D segments. The groups are returned as vectors of indices.
+
+    This function infers a traits class from the `InputRange` iterator's value type.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    must be an output iterator whose value type is `std::vector<std::size_t>`.
+
+    \tparam NamedParameters
+    a sequence of \ref sr_namedparameters "Named Parameters".
+
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`. %Default is the
+    `CGAL::Identity_property_map`.
+
+    \param input_range
+    a const range of input segments
+
+    \param groups
+    an output iterator with groups of segment indices
+
+    \param np
+    optional sequence of \ref sr_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \param segment_map
+    an instance of `SegmentMap`, if not provided, the default is used
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{max_angle}
+        max angle deviation in degrees between two segments, the default is 5 degrees
+      \cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \return an output iterator.
+
+    \pre `input_range.size() > 0`
+    \pre `max_angle >= 0 && max_angle <= 90`
+  */
+  template<
+  typename InputRange,
+  typename OutputIterator,
+  typename NamedParameters,
+  typename SegmentMap = CGAL::Identity_property_map<
+  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
+  OutputIterator parallel_groups(
+    const InputRange& input_range,
+    OutputIterator groups,
+    const NamedParameters np,
+    const SegmentMap segment_map = SegmentMap()) {
+
+    using Iterator_type = typename InputRange::const_iterator;
+    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
+    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
+    GeomTraits traits;
+
+    return parallel_groups(
+      input_range, groups, np, segment_map, traits);
+  }
+
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief finds groups of collinear segments in a set of 2D segments.
+
+    This function enables to find groups of collinear segments
+    in a set of 2D segments. The groups are returned as vectors of indices.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    must be an output iterator whose value type is `std::vector<std::size_t>`.
+
+    \tparam NamedParameters
+    a sequence of \ref sr_namedparameters "Named Parameters".
+
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`.
+
+    \tparam GeomTraits
+    must be a model of `Kernel`.
+
+    \param input_range
+    a const range of input segments
+
+    \param groups
+    an output iterator with groups of segment indices
+
+    \param np
+    optional sequence of \ref sr_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \param segment_map
+    an instance of `SegmentMap`
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{max_offset}
+        max offset deviation in between two segments, the default is 0.2
+      \cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \return an output iterator.
+
+    \pre `input_range.size() > 0`
+    \pre `max_offset >= 0`
+  */
+  template<
+  typename InputRange,
+  typename OutputIterator,
+  typename NamedParameters,
+  typename SegmentMap,
+  typename GeomTraits>
+  OutputIterator collinear_groups(
+    const InputRange& input_range,
+    OutputIterator groups,
+    const NamedParameters np,
+    const SegmentMap segment_map,
+    const GeomTraits traits) {
+
+    using Collinear_groups_2 = internal::Collinear_groups_2<
+      GeomTraits, InputRange, SegmentMap>;
+
+    Collinear_groups_2 grouping(
+      input_range, np, segment_map, traits);
+    return grouping.groups(groups);
+  }
+
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief finds groups of collinear segments in a set of 2D segments.
+
+    This function enables to find groups of collinear segments
+    in a set of 2D segments. The groups are returned as vectors of indices.
+
+    This function infers a traits class from the `InputRange` iterator's value type.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    must be an output iterator whose value type is `std::vector<std::size_t>`.
+
+    \tparam NamedParameters
+    a sequence of \ref sr_namedparameters "Named Parameters".
+
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`. %Default is the
+    `CGAL::Identity_property_map`.
+
+    \param input_range
+    a const range of input segments
+
+    \param groups
+    an output iterator with groups of segment indices
+
+    \param np
+    optional sequence of \ref sr_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \param segment_map
+    an instance of `SegmentMap`, if not provided, the default is used
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{max_offset}
+        max offset deviation in between two segments, the default is 0.2
+      \cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \return an output iterator.
+
+    \pre `input_range.size() > 0`
+    \pre `max_offset >= 0`
+  */
+  template<
+  typename InputRange,
+  typename OutputIterator,
+  typename NamedParameters,
+  typename SegmentMap = CGAL::Identity_property_map<
+  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
+  OutputIterator collinear_groups(
+    const InputRange& input_range,
+    OutputIterator groups,
+    const NamedParameters np,
+    const SegmentMap segment_map = SegmentMap()) {
+
+    using Iterator_type = typename InputRange::const_iterator;
+    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
+    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
+    GeomTraits traits;
+
+    return collinear_groups(
+      input_range, groups, np, segment_map, traits);
+  }
+
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief finds groups of orthogonal segments in a set of 2D segments.
+
+    This function enables to find groups of orthogonal segments
+    in a set of 2D segments. The groups are returned as vectors of indices.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    must be an output iterator whose value type is `std::vector<std::size_t>`.
+
+    \tparam NamedParameters
+    a sequence of \ref sr_namedparameters "Named Parameters".
+
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`.
+
+    \tparam GeomTraits
+    must be a model of `Kernel`.
+
+    \param input_range
+    a const range of input segments
+
+    \param groups
+    an output iterator with groups of segment indices
+
+    \param np
+    optional sequence of \ref sr_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \param segment_map
+    an instance of `SegmentMap`
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{max_angle}
+        max angle deviation in degrees between two segments, the default is 5 degrees
+      \cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \return an output iterator.
+
+    \pre `input_range.size() > 0`
+    \pre `max_angle >= 0 && max_angle <= 90`
+  */
+  template<
+  typename InputRange,
+  typename OutputIterator,
+  typename NamedParameters,
+  typename SegmentMap,
+  typename GeomTraits>
+  OutputIterator orthogonal_groups(
+    const InputRange& input_range,
+    OutputIterator groups,
+    const NamedParameters np,
+    const SegmentMap segment_map,
+    const GeomTraits traits) {
+
+    using Orthogonal_groups_2 = internal::Orthogonal_groups_2<
+      GeomTraits, InputRange, SegmentMap>;
+
+    Orthogonal_groups_2 grouping(
+      input_range, np, segment_map, traits);
+    return grouping.groups(groups);
+  }
+
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief finds groups of orthogonal segments in a set of 2D segments.
+
+    This function enables to find groups of orthogonal segments
+    in a set of 2D segments. The groups are returned as vectors of indices.
+
+    This function infers a traits class from the `InputRange` iterator's value type.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    must be an output iterator whose value type is `std::vector<std::size_t>`.
+
+    \tparam NamedParameters
+    a sequence of \ref sr_namedparameters "Named Parameters".
+
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`. %Default is the
+    `CGAL::Identity_property_map`.
+
+    \param input_range
+    a const range of input segments
+
+    \param groups
+    an output iterator with groups of segment indices
+
+    \param np
+    optional sequence of \ref sr_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \param segment_map
+    an instance of `SegmentMap`, if not provided, the default is used
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{max_angle}
+        max angle deviation in degrees between two segments, the default is 5 degrees
+      \cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \return an output iterator.
+
+    \pre `input_range.size() > 0`
+    \pre `max_angle >= 0 && max_angle <= 90`
+  */
+  template<
+  typename InputRange,
+  typename OutputIterator,
+  typename NamedParameters,
+  typename SegmentMap = CGAL::Identity_property_map<
+  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
+  OutputIterator orthogonal_groups(
+    const InputRange& input_range,
+    OutputIterator groups,
+    const NamedParameters np,
+    const SegmentMap segment_map = SegmentMap()) {
+
+    using Iterator_type = typename InputRange::const_iterator;
+    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
+    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
+    GeomTraits traits;
+
+    return orthogonal_groups(
+      input_range, groups, np, segment_map, traits);
   }
 
 } // namespace Segments

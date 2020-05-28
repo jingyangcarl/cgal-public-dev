@@ -112,7 +112,6 @@ namespace Contours {
 
       CGAL_precondition(input_range.size() >= 2);
       CGAL_precondition(direction_range.size() > 0);
-
       if (is_closed)
         estimate_closed(
           direction_range, m_bounds, m_directions, m_assigned);

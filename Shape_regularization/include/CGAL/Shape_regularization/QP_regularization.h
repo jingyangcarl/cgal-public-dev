@@ -119,7 +119,7 @@ namespace Shape_regularization {
       an instance of `QPSolver` to solve the quadratic programming problem
 
       \param traits
-      an instance of `GeomTraits`
+      an instance of `GeomTraits`, if not provided, the default is used
 
       \pre `input_range.size() > 1`
     */
@@ -128,7 +128,7 @@ namespace Shape_regularization {
       NeighborQuery& neighbor_query,
       RegularizationType& regularization_type,
       QPSolver& quadratic_program,
-      const GeomTraits traits) :
+      const GeomTraits traits = GeomTraits()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),
     m_regularization_type(regularization_type),

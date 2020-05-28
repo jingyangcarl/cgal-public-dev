@@ -57,12 +57,6 @@ to the user-defined conditions.}
 - `RegularizationType`
 - `ContourDirections`
 
-### QP Regularization ###
-- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>`
-#### Solvers ####
-- `CGAL::Shape_regularization::CGAL_quadratic_program<FT>`
-- `CGAL::Shape_regularization::OSQP_quadratic_program<FT>`
-
 ### Segments ###
 - `CGAL::Shape_regularization::Segments::regularize_segments()`
 #### Neighbor Queries ####
@@ -71,9 +65,9 @@ to the user-defined conditions.}
 - `CGAL::Shape_regularization::Segments::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
 - `CGAL::Shape_regularization::Segments::Offset_regularization_2<GeomTraits, InputRange, SegmentMap>`
 #### Groups ####
-- `CGAL::Shape_regularization::Segments::Parallel_groups_2<GeomTraits, InputRange, SegmentMap>`
-- `CGAL::Shape_regularization::Segments::Orthogonal_groups_2<GeomTraits, InputRange, SegmentMap>`
-- `CGAL::Shape_regularization::Segments::Collinear_groups_2<GeomTraits, InputRange, SegmentMap>`
+- `CGAL::Shape_regularization::Segments::parallel_groups()`
+- `CGAL::Shape_regularization::Segments::orthogonal_groups()`
+- `CGAL::Shape_regularization::Segments::collinear_groups()`
 
 ### Contours ###
 - `CGAL::Shape_regularization::Contours::regularize_closed_contour()`
@@ -85,5 +79,11 @@ to the user-defined conditions.}
 
 ### Planes ###
 - `CGAL::Shape_regularization::Planes::regularize_planes()`
+
+### QP Regularization ###
+- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>`
+#### Solvers ####
+- `CGAL::Shape_regularization::CGAL_quadratic_program<FT>`
+- `CGAL::Shape_regularization::OSQP_quadratic_program<FT>`
 
 */
