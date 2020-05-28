@@ -1,30 +1,19 @@
 #include "include/utils.h"
 #include "include/Saver.h"
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Shape_regularization.h>
+#include <CGAL/Shape_regularization/regularize_segments.h>
 
 // Typedefs.
-using Kernel = CGAL::Simple_cartesian<double>;
-
+using Kernel    = CGAL::Simple_cartesian<double>;
 using FT        = typename Kernel::FT;
 using Segment_2 = typename Kernel::Segment_2;
-using Indices   = std::vector<std::size_t>;
 using Segments  = std::vector<Segment_2>;
+using Indices   = std::vector<std::size_t>;
 
-using Parallel_groups =
-  CGAL::Shape_regularization::Segments::Parallel_groups_2<Kernel, Segments>;
-
-using Neighbor_query =
-  CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using Offset_regularization =
-  CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
-using Quadratic_program =
-  CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
-using QP_offset_regularizer =
-  CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Offset_regularization, Quadratic_program>;
-
-using Saver =
-  CGAL::Shape_regularization::Examples::Saver<Kernel>;
+using PG    = CGAL::Shape_regularization::Segments::Parallel_groups_2<Kernel, Segments>;
+using NQ    = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
+using OR    = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
+using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
 
@@ -33,7 +22,7 @@ int main(int argc, char *argv[]) {
   if (argc > 1) path = argv[1];
   Saver saver;
 
-  // Initialize 100 segments in a circle.
+  // Initialize 100 segments in a fuzzy circle.
   Segments segments;
   CGAL::Shape_regularization::Examples::
   create_example_offsets(segments);
@@ -44,33 +33,32 @@ int main(int argc, char *argv[]) {
     saver.export_eps_segments(segments, full_path, FT(100));
   }
 
-  // Create parallel groups.
+  // Find groups of parallel segments.
   const FT max_angle_2 = FT(1);
-  const Parallel_groups grouping(segments,
+
+  const PG grouping(segments,
   CGAL::parameters::max_angle(max_angle_2));
-  std::vector<Indices> parallel_groups;
+  std::vector<Indices> pgroups;
   grouping.groups(
-    std::back_inserter(parallel_groups));
-
-  // Create a solver.
-  Quadratic_program qp_offsets;
-
-  // Create a neighbor query.
-  Neighbor_query neighbor_query(segments);
+    std::back_inserter(pgroups));
 
   // Offset regularization.
   const FT max_offset_2 = FT(1) / FT(4);
-  Offset_regularization offset_regularization(
+
+  // Create neigbor query and offset-based regularization model.
+  NQ neighbor_query(segments);
+  OR offset_regularization(
     segments, CGAL::parameters::max_offset(max_offset_2));
 
-  for (const auto& parallel_group : parallel_groups) {
-    neighbor_query.add_group(parallel_group);
-    offset_regularization.add_group(parallel_group);
+  // Add each group of parallel segments with at least 2 segments.
+  for (const auto& pgroup : pgroups) {
+    neighbor_query.add_group(pgroup);
+    offset_regularization.add_group(pgroup);
   }
 
-  QP_offset_regularizer qp_offset_regularizer(
-    segments, neighbor_query, offset_regularization, qp_offsets);
-  qp_offset_regularizer.regularize();
+  // Regularize.
+  CGAL::Shape_regularization::Segments::regularize_segments(
+    segments, neighbor_query, offset_regularization);
 
   std::cout << "* number of modified segments = " <<
     offset_regularization.number_of_modified_segments() << std::endl;

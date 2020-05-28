@@ -13,11 +13,11 @@
 #include <CGAL/utils.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
-#include <CGAL/Aff_transformation_3.h>
-#include <CGAL/point_generators_2.h>
-#include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/function_objects.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/Kernel/global_functions.h>
 #include <CGAL/Join_input_iterator.h>
+#include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/Counting_iterator.h>
 #include <CGAL/Random.h>
 #include <CGAL/IO/io.h>

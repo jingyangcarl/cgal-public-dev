@@ -3,8 +3,7 @@
                               // converts 64 to 32 bits integers
 #endif
 
-#include <CGAL/property_map.h>
-#include <CGAL/IO/read_xyz_points.h>
+#include "include/utils.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>
 #include <CGAL/Shape_regularization/regularize_planes.h>
@@ -16,10 +15,9 @@ using Point_3  = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
 
 using Point_with_normal = std::pair<Point_3, Vector_3>;
+using Point_map         = CGAL::First_of_pair_property_map<Point_with_normal>;
+using Normal_map        = CGAL::Second_of_pair_property_map<Point_with_normal>;
 using Pwn_vector        = std::vector<Point_with_normal>;
-
-using Point_map  = CGAL::First_of_pair_property_map<Point_with_normal>;
-using Normal_map = CGAL::Second_of_pair_property_map<Point_with_normal>;
 
 using Traits    = CGAL::Shape_detection::Efficient_RANSAC_traits<Kernel, Pwn_vector, Point_map, Normal_map>;
 using RANSAC    = CGAL::Shape_detection::Efficient_RANSAC<Traits>;

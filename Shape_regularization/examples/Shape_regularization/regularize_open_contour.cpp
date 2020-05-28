@@ -4,14 +4,14 @@
 #include <CGAL/Shape_regularization/regularize_contours.h>
 
 // Typedefs.
-using Kernel  = CGAL::Exact_predicates_exact_constructions_kernel;
-using FT      = typename Kernel::FT;
-using Point_2 = typename Kernel::Point_2;
-using Contour = std::vector<Point_2>;
-
+using Kernel    = CGAL::Exact_predicates_exact_constructions_kernel;
+using FT        = typename Kernel::FT;
+using Point_2   = typename Kernel::Point_2;
+using Contour   = std::vector<Point_2>;
 using Point_map = CGAL::Identity_property_map<Point_2>;
-using CD        = CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour, Point_map>;
-using Saver     = CGAL::Shape_regularization::Examples::Saver<Kernel>;
+
+using CD    = CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour, Point_map>;
+using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
 

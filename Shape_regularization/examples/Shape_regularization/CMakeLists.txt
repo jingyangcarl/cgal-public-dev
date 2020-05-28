@@ -3,11 +3,12 @@
 
 project(Shape_regularization_Examples)
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 3.1...3.15)
 set(CMAKE_CXX_STANDARD 11)
 
 find_package(CGAL QUIET COMPONENTS Core)
 if(CGAL_FOUND)
+  message(STATUS "Found CGAL")
 
   include(${CGAL_USE_FILE})
   include(CGAL_CreateSingleSourceCGALProgram)
@@ -19,12 +20,22 @@ if(CGAL_FOUND)
 
     set(targets
     regularize_framework
-    # regularize_15_segments
+    regularize_15_segments
     regularize_100_segments_angles
-    # regularize_100_segments_offsets
-    regularize_simple
-    # regularize_real_data_2
-    )
+    regularize_100_segments_offsets
+    regularize_simple)
+
+    find_package(Eigen3 3.1.0 QUIET)
+    if (EIGEN3_FOUND)
+      message(STATUS "Found Eigen")
+      include(CGAL_target_use_Eigen)
+      create_single_source_cgal_program(
+        "regularize_real_data_2.cpp")
+      CGAL_target_use_Eigen(regularize_real_data_2)
+      target_link_libraries(regularize_real_data_2 PUBLIC ${OSQP_LIBRARIES})
+    else()
+      message(STATUS "NOTICE: Eigen was not found. Eigen examples won't be available.")
+    endif()
 
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")

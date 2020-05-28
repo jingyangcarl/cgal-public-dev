@@ -34,9 +34,12 @@ int main(int argc, char *argv[]) {
   // Angle regularization.
   const FT max_angle_2 = FT(40);
 
+  // Create neigbor query and angle-based regularization model.
   NQ neighbor_query(segments);
   AR angle_regularization(
     segments, CGAL::parameters::max_angle(max_angle_2));
+
+  // Regularize.
   CGAL::Shape_regularization::Segments::regularize_segments(
     segments, neighbor_query, angle_regularization);
 

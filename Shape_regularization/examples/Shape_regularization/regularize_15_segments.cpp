@@ -4,30 +4,21 @@
 #include <CGAL/Shape_regularization.h>
 
 // Typedefs.
-using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
+using Kernel      = CGAL::Exact_predicates_inexact_constructions_kernel;
+using FT          = typename Kernel::FT;
+using Segment_2   = typename Kernel::Segment_2;
+using Segments    = std::vector<Segment_2>;
+using Indices     = std::vector<std::size_t>;
+using Segment_map = CGAL::Identity_property_map<Segment_2>;
 
-using FT        = typename Kernel::FT;
-using Segment_2 = typename Kernel::Segment_2;
-using Indices   = std::vector<std::size_t>;
-using Segments  = std::vector<Segment_2>;
+using NQ = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments, Segment_map>;
+using AR = CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments, Segment_map>;
+using OR = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments, Segment_map>;
+using QP = CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
 
-using Neighbor_query =
-  CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using Angle_regularization =
-  CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments>;
-using Offset_regularization =
-  CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
-
-using Quadratic_program =
-  CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
-
-using QP_angle_regularizer =
-  CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Angle_regularization, Quadratic_program>;
-using QP_offset_regularizer =
-  CGAL::Shape_regularization::QP_regularization<Kernel, Segments, Neighbor_query, Offset_regularization, Quadratic_program>;
-
-using Saver =
-  CGAL::Shape_regularization::Examples::Saver<Kernel>;
+using QP_AR = CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, AR, QP>;
+using QP_OR = CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, OR, QP>;
+using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
 
@@ -55,43 +46,51 @@ int main(int argc, char *argv[]) {
   }
 
   // Angle regularization.
-  Quadratic_program qp_angles;
-  Neighbor_query neighbor_query(segments);
-
   const FT max_angle_2 = FT(10);
-  Angle_regularization angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2));
 
+  // Create qp solver, neigbor query, and angle-based regularization model.
+  QP qp_angles;
+  NQ neighbor_query(segments, Segment_map());
+  AR angle_regularization(
+    segments, CGAL::parameters::max_angle(max_angle_2), Segment_map());
+
+  // Add each group of input segments.
   for (const auto& group : groups) {
     neighbor_query.add_group(group);
     angle_regularization.add_group(group);
   }
 
-  QP_angle_regularizer qp_angle_regularizer(
-    segments, neighbor_query, angle_regularization, qp_angles);
+  // Regularize.
+  QP_AR qp_angle_regularizer(
+    segments, neighbor_query, angle_regularization, qp_angles, Kernel());
   qp_angle_regularizer.regularize();
 
   std::cout << "* number of modified segments (angles) = " <<
     angle_regularization.number_of_modified_segments() << std::endl;
 
   // Offset regularization.
-  Quadratic_program qp_offsets;
-  std::vector<Indices> parallel_groups;
-  angle_regularization.parallel_groups(
-    std::back_inserter(parallel_groups));
-
   const FT max_offset_2 = FT(1) / FT(10);
-  Offset_regularization offset_regularization(
-    segments, CGAL::parameters::max_offset(max_offset_2));
 
+  // Get groups of parallel segments after angle regularization.
+  std::vector<Indices> pgroups;
+  angle_regularization.parallel_groups(
+    std::back_inserter(pgroups));
+
+  // Create qp solver and offset-based regularization model.
+  QP qp_offsets;
+  OR offset_regularization(
+    segments, CGAL::parameters::max_offset(max_offset_2), Segment_map());
+
+  // Add each group of parallel segments with at least 2 segments.
   neighbor_query.clear();
-  for (const auto& group : parallel_groups) {
-    neighbor_query.add_group(group);
-    offset_regularization.add_group(group);
+  for (const auto& pgroup : pgroups) {
+    neighbor_query.add_group(pgroup);
+    offset_regularization.add_group(pgroup);
   }
 
-  QP_offset_regularizer qp_offset_regularizer(
-    segments, neighbor_query, offset_regularization, qp_offsets);
+  // Regularize.
+  QP_OR qp_offset_regularizer(
+    segments, neighbor_query, offset_regularization, qp_offsets, Kernel());
   qp_offset_regularizer.regularize();
 
   std::cout << "* number of modified segments (offsets) = " <<

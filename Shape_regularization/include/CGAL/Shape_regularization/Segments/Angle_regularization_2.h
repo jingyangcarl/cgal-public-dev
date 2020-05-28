@@ -370,8 +370,8 @@ namespace Segments {
       for (const auto seg_index : index_range) {
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
-
         auto& wrap = m_wraps[seg_index];
+
         const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
         wrap.set_qp(seg_index, segment);
@@ -385,7 +385,9 @@ namespace Segments {
       for (const auto seg_index : index_range) {
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
-        m_wraps[seg_index].is_used = true;
+        auto& wrap = m_wraps[seg_index];
+
+        wrap.is_used = true;
       }
     }
   };

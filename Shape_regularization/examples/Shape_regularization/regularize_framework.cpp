@@ -91,7 +91,7 @@ using Regularizer =
 int main(int argc, char *argv[]) {
 
   NQ neighbor_query;
-  RT angle_regularization;
+  RT regularization_type;
   QP quadratic_program;
 
   Segments segments = {
@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
   };
 
   Regularizer regularizer(
-    segments, neighbor_query, angle_regularization, quadratic_program, Kernel());
+    segments, neighbor_query, regularization_type, quadratic_program, Kernel());
   regularizer.regularize();
 
   std::cout << "* regularized 2 segments" << std::endl;

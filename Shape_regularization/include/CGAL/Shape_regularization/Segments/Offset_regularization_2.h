@@ -124,7 +124,8 @@ namespace Segments {
     m_segment_map(segment_map),
     m_num_modified_segments(0) {
 
-      CGAL_precondition(input_range.size() > 1);
+      CGAL_precondition(
+        input_range.size() > 1);
       const FT max_offset = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));
       CGAL_precondition(max_offset >= FT(0));
@@ -136,6 +137,33 @@ namespace Segments {
         m_max_offset = FT(1) / FT(2);
       }
       clear();
+      create_unique_group();
+    }
+
+    /*!
+      \brief inserts a group of segments from `input_range`.
+
+      \tparam IndexRange
+      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+      The value type is `std::size_t`.
+
+      \param index_range
+      a const range of segment indices
+
+      \pre `index_range.size() > 1`
+    */
+    template<typename IndexRange>
+  	void add_group(
+      const IndexRange& index_range) {
+
+      if (m_is_first_call) {
+        clear();
+        m_is_first_call = false;
+      }
+
+      if (index_range.size() < 2) return;
+      update_wrappers(index_range);
+      ++m_num_groups;
     }
 
     /// @}
@@ -194,6 +222,7 @@ namespace Segments {
       const std::vector<FT>& solution) {
 
       CGAL_precondition(solution.size() > 0);
+      m_num_modified_segments = 0;
       for (auto& wrap : m_wraps) {
         if (!wrap.is_used) continue;
 
@@ -227,9 +256,10 @@ namespace Segments {
         ++m_num_modified_segments;
       }
     }
+
     /// @}
 
-    /// \name Miscellaneous
+    /// \name Groups
     /// @{
 
     /*!
@@ -252,49 +282,10 @@ namespace Segments {
       return grouping.groups(groups);
     }
 
-    /*!
-      \brief inserts a group of segments from `input_range`.
+    /// @}
 
-      \tparam IndexRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-      The value type is `std::size_t`.
-
-      \param index_range
-      a const range of segment indices
-
-      \pre `index_range.size() > 1`
-    */
-    template<typename IndexRange>
-  	void add_group(
-      const IndexRange& index_range) {
-      if (index_range.size() < 2)
-        return;
-
-      Indices group;
-      group.reserve(index_range.size());
-      for (const auto seg_index : index_range)
-        group.push_back(seg_index);
-      update_segment_data(group);
-      ++m_num_groups;
-    }
-
-    /*!
-      \brief inserts all input segments from `input_range` as one unique group.
-
-      For more details,
-      see `CGAL::Shape_regularization::Segments::Offset_regularization_2::add_group()`.
-
-      \pre `m_input_range.size() > 1`
-    */
-    void create_unique_group() {
-
-      CGAL_precondition(m_input_range.size() > 1);
-      if (m_input_range.size() < 2) return;
-
-      Indices group(m_input_range.size());
-      std::iota(group.begin(), group.end(), 0);
-      add_group(group);
-    }
+    /// \name Miscellaneous
+    /// @{
 
     /*!
       \brief returns the number of modifed segments.
@@ -305,17 +296,17 @@ namespace Segments {
 
     /// @}
 
-    /// \name Internal data management
+    /// \name Memory Management
     /// @{
 
     /*!
       \brief clears all internal data structures.
     */
     void clear() {
-      m_wraps.clear();
-      m_wraps.resize(m_input_range.size());
-      m_num_modified_segments = 0;
       m_num_groups = 0;
+      m_is_first_call = true;
+      for (auto& wrap : m_wraps)
+        wrap.is_used = false;
     }
 
     /// @}
@@ -336,14 +327,29 @@ namespace Segments {
 
     std::size_t m_num_modified_segments;
     std::size_t m_num_groups;
+    bool m_is_first_call;
 
+    void create_unique_group() {
+
+      CGAL_precondition(m_input_range.size() > 1);
+      if (m_input_range.size() < 2) return;
+
+      m_wraps.clear();
+      m_wraps.resize(m_input_range.size());
+
+      Indices group(m_input_range.size());
+      std::iota(group.begin(), group.end(), 0);
+      update_segment_data(group);
+      m_num_groups = 1;
+    }
+
+    template<typename IndexRange>
     void update_segment_data(
-      const Indices& group) {
-      if (group.size() < 2) return;
+      const IndexRange& index_range) {
 
       Point_2 frame_origin;
-      for (std::size_t i = 0; i < group.size(); ++i) {
-        const std::size_t seg_index = group[i];
+      for (std::size_t i = 0; i < index_range.size(); ++i) {
+        const auto seg_index = *(index_range.begin() + i);
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
@@ -351,6 +357,24 @@ namespace Segments {
         const auto& segment =
           get(m_segment_map, *(m_input_range.begin() + seg_index));
         wrap.set_qp(seg_index, segment);
+
+        if (i == 0) frame_origin = wrap.barycenter;
+        wrap.set_ref_coords(frame_origin);
+      }
+    }
+
+    template<typename IndexRange>
+    void update_wrappers(
+      const IndexRange& index_range) {
+
+      Point_2 frame_origin;
+      for (std::size_t i = 0; i < index_range.size(); ++i) {
+        const auto seg_index = *(index_range.begin() + i);
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < m_wraps.size());
+        auto& wrap = m_wraps[seg_index];
+
+        wrap.is_used = true;
 
         if (i == 0) frame_origin = wrap.barycenter;
         wrap.set_ref_coords(frame_origin);

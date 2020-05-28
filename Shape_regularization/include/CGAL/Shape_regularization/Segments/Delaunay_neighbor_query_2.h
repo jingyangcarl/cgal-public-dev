@@ -159,9 +159,9 @@ namespace Segments {
 
       neighbors.clear();
       CGAL_precondition(
-        m_groups.size() == m_input_range.size());
-      CGAL_precondition(
         query_index >= 0 && query_index < m_input_range.size());
+      CGAL_precondition(
+        m_groups.size() == m_input_range.size());
       if (query_index >= m_input_range.size()) return;
       neighbors = m_groups[query_index];
     }
@@ -265,7 +265,7 @@ namespace Segments {
 
         const std::size_t seg_index_1 = vit->info();
         CGAL_assertion(
-          seg_index_1 >= 0 && seg_index_1 < m_groups.size());
+          seg_index_1 >= 0 && seg_index_1 < m_input_range.size());
         auto& neighbors = m_groups[seg_index_1];
         neighbors.clear();
 
@@ -274,9 +274,10 @@ namespace Segments {
         const auto end = vc;
         do {
           if (!m_delaunay.is_infinite(vc)) {
+
             const std::size_t seg_index_2 = vc->info();
             CGAL_assertion(
-              seg_index_2 >= 0 && seg_index_2 < m_groups.size());
+              seg_index_2 >= 0 && seg_index_2 < m_input_range.size());
             neighbors.push_back(seg_index_2);
           }
           ++vc;
@@ -296,6 +297,7 @@ namespace Segments {
       CGAL_assertion(m_groups.size() == m_input_range.size());
       for (std::size_t i = 0; i < m_groups.size(); ++i) {
         operator()(i, neighbors);
+
         for (const std::size_t neighbor : neighbors) {
           i < neighbor ?
           pair = std::make_pair(i, neighbor) :
@@ -308,6 +310,8 @@ namespace Segments {
     const Point_2 get_middle_point(
       const std::size_t seg_index) const {
 
+      CGAL_assertion(
+        seg_index >= 0 && seg_index < m_input_range.size());
       const auto& segment = get(
         m_segment_map, *(m_input_range.begin() + seg_index));
       const auto& source = segment.source();
