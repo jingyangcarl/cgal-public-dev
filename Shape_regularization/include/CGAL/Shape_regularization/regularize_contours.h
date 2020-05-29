@@ -68,10 +68,10 @@ namespace Contours {
     must be a model of `Kernel`.
 
     \param input_range
-    a const range of points, which form a contour
+    a const range of ordered points, which form a contour
 
     \param directions
-    estimated contour directions
+    estimated contour directions towards which the contour edges are oriented
 
     \param contour
     an output iterator with points of the regularized contour
@@ -88,7 +88,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max offset deviation between two contour edges, the default is 0.5
+        max distance between two parallel contour edges, the default is 0.5 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
 
@@ -111,6 +111,7 @@ namespace Contours {
     const PointMap point_map,
     const GeomTraits traits) {
 
+    CGAL_precondition(input_range.size() >= 3);
     using Contour_regularizer =
     CGAL::Shape_regularization::internal::Contour_regularization_2<
       CGAL::Shape_regularization::internal::CLOSED,
@@ -149,10 +150,10 @@ namespace Contours {
     `CGAL::Identity_property_map`.
 
     \param input_range
-    a const range of points, which form a contour
+    a const range of ordered points, which form a contour
 
     \param directions
-    estimated contour directions
+    estimated contour directions towards which the contour edges are oriented
 
     \param contour
     an output iterator with points of the regularized contour
@@ -166,7 +167,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max offset deviation between two contour edges, the default is 0.5
+        max distance between two parallel contour edges, the default is 0.5 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
 
@@ -188,6 +189,7 @@ namespace Contours {
     const NamedParameters np,
     const PointMap point_map = PointMap()) {
 
+    CGAL_precondition(input_range.size() >= 3);
     using Iterator_type = typename InputRange::const_iterator;
     using Point_2 = typename std::iterator_traits<Iterator_type>::value_type;
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
@@ -225,10 +227,10 @@ namespace Contours {
     must be a model of `Kernel`.
 
     \param input_range
-    a const range of points, which form a contour
+    a const range of ordered points, which form a contour
 
     \param directions
-    estimated contour directions
+    estimated contour directions towards which the contour edges are oriented
 
     \param contour
     an output iterator with points of the regularized contour
@@ -245,7 +247,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max offset deviation between two contour edges, the default is 0.5
+        max distance between two parallel contour edges, the default is 0.5 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
 
@@ -268,6 +270,7 @@ namespace Contours {
     const PointMap point_map,
     const GeomTraits traits) {
 
+    CGAL_precondition(input_range.size() >= 2);
     using Contour_regularizer =
     CGAL::Shape_regularization::internal::Contour_regularization_2<
       CGAL::Shape_regularization::internal::OPEN,
@@ -306,10 +309,10 @@ namespace Contours {
     `CGAL::Identity_property_map`.
 
     \param input_range
-    a const range of points, which form a contour
+    a const range of ordered points, which form a contour
 
     \param directions
-    estimated contour directions
+    estimated contour directions towards which the contour edges are oriented
 
     \param contour
     an output iterator with points of the regularized contour
@@ -323,7 +326,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max offset deviation between two contour edges, the default is 0.5
+        max distance between two parallel contour edges, the default is 0.5 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
 
@@ -345,6 +348,7 @@ namespace Contours {
     const NamedParameters np,
     const PointMap point_map = PointMap()) {
 
+    CGAL_precondition(input_range.size() >= 2);
     using Iterator_type = typename InputRange::const_iterator;
     using Point_2 = typename std::iterator_traits<Iterator_type>::value_type;
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;

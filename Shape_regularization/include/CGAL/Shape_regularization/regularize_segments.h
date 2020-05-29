@@ -56,7 +56,7 @@ namespace Segments {
     The user has to provide the `NeighborQuery` model to access local neighbors
     of a segment and `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
-    Please address that class for more information.
+    Please address that class and these concepts for more information.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -90,7 +90,7 @@ namespace Segments {
     \param traits
     an instance of `GeomTraits`
 
-    \pre `input_range.size() > 1`
+    \pre `input_range.size() >= 2`
   */
   template<
   typename InputRange,
@@ -105,6 +105,7 @@ namespace Segments {
     QPSolver& quadratic_program,
     GeomTraits traits) {
 
+    CGAL_precondition(input_range.size() >= 2);
     using Regularizer =
       CGAL::Shape_regularization::QP_regularization<
       GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>;
@@ -125,7 +126,7 @@ namespace Segments {
     The user has to provide the `NeighborQuery` model to access local neighbors
     of a segment and `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
-    Please address that class for more information.
+    Please address that class and these concepts for more information.
 
     This function provides the default solver for the quadratic program that is
     solved during regularization.
@@ -156,7 +157,7 @@ namespace Segments {
     \param traits
     an instance of `GeomTraits`
 
-    \pre `input_range.size() > 1`
+    \pre `input_range.size() >= 2`
   */
   template<
   typename InputRange,
@@ -169,6 +170,7 @@ namespace Segments {
     RegularizationType& regularization_type,
     GeomTraits traits) {
 
+    CGAL_precondition(input_range.size() >= 2);
     using FT = typename GeomTraits::FT;
     using QP = CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
     QP quadratic_program;
@@ -188,7 +190,7 @@ namespace Segments {
     The user has to provide the `NeighborQuery` model to access local neighbors
     of a segment and `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
-    Please address that class for more information.
+    Please address that class and these concepts for more information.
 
     This function provides the default solver for the quadratic program that is
     solved during regularization. In addition, this function infers a traits class
@@ -214,7 +216,7 @@ namespace Segments {
     an instance of `RegularizationType` that is used internally to
     obtain bounds and target values required by the regularization
 
-    \pre `input_range.size() > 1`
+    \pre `input_range.size() >= 2`
   */
   template<
   typename InputRange,
@@ -225,6 +227,7 @@ namespace Segments {
     NeighborQuery& neighbor_query,
     RegularizationType& regularization_type) {
 
+    CGAL_precondition(input_range.size() >= 2);
     using Iterator_type = typename InputRange::const_iterator;
     using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
     using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
@@ -289,7 +292,7 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() > 0`
+    \pre `input_range.size() >= 1`
     \pre `max_angle >= 0 && max_angle <= 90`
   */
   template<
@@ -305,6 +308,7 @@ namespace Segments {
     const SegmentMap segment_map,
     const GeomTraits traits) {
 
+    CGAL_precondition(input_range.size() >= 1);
     using Parallel_groups_2 = internal::Parallel_groups_2<
       GeomTraits, InputRange, SegmentMap>;
 
@@ -361,7 +365,7 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() > 0`
+    \pre `input_range.size() >= 1`
     \pre `max_angle >= 0 && max_angle <= 90`
   */
   template<
@@ -376,6 +380,7 @@ namespace Segments {
     const NamedParameters np,
     const SegmentMap segment_map = SegmentMap()) {
 
+    CGAL_precondition(input_range.size() >= 1);
     using Iterator_type = typename InputRange::const_iterator;
     using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
     using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
@@ -430,13 +435,13 @@ namespace Segments {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max offset deviation in between two segments, the default is 0.2
+        max distance between two parallel segments, the default is 0.2 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
 
-    \pre `input_range.size() > 0`
+    \pre `input_range.size() >= 1`
     \pre `max_offset >= 0`
   */
   template<
@@ -452,6 +457,7 @@ namespace Segments {
     const SegmentMap segment_map,
     const GeomTraits traits) {
 
+    CGAL_precondition(input_range.size() >= 1);
     using Collinear_groups_2 = internal::Collinear_groups_2<
       GeomTraits, InputRange, SegmentMap>;
 
@@ -502,13 +508,13 @@ namespace Segments {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max offset deviation in between two segments, the default is 0.2
+        max distance between two parallel segments, the default is 0.2 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
 
-    \pre `input_range.size() > 0`
+    \pre `input_range.size() >= 1`
     \pre `max_offset >= 0`
   */
   template<
@@ -523,6 +529,7 @@ namespace Segments {
     const NamedParameters np,
     const SegmentMap segment_map = SegmentMap()) {
 
+    CGAL_precondition(input_range.size() >= 1);
     using Iterator_type = typename InputRange::const_iterator;
     using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
     using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
@@ -583,7 +590,7 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() > 0`
+    \pre `input_range.size() >= 1`
     \pre `max_angle >= 0 && max_angle <= 90`
   */
   template<
@@ -599,6 +606,7 @@ namespace Segments {
     const SegmentMap segment_map,
     const GeomTraits traits) {
 
+    CGAL_precondition(input_range.size() >= 1);
     using Orthogonal_groups_2 = internal::Orthogonal_groups_2<
       GeomTraits, InputRange, SegmentMap>;
 
@@ -655,7 +663,7 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() > 0`
+    \pre `input_range.size() >= 1`
     \pre `max_angle >= 0 && max_angle <= 90`
   */
   template<
@@ -670,6 +678,7 @@ namespace Segments {
     const NamedParameters np,
     const SegmentMap segment_map = SegmentMap()) {
 
+    CGAL_precondition(input_range.size() >= 1);
     using Iterator_type = typename InputRange::const_iterator;
     using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
     using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;

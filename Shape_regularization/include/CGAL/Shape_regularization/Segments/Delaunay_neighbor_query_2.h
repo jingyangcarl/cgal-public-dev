@@ -41,13 +41,13 @@ namespace Segments {
     \brief A neighbor query based on a Delaunay triangulation, which enables to
     find the nearest neighbors in a set of `GeomTraits::Segment_2`.
 
-    This class returns indices of the nearest neighbors of a query segment
+    This class finds indices of the nearest neighbors of a query segment
     in a set of 2D segments.
 
-    This class first creates a Delaunay triangulation whose vertices are center
-    points of the input segments and then returns for each query segment indices of
-    segments whose center points form the one-ring neighborhood of the corresponding
-    query vertex in the triangulation.
+    The class first creates a Delaunay triangulation whose vertices are center
+    points of the input segments and then enables to return for each query segment
+    indices of the segments whose center points form the one-ring neighborhood of
+    the corresponding query vertex in the triangulation.
 
     \tparam GeomTraits
     must be a model of `Kernel`.
@@ -99,7 +99,7 @@ namespace Segments {
       an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`,
       if not provided, the default is used
 
-      \pre `input_range.size() > 1`
+      \pre `input_range.size() >= 2`
     */
     Delaunay_neighbor_query_2(
       const InputRange& input_range,
@@ -108,23 +108,30 @@ namespace Segments {
     m_segment_map(segment_map) {
 
       CGAL_precondition(
-        input_range.size() > 1);
+        input_range.size() >= 2);
       clear();
       create_unique_group();
     }
 
     /*!
-      \brief inserts a group of segments from `input_range` and computes their
+      \brief inserts a group of segments from `input_range` and finds their
       neighbors within the group.
 
+      Each group of segments is provided as a vector of their indices and only
+      neighbors of segments within the group are computed that is no relationships
+      between segments from different groups are taken into account.
+
+      The user does not have to use this method until one has groups of segments.
+      By default, all segments are inserted as a group.
+
       \tparam IndexRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-      The value type is `std::size_t`.
+      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+      and value type is `std::size_t`.
 
       \param index_range
       a const range of segment indices
 
-      \pre `index_range.size() > 1`
+      \pre `index_range.size() >= 2`
     */
     template<typename IndexRange>
   	void add_group(
@@ -230,7 +237,7 @@ namespace Segments {
 
     void create_unique_group() {
 
-      CGAL_precondition(m_input_range.size() > 1);
+      CGAL_precondition(m_input_range.size() >= 2);
       if (m_input_range.size() < 2) return;
 
       m_groups.clear();

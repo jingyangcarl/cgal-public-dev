@@ -38,10 +38,18 @@ namespace Shape_regularization {
 
     Given a quadratic programming solver via the class `QPSolver`, this version of the
     shape regularization algorithm enables to regularize a set of user-defined
-    items provided a way
-    - to access neighbors of each item via the `NeighborQuery` class;
-    - to obtain a max bound for each item via the `RegularizationType` class;
-    - to obtain a target value for each pair of neighbor items via the `RegularizationType` class.
+    geometric objects provided a way
+    - to access neighbors of each object via the `NeighborQuery` class;
+    - to obtain a max bound on a regularization characteristic (angle-orientation/
+    distance-offset/etc.) with respect to which an object is being regularized
+    via the `RegularizationType` class;
+    - to obtain a target value for each pair of neighbor objects via
+    the `RegularizationType` class.
+
+    This class is generic and forms a framework for different types of user-defined
+    regularizations. Please address the user manual in order to learn how to use it.
+    In particular, section \ref QP_Regularization_Segments "Regularizing 2D Segments"
+    shows an example.
 
     \tparam GeomTraits
     must be a model of `Kernel`.
@@ -105,15 +113,15 @@ namespace Shape_regularization {
       \brief initializes all internal data structures.
 
       \param input_range
-      a const range of input items for shape regularization
+      a const range of input objects for shape regularization
 
       \param neighbor_query
       an instance of `NeighborQuery` that is used internally to
-      access item's neighbors
+      access object neighbors
 
       \param regularization_type
       an instance of `RegularizationType` that is used internally to
-      obtain bounds and target values of the items
+      obtain object bounds and target values
 
       \param quadratic_program
       an instance of `QPSolver` to solve the quadratic programming problem
@@ -121,7 +129,7 @@ namespace Shape_regularization {
       \param traits
       an instance of `GeomTraits`, if not provided, the default is used
 
-      \pre `input_range.size() > 1`
+      \pre `input_range.size() >= 2`
     */
     QP_regularization(
       const InputRange& input_range,
@@ -136,7 +144,7 @@ namespace Shape_regularization {
     m_traits(traits),
     m_parameters(Parameters()) {
 
-      CGAL_precondition(input_range.size() > 1);
+      CGAL_precondition(input_range.size() >= 2);
       clear();
     }
 

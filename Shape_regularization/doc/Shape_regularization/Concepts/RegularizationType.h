@@ -15,10 +15,12 @@ class RegularizationType {
 public:
 
   /*!
-  returns the max bound on an item value that is regularized.
+    returns the max bound on a regularization characteristic (angle-orientation/
+    distance-offset/etc.) with respect to which a geometric object with the index
+    `query_index` is being regularized.
 
-  `CGAL::Shape_regularization::QP_regularization` calls this function for each item
-  with the index `query_index` that participates in the regularization process.
+    `CGAL::Shape_regularization::QP_regularization` calls this method
+    once for each object from the input range.
   */
   typename GeomTraits::FT bound(
     const std::size_t query_index) const {
@@ -26,10 +28,12 @@ public:
   }
 
   /*!
-    returns an objective function value between two items, which are direct neighbors.
+    returns an objective function value between two geometric objects, which are
+    direct neighbors, that is they form a neighbor pair `i <-> j`. Neighbors are
+    provided by the concept `NeighborQuery`.
 
-    `CGAL::Shape_regularization::QP_regularization` calls this function for each neighbor pair
-    `i <-> j` that participates in the regularization process.
+    `CGAL::Shape_regularization::QP_regularization` calls this method
+    once for each neighbor pair being regularized.
   */
   typename GeomTraits::FT target(
     const std::size_t i,
@@ -38,13 +42,18 @@ public:
   }
 
   /*!
-    applies the `solution` from the QP solver to the initial items.
+    updates regularization characteristics (angle-orientation/distance-offset/etc.)
+    of the geometric objects being regularized using values from `solution`, one
+    value per one regularized object. These values depend on what is being regularized,
+    they could be angle or offset differences for example. The solution vector is
+    computed by the `QPSolver`.
 
-    `CGAL::Shape_regularization::QP_regularization` calls this function once after
-    the global regularization QP problem has been solved.
+    Number of values in `solution` equals to the number n of geometric objects being
+    regularized + the number m of neighbor pairs between these objects. The first
+    n values are the values that should be used.
 
-    The `solution` vector contains values, one value per one regularized item. These
-    values depend on what is being regularized, they could be angles or offsets for example.
+    `CGAL::Shape_regularization::QP_regularization` calls this method
+    once after the global regularization QP problem has been solved.
   */
   void update(
     const std::vector<GeomTraits::FT>& solution) {

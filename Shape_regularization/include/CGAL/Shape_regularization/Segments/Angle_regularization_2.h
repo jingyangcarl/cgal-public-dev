@@ -113,7 +113,7 @@ namespace Segments {
         \cgalParamEnd
       \cgalNamedParamsEnd
 
-      \pre `input_range.size() > 1`
+      \pre `input_range.size() >= 2`
       \pre `max_angle >= 0 && max_angle <= 90`
     */
     template<typename NamedParameters>
@@ -125,7 +125,7 @@ namespace Segments {
     m_segment_map(segment_map) {
 
       CGAL_precondition(
-        input_range.size() > 1);
+        input_range.size() >= 2);
       const FT max_angle = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_angle), FT(25));
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
@@ -143,14 +143,21 @@ namespace Segments {
     /*!
       \brief inserts a group of segments from `input_range`.
 
+      Each group of segments is provided as a vector of their indices and only
+      segments within the group are being regularized that is no relationships
+      between segments from different groups are taken into account.
+
+      The user does not have to use this method until one has groups of segments.
+      By default, all segments are inserted as a group.
+
       \tparam IndexRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-      The value type is `std::size_t`.
+      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+      and value type is `std::size_t`.
 
       \param index_range
       a const range of segment indices
 
-      \pre `index_range.size() > 1`
+      \pre `index_range.size() >= 2`
     */
     template<typename IndexRange>
   	void add_group(
@@ -173,7 +180,10 @@ namespace Segments {
 
     /*!
       \brief calculates the target value between 2 segments, which are
-      direct neighbors to each other. The target value is the angle.
+      direct neighbors to each other.
+
+      The target value is the angle difference between initial orientations
+      of two segments `i` and `j`.
 
       \param i
       index of the first segment
@@ -219,18 +229,22 @@ namespace Segments {
     }
 
     /*!
-      \brief applies new orientations computed by the QP solver
+      \brief applies new orientations computed by the `QPSolver`
       to the initial segments.
 
-      \param solution
-      a vector with updated segment orientations.
+      Number of values in `solution` equals to the number n of segments being
+      regularized + the number m of neighbor pairs between these segments. Each
+      of n values is an angle that is added to the initial segment orientation.
 
-      \pre `solution.size() > 0`
+      \param solution
+      a vector with angles in degrees
+
+      \pre `solution.size() >= 1`
     */
     void update(
       const std::vector<FT>& solution) {
 
-      CGAL_precondition(solution.size() > 0);
+      CGAL_precondition(solution.size() >= 1);
       m_num_modified_segments = 0;
       for (auto& wrap : m_wraps) {
         if (!wrap.is_used) continue;
@@ -263,27 +277,9 @@ namespace Segments {
     /// @{
 
     /*!
-      \brief returns indices of orthogonal segments organized into groups.
-
-      \tparam OutputIterator
-      must be a model of `OutputIterator`
-
-      \param groups
-      an instance of `OutputIterator`,
-      whose value type is `std::vector<std::size_t>`
-    */
-    template<typename OutputIterator>
-    OutputIterator orthogonal_groups(OutputIterator groups) const {
-
-      const Orthogonal_groups_2 grouping(
-        m_input_range,
-        CGAL::parameters::max_angle(m_max_angle),
-        m_segment_map, Traits());
-      return grouping.groups(groups);
-    }
-
-    /*!
       \brief returns indices of parallel segments organized into groups.
+
+      This function calls `CGAL::Shape_regularization::Segments::parallel_groups()`.
 
       \tparam OutputIterator
       must be a model of `OutputIterator`
@@ -296,6 +292,28 @@ namespace Segments {
     OutputIterator parallel_groups(OutputIterator groups) const {
 
       const Parallel_groups_2 grouping(
+        m_input_range,
+        CGAL::parameters::max_angle(m_max_angle),
+        m_segment_map, Traits());
+      return grouping.groups(groups);
+    }
+
+    /*!
+      \brief returns indices of orthogonal segments organized into groups.
+
+      This function calls `CGAL::Shape_regularization::Segments::orthogonal_groups()`.
+
+      \tparam OutputIterator
+      must be a model of `OutputIterator`
+
+      \param groups
+      an instance of `OutputIterator`,
+      whose value type is `std::vector<std::size_t>`
+    */
+    template<typename OutputIterator>
+    OutputIterator orthogonal_groups(OutputIterator groups) const {
+
+      const Orthogonal_groups_2 grouping(
         m_input_range,
         CGAL::parameters::max_angle(m_max_angle),
         m_segment_map, Traits());
@@ -351,7 +369,7 @@ namespace Segments {
 
     void create_unique_group() {
 
-      CGAL_precondition(m_input_range.size() > 1);
+      CGAL_precondition(m_input_range.size() >= 2);
       if (m_input_range.size() < 2) return;
 
       m_wraps.clear();

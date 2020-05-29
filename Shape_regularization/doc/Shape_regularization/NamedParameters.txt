@@ -12,26 +12,26 @@ This package offers the following named parameters:
 \cgalNPTableBegin
 
 \cgalNPBegin{max_angle} \anchor SR_max_angle
-max angle bound between two items in degrees\n
+max allowed angle deviation between two geometric objects in degrees, if applicable\n
 <b>Type:</b> floating point value\n
 <b>Default:</b> `{5, 25} degrees, depends on the class`
 \cgalNPEnd
 
 \cgalNPBegin{max_offset} \anchor SR_max_offset
-max offset bound between two items\n
+max allowed distance between two geometric objects, if applicable\n
 <b>Type:</b> floating point value\n
-<b>Default:</b> `{0.01, 0.2, 0.5}, depends on the class`
+<b>Default:</b> `{0.01, 0.2, 0.5} unit length, depends on the class`
 \cgalNPEnd
 
 \cgalNPBegin{min_length} \anchor SR_min_length
-min length of an item\n
+min allowed length of a geometric object, if applicable\n
 <b>Type:</b> floating point value\n
-<b>Default:</b> `3`
+<b>Default:</b> `3` unit lengths
 \cgalNPEnd
 
 \cgalNPBegin{plane_index_map} \anchor SR_plane_index_map
 a property map that associates the index of a point in the input range to
-the index of a plane (-1 if the point is not assigned to a plane)\n
+the index of a plane in the plane range (-1 if the point is not assigned to a plane)\n
 <b>Type:</b> a model of `ReadablePropertyMap` with `std::size_t` as key type and
 `int` as value type\n
 <b>Default:</b> no default value

@@ -19,37 +19,40 @@ class QPSolver {
 public:
 
   /*!
-    allocates memory for `n` non-zero items from the matrix `D`.
+    allocates memory for `n` non-zero values from the matrix `D`.
   */
   void reserve_d(const std::size_t n) { }
 
   /*!
-    allocates memory for `n` non-zero items from the vector `c`.
+    allocates memory for `n` non-zero values from the vector `c`.
   */
   void reserve_c(const std::size_t n) { }
 
   /*!
-    allocates memory for `n` non-zero items from the matrix `A`.
+    allocates memory for `n` non-zero values from the matrix `A`.
   */
   void reserve_a(const std::size_t n) { }
 
   /*!
-    allocates memory for `n` non-zero items from the vector `b`.
+    allocates memory for `n` non-zero values from the vector `b`.
   */
   void reserve_b(const std::size_t n) { }
 
   /*!
-    allocates memory for `n` non-zero items from the vector `l`.
+    allocates memory for `n` non-zero values from the vector `l`.
   */
   void reserve_l(const std::size_t n) { }
 
   /*!
-    allocates memory for `n` non-zero items from the vector `u`.
+    allocates memory for `n` non-zero values from the vector `u`.
   */
   void reserve_u(const std::size_t n) { }
 
   /*!
     \brief solves the quadratic program.
+
+    Number of values in `solution` equals to the number n of geometric objects being
+    regularized + the number m of neighbor pairs between these objects.
 
     \param solution
     a vector with the solution

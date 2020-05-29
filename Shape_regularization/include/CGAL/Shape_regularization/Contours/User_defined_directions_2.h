@@ -80,13 +80,13 @@ namespace Contours {
       \brief initializes all internal data structures.
 
       \tparam DirectionRange
-      must be a model of `ConstRange`. The value type is `GeomTraits::Direction_2`.
+      must be a model of `ConstRange` whose value type is `GeomTraits::Direction_2`.
 
       \param direction_range
       a const range with user-defined principal directions
 
       \param input_range
-      a const range of 2D points, which form a contour
+      a const range of ordered 2D points, which form a contour
 
       \param is_closed
       indicates whether the contour is closed or open
@@ -95,7 +95,7 @@ namespace Contours {
       an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`,
       if not provided, the default is used
 
-      \pre `direction_range.size() > 0`
+      \pre `direction_range.size() >= 1`
       \pre `direction_range.size() == input_range.size()` for closed contours
       \pre `direction_range.size() == input_range.size() - 1` for open contours
 
@@ -112,7 +112,7 @@ namespace Contours {
     m_point_map(point_map) {
 
       CGAL_precondition(input_range.size() >= 2);
-      CGAL_precondition(direction_range.size() > 0);
+      CGAL_precondition(direction_range.size() >= 1);
       if (is_closed)
         estimate_closed(
           direction_range, m_bounds, m_directions, m_assigned);
@@ -134,13 +134,13 @@ namespace Contours {
     /// @{
 
     /*!
-      \brief orients a given `segment` with the index `query_index` with respect
-      to the best user-defined principal direction.
+      \brief orients a given `segment` with the index `query_index` towards the
+      best-fit user-defined principal direction.
 
-      \param query_index an index of the `segment` in the input contour, in other words,
-      the segment's source point is the point in the contour with the index `query_index`
+      \param query_index an index of the contour vertex that emits the contour
+      edge being `segment`.
 
-      \param segment a segment to be oriented
+      \param segment a segment to be rotated
 
       \pre `query_index >= 0 && query_index < input_range.size()` for closed contours
       \pre `query_index >= 0 && query_index < input_range.size() - 1` for open contours

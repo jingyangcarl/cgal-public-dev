@@ -42,7 +42,7 @@ namespace Contours {
     based on the user-defined min length and max angle bounds.
 
     This algorithm finds the best-fit edges of the contour with respect to the
-    user-defined conditions and sets their directions as the principal directions
+    user-defined parameters and sets their directions as the principal directions
     of the contour.
 
     \tparam GeomTraits
@@ -89,7 +89,7 @@ namespace Contours {
       a sequence of \ref sr_namedparameters "Named Parameters".
 
       \param input_range
-      a const range of 2D points, which form a contour
+      a const range of ordered 2D points, which form a contour
 
       \param np
       optional sequence of \ref sr_namedparameters "Named Parameters"
@@ -104,12 +104,12 @@ namespace Contours {
 
       \cgalNamedParamsBegin
         \cgalParamBegin{max_angle}
-          max angle deviation in degrees between a contour edge and a given
-          principal direction, the default is 25 degrees
+          max angle deviation in degrees of a contour edge from its
+          initial orientation, the default is 25 degrees
         \cgalParamEnd
         \cgalParamBegin{min_length}
           min length of a contour edge whose direction can be taken
-          as a principal direction, the default is 3
+          as a principal direction, the default is 3 unit lengths
         \cgalParamEnd
       \cgalNamedParamsEnd
 
@@ -156,13 +156,13 @@ namespace Contours {
     /// @{
 
     /*!
-      \brief orients a given `segment` with the index `query_index` with respect
-      to the best found principal direction.
+      \brief orients a given `segment` with the index `query_index` towards the
+      best-fit found principal direction.
 
-      \param query_index an index of the `segment` in the input contour, in other words,
-      the segment's source point is the point in the contour with the index `query_index`
+      \param query_index an index of the contour vertex that emits the contour
+      edge being `segment`.
 
-      \param segment a segment to be oriented
+      \param segment a segment to be rotated
 
       \pre `query_index >= 0 && query_index < input_range.size()` for closed contours
       \pre `query_index >= 0 && query_index < input_range.size() - 1` for open contours

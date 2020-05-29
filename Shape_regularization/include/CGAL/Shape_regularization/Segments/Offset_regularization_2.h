@@ -42,6 +42,11 @@ namespace Segments {
     \brief An offset-based regularization type for 2D segments that preserves
     collinearity relationships.
 
+    All input segments should be either orthogonal or parallel to each other.
+    In order to achieve that, one may use the class `CGAL::Shape_regularization::Segments::Angle_regularization_2`
+    or the function `CGAL::Shape_regularization::Segments::parallel_groups()`.
+    Each group of parallel segments may be inserted using the method `add_group()`.
+
     \tparam GeomTraits
     must be a model of `Kernel`.
 
@@ -108,11 +113,11 @@ namespace Segments {
 
       \cgalNamedParamsBegin
         \cgalParamBegin{max_offset}
-          max offset deviation between two segments, the default is 0.5
+          max distance between two parallel segments, the default is 0.5 unit length
         \cgalParamEnd
       \cgalNamedParamsEnd
 
-      \pre `input_range.size() > 1`
+      \pre `input_range.size() >= 2`
       \pre `max_offset >= 0`
     */
     template<typename NamedParameters>
@@ -125,7 +130,7 @@ namespace Segments {
     m_num_modified_segments(0) {
 
       CGAL_precondition(
-        input_range.size() > 1);
+        input_range.size() >= 2);
       const FT max_offset = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(2));
       CGAL_precondition(max_offset >= FT(0));
@@ -143,14 +148,21 @@ namespace Segments {
     /*!
       \brief inserts a group of segments from `input_range`.
 
+      Each group of segments is provided as a vector of their indices and only
+      segments within the group are being regularized that is no relationships
+      between segments from different groups are taken into account.
+
+      The user does not have to use this method until one has groups of segments.
+      By default, all segments are inserted as a group.
+
       \tparam IndexRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-      The value type is `std::size_t`.
+      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`
+      and value type is `std::size_t`.
 
       \param index_range
       a const range of segment indices
 
-      \pre `index_range.size() > 1`
+      \pre `index_range.size() >= 2`
     */
     template<typename IndexRange>
   	void add_group(
@@ -172,8 +184,10 @@ namespace Segments {
     /// @{
 
     /*!
-      \brief calculates the target value between 2 segments, which are
-      direct neighbors to each other. The target value is the offset distance.
+      \brief calculates the target value between 2 parallel segments, which are
+      direct neighbors to each other.
+
+      The target value is the distance between two parallel segments `i` and `j`.
 
       \param i
       index of the first segment
@@ -210,18 +224,22 @@ namespace Segments {
     }
 
     /*!
-      \brief applies new positions computed by the QP solver
+      \brief applies new positions computed by the `QPSolver`
       to the initial segments.
 
-      \param solution
-      a vector with updated segment positions.
+      Number of values in `solution` equals to the number n of segments being
+      regularized + the number m of neighbor pairs between these segments. Each
+      of n values is an offset that is added to the initial segment position.
 
-      \pre `solution.size() > 0`
+      \param solution
+      a vector with offsets in unit lengths
+
+      \pre `solution.size() >= 1`
     */
     void update(
       const std::vector<FT>& solution) {
 
-      CGAL_precondition(solution.size() > 0);
+      CGAL_precondition(solution.size() >= 1);
       m_num_modified_segments = 0;
       for (auto& wrap : m_wraps) {
         if (!wrap.is_used) continue;
@@ -264,6 +282,8 @@ namespace Segments {
 
     /*!
       \brief returns indices of collinear segments organized into groups.
+
+      This function calls `CGAL::Shape_regularization::Segments::collinear_groups()`.
 
       \tparam OutputIterator
       must be a model of `OutputIterator`
@@ -331,7 +351,7 @@ namespace Segments {
 
     void create_unique_group() {
 
-      CGAL_precondition(m_input_range.size() > 1);
+      CGAL_precondition(m_input_range.size() >= 2);
       if (m_input_range.size() < 2) return;
 
       m_wraps.clear();

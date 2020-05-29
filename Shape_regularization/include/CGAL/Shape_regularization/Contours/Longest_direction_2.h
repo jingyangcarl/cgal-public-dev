@@ -79,7 +79,7 @@ namespace Contours {
       \brief initializes all internal data structures.
 
       \param input_range
-      a const range of 2D points, which form a contour
+      a const range of ordered 2D points, which form a contour
 
       \param is_closed
       indicates whether the contour is closed or open
@@ -118,13 +118,13 @@ namespace Contours {
     /// @{
 
     /*!
-      \brief orients a given `segment` with the index `query_index` with respect
-      to the longest principal direction.
+      \brief orients a given `segment` with the index `query_index` towards the
+      longest principal direction.
 
-      \param query_index an index of the `segment` in the input contour, in other words,
-      the segment's source point is the point in the contour with the index `query_index`
+      \param query_index an index of the contour vertex that emits the contour
+      edge being `segment`.
 
-      \param segment a segment to be oriented
+      \param segment a segment to be rotated
 
       \pre `query_index >= 0 && query_index < input_range.size()` for closed contours
       \pre `query_index >= 0 && query_index < input_range.size() - 1` for open contours
