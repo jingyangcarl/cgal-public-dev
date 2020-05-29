@@ -86,13 +86,14 @@ namespace Contours {
       a const range with user-defined principal directions
 
       \param input_range
-      a const range of points, which form a contour
+      a const range of 2D points, which form a contour
 
       \param is_closed
       indicates whether the contour is closed or open
 
       \param point_map
-      an instance of `PointMap`, if not provided, the default is used
+      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`,
+      if not provided, the default is used
 
       \pre `direction_range.size() > 0`
       \pre `direction_range.size() == input_range.size()` for closed contours

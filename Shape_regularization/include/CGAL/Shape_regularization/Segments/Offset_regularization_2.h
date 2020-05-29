@@ -46,7 +46,7 @@ namespace Segments {
     must be a model of `Kernel`.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `Range` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap
     must be a model of `LvaluePropertyMap` whose key type is the value type of the `InputRange`
@@ -96,7 +96,7 @@ namespace Segments {
       a sequence of \ref sr_namedparameters "Named Parameters".
 
       \param input_range
-      an instance of `InputRange` with 2D segments
+      a range of 2D segments to be regularized
 
       \param np
       optional sequence of \ref sr_namedparameters "Named Parameters"

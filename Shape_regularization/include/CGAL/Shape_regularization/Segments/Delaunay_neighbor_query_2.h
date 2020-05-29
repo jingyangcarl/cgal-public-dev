@@ -44,6 +44,11 @@ namespace Segments {
     This class returns indices of the nearest neighbors of a query segment
     in a set of 2D segments.
 
+    This class first creates a Delaunay triangulation whose vertices are center
+    points of the input segments and then returns for each query segment indices of
+    segments whose center points form the one-ring neighborhood of the corresponding
+    query vertex in the triangulation.
+
     \tparam GeomTraits
     must be a model of `Kernel`.
 
@@ -88,7 +93,7 @@ namespace Segments {
       \brief initializes all internal data structures.
 
       \param input_range
-      an instance of `InputRange` with 2D segments
+      a const range of 2D segments
 
       \param segment_map
       an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`,

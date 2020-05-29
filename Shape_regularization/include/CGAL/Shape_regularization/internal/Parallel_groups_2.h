@@ -35,22 +35,6 @@ namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  /*!
-    \ingroup PkgShapeRegularizationRefSegments
-
-    \brief Organizes segments with a similar orientation into groups of
-    parallel segments.
-
-    \tparam GeomTraits
-    must be a model of `Kernel`.
-
-    \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-
-    \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
-    and value type is `GeomTraits::Segment_2`.
-  */
   template<
   typename GeomTraits,
   typename InputRange,
@@ -58,53 +42,14 @@ namespace internal {
   class Parallel_groups_2 {
 
   public:
-
-    /// \name Types
-    /// @{
-
-    /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Segment_map = SegmentMap;
-    /// \endcond
 
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// \cond SKIP_IN_MANUAL
+    using FT = typename Traits::FT;
     using Segment_2 = typename Traits::Segment_2;
     using Indices = std::vector<std::size_t>;
-    /// \endcond
 
-    /// @}
-
-    /// \name Initialization
-    /// @{
-    /*!
-      \brief initializes all internal data structures.
-
-      \tparam NamedParameters
-      a sequence of \ref sr_namedparameters "Named Parameters".
-
-      \param input_range
-      an instance of `InputRange` with 2D segments
-
-      \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters"
-      among the ones listed below
-
-      \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`
-
-      \cgalNamedParamsBegin
-        \cgalParamBegin{max_angle}
-          max angle deviation in degrees between two segments, the default is 5 degrees
-        \cgalParamEnd
-      \cgalNamedParamsEnd
-
-      \pre `input_range.size() > 0`
-      \pre `max_angle >= 0 && max_angle <= 90`
-    */
     template<typename NamedParameters>
     Parallel_groups_2(
       const InputRange& input_range,
@@ -122,23 +67,6 @@ namespace internal {
       make_parallel_groups();
     }
 
-    /// @}
-
-    // \name Access
-    /// @{
-
-    /*!
-      \brief returns indices of parallel segments organized into groups.
-
-      \tparam OutputIterator
-      must be a model of `OutputIterator`
-
-      \param groups
-      an instance of `OutputIterator`,
-      whose value type is `std::vector<std::size_t>`
-
-      \return an output iterator.
-    */
     template<typename OutputIterator>
     OutputIterator groups(OutputIterator groups) const {
       for (const auto& parallel_group : m_parallel_groups) {
@@ -147,7 +75,6 @@ namespace internal {
       }
       return groups;
     }
-    /// @}
 
   private:
     const Input_range& m_input_range;

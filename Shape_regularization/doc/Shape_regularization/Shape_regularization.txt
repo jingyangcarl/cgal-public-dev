@@ -13,7 +13,7 @@ A set of 2D segments before and after regularization.
 
 \section Shape_Regularization_Intro Introduction
 
-This CGAL package enables to regularize a set of segments and open or closed contours in 2D
+This \cgal package enables to regularize a set of segments and open or closed contours in 2D
 and a set of planes in 3D such that all input objects are rotated and aligned with respect
 to the user-defined conditions. This package can also be used in conjunction with
 the \ref PkgShapeDetection "Shape Detection" package.
@@ -136,9 +136,9 @@ collinearity among them. See more details
 \ref QP_Regularization_Segments_Offset "here".
 
 The algorithm reinforces three types of regularities:
-- Segments, which are new parallel, are made exactly parallel.
-- Segments, which are new orthogonal, are made exactly orthogonal.
-- Parallel segments, which are new collinear, are made exactly collinear.
+- Segments, which are detected as near parallel, are made exactly parallel.
+- Segments, which are detected as near orthogonal, are made exactly orthogonal.
+- Parallel segments, which are detected as near collinear, are made exactly collinear.
 
 A typical use of the QP regularization algorithm for segments consists of the following steps:
 1. Define an input range with segments;
@@ -193,7 +193,7 @@ A set of 2D segments after the angle regularization.
 \cgalFigureEnd
 
 The following example demonstrates the usage of the shape regularization algorithm for angles
-on a set of 100 randomly generated segments using the \ref PkgGenerators "CGAL Geometric Object Generators".
+on a set of 100 generated segments using the \ref PkgGenerators "CGAL Geometric Object Generators".
 The entire `InputRange` is provided to the angle regularization class as one group.
 The max angle bound is set to 40 degrees and the `CGAL::Simple_cartesian<double>` kernel is used.
 
@@ -332,11 +332,11 @@ parallel segments and then splits each of these groups into groups of collinear 
 \section Contour_Regularization Contours
 
 The algorithm `CGAL::Shape_regularization::Contour_regularization_2` enables to regularize
-both closed and open 2D contours. A contour is given as a set of ordered points
+both closed or open 2D contours. A contour is given as a set of ordered points
 connected by segments. The algorithm reinforces three types of regularities:
-- Contour edges, which are new parallel, are made exactly parallel.
-- Contour edges, which are new orthogonal, are made exactly orthogonal.
-- Parallel contour edges, which are new collinear, are made exactly collinear.
+- Contour edges, which are detected as near parallel, are made exactly parallel.
+- Contour edges, which are detected as near orthogonal, are made exactly orthogonal.
+- Parallel contour edges, which are detected as near collinear, are made exactly collinear.
 
 A typical use of this algorithm consists of the following steps:
 - specify a type of the contour, open or closed;
@@ -373,8 +373,8 @@ Both open and closed contour algorithms give identical results on the same input
 
 In the example below, we regularize a closed contour. We first try to find multiple
 directions, but since the original contour is very rectilinear, we revert back to the
-direction defined by the longest contour edge. Note that this result is the same as
-one for the open contour below. The used kernel is `Exact_predicates_inexact_constructions_kernel`.
+direction defined by the longest contour edge. The used kernel is
+`Exact_predicates_inexact_constructions_kernel`.
 
 \cgalFigureBegin{regularize_closed_contour, regularize_closed_contour.png}
 A closed contour (red) and its regularized version (black).
@@ -388,8 +388,7 @@ A closed contour (red) and its regularized version (black).
 Open contours are contours where the head and tail of the contour are not connected.
 This case requires a special treatment, but the core of the algorithm is the same.
 In the example below, we regularize an open contour with respect to
-its longest edge. Note that this result is the same as one for the closed contour above.
-The used kernel is `Exact_predicates_exact_constructions_kernel`.
+its longest edge. The used kernel is `Exact_predicates_exact_constructions_kernel`.
 
 \cgalFigureBegin{regularize_open_contour, regularize_open_contour.png}
 An open contour (red) and its regularized version (black).
@@ -408,10 +407,10 @@ Here, we provide all available \cgal algorithms that enable to regularize 3D pla
 This component offers a function to reinforce four types of regularities for planes,
 `CGAL::Shape_regularization::Planes::regularize_planes()`:
 
-- Planes, which are near parallel, are made parallel.
-- Planes, which are near orthogonal, are made exactly orthogonal.
-- Parallel planes, which are near coplanar, are made exactly coplanar.
-- Planes, which are near symmetrical with respect to a user-defined axis, are made exactly symmetrical.
+- Planes, which are detected as near parallel, are made parallel.
+- Planes, which are detected as near orthogonal, are made exactly orthogonal.
+- Parallel planes, which are detected as near coplanar, are made exactly coplanar.
+- Planes, which are detected as near symmetrical with respect to a user-defined axis, are made exactly symmetrical.
 
 The user can choose to regularize only one or several of these four properties.
 The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters,

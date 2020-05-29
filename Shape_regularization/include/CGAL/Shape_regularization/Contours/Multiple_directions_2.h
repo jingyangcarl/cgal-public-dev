@@ -42,7 +42,8 @@ namespace Contours {
     based on the user-defined min length and max angle bounds.
 
     This algorithm finds the best-fit edges of the contour with respect to the
-    user-defined conditions and sets them as its principal directions.
+    user-defined conditions and sets their directions as the principal directions
+    of the contour.
 
     \tparam GeomTraits
     must be a model of `Kernel`.
@@ -88,7 +89,7 @@ namespace Contours {
       a sequence of \ref sr_namedparameters "Named Parameters".
 
       \param input_range
-      a const range of points, which form a contour
+      a const range of 2D points, which form a contour
 
       \param np
       optional sequence of \ref sr_namedparameters "Named Parameters"
@@ -98,7 +99,8 @@ namespace Contours {
       indicates whether the contour is closed or open
 
       \param point_map
-      an instance of `PointMap`, if not provided, the default is used
+      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`,
+      if not provided, the default is used
 
       \cgalNamedParamsBegin
         \cgalParamBegin{max_angle}

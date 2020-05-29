@@ -245,6 +245,9 @@ namespace Segments {
 
     This function enables to find groups of parallel segments
     in a set of 2D segments. The groups are returned as vectors of indices.
+    Note that two segments may be included at the same group even if they are
+    far away from each other. This algorithm concerns only the angle relationship
+    among segments, but not the distance.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -317,6 +320,9 @@ namespace Segments {
 
     This function enables to find groups of parallel segments
     in a set of 2D segments. The groups are returned as vectors of indices.
+    Note that two segments may be included at the same group even if they are
+    far away from each other. This algorithm concerns only the angle relationship
+    among segments, but not the distance.
 
     This function infers a traits class from the `InputRange` iterator's value type.
 
@@ -386,6 +392,9 @@ namespace Segments {
 
     This function enables to find groups of collinear segments
     in a set of 2D segments. The groups are returned as vectors of indices.
+    This algorithm first finds the groups of
+    `CGAL::Shape_regularization::Segments::parallel_segments()` and then splits
+    these groups into groups of collinear segments.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -458,6 +467,9 @@ namespace Segments {
 
     This function enables to find groups of collinear segments
     in a set of 2D segments. The groups are returned as vectors of indices.
+    This algorithm first finds the groups of
+    `CGAL::Shape_regularization::Segments::parallel_segments()` and then splits
+    these groups into groups of collinear segments.
 
     This function infers a traits class from the `InputRange` iterator's value type.
 
@@ -527,6 +539,9 @@ namespace Segments {
 
     This function enables to find groups of orthogonal segments
     in a set of 2D segments. The groups are returned as vectors of indices.
+    This algorithm first finds the groups of
+    `CGAL::Shape_regularization::Segments::parallel_segments()` and then merges
+    these groups into groups of orthogonal segments.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -599,6 +614,9 @@ namespace Segments {
 
     This function enables to find groups of orthogonal segments
     in a set of 2D segments. The groups are returned as vectors of indices.
+    This algorithm first finds the groups of
+    `CGAL::Shape_regularization::Segments::parallel_segments()` and then merges
+    these groups into groups of orthogonal segments.
 
     This function infers a traits class from the `InputRange` iterator's value type.
 

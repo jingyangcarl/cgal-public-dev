@@ -272,42 +272,53 @@ namespace Planes {
 
     Given a set of detected planes with their corresponding inlier sets,
     this function enables to regularize the planes:
-    - %Planes, which are near parallel, are made parallel.
-    - %Planes, which are near orthogonal, are made exactly orthogonal.
-    - Parallel planes, which are near coplanar, are made exactly coplanar.
-    - %Planes, which are near symmetrical with respect to a user-defined axis, are made exactly symmetrical.
+    - %Planes, which are detected as near parallel, are made parallel.
+    - %Planes, which are detected as near orthogonal, are made exactly orthogonal.
+    - %Parallel planes, which are detected as near coplanar, are made exactly coplanar.
+    - %Planes, which are detected as near symmetrical with respect to a user-defined axis,
+    are made exactly symmetrical.
 
     %Planes are directly modified. Points are left unaltered, as well as their
     relationship to the planes (no transfer of a point from a primitive plane to another).
 
     The implementation follows \cgalCite{cgal:vla-lod-15}.
 
-    \tparam PlaneRange must be a model of `Range` with planes.
+    \tparam PlaneRange
+    must be a model of `Range` whose iterator type is `RandomAccessIterator`.
 
-    \tparam PlaneMap must be a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<Kernel>`.
+    \tparam PlaneMap
+    must be a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<Kernel>`.
 
-    \tparam PointRange must be a model of `ConstRange` with points.
+    \tparam PointRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
-    \tparam PointMap must be a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<Kernel>`.
+    \tparam PointMap
+    must be a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<Kernel>`.
 
     \tparam NamedParameters
     a sequence of \ref sr_namedparameters "Named Parameters".
 
-    \param planes `Range` of planes
+    \param planes
+    a range of planes to be regularized
 
-    \param plane_map property map: value_type of `typename PlaneRange::iterator` -> `Plane_3`
+    \param plane_map
+    an instance of `PlaneMap` that maps an item from plane range to `GeomTraits::Plane_3`
 
-    \param points `ConstRange` of points
+    \param points
+    a const range of points assigned to planes, see the `plane_index_map` below
+    for more details
 
-    \param point_map property map: value_type of `typename PointRange::const_iterator` -> `Point_3`
+    \param point_map
+    an instance of `PointMap` that maps an item from point range to `GeomTraits::Point_3`
 
     \param np optional sequence of \ref sr_namedparameters "Named Parameters"
     among the ones listed below:
 
     \cgalNamedParamsBegin
       \cgalParamBegin{plane_index_map}
-        a property map that associates the index of a point in the input range
-        to the index of plane (-1 if point is not assigned to a plane), no default value
+        a property map that associates the index of a point in the `points` range
+        to the index of a plane in the `planes` range (-1 if point is not assigned
+        to a plane), no default value
       \cgalParamEnd
       \cgalParamBegin{max_angle}
         max angle in degrees between plane normals used for parallelism,

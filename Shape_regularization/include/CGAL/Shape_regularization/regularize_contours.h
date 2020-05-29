@@ -74,7 +74,7 @@ namespace Contours {
     estimated contour directions
 
     \param contour
-    an output iterator with contour points
+    an output iterator with points of the regularized contour
 
     \param np
     optional sequence of \ref sr_namedparameters "Named Parameters"
@@ -155,7 +155,7 @@ namespace Contours {
     estimated contour directions
 
     \param contour
-    an output iterator with contour points
+    an output iterator with points of the regularized contour
 
     \param np
     optional sequence of \ref sr_namedparameters "Named Parameters"
@@ -231,7 +231,7 @@ namespace Contours {
     estimated contour directions
 
     \param contour
-    an output iterator with contour points
+    an output iterator with points of the regularized contour
 
     \param np
     optional sequence of \ref sr_namedparameters "Named Parameters"
@@ -312,7 +312,7 @@ namespace Contours {
     estimated contour directions
 
     \param contour
-    an output iterator with contour points
+    an output iterator with points of the regularized contour
 
     \param np
     optional sequence of \ref sr_namedparameters "Named Parameters"

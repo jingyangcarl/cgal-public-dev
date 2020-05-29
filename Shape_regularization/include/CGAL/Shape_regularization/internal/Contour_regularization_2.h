@@ -36,28 +36,9 @@ namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  /// \cond SKIP_IN_MANUAL
   struct CLOSED { };
-
   struct OPEN { };
-  /// \endcond
 
-  /*!
-    \ingroup PkgShapeRegularizationRef
-
-    \brief Contour regularization algorithm.
-
-    This algorithm enables to regularize both open and closed contours.
-
-    \tparam ContourTag
-    must be either `CGAL::Shape_regularization::CLOSED` or `CGAL::Shape_regularization::OPEN`.
-
-    \tparam ContourDirections
-    must be a model of `ContourDirections`.
-
-    \tparam GeomTraits
-    must be a model of `Kernel`.
-  */
   template<
   typename ContourTag,
   typename ContourDirections,
@@ -65,7 +46,6 @@ namespace internal {
   class Contour_regularization_2 {
 
   public:
-    /// \cond SKIP_IN_MANUAL
     using Contour_tag = ContourTag;
     using Contour_directions = ContourDirections;
     using Traits = GeomTraits;
@@ -75,46 +55,7 @@ namespace internal {
       std::is_same<ContourTag, CLOSED>::value,
       internal::Closed_contour_2<Contour_directions, Traits>,
       internal::Open_contour_2<Contour_directions, Traits> >::type;
-    /// \endcond
 
-    /// \name Initialization
-    /// @{
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \tparam InputRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-
-      \tparam PointMap
-      must be a model of `ReadablePropertyMap` whose key type is the value type of the input
-      range and value type is `GeomTraits::Point_2`.
-
-      \tparam NamedParameters
-      a sequence of \ref sr_namedparameters "Named Parameters".
-
-      \param directions
-      estimated contour directions
-
-      \param input_range
-      a const range of points, which form a contour
-
-      \param point_map
-      an instance of `PointMap`
-
-      \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters"
-      among the ones listed below
-
-      \cgalNamedParamsBegin
-        \cgalParamBegin{max_offset}
-          max offset deviation between two contour edges, the default is 0.5
-        \cgalParamEnd
-      \cgalNamedParamsEnd
-
-      \pre `input_range.size() >= 3` for closed contours
-      \pre `input_range.size() >= 2` for open contours
-    */
     template<
     typename InputRange,
     typename PointMap,
@@ -134,25 +75,6 @@ namespace internal {
       m_regularization->initialize(input_range, point_map);
     }
 
-    /// @}
-
-    /// \name Regularization
-    /// @{
-
-    /*!
-      \brief executes the contour regularization algorithm.
-
-      This method regularizes the contour with respect
-      to the defined principal directions.
-
-      \tparam OutputIterator
-      must be an output iterator whose value type is `GeomTraits::Point_2`.
-
-      \param contour
-      an `OutputIterator` with contour points
-
-      \return an output iterator.
-    */
     template<typename OutputIterator>
     OutputIterator regularize(
       OutputIterator contour) {
@@ -160,8 +82,6 @@ namespace internal {
       return m_regularization->regularize(
         contour);
     }
-
-    /// @}
 
   private:
     std::shared_ptr<Regularization> m_regularization;

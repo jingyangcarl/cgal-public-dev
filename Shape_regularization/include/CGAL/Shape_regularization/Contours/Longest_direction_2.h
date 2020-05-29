@@ -36,8 +36,8 @@ namespace Contours {
 
     \brief Estimates the longest principal direction of the contour.
 
-    This algorithm finds the longest contour edge and sets it as the principal
-    direction of the contour.
+    This algorithm finds the longest contour edge and sets its direction as the
+    principal direction of the contour.
 
     \tparam GeomTraits
     must be a model of `Kernel`.
@@ -79,13 +79,14 @@ namespace Contours {
       \brief initializes all internal data structures.
 
       \param input_range
-      a const range of points, which form a contour
+      a const range of 2D points, which form a contour
 
       \param is_closed
       indicates whether the contour is closed or open
 
       \param point_map
-      an instance of `PointMap`, if not provided, the default is used
+      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`,
+      if not provided, the default is used
 
       \pre `input_range.size() >= 3` for closed contours
       \pre `input_range.size() >= 2` for open contours

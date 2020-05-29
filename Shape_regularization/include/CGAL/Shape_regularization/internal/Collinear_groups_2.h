@@ -36,22 +36,6 @@ namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
-  /*!
-    \ingroup PkgShapeRegularizationRefSegments
-
-    \brief Organizes segments with a similar orientation into groups of
-    collinear segments.
-
-    \tparam GeomTraits
-    must be a model of `Kernel`.
-
-    \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-
-    \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
-    and value type is `GeomTraits::Segment_2`.
-  */
   template<
   typename GeomTraits,
   typename InputRange,
@@ -59,54 +43,17 @@ namespace internal {
   class Collinear_groups_2 {
 
   public:
-
-    /// \name Types
-    /// @{
-
-    /// \cond SKIP_IN_MANUAL
     using Traits = GeomTraits;
     using Input_range = InputRange;
     using Segment_map = SegmentMap;
-    /// \endcond
 
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// \cond SKIP_IN_MANUAL
+    using FT = typename Traits::FT;
     using Line_2 = typename Traits::Line_2;
     using Indices = std::vector<std::size_t>;
-    using Parallel_groups_2 = Parallel_groups_2<Traits, Input_range, Segment_map>;
-    /// \endcond
 
-    /// @}
+    using Parallel_groups_2 =
+      Parallel_groups_2<Traits, Input_range, Segment_map>;
 
-    /// \name Initialization
-    /// @{
-    /*!
-      \brief initializes all internal data structures.
-
-      \tparam NamedParameters
-      a sequence of \ref sr_namedparameters "Named Parameters".
-
-      \param input_range
-      an instance of `InputRange` with 2D segments
-
-      \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters"
-      among the ones listed below
-
-      \param segment_map
-      an instance of `SegmentMap` that maps an item from `input_range` to `GeomTraits::Segment_2`
-
-      \cgalNamedParamsBegin
-        \cgalParamBegin{max_offset}
-          max offset deviation between two segments, the default is 0.2
-        \cgalParamEnd
-      \cgalNamedParamsEnd
-
-      \pre `input_range.size() > 0`
-      \pre `max_offset >= 0`
-    */
     template<typename NamedParameters>
     Collinear_groups_2(
       const InputRange& input_range,
@@ -126,23 +73,6 @@ namespace internal {
       make_collinear_groups();
     }
 
-    /// @}
-
-    // \name Access
-    /// @{
-
-    /*!
-      \brief returns indices of collinear segments organized into groups.
-
-      \tparam OutputIterator
-      must be a model of `OutputIterator`
-
-      \param groups
-      an instance of `OutputIterator`,
-      whose value type is `std::vector<std::size_t>`
-
-      \return an output iterator.
-    */
     template<typename OutputIterator>
     OutputIterator groups(OutputIterator groups) const {
       for (const auto& collinear_group : m_collinear_groups) {
@@ -151,7 +81,6 @@ namespace internal {
       }
       return groups;
     }
-    /// @}
 
   private:
     const Input_range& m_input_range;
