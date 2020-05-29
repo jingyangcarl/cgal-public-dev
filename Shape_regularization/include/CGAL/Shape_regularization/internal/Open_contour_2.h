@@ -260,7 +260,7 @@ namespace internal {
         wraps.size() << std::endl;
 
       // Do we need it here?
-      // m_base.make_segments_collinear(max_offset_2, wraps);
+      // m_base.make_segments_collinear(m_max_offset_2, wraps);
 
       intersect_segments(wraps);
       return success;

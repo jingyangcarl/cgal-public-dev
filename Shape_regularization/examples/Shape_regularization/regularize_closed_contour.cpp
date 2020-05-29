@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
   // Set parameters.
   const FT min_length_2 = FT(2);
   const FT  max_angle_2 = FT(20);
-  const FT max_offset_2 = FT(1) / FT(2);
+  const FT max_offset_2 = FT(1);
 
   // Initialize contour.
   Contour contour;

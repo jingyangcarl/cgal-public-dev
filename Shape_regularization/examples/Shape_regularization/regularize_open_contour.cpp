@@ -20,6 +20,9 @@ int main(int argc, char *argv[]) {
   if (argc > 1) path = argv[1];
   Saver saver;
 
+  // Set parameters.
+  const FT max_offset_2 = FT(1);
+
   // Initialize contour.
   Contour contour;
   CGAL::Shape_regularization::Examples::
@@ -39,7 +42,7 @@ int main(int argc, char *argv[]) {
   Contour regularized;
   CGAL::Shape_regularization::Contours::regularize_open_contour(
     contour, directions, std::back_inserter(regularized),
-    CGAL::parameters::all_default(), Point_map(), Kernel());
+    CGAL::parameters::max_offset(max_offset_2), Point_map(), Kernel());
 
   std::cout << "* number of directions = " <<
     directions.number_of_directions() << std::endl;
