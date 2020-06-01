@@ -151,8 +151,8 @@ namespace Examples {
       // Draw segments.
       for (const auto& segment : segments) {
         add_eps_segment(segment, scale, line_width, dashed);
-        add_eps_disc(segment.source(), radius, scale);
-        add_eps_disc(segment.target(), radius, scale);
+        // add_eps_disc(segment.source(), radius, scale);
+        // add_eps_disc(segment.target(), radius, scale);
       }
 
       // Finish private namespace.

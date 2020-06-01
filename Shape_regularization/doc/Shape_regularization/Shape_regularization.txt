@@ -7,9 +7,10 @@ namespace CGAL {
 \cgalAutoToc
 \authors Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge
 
-\cgalFigureBegin{QP_segments_overview, qp_segments_overview.png}
-A set of 2D segments before and after regularization.
+\cgalFigureBegin{regularize_2_overview, overview.svg}
+A set of 2D segments and contours before (red) and after (green) regularization.
 \cgalFigureEnd
+
 
 \section Shape_Regularization_Intro Introduction
 
@@ -151,6 +152,11 @@ A typical use of the QP regularization algorithm for segments consists of the fo
 are necessary for the next regularization steps.
 
 The example below shows the most straightforward entry point to the QP framework for segments.
+
+\cgalFigureBegin{regularize_simple_example, regularize_simple.svg}
+A set of 2D segments before (red) and after (green) the angle regularization.
+\cgalFigureEnd
+
 \cgalExample{Shape_regularization/regularize_simple.cpp}
 
 
@@ -184,12 +190,8 @@ a bound of 25 degrees will be set as the default value;
 `CGAL::Shape_regularization::Segments::Angle_regularization_2::add_group()` method.
 These groups are identical to the ones from \ref QP_Regularization_Segments_Delaunay.
 
-\cgalFigureBegin{angle_regularization_2_example_before, regularize_100_segments_angles_before.png}
-A generated set of 2D segments before the angle regularization.
-\cgalFigureEnd
-
-\cgalFigureBegin{angle_regularization_2_example_after, regularize_100_segments_angles_after.png}
-A set of 2D segments after the angle regularization.
+\cgalFigureBegin{regularize_100_segments_angles_example, regularize_100_segments_angles.svg}
+A generated set of 2D segments before (red) and after (green) the angle regularization.
 \cgalFigureEnd
 
 The following example demonstrates the usage of the shape regularization algorithm for angles
@@ -212,12 +214,8 @@ If the user does not have these groups, they can be obtained from \ref QP_Regula
 "Angle Regularization" by orienting original segments or they can be computed by using the utility class
 `CGAL::Shape_regularization::Segments::Parallel_groups_2`. See more \ref QP_Regularization_Segments_Utils "here".
 
-\cgalFigureBegin{offset_regularization_2_example_before, regularize_100_segments_offsets_before.png}
-A generated set of 2D segments before the offset regularization.
-\cgalFigureEnd
-
-\cgalFigureBegin{offset_regularization_2_example_after, regularize_100_segments_offsets_after.png}
-A set of 2D segments after the offset regularization.
+\cgalFigureBegin{regularize_100_segments_offsets_example, regularize_100_segments_offsets.svg}
+A generated set of 2D segments before (red) and after (green) the offset regularization.
 \cgalFigureEnd
 
 The following example demonstrates the usage of the shape regularization algorithm for offsets
@@ -242,12 +240,8 @@ show here how to create and work with contextually similar groups of segments an
 regularize each group on its own. The defined groups are the outer boundary, top and
 bottom rhombus.
 
-\cgalFigureBegin{simple_example_before, regularize_15_segments_before.png}
-A set of 2D segments before the shape regularization.
-\cgalFigureEnd
-
-\cgalFigureBegin{simple_example_after, regularize_15_segments_after.png}
-A set of 2D segments after the shape regularization.
+\cgalFigureBegin{regularize_15_segments_example, regularize_15_segments.svg}
+A set of 2D segments before (red) and after (green) the shape regularization.
 \cgalFigureEnd
 
 \cgalExample{Shape_regularization/regularize_15_segments.cpp}
@@ -260,12 +254,8 @@ The angle and offset regularizations are performed on these segments
 using the bounds of 60 degrees and 0.95 respectively.
 The `CGAL::Exact_predicates_inexact_constructions_kernel` kernel is used.
 
-\cgalFigureBegin{real_data_example_before, regularize_real_data_2_before.png}
-A set of 2D segments before the shape regularization.
-\cgalFigureEnd
-
-\cgalFigureBegin{real_data_example_after, regularize_real_data_2_after.png}
-A set of 2D segments after the shape regularization.
+\cgalFigureBegin{regularize_real_data_2_example, regularize_real_data_2.svg}
+A set of 2D segments before (red) and after (green) the shape regularization.
 \cgalFigureEnd
 
 \cgalExample{Shape_regularization/regularize_real_data_2.cpp}
@@ -376,8 +366,8 @@ directions, but since the original contour is very rectilinear, we revert back t
 direction defined by the longest contour edge. The used kernel is
 `Exact_predicates_inexact_constructions_kernel`.
 
-\cgalFigureBegin{regularize_closed_contour, regularize_closed_contour.png}
-A closed contour (red) and its regularized version (black).
+\cgalFigureBegin{regularize_closed_contour_example, regularize_closed_contour.svg}
+A closed contour before (red) and after (green) the contour regularization.
 \cgalFigureEnd
 
 \cgalExample{Shape_regularization/regularize_closed_contour.cpp}
@@ -390,8 +380,8 @@ This case requires a special treatment, but the core of the algorithm is the sam
 In the example below, we regularize an open contour with respect to
 its longest edge. The used kernel is `Exact_predicates_exact_constructions_kernel`.
 
-\cgalFigureBegin{regularize_open_contour, regularize_open_contour.png}
-An open contour (red) and its regularized version (black).
+\cgalFigureBegin{regularize_open_contour_example, regularize_open_contour.svg}
+An open contour before (red) and after (green) the contour regularization.
 \cgalFigureEnd
 
 \cgalExample{Shape_regularization/regularize_open_contour.cpp}
