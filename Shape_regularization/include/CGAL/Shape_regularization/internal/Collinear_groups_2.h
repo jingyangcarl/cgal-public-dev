@@ -63,7 +63,7 @@ namespace internal {
     m_input_range(input_range),
     m_segment_map(segment_map),
     m_grouping(
-      input_range, np, segment_map) {
+      input_range, np, segment_map, GeomTraits()) {
 
       CGAL_precondition(input_range.size() > 0);
       const FT max_offset = parameters::choose_parameter(

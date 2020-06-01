@@ -45,8 +45,13 @@ namespace Contours {
 
     \brief regularizes closed contours.
 
-    This function enables to regularize closed contours with respect
-    to the defined principal directions.
+    Given a set of ordered 2D points connected by segments, which form a closed contour,
+    this function enables to reinforce three types of regularities among consecutive edges of this contour:
+    - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Collinearity*: parallel contour edges, which are detected as near collinear, are made exactly collinear.
+
+    The principal directions of the contour are provided via the concept `ContourDirections`.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -128,8 +133,13 @@ namespace Contours {
 
     \brief regularizes closed contours.
 
-    This function enables to regularize closed contours with respect
-    to the defined principal directions.
+    Given a set of ordered 2D points connected by segments, which form a closed contour,
+    this function enables to reinforce three types of regularities among consecutive edges of this contour:
+    - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Collinearity*: parallel contour edges, which are detected as near collinear, are made exactly collinear.
+
+    The principal directions of the contour are provided via the concept `ContourDirections`.
 
     This function infers a traits class from the `InputRange` iterator's value type.
 
@@ -206,8 +216,13 @@ namespace Contours {
 
     \brief regularizes open contours.
 
-    This function enables to regularize open contours with respect
-    to the defined principal directions.
+    Given a set of ordered 2D points connected by segments, which form an open contour,
+    this function enables to reinforce three types of regularities among consecutive edges of this contour:
+    - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Collinearity*: parallel contour edges, which are detected as near collinear, are made exactly collinear.
+
+    The principal directions of the contour are provided via the concept `ContourDirections`.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -289,8 +304,13 @@ namespace Contours {
 
     \brief regularizes open contours.
 
-    This function enables to regularize open contours with respect
-    to the defined principal directions.
+    Given a set of ordered 2D points connected by segments, which form an open contour,
+    this function enables to reinforce three types of regularities among consecutive edges of this contour:
+    - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Collinearity*: parallel contour edges, which are detected as near collinear, are made exactly collinear.
+
+    The principal directions of the contour are provided via the concept `ContourDirections`.
 
     This function infers a traits class from the `InputRange` iterator's value type.
 

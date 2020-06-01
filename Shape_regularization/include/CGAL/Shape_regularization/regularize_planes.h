@@ -271,11 +271,11 @@ namespace Planes {
     \brief Hierarchical plane regularization.
 
     Given a set of detected planes with their corresponding inlier sets,
-    this function enables to regularize the planes:
-    - %Planes, which are detected as near parallel, are made parallel.
-    - %Planes, which are detected as near orthogonal, are made exactly orthogonal.
-    - %Parallel planes, which are detected as near coplanar, are made exactly coplanar.
-    - %Planes, which are detected as near symmetrical with respect to a user-defined axis,
+    this function enables to reinforce four types of regularities among these planes:
+    - *Parallelism*: planes, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: planes, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Coplanarity*: parallel planes, which are detected as near coplanar, are made exactly coplanar.
+    - *Axis-Symmetry*: planes, which are detected as near symmetrical with respect to a user-defined axis,
     are made exactly symmetrical.
 
     %Planes are directly modified. Points are left unaltered, as well as their

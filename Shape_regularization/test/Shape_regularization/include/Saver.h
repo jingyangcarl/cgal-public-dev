@@ -54,7 +54,8 @@ namespace Tests {
     void export_group(
       const std::vector<Segment_2>& segments,
       const std::vector<std::size_t>& group,
-      const std::string path) {
+      const std::string path,
+      const FT) {
 
       const FT stub = FT(0);
       std::vector<Segment_2> edges;
@@ -151,14 +152,26 @@ namespace Tests {
       // Draw segments.
       for (const auto& segment : segments) {
         add_eps_segment(segment, scale, line_width, dashed);
-        add_eps_disc(segment.source(), radius, scale);
-        add_eps_disc(segment.target(), radius, scale);
+        // add_eps_disc(segment.source(), radius, scale);
+        // add_eps_disc(segment.target(), radius, scale);
       }
 
       // Finish private namespace.
       out << "grestore end" << std::endl << std::endl;
       out << "%%EOF" << std::endl;
       save(path + ".eps");
+    }
+
+    void export_eps_group(
+      const std::vector<Segment_2>& segments,
+      const std::vector<std::size_t>& group,
+      const std::string path,
+      const FT scale) {
+
+      std::vector<Segment_2> edges;
+      for (const std::size_t seg_index : group)
+        edges.push_back(segments[seg_index]);
+      export_eps_segments(edges, path, scale);
     }
 
     void export_eps_closed_contour(

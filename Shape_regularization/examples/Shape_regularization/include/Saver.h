@@ -54,7 +54,8 @@ namespace Examples {
     void export_group(
       const std::vector<Segment_2>& segments,
       const std::vector<std::size_t>& group,
-      const std::string path) {
+      const std::string path,
+      const FT) {
 
       const FT stub = FT(0);
       std::vector<Segment_2> edges;
@@ -159,6 +160,18 @@ namespace Examples {
       out << "grestore end" << std::endl << std::endl;
       out << "%%EOF" << std::endl;
       save(path + ".eps");
+    }
+
+    void export_eps_group(
+      const std::vector<Segment_2>& segments,
+      const std::vector<std::size_t>& group,
+      const std::string path) {
+
+      const FT stub = FT(0);
+      std::vector<Segment_2> edges;
+      for (const std::size_t seg_index : group)
+        edges.push_back(segments[seg_index]);
+      export_eps_segments(edges, path, stub);
     }
 
     void export_eps_closed_contour(

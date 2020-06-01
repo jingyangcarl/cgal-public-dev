@@ -3,7 +3,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Shape_regularization/Segments/Collinear_groups_2.h>
+#include <CGAL/Shape_regularization/regularize_segments.h>
 
 namespace SR = CGAL::Shape_regularization;
 
@@ -13,11 +13,9 @@ void test_collinear_groups() {
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
+  using Segments  = std::vector<Segment_2>;
   using Indices   = std::vector<std::size_t>;
   using Saver     = SR::Tests::Saver<Traits>;
-
-  using Segments = std::vector<Segment_2>;
-  using CG = SR::Segments::Collinear_groups_2<Traits, Segments>;
 
   Saver saver;
   const Segments segments = {
@@ -33,23 +31,21 @@ void test_collinear_groups() {
 
     Segment_2(Point_2(7, 2), Point_2(5, 4)) // top right group
   };
-  // saver.export_polylines(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cg_input");
+  // saver.export_eps_segments(segments,
+    // "/Users/monet/Documents/gsoc/ggr/logs/cg_input", 100);
 
-  const CG grouping(
-    segments, CGAL::parameters::all_default());
   std::vector<Indices> groups;
-  grouping.groups(
-    std::back_inserter(groups));
+  SR::Segments::collinear_groups(
+    segments, std::back_inserter(groups), CGAL::parameters::all_default());
   assert(groups.size() == 4);
 
-  // saver.export_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/cg_group0");
+  // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/cg_group0", 100);
   assert(groups[0].size() == 2);
-  // saver.export_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/cg_group1");
+  // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/cg_group1", 100);
   assert(groups[1].size() == 3);
-  // saver.export_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/cg_group2");
+  // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/cg_group2", 100);
   assert(groups[2].size() == 2);
-  // saver.export_group(segments, groups[3], "/Users/monet/Documents/gsoc/ggr/logs/cg_group3");
+  // saver.export_eps_group(segments, groups[3], "/Users/monet/Documents/gsoc/ggr/logs/cg_group3", 100);
   assert(groups[3].size() == 1);
 }
 

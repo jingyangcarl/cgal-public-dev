@@ -121,8 +121,8 @@ namespace Segments {
       neighbors of segments within the group are computed that is no relationships
       between segments from different groups are taken into account.
 
-      The user does not have to use this method until one has groups of segments.
-      By default, all segments are inserted as a group.
+      The user does not have to use this method until one has well-defined
+      groups of segments. By default, all segments are inserted as a group.
 
       \tparam IndexRange
       must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`

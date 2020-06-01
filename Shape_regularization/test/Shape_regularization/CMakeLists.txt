@@ -19,25 +19,26 @@ if(CGAL_FOUND)
     message(STATUS "Found OSQP")
 
     set(targets
-    test_neighbor_query
+    # test_neighbor_query
     test_parallel_groups
     test_collinear_groups
     test_orthogonal_groups
-    test_0_segments
-    test_1_segment
-    test_2_segments
-    test_3_segments
-    test_4_segments
-    test_100_segments_angles
-    test_100_segments_offsets
-    test_cgal_solver
-    test_plane_regularization
-    test_closed_contour
-    test_open_contour
-    test_equal_contours
-    test_longest_direction
-    test_multiple_directions
-    test_user_defined_directions)
+    # test_0_segments
+    # test_1_segment
+    # test_2_segments
+    # test_3_segments
+    # test_4_segments
+    # test_100_segments_angles
+    # test_100_segments_offsets
+    # test_cgal_solver
+    # test_plane_regularization
+    # test_closed_contour
+    # test_open_contour
+    # test_equal_contours
+    # test_longest_direction
+    # test_multiple_directions
+    # test_user_defined_directions
+    )
 
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")

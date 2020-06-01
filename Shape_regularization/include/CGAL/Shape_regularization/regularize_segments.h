@@ -50,11 +50,14 @@ namespace Segments {
 
     \brief regularizes a set of 2D segments.
 
-    This function enables to regularize 2D segments with respect to the
-    user-defined conditions.
+    Given a set of unordered 2D segments, this function enables to reinforce
+    three types of regularities among these segments:
+    - *Parallelism*: segments, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: segments, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Collinearity*: parallel segments, which are detected as near collinear, are made exactly collinear.
 
-    The user has to provide the `NeighborQuery` model to access local neighbors
-    of a segment and `RegularizationType` model to define the type of regularities
+    The user has to provide a `NeighborQuery` model to access local neighbors
+    of a segment and a `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
     Please address that class and these concepts for more information.
 
@@ -120,11 +123,14 @@ namespace Segments {
 
     \brief regularizes a set of 2D segments.
 
-    This function enables to regularize 2D segments with respect to the
-    user-defined conditions.
+    Given a set of unordered 2D segments, this function enables to reinforce
+    three types of regularities among these segments:
+    - *Parallelism*: segments, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: segments, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Collinearity*: parallel segments, which are detected as near collinear, are made exactly collinear.
 
-    The user has to provide the `NeighborQuery` model to access local neighbors
-    of a segment and `RegularizationType` model to define the type of regularities
+    The user has to provide a `NeighborQuery` model to access local neighbors
+    of a segment and a `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
     Please address that class and these concepts for more information.
 
@@ -184,11 +190,14 @@ namespace Segments {
 
     \brief regularizes a set of 2D segments.
 
-    This function enables to regularize 2D segments with respect to the
-    user-defined conditions.
+    Given a set of unordered 2D segments, this function enables to reinforce
+    three types of regularities among these segments:
+    - *Parallelism*: segments, which are detected as near parallel, are made exactly parallel.
+    - *Orthogonality*: segments, which are detected as near orthogonal, are made exactly orthogonal.
+    - *Collinearity*: parallel segments, which are detected as near collinear, are made exactly collinear.
 
-    The user has to provide the `NeighborQuery` model to access local neighbors
-    of a segment and `RegularizationType` model to define the type of regularities
+    The user has to provide a `NeighborQuery` model to access local neighbors
+    of a segment and a `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
     Please address that class and these concepts for more information.
 
@@ -246,7 +255,7 @@ namespace Segments {
 
     \brief finds groups of parallel segments in a set of 2D segments.
 
-    This function enables to find groups of parallel segments
+    This function enables to find groups of near parallel segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     Note that two segments may be included at the same group even if they are
     far away from each other. This algorithm concerns only the angle relationship
@@ -322,7 +331,7 @@ namespace Segments {
 
     \brief finds groups of parallel segments in a set of 2D segments.
 
-    This function enables to find groups of parallel segments
+    This function enables to find groups of near parallel segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     Note that two segments may be included at the same group even if they are
     far away from each other. This algorithm concerns only the angle relationship
@@ -395,7 +404,7 @@ namespace Segments {
 
     \brief finds groups of collinear segments in a set of 2D segments.
 
-    This function enables to find groups of collinear segments
+    This function enables to find groups of near collinear segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     This algorithm first finds the groups of
     `CGAL::Shape_regularization::Segments::parallel_segments()` and then splits
@@ -471,7 +480,7 @@ namespace Segments {
 
     \brief finds groups of collinear segments in a set of 2D segments.
 
-    This function enables to find groups of collinear segments
+    This function enables to find groups of near collinear segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     This algorithm first finds the groups of
     `CGAL::Shape_regularization::Segments::parallel_segments()` and then splits
@@ -544,7 +553,7 @@ namespace Segments {
 
     \brief finds groups of orthogonal segments in a set of 2D segments.
 
-    This function enables to find groups of orthogonal segments
+    This function enables to find groups of near orthogonal segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     This algorithm first finds the groups of
     `CGAL::Shape_regularization::Segments::parallel_segments()` and then merges
@@ -620,7 +629,7 @@ namespace Segments {
 
     \brief finds groups of orthogonal segments in a set of 2D segments.
 
-    This function enables to find groups of orthogonal segments
+    This function enables to find groups of near orthogonal segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     This algorithm first finds the groups of
     `CGAL::Shape_regularization::Segments::parallel_segments()` and then merges
