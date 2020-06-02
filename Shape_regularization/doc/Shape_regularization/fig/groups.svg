@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 24.0.3, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="1127.43px" height="285.54px" viewBox="0 0 1127.43 285.54" style="enable-background:new 0 0 1127.43 285.54;"
-	 xml:space="preserve">
+	 width="901px" height="228.3px" viewBox="0 0 901 228.3" style="enable-background:new 0 0 901 228.3;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:none;stroke:#B62025;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
 	.st1{fill:none;stroke:#157B3E;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
@@ -17,39 +16,39 @@
 </style>
 <g>
 	<g>
-		<line class="st0" x1="316.62" y1="268.6" x2="316.62" y2="138.6"/>
-		<line class="st0" x1="273.29" y1="268.6" x2="273.29" y2="138.6"/>
-		<line class="st0" x1="229.96" y1="268.6" x2="221.72" y2="139.03"/>
-		<line class="st1" x1="186.62" y1="268.6" x2="99.96" y2="268.6"/>
-		<line class="st1" x1="143.29" y1="225.26" x2="13.29" y2="225.26"/>
-		<line class="st2" x1="143.29" y1="181.93" x2="56.62" y2="51.93"/>
-		<line class="st2" x1="99.96" y1="8.6" x2="186.62" y2="138.6"/>
+		<line class="st0" x1="253.1" y1="214.7" x2="253.1" y2="110.8"/>
+		<line class="st0" x1="218.5" y1="214.7" x2="218.5" y2="110.8"/>
+		<line class="st0" x1="183.8" y1="214.7" x2="177.3" y2="111.2"/>
+		<line class="st1" x1="149.2" y1="214.7" x2="80" y2="214.7"/>
+		<line class="st1" x1="114.6" y1="180.1" x2="10.7" y2="180.1"/>
+		<line class="st2" x1="114.6" y1="145.5" x2="45.3" y2="41.6"/>
+		<line class="st2" x1="80" y1="7" x2="149.2" y2="110.8"/>
 	</g>
-	<rect x="0.5" y="0.5" class="st3" width="333.82" height="284.54"/>
+	<rect x="0.5" y="0.5" class="st3" width="266.7" height="227.3"/>
 </g>
 <g>
 	<g>
-		<line class="st4" x1="800.23" y1="181.93" x2="800.23" y2="51.93"/>
-		<line class="st4" x1="713.57" y1="51.93" x2="717.9" y2="181.93"/>
-		<line class="st4" x1="800.23" y1="268.6" x2="583.57" y2="268.6"/>
-		<line class="st4" x1="670.23" y1="225.26" x2="670.23" y2="181.93"/>
-		<line class="st4" x1="670.23" y1="138.6" x2="583.57" y2="138.6"/>
-		<line class="st5" x1="583.57" y1="51.93" x2="453.57" y2="8.6"/>
-		<line class="st6" x1="540.23" y1="138.6" x2="453.57" y2="233.93"/>
-		<line class="st6" x1="366.9" y1="95.26" x2="453.57" y2="181.93"/>
+		<line class="st4" x1="639.5" y1="145.5" x2="639.5" y2="41.6"/>
+		<line class="st4" x1="570.2" y1="41.6" x2="573.7" y2="145.5"/>
+		<line class="st4" x1="639.5" y1="214.7" x2="466.4" y2="214.7"/>
+		<line class="st4" x1="535.6" y1="180.1" x2="535.6" y2="145.5"/>
+		<line class="st4" x1="535.6" y1="110.8" x2="466.4" y2="110.8"/>
+		<line class="st5" x1="466.4" y1="41.6" x2="362.5" y2="7"/>
+		<line class="st6" x1="431.7" y1="110.8" x2="362.5" y2="187"/>
+		<line class="st6" x1="293.2" y1="76.2" x2="362.5" y2="145.5"/>
 	</g>
-	<rect x="356.01" y="0.5" class="st3" width="459.49" height="284.54"/>
+	<rect x="284.5" y="0.5" class="st3" width="367.1" height="227.3"/>
 </g>
 <g>
 	<g>
-		<line class="st7" x1="891.84" y1="268.6" x2="1021.84" y2="268.6"/>
-		<line class="st7" x1="1065.18" y1="268.6" x2="1108.51" y2="268.6"/>
-		<line class="st8" x1="848.51" y1="181.93" x2="978.51" y2="181.93"/>
-		<line class="st8" x1="1021.84" y1="177.6" x2="1065.18" y2="177.6"/>
-		<line class="st8" x1="978.51" y1="186.26" x2="1065.18" y2="186.26"/>
-		<line class="st9" x1="891.84" y1="138.6" x2="935.18" y2="95.26"/>
-		<line class="st9" x1="1021.84" y1="8.6" x2="978.51" y2="51.93"/>
+		<line class="st7" x1="712.7" y1="214.7" x2="816.5" y2="214.7"/>
+		<line class="st7" x1="851.2" y1="214.7" x2="885.8" y2="214.7"/>
+		<line class="st8" x1="678" y1="145.5" x2="781.9" y2="145.5"/>
+		<line class="st8" x1="816.5" y1="142" x2="851.2" y2="142"/>
+		<line class="st8" x1="781.9" y1="148.9" x2="851.2" y2="148.9"/>
+		<line class="st9" x1="712.7" y1="110.8" x2="747.3" y2="76.2"/>
+		<line class="st9" x1="816.5" y1="7" x2="781.9" y2="41.6"/>
 	</g>
-	<rect x="835.26" y="0.5" class="st3" width="291.67" height="284.54"/>
+	<rect x="667.5" y="0.5" class="st3" width="233" height="227.3"/>
 </g>
 </svg>
