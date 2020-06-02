@@ -109,7 +109,8 @@ namespace Segments {
 
       \cgalNamedParamsBegin
         \cgalParamBegin{max_angle}
-          max angle deviation in degrees between two segments, the default is 25 degrees
+          max angle deviation in degrees of a segment from its initial orientation,
+          the default is 25 degrees
         \cgalParamEnd
       \cgalNamedParamsEnd
 

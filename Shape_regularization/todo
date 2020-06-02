@@ -5,4 +5,3 @@
 * Install OSQP on all testing platforms.
 * When adding the QP_solver concept, I should put it in the Solver_interface and refactor the MixedIntegerConcept, too.
 * Check the closed/open contour generating examples. They should avoid an almost collinear vertex in the left top corner.
-* Add a benchmarks table in the user manual.

@@ -104,8 +104,8 @@ namespace Contours {
 
       \cgalNamedParamsBegin
         \cgalParamBegin{max_angle}
-          max angle deviation in degrees of a contour edge from its
-          initial orientation, the default is 10 degrees
+          max angle deviation in degrees between a contour edge and a principal direction,
+          the default is 10 degrees
         \cgalParamEnd
         \cgalParamBegin{min_length}
           min length of a contour edge whose direction can be taken

@@ -101,7 +101,7 @@ and interior bottom rhombus.
 
 This class orients 2D segments in order to preserve parallelism and orthogonality among them.
 To apply the angle regularization on a set of 2D segments, the user has to:
-- specify the max angle deviation between two segments that has to be within the
+- specify the max angle deviation of a segment from its initial orientation that has to be within the
 interval [0, 90] degrees. If no bound is provided, a bound of 25 degrees will be set as the default value;
 - add groups of segments, if any, through the
 `CGAL::Shape_regularization::Segments::Angle_regularization_2::add_group()` method.
@@ -228,8 +228,8 @@ or `CGAL::Shape_regularization::Segments::regularize_open_contour()`.
 
 We assume that each contour has at least one principal direction that is a reference
 direction towards which the contour edges are either rotated or displaced. Given a
-user defined max angle deviation between an edge and a principal direction and max distance
-between two consecutive edges, each edge within these thresholds is made either parallel,
+user defined max angle deviation between an edge and a principal direction and a max distance
+between two consecutive parallel edges, each edge within these thresholds is made either parallel,
 collinear or orthogonal to the reference direction(s).
 
 \cgalFigureBegin{multiple_directions, multiple_directions.svg}
@@ -327,9 +327,9 @@ The shape regularization component is a generic framework that is based on the
 Quadratic Programming (QP) global regularization algorithm \cgalCite{cgal:bl-kippi-18}
 by Bauchet et Lafarge. You should address this section only if you want to know details
 on how the shape regularization framework is organized internally or you want to extend
-it by implementing your own regularization types.
+that framework by implementing your own regularization types.
 
-Two particular instances of this algorithm are provided:
+Two particular instances of the algorithm are provided:
 - `CGAL::Shape_regularization::Segments::Angle_regularization_2` - orients a set
 of unordered 2D segments. See \ref QP_Regularization_Segments_Angles "Angle Regularization" for more details.
 
@@ -341,12 +341,51 @@ Other instances can be added by the user, as explained \ref QP_Regularization_Im
 
 \subsection QP_Regularization_Framework Framework
 
-This framework follows Section three .... (TO BE ADDED)
+This framework follows Section 3 from \cgalCite{cgal:bl-kippi-18}, however the algorithm
+from that paper was extended and generalized. The idea behind the main algorithm is
+to minimize the energy
 
-The main class `CGAL::Shape_regularization::QP_regularization` is parameterized by:
+<center>\f$U(\boldsymbol{x}) = (1 - \lambda) D(\boldsymbol{x}) + \lambda V(\boldsymbol{x})\f$,</center>
+
+where \f$\boldsymbol{x} = (x_1, \dots, x_n)\f$ is a configuration of perturbations operated
+on \f$n\f$ input items, \f$D(\boldsymbol{x})\f$ and \f$V(\boldsymbol{x})\f$ represent a data
+term and pairwise potential respectively, and \f$\lambda \in [0, 1]\f$ is a parameter weighting
+these two terms. By setting up the correct types of \f$D(\boldsymbol{x})\f$ and \f$V(\boldsymbol{x})\f$,
+the problem can be reformulated into a quadratic optimization problem with \f$(n + m)\f$ variables
+and \f$2(n + m)\f$ linear constraints, where \f$m\f$ is the number of unique pairs formed by connecting
+an item to one of its closest neighbors. Let us explain how it all works when the input items
+are segments and we want to regularize their orientations in order to preserve parallelism and
+orthogonality among them.
+
+To set up the framework, we first need to find closest neigbors for each segment.
+These neighbors are provided via the concept `NeighborQuery`. Internally, we create a graph
+based on these neighbors. Every edge \f$\{i, j\}\f$, where \f$i\f$ is the index of the ith
+segment and \f$j\f$ is the index of the jth segment is inserted in the graph whenever \f$i < j\f$.
+This way each pair is inserted only once. The neighbors are found via the \ref QP_Regularization_Segments_Delaunay
+"Delaunay Neighbor Query".
+
+When we have the graph, we fill in the terms \f$D(\boldsymbol{x})\f$ and \f$V(\boldsymbol{x})\f$
+via the concept `RegularizationType`. First, we obtain a max perturbation bound for each segment
+via the method `RegularizationType::bound()`. Since we want to rotate segments, we return here
+the max allowed angle deviation for each segment with respect to its original orientation, lets
+say 25 degrees.
+
+Next, for every edge \f$\{i, j\}\f$ in the graph, we compute the perturbation difference between
+two segments \f$i\f$ and \f$j\f$ via the method `RegularizationType::target()`. For example,
+that could be a difference of segment orientations with respect to \f$90\f$ or \f$180\f$ degrees. Lets say
+an angle between two segments is \f$85\f$ degrees then we return \f$90 - 85 = 5\f$ degrees
+since this is what we should minimize in order to make the two segments orthogonal to each other.
+
+Then we set up the quadratic programming problem that is solved via the `QPSolver` concept. The
+returned result is stored as a vector of the length \f$(n + m)\f$ with the updated perturbation values,
+where the first \f$n\f$ values are the values that should be added to the original orientations
+of the input segments in order to update them and the last \f$m\f$ values are minimized to zeros. The
+update is achieved via the method `RegularizationType::update()`.
+
+Overall, the class `CGAL::Shape_regularization::QP_regularization` is parameterized by:
 - `NeighborQuery` that provides the means for accessing local neighbors of an item,
 - `RegularizationType` that determines a regularization type to be applied, and
-- `QPSolver` that is used to define and solve the corresponding QP problem.
+- `QPSolver` that is used to solve the corresponding QP problem.
 
 Within this generic framework, users can regularize any set of input items provided
 their own neighbor search, regularization type, and QP solver.
@@ -362,7 +401,7 @@ are neighbors of the query item.
 
 For example, given a segment, this operator may return a vector with indices of some other
 input segments, which are within a certain distance from this segment, however this distance
-is measured. See \ref QP_Regularization_Segments_Delaunay "this section" for more details.
+is measured. See above and \ref QP_Regularization_Segments_Delaunay "this section" for more details.
 
 
 \subsection QP_Regularization_Type Regularization
@@ -375,10 +414,10 @@ To create a model that respects this concept, three functions have to be defined
 - `RegularizationType::update()` a function that updates input items with respect to the modified regularities.
 
 For example, if we want to regularize segment orientations, that is to make segments parallel and orthogonal
-to each other, the first function should return an angle between a query segment and each of its neighbors;
+to each other, the first function should return an angle perturbation between a query segment and each of its neighbors;
 the second function should return a max angle within which a rotation of the query segment is accepted;
-and the third function should apply the new segment orientations computed by the QP solver to
-the initial input segments. See \ref QP_Regularization_Segments_Angles "this section" for more details.
+and the third function should update original orientations of the input segments.
+See above and \ref QP_Regularization_Segments_Angles "this section" for more details.
 
 
 \subsection QP_Regularization_Solvers Solvers
@@ -419,12 +458,13 @@ choose among available solvers.
 
 \subsection QP_Regularization_Performance Performance
 
-The shape regularization algorithm is very efficient. In the setup phase, it has
-a linear level of complexity to obtain local neighbors of each item, compute all objective
-function values, and construct the QP problem data. In the solve phase, when using the
-`CGAL::Shape_regularization::OSQP_quadratic_program`, we exploit and efficiently use the sparse
-nature of the related QP problem that leads to the quick performance in practice
-(see the table and graph below).
+The shape regularization algorithm is very efficient and its performance depends
+on the two phases:
+- *the setup phase* that is user-based and has a linear level complexity in the
+number n + m (see above for notations) for currently implemented classes and
+- *the solve phase* that is very efficient when using the `CGAL::Shape_regularization::OSQP_quadratic_program`,
+in that case we exploit and efficiently use the sparse nature of the related QP problem
+that leads to the quick performance in practice (see below).
 
 This table includes some timings of running several representative examples from this manual.
 
@@ -440,9 +480,6 @@ This table includes some timings of running several representative examples from
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">regularize_real_data_2  </td><td class="markdownTableBodyCenter">65  </td><td class="markdownTableBodyCenter">65 </td><td class="markdownTableBodyCenter">64  </td><td class="markdownTableBodyCenter">0.001873   </td><td class="markdownTableBodyCenter">0.000396  </td></tr>
 </table>
-
-We also present a graph (TO BE ADDED LATER) that shows how the QP regularization performance depends on
-the number of input segments.
 
 
 \section Shape_Regularization_History History

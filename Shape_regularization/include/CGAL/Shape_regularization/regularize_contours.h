@@ -93,7 +93,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max distance between two parallel and adjacent contour edges,
+        max distance between two parallel and consecutive contour edges,
         the default is 0.5 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
@@ -178,7 +178,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max distance between two parallel and adjacent contour edges,
+        max distance between two parallel and consecutive contour edges,
         the default is 0.5 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
@@ -264,7 +264,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max distance between two parallel and adjacent contour edges,
+        max distance between two parallel and consecutive contour edges,
         the default is 0.5 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
@@ -349,7 +349,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
-        max distance between two parallel and adjacent contour edges,
+        max distance between two parallel and consecutive contour edges,
         the default is 0.5 unit length
       \cgalParamEnd
     \cgalNamedParamsEnd
