@@ -232,6 +232,11 @@ user defined max angle deviation between an edge and a principal direction and m
 between two consecutive edges, each edge within these thresholds is made either parallel,
 collinear or orthogonal to the reference direction(s).
 
+\cgalFigureBegin{multiple_directions, multiple_directions.svg}
+A closed contour before (red) and after (green) the contour regularization.
+The found principal directions are marked yellow.
+\cgalFigureEnd
+
 To estimate principal directions of the contour, this component provides three
 models of the concept `ContourDirections`:
 - `CGAL::Shape_regularization::Contours::Longest_direction_2` - sets the longest contour edge

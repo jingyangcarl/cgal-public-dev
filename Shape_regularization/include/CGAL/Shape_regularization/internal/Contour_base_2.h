@@ -486,7 +486,7 @@ namespace internal {
       CGAL_assertion(angles.size() == directions.size());
 
       for (std::size_t k = 0; k < angles.size(); ++k) {
-        CGAL_assertion(counts[k] != FT(0));
+        if (counts[k] == FT(0)) continue;
         angles[k] /= counts[k];
 
         const FT angle_deg = angles[k];

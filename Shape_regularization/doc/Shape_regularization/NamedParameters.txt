@@ -14,7 +14,7 @@ This package offers the following named parameters:
 \cgalNPBegin{max_angle} \anchor SR_max_angle
 max allowed angle deviation between two geometric objects in degrees, if applicable\n
 <b>Type:</b> floating point value\n
-<b>Default:</b> `{5, 25} degrees, depends on the class`
+<b>Default:</b> `{5, 10, 25} degrees, depends on the class`
 \cgalNPEnd
 
 \cgalNPBegin{max_offset} \anchor SR_max_offset
