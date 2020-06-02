@@ -10,12 +10,12 @@ namespace SR = CGAL::Shape_regularization;
 template<class Traits>
 void test_user_defined_directions() {
 
-  using FT      = typename Traits::FT;
-  using Point_2 = typename Traits::Point_2;
+  using FT          = typename Traits::FT;
+  using Point_2     = typename Traits::Point_2;
   using Direction_2 = typename Traits::Direction_2;
-  using Saver   = SR::Tests::Saver<Traits>;
+  using Contour     = std::vector<Point_2>;
+  using Saver       = SR::Tests::Saver<Traits>;
 
-  using Contour = std::vector<Point_2>;
   using Point_map = CGAL::Identity_property_map<Point_2>;
   using UD = SR::Contours::User_defined_directions_2<Traits, Contour, Point_map>;
 
@@ -29,7 +29,7 @@ void test_user_defined_directions() {
   };
   assert(contour.size() == 7);
   // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/ud_input");
+  //   "/Users/monet/Documents/gsoc/ggr/logs/ud_input", 100);
 
   const std::vector<Direction_2> dirs = {
     Direction_2(1, 0),
@@ -38,9 +38,9 @@ void test_user_defined_directions() {
 
   const bool is_closed = true;
   UD closed_directions(
-    dirs, contour,  is_closed, pmap);
+    contour,  is_closed, dirs, pmap);
   UD open_directions(
-    dirs, contour, !is_closed, pmap);
+    contour, !is_closed, dirs, pmap);
 
   const std::size_t num_closed_directions =
     closed_directions.number_of_directions();

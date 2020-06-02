@@ -19,20 +19,20 @@ void test_collinear_groups() {
 
   Saver saver;
   const Segments segments = {
-    Segment_2(Point_2(2, -1), Point_2(5, -1)), // bottom group
+    Segment_2(Point_2(2, -1), Point_2(5, -1)), // the bottom group
     Segment_2(Point_2(6, -1), Point_2(7, -1)),
 
-    Segment_2(Point_2(1, 1), Point_2(4, 1)), // middle group
+    Segment_2(Point_2(1, 1), Point_2(4, 1)), // the middle group
     Segment_2(Point_2(5, FT(11) / FT(10)), Point_2(6, FT(11) / FT(10))),
     Segment_2(Point_2(4, FT(9)  / FT(10)), Point_2(6, FT(9)  / FT(10))),
 
-    Segment_2(Point_2(2, 2), Point_2(3, 3)), // top left group
+    Segment_2(Point_2(2, 2), Point_2(3, 3)), // the top left group
     Segment_2(Point_2(5, 5), Point_2(4, 4)),
 
-    Segment_2(Point_2(7, 2), Point_2(5, 4)) // top right group
+    Segment_2(Point_2(7, 2), Point_2(5, 4)) // the top right group
   };
   // saver.export_eps_segments(segments,
-    // "/Users/monet/Documents/gsoc/ggr/logs/cg_input", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/cg_input", 100);
 
   std::vector<Indices> groups;
   SR::Segments::collinear_groups(

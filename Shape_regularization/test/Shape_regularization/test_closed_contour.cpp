@@ -3,7 +3,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Shape_regularization.h>
+#include <CGAL/Shape_regularization/regularize_contours.h>
 
 namespace SR = CGAL::Shape_regularization;
 
@@ -12,16 +12,12 @@ void test_closed_contour() {
 
   using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
+  using Contour = std::vector<Point_2>;
   using Saver   = SR::Tests::Saver<Traits>;
 
-  using Contour   = std::vector<Point_2>;
-  using Point_map = CGAL::Identity_property_map<Point_2>;
-
-  using CD = SR::Contours::Longest_direction_2<Traits, Contour, Point_map>;
-  using CR = SR::Contour_regularization_2<Traits, Contour, CD, SR::CLOSED, Point_map>;
+  using CD = SR::Contours::Longest_direction_2<Traits, Contour>;
 
   Saver saver;
-  Point_map pmap;
   const Contour contour = {
     Point_2(0, 0), Point_2(  FT(5) / FT(10), -FT(1) / FT(20)),
     Point_2(1, 0), Point_2(FT(105) / FT(100), FT(5) / FT(10)),
@@ -29,22 +25,22 @@ void test_closed_contour() {
   };
   assert(contour.size() == 6);
   // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_input");
+  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_input", 100);
 
   const bool is_closed = true;
   CD directions(
-    contour, is_closed, pmap);
-  CR regularizer(
-    contour, directions, CGAL::parameters::all_default(), pmap);
+    contour, is_closed);
 
   std::vector<Point_2> regularized;
-  regularizer.regularize(
-    std::back_inserter(regularized));
+  SR::Contours::regularize_closed_contour(
+    contour, directions, std::back_inserter(regularized),
+    CGAL::parameters::all_default());
+
   const std::size_t num_directions =
     directions.number_of_directions();
 
   // saver.export_closed_contour(regularized,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_output");
+  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_output", 100);
 
   assert(num_directions == 1);
   assert(regularized.size() == 4);

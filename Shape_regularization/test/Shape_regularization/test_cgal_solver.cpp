@@ -13,20 +13,17 @@ void test_cgal_solver() {
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
+  using Segments  = std::vector<Segment_2>;
   using Indices   = std::vector<std::size_t>;
   using Saver     = SR::Tests::Saver<Traits>;
 
-  using Segments = std::vector<Segment_2>;
-  using Segment_map = CGAL::Identity_property_map<Segment_2>;
-
-  using NQ = SR::Segments::Delaunay_neighbor_query_2<Traits, Segments, Segment_map>;
-  using AR = SR::Segments::Angle_regularization_2<Traits, Segments, Segment_map>;
+  using NQ = SR::Segments::Delaunay_neighbor_query_2<Traits, Segments>;
+  using AR = SR::Segments::Angle_regularization_2<Traits, Segments>;
   using QP = SR::CGAL_quadratic_program<FT>;
 
-  using ARegularizer = SR::QP_regularization<Traits, Segments, NQ, AR, QP>;
+  using QP_AR = SR::QP_regularization<Traits, Segments, NQ, AR, QP>;
 
   Saver saver;
-  Segment_map smap;
   Segments segments = {
     Segment_2(Point_2(0, 0), Point_2(1, 0)),
     Segment_2(Point_2(1, 0), Point_2(1, 1)),
@@ -35,21 +32,18 @@ void test_cgal_solver() {
   };
 
   assert(segments.size() == 4);
-  // saver.export_polylines(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cgal_input");
-
-  NQ neighbor_query(segments, smap);
-  neighbor_query.create_unique_group();
+  // saver.export_segments(segments,
+  //   "/Users/monet/Documents/gsoc/ggr/logs/cgal_input", 100);
 
   const FT max_angle_2 = FT(5);
+  NQ neighbor_query(segments);
   AR angle_regularization(
-    segments, CGAL::parameters::max_angle(max_angle_2), smap);
-  angle_regularization.create_unique_group();
+    segments, CGAL::parameters::max_angle(max_angle_2));
 
   QP qp_angles;
-  ARegularizer aregularizer(
+  QP_AR qp_ar(
     segments, neighbor_query, angle_regularization, qp_angles);
-  aregularizer.regularize();
+  qp_ar.regularize();
 
   std::vector<Indices> parallel_groups;
   angle_regularization.parallel_groups(
@@ -62,8 +56,8 @@ void test_cgal_solver() {
   const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cgal_angles");
+  // saver.export_segments(segments,
+  //   "/Users/monet/Documents/gsoc/ggr/logs/cgal_angles", 100);
 
   assert(segments.size() == 4);
   assert(parallel_groups.size() == 2);

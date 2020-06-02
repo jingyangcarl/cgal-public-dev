@@ -8,13 +8,13 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_multiple_directions() {
+void test_multiple_directions_1() {
 
   using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
+  using Contour = std::vector<Point_2>;
   using Saver   = SR::Tests::Saver<Traits>;
 
-  using Contour = std::vector<Point_2>;
   using Point_map = CGAL::Identity_property_map<Point_2>;
   using MD = SR::Contours::Multiple_directions_2<Traits, Contour, Point_map>;
 
@@ -28,7 +28,7 @@ void test_multiple_directions() {
   };
   assert(contour.size() == 7);
   // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/md_input");
+  //   "/Users/monet/Documents/gsoc/ggr/logs/md1_input", 100);
 
   const FT min_length_2 = FT(2);
   const FT max_angle_2 = FT(10);
@@ -57,9 +57,9 @@ void test_multiple_directions() {
 }
 
 int main() {
-  test_multiple_directions< CGAL::Simple_cartesian<double> >();
-  test_multiple_directions< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_multiple_directions< CGAL::Exact_predicates_exact_constructions_kernel >();
-  std::cout << "test_multiple_directions: SUCCESS" << std::endl;
+  test_multiple_directions_1< CGAL::Simple_cartesian<double> >();
+  test_multiple_directions_1< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_multiple_directions_1< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_multiple_directions_1: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

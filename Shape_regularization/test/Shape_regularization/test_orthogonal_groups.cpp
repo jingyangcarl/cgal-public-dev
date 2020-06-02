@@ -19,19 +19,19 @@ void test_orthogonal_groups() {
 
   Saver saver;
   const Segments segments = {
-    Segment_2(Point_2(2, 4), Point_2(2, 1)), // left group
+    Segment_2(Point_2(2, 4), Point_2(2, 1)), // the left group
     Segment_2(Point_2(4, 1), Point_2(FT(39) / FT(10), 4)),
     Segment_2(Point_2(2, 6), Point_2(7, 6)),
     Segment_2(Point_2(5, 5), Point_2(5, 4)),
     Segment_2(Point_2(5, 3), Point_2(7, 3)),
 
-    Segment_2(Point_2(7, 1), Point_2(10, 0)), // bottom right group
+    Segment_2(Point_2(7, 1), Point_2(10, 0)), // the bottom right group
 
-    Segment_2(Point_2( 8, 3), Point_2(10, FT(52) / FT(10))), // top right group
+    Segment_2(Point_2( 8, 3), Point_2(10, FT(52) / FT(10))), // the top right group
     Segment_2(Point_2(12, 2), Point_2(10, 4))
   };
   // saver.export_eps_segments(segments,
-    // "/Users/monet/Documents/gsoc/ggr/logs/og_input", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/og_input", 100);
 
   std::vector<Indices> groups;
   SR::Segments::orthogonal_groups(

@@ -19,14 +19,14 @@ void test_parallel_groups() {
 
   Saver saver;
   const Segments segments = {
-    Segment_2(Point_2(1, 1), Point_2(4, 1)), // bottom group
+    Segment_2(Point_2(1, 1), Point_2(4, 1)), // the bottom group
     Segment_2(Point_2(1, 2), Point_2(4, 2)),
     Segment_2(Point_2(1, 3), Point_2(FT(399) / FT(100), FT(319) / FT(100))),
 
-    Segment_2(Point_2(1, 4), Point_2(1, 6)), // top left group
+    Segment_2(Point_2(1, 4), Point_2(1, 6)), // the top left group
     Segment_2(Point_2(2, 5), Point_2(2, 8)),
 
-    Segment_2(Point_2(3, 5), Point_2(6, 7)), // top right group
+    Segment_2(Point_2(3, 5), Point_2(6, 7)), // the top right group
     Segment_2(Point_2(7, 6), Point_2(4, 4))
   };
   // saver.export_eps_segments(segments,

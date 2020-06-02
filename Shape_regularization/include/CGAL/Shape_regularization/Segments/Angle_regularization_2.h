@@ -344,6 +344,7 @@ namespace Segments {
     void clear() {
       m_num_groups = 0;
       m_is_first_call = true;
+      m_num_modified_segments = 0;
       for (auto& wrap : m_wraps)
         wrap.is_used = false;
     }

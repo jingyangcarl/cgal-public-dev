@@ -3,7 +3,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Shape_regularization.h>
+#include <CGAL/Shape_regularization/regularize_contours.h>
 
 namespace SR = CGAL::Shape_regularization;
 
@@ -12,16 +12,13 @@ void test_equal_contours() {
 
   using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
+  using Contour = std::vector<Point_2>;
   using Saver   = SR::Tests::Saver<Traits>;
 
-  using Contour   = std::vector<Point_2>;
   using Point_map = CGAL::Identity_property_map<Point_2>;
 
   using CD = SR::Contours::Longest_direction_2<Traits, Contour, Point_map>;
   using OD = SR::Contours::Longest_direction_2<Traits, Contour, Point_map>;
-
-  using CR = SR::Contour_regularization_2<Traits, Contour, CD, SR::CLOSED, Point_map>;
-  using OR = SR::Contour_regularization_2<Traits, Contour, OD, SR::OPEN, Point_map>;
 
   Saver saver;
   Point_map pmap;
@@ -38,18 +35,15 @@ void test_equal_contours() {
   OD open_directions(
     contour, !is_closed, pmap);
 
-  CR closed_regularizer(
-    contour, closed_directions, CGAL::parameters::all_default(), pmap);
-  OR open_regularizer(
-    contour, open_directions, CGAL::parameters::all_default(), pmap);
-
   std::vector<Point_2> closed_contour;
-  closed_regularizer.regularize(
-    std::back_inserter(closed_contour));
+  SR::Contours::regularize_closed_contour(
+    contour, closed_directions, std::back_inserter(closed_contour),
+    CGAL::parameters::all_default(), pmap);
 
   std::vector<Point_2> open_contour;
-  open_regularizer.regularize(
-    std::back_inserter(open_contour));
+  SR::Contours::regularize_open_contour(
+    contour, open_directions, std::back_inserter(open_contour),
+    CGAL::parameters::all_default(), pmap);
 
   assert(closed_contour.size() == 4);
   assert(closed_contour.size() == open_contour.size());

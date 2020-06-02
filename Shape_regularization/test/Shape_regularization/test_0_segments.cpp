@@ -13,10 +13,10 @@ void test_0_segments() {
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
+  using Segments  = std::vector<Segment_2>;
   using Indices   = std::vector<std::size_t>;
   using Saver     = SR::Tests::Saver<Traits>;
 
-  using Segments = std::vector<Segment_2>;
   using Segment_map = CGAL::Identity_property_map<Segment_2>;
 
   using NQ = SR::Segments::Delaunay_neighbor_query_2<Traits, Segments, Segment_map>;
@@ -24,27 +24,24 @@ void test_0_segments() {
   using OR = SR::Segments::Offset_regularization_2<Traits, Segments, Segment_map>;
   using QP = SR::OSQP_quadratic_program<FT>;
 
-  using ARegularizer = SR::QP_regularization<Traits, Segments, NQ, AR, QP>;
-  using ORegularizer = SR::QP_regularization<Traits, Segments, NQ, OR, QP>;
+  using QP_AR = SR::QP_regularization<Traits, Segments, NQ, AR, QP>;
+  using QP_OR = SR::QP_regularization<Traits, Segments, NQ, OR, QP>;
 
   Saver saver;
   Segment_map smap;
   Segments segments;
   assert(segments.size() == 0);
-  // saver.export_polylines(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/0_input");
+  // saver.export_eps_segments(segments,
+  //   "/Users/monet/Documents/gsoc/ggr/logs/0_input", 100);
 
   NQ neighbor_query(segments, smap);
-  neighbor_query.create_unique_group();
-
   AR angle_regularization(
     segments, CGAL::parameters::all_default(), smap);
-  angle_regularization.create_unique_group();
 
   QP qp_angles;
-  ARegularizer aregularizer(
+  QP_AR qp_ar(
     segments, neighbor_query, angle_regularization, qp_angles);
-  aregularizer.regularize();
+  qp_ar.regularize();
 
   std::vector<Indices> parallel_groups;
   angle_regularization.parallel_groups(
@@ -57,8 +54,8 @@ void test_0_segments() {
   const std::size_t num_segments_angles =
     angle_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/0_angles");
+  // saver.export_eps_segments(segments,
+  //   "/Users/monet/Documents/gsoc/ggr/logs/0_angles", 100);
 
   assert(segments.size() == 0);
   assert(parallel_groups.size() == 0);
@@ -75,9 +72,9 @@ void test_0_segments() {
   }
 
   QP qp_offsets;
-  ORegularizer oregularizer(
+  QP_OR qp_or(
     segments, neighbor_query, offset_regularization, qp_offsets);
-  oregularizer.regularize();
+  qp_or.regularize();
 
   std::vector<Indices> collinear_groups;
   offset_regularization.collinear_groups(
@@ -86,8 +83,8 @@ void test_0_segments() {
   const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
-  // saver.export_polylines(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/0_offsets");
+  // saver.export_eps_segments(segments,
+  //   "/Users/monet/Documents/gsoc/ggr/logs/0_offsets", 100);
 
   assert(segments.size() == 0);
   assert(collinear_groups.size() == 0);

@@ -13,38 +13,37 @@ void test_neighbor_query() {
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
   using Segment_2 = typename Traits::Segment_2;
+  using Segments  = std::vector<Segment_2>;
   using Indices   = std::vector<std::size_t>;
   using Saver     = SR::Tests::Saver<Traits>;
 
-  using Segments = std::vector<Segment_2>;
   using NQ = SR::Segments::Delaunay_neighbor_query_2<Traits, Segments>;
 
   Saver saver;
   const Segments segments = {
-    Segment_2(Point_2(0, 0), Point_2(4, 0)), // external square
+    Segment_2(Point_2(0, 0), Point_2(4, 0)), // the outer square
     Segment_2(Point_2(4, 0), Point_2(4, 4)),
     Segment_2(Point_2(4, 4), Point_2(0, 4)),
     Segment_2(Point_2(0, 4), Point_2(0, 0)),
 
-    Segment_2(Point_2(1, 1), Point_2(3, 1)), // internal square
+    Segment_2(Point_2(1, 1), Point_2(3, 1)), // the inner square
     Segment_2(Point_2(3, 1), Point_2(3, 3)),
     Segment_2(Point_2(3, 3), Point_2(1, 3)),
     Segment_2(Point_2(1, 3), Point_2(1, 1))
   };
-  // saver.export_polylines(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/nq_input");
+  // saver.export_eps_segments(segments,
+  //   "/Users/monet/Documents/gsoc/ggr/logs/nq_input", 100);
 
   std::vector<Indices> groups(2);
   groups[0] = {0, 1, 2, 3}; // external square
   groups[1] = {4, 5, 6, 7}; // internal square
 
   NQ neighbor_query(segments);
-  neighbor_query.create_unique_group();
 
   // Check unique group.
   Segments edges;
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph0");
+  // saver.export_eps_segments(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph0", 100);
   assert(edges.size() == 17);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -52,7 +51,7 @@ void test_neighbor_query() {
   // Check clear.
   neighbor_query.clear();
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph1");
+  // saver.export_eps_segments(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph1", 100);
   assert(edges.size() == 0);
   assert(neighbor_query.number_of_groups() == 0);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -61,7 +60,7 @@ void test_neighbor_query() {
   neighbor_query.clear();
   neighbor_query.add_group(groups[0]);
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph2");
+  // saver.export_eps_segments(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph2", 100);
   assert(edges.size() == 5);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -70,7 +69,7 @@ void test_neighbor_query() {
   neighbor_query.clear();
   neighbor_query.add_group(groups[1]);
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph3");
+  // saver.export_eps_segments(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph3", 100);
   assert(edges.size() == 5);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -80,7 +79,7 @@ void test_neighbor_query() {
   neighbor_query.add_group(groups[0]);
   neighbor_query.add_group(groups[1]);
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph4");
+  // saver.export_eps_segments(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph4", 100);
   assert(edges.size() == 10);
   assert(neighbor_query.number_of_groups() == 2);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
@@ -90,7 +89,7 @@ void test_neighbor_query() {
   const std::list<std::size_t> mini = {0, 1};
   neighbor_query.add_group(mini);
   neighbor_query.get_edges(edges);
-  // saver.export_polylines(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph5");
+  // saver.export_eps_segments(edges, "/Users/monet/Documents/gsoc/ggr/logs/nq_graph5", 100);
   assert(edges.size() == 1);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
