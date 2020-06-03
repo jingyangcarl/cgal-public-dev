@@ -30,11 +30,8 @@
 
 // TODO:
 // * Simplify this class if possible.
-// * Use squared distance here instead of distance.
-// * Improve find_central_segment().
-// * Improve orth segments, they are too far away.
-// * Improve intersection.
 // * Use affine transform to rotate all segments if possible.
+// * Further improve find_central_segment(). Why it does not change the overall results?
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -673,7 +670,7 @@ namespace internal {
             auto& wrapj = wraps[j];
             if (wrapj.is_used) break;
 
-            if (does_satisfy_ordinate_conditions(
+            if (does_satisfy_offset_conditions(
               max_offset_2, source, wrapj.segment)) {
 
               wrapj.is_used = true;
@@ -692,7 +689,7 @@ namespace internal {
             auto& wrapj = wraps[j];
             if (wrapj.is_used) break;
 
-            if (does_satisfy_ordinate_conditions(
+            if (does_satisfy_offset_conditions(
               max_offset_2, source, wrapj.segment)) {
 
               wrapj.is_used = true;
@@ -708,7 +705,7 @@ namespace internal {
       }
     }
 
-    bool does_satisfy_ordinate_conditions(
+    bool does_satisfy_offset_conditions(
       const FT max_offset_2,
       const Point_2& source,
       const Segment_2& segment) const {
@@ -774,32 +771,21 @@ namespace internal {
       CGAL_assertion(weights.size() == wraps.size());
     }
 
-    // Improve this function!
     Segment_2 find_central_segment(
       const std::vector<Segment_wrapper_2>& wraps) const {
-      return find_longest_segment(wraps);
 
-      Point_2 source, target;
-      FT x1 = FT(0), y1 = FT(0);
-      FT x2 = FT(0), y2 = FT(0);
-      for (const auto& wrap : wraps) {
-        x1 += wrap.segment.source().x();
-        x2 += wrap.segment.target().x();
+      const auto longest = find_longest_segment(wraps);
+      const auto b = compute_barycenter(wraps);
 
-        y1 += wrap.segment.source().y();
-        y2 += wrap.segment.target().y();
-      }
+      const Line_2 line = Line_2(longest.source(), longest.target());
+      const auto proj = line.projection(b);
 
-      CGAL_assertion(wraps.size() > 0);
-      const FT size = static_cast<FT>(wraps.size());
-      x1 /= size; y1 /= size;
-      x2 /= size; y2 /= size;
+      const Vector_2 dir = Vector_2(proj, b);
+      const auto source = longest.source() + dir;
+      const auto target = longest.target() + dir;
 
-      source = Point_2(x1, y1);
-      target = Point_2(x2, y2);
-
-      if (source == target)
-        return find_longest_segment(wraps);
+      CGAL_assertion(source != target);
+      if (source == target) return longest;
       return Segment_2(source, target);
     }
 
@@ -818,6 +804,23 @@ namespace internal {
         }
       }
       return wraps[longest].segment;
+    }
+
+    Point_2 compute_barycenter(
+      const std::vector<Segment_wrapper_2>& wraps) const {
+
+      FT x = FT(0), y = FT(0);
+      for (const auto& wrap : wraps) {
+        x += wrap.segment.source().x();
+        x += wrap.segment.target().x();
+        y += wrap.segment.source().y();
+        y += wrap.segment.target().y();
+      }
+
+      CGAL_assertion(wraps.size() > 0);
+      const FT size = static_cast<FT>(wraps.size() * 2);
+      x /= size; y /= size;
+      return Point_2(x, y);
     }
 
     Segment_2 compute_weighted_segment(
@@ -953,32 +956,6 @@ namespace internal {
         }
       }
       segment = Segment_2(source, target);
-    }
-
-    // Do we need this function at all? It does not seem to work well!
-    // At least when I call it from the connect_contour().
-    void make_segments_collinear(
-      const FT max_ordinate_2,
-      std::vector<Segment_wrapper_2>& wraps) const {
-
-      std::vector<std::size_t> seeds;
-      seeds.reserve(wraps.size());
-      for (std::size_t i = 0; i < wraps.size(); ++i)
-        seeds.push_back(i);
-
-      std::vector<Segment_wrappers_2> groups;
-      create_collinear_groups(max_ordinate_2, wraps, seeds, groups);
-
-      const std::size_t before = wraps.size();
-      std::vector<Line_2> lines;
-      create_lines(groups, lines);
-      move_segments_toward_lines(lines, wraps);
-      const std::size_t after = wraps.size();
-      CGAL_assertion(after >= before);
-
-      if (m_verbose)
-        std::cout <<
-          "* segments before/after = " << before << "/" << after << std::endl;
     }
 
     void intersect_segment(

@@ -27,6 +27,11 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Contour_base_2.h>
 
+// TODO:
+// * Improve orth segments, they are too far away.
+// * Improve make_segments_collinear().
+// * Move the middle orth functions to the base class.
+
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
@@ -220,21 +225,47 @@ namespace internal {
         const std::size_t groupi = wrapi.group;
         const std::size_t groupj = wrapj.group;
         if (groupi != groupj) {
-
-          const Line_2 line = Line_2(
-            wrapj.segment.source(), wrapj.segment.target());
-          const auto source = internal::middle_point_2(
-            wrapi.segment.source(), wrapi.segment.target());
-          const auto target = line.projection(source);
-          orth.segment = Segment_2(source, target);
-
           // Add an orthogonal segment that connects two collinear groups.
+          create_middle_orth(wrapi, wrapj, orth);
           orth.index = count; ++count;
           orth.is_used = false;
           updated.push_back(orth);
         }
       }
       wraps = updated;
+    }
+
+    void create_middle_orth(
+      const Segment_wrapper_2& wrapi,
+      const Segment_wrapper_2& wrapj,
+      Segment_wrapper_2& orth) const {
+
+      const Line_2 line = Line_2(
+        wrapj.segment.source(), wrapj.segment.target());
+      const auto source = internal::middle_point_2(
+        wrapi.segment.source(), wrapi.segment.target());
+      const auto target = line.projection(source);
+      orth.segment = Segment_2(source, target);
+    }
+
+    void create_middle_middle_orth(
+      const Segment_wrapper_2& wrapi,
+      const Segment_wrapper_2& wrapj,
+      Segment_wrapper_2& orth) const {
+
+      const Line_2 linei = Line_2(
+        wrapi.segment.source(), wrapi.segment.target());
+      const auto p = linei.projection(wrapj.segment.source());
+      const auto source = internal::middle_point_2(
+        p, wrapi.segment.target());
+
+      const Line_2 linej = Line_2(
+        wrapj.segment.source(), wrapj.segment.target());
+      const auto q = linej.projection(wrapi.segment.target());
+      const auto target = internal::middle_point_2(
+        q, wrapj.segment.source());
+
+      orth.segment = Segment_2(source, target);
     }
 
     bool connect_contour(
@@ -252,10 +283,10 @@ namespace internal {
         std::cout << "* number of clean segments = " <<
         wraps.size() << std::endl;
 
-      // Do we need it here?
-      // m_base.make_segments_collinear(m_max_offset_2, wraps);
-
       intersect_segments(wraps);
+      make_segments_collinear(wraps);
+      intersect_segments(wraps);
+
       return success;
     }
 
@@ -376,6 +407,36 @@ namespace internal {
 
         m_base.intersect_segment(sm, si, sp);
       }
+    }
+
+    void make_segments_collinear(
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      Segment_wrapper_2 wrap;
+      std::vector<Segment_wrapper_2> clean, group;
+
+      const std::size_t n = wraps.size();
+      const FT sq_max_length = m_max_offset_2 * m_max_offset_2;
+      for (std::size_t i = 0; i < n; ++i) {
+
+        group.push_back(wraps[i]);
+        const FT sq_length = wraps[(i + 1) % n].segment.squared_length();
+        if (sq_length < sq_max_length) {
+          ++i; continue;
+        } else {
+          m_base.parallel_segments_to_segment(group, wrap.segment);
+          clean.push_back(wrap); group.clear();
+        }
+      }
+
+      const std::size_t before = wraps.size();
+      wraps = clean;
+      const std::size_t after = wraps.size();
+      CGAL_assertion(after <= before);
+
+      if (verbose())
+        std::cout <<
+          "* segments before/after = " << before << "/" << after << std::endl;
     }
 
     template<typename OutputIterator>

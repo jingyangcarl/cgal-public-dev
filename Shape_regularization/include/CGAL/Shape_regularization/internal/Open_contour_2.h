@@ -27,6 +27,10 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Contour_base_2.h>
 
+// TODO:
+// * Improve orth segments, they are too far away.
+// * Improve make_segments_collinear().
+
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
@@ -259,10 +263,8 @@ namespace internal {
         std::cout << "* number of clean segments = " <<
         wraps.size() << std::endl;
 
-      // Do we need it here?
-      // m_base.make_segments_collinear(m_max_offset_2, wraps);
-
       intersect_segments(wraps);
+      make_segments_collinear(wraps);
       return success;
     }
 
@@ -382,6 +384,16 @@ namespace internal {
         const auto& sp = wraps[ip].segment;
         m_base.intersect_segment(sm, si, sp);
       }
+    }
+
+    void make_segments_collinear(
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+
+
+      // if (verbose())
+      //   std::cout <<
+      //     "* segments before/after = " << before << "/" << after << std::endl;
     }
 
     template<typename OutputIterator>
