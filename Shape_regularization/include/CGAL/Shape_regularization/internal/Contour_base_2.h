@@ -30,7 +30,7 @@
 
 // TODO:
 // * Simplify this class if possible.
-// * Further improve find_central_segment(). Why it does not change the overall results?
+// * Why find_central_segment() does not change the overall results?
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -69,22 +69,6 @@ namespace internal {
       return m_angle_threshold_2;
     }
 
-    void set_directions(
-      const std::vector<Direction_2>& directions,
-      std::vector<Segment_wrapper_2>& wraps,
-      std::vector<std::size_t>& assigned) const {
-
-      for (auto& wrap : wraps) {
-        for (std::size_t i = 0; i < directions.size(); ++i) {
-          if (does_satisify_angle_conditions(
-            FT(5), directions[i], wrap.direction)) {
-            assigned[wrap.index] = i;
-            wrap.is_used = true; break;
-          }
-        }
-      }
-    }
-
     template<
     typename Input_range,
     typename Point_map>
@@ -118,7 +102,6 @@ namespace internal {
       CGAL_assertion(wraps.size() == n);
     }
 
-    // Optimize this one. It doubles input points.
     template<
     typename Input_range,
     typename Point_map>
@@ -556,41 +539,12 @@ namespace internal {
         ref_bounds, ref_direction, seg_direction, segment);
     }
 
-    void rotate_contour(
-      const std::vector<FT_pair>& bounds,
-      const std::vector<Direction_2>& directions,
-      const std::vector<std::size_t>& assigned,
-      std::vector<Segment_wrapper_2>& wraps) const {
-
-      CGAL_assertion(assigned.size() == wraps.size());
-      CGAL_assertion(bounds.size() == directions.size());
-
-      for (std::size_t i = 0; i < wraps.size(); ++i) {
-        const std::size_t direction_index = assigned[i];
-        if (direction_index == std::size_t(-1))
-          continue;
-
-        CGAL_assertion(
-          direction_index >= 0 &&
-          direction_index < directions.size());
-
-        auto& wrap = wraps[i];
-        const auto& ref_direction = directions[direction_index];
-        const auto& ref_bounds = bounds[direction_index];
-
-        const auto& seg_direction = wrap.direction;
-        rotate_segment(
-          ref_bounds, ref_direction, seg_direction, wrap.segment);
-      }
-    }
-
     void rotate_segment(
       const FT_pair& bounds,
       const Direction_2& ref_direction,
       const Direction_2& seg_direction,
       Segment_2& segment) const {
 
-      // Can I use a segment here?
       const FT angle_deg = internal::compute_angle_2(
         ref_direction, seg_direction);
       const FT converted = CGAL::abs(convert_angle_2(angle_deg));
@@ -1087,6 +1041,55 @@ namespace internal {
       file << out.str() << std::endl; file.close();
       std::cout <<
         "* segments are saved in " << path << std::endl;
+    }
+
+    void set_directions(
+      const std::vector<Direction_2>& directions,
+      std::vector<Segment_wrapper_2>& wraps,
+      std::vector<std::size_t>& assigned) const {
+
+      for (auto& wrap : wraps) {
+        for (std::size_t i = 0; i < directions.size(); ++i) {
+          if (does_satisify_angle_conditions(
+            FT(5), directions[i], wrap.direction)) {
+            assigned[wrap.index] = i;
+            wrap.is_used = true; break;
+          }
+        }
+      }
+    }
+
+    void create_middle_orth(
+      const Segment_wrapper_2& wrapi,
+      const Segment_wrapper_2& wrapj,
+      Segment_wrapper_2& orth) const {
+
+      const Line_2 line = Line_2(
+        wrapj.segment.source(), wrapj.segment.target());
+      const auto source = internal::middle_point_2(
+        wrapi.segment.source(), wrapi.segment.target());
+      const auto target = line.projection(source);
+      orth.segment = Segment_2(source, target);
+    }
+
+    void create_middle_middle_orth(
+      const Segment_wrapper_2& wrapi,
+      const Segment_wrapper_2& wrapj,
+      Segment_wrapper_2& orth) const {
+
+      const Line_2 linei = Line_2(
+        wrapi.segment.source(), wrapi.segment.target());
+      const auto p = linei.projection(wrapj.segment.source());
+      const auto source = internal::middle_point_2(
+        p, wrapi.segment.target());
+
+      const Line_2 linej = Line_2(
+        wrapj.segment.source(), wrapj.segment.target());
+      const auto q = linej.projection(wrapi.segment.target());
+      const auto target = internal::middle_point_2(
+        q, wrapj.segment.source());
+
+      orth.segment = Segment_2(source, target);
     }
 
   private:

@@ -28,9 +28,8 @@
 #include <CGAL/Shape_regularization/internal/Contour_base_2.h>
 
 // TODO:
-// * Improve orth segments, they are too far away.
 // * Improve make_segments_collinear().
-// * Move the middle orth functions to the base class.
+// * Improve orth segments, they are too far away.
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -226,46 +225,13 @@ namespace internal {
         const std::size_t groupj = wrapj.group;
         if (groupi != groupj) {
           // Add an orthogonal segment that connects two collinear groups.
-          create_middle_orth(wrapi, wrapj, orth);
+          m_base.create_middle_orth(wrapi, wrapj, orth);
           orth.index = count; ++count;
           orth.is_used = false;
           updated.push_back(orth);
         }
       }
       wraps = updated;
-    }
-
-    void create_middle_orth(
-      const Segment_wrapper_2& wrapi,
-      const Segment_wrapper_2& wrapj,
-      Segment_wrapper_2& orth) const {
-
-      const Line_2 line = Line_2(
-        wrapj.segment.source(), wrapj.segment.target());
-      const auto source = internal::middle_point_2(
-        wrapi.segment.source(), wrapi.segment.target());
-      const auto target = line.projection(source);
-      orth.segment = Segment_2(source, target);
-    }
-
-    void create_middle_middle_orth(
-      const Segment_wrapper_2& wrapi,
-      const Segment_wrapper_2& wrapj,
-      Segment_wrapper_2& orth) const {
-
-      const Line_2 linei = Line_2(
-        wrapi.segment.source(), wrapi.segment.target());
-      const auto p = linei.projection(wrapj.segment.source());
-      const auto source = internal::middle_point_2(
-        p, wrapi.segment.target());
-
-      const Line_2 linej = Line_2(
-        wrapj.segment.source(), wrapj.segment.target());
-      const auto q = linej.projection(wrapi.segment.target());
-      const auto target = internal::middle_point_2(
-        q, wrapj.segment.source());
-
-      orth.segment = Segment_2(source, target);
     }
 
     bool connect_contour(

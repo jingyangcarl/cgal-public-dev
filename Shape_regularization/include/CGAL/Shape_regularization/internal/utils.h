@@ -272,7 +272,7 @@ namespace internal {
     const FT dot = CGAL::scalar_product(v1, v2);
     const FT angle_rad = static_cast<FT>(
       std::atan2(CGAL::to_double(det), CGAL::to_double(dot)));
-    const FT angle_deg = angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
+    const FT angle_deg = degrees_2(angle_rad);
     return angle_deg;
   }
 
@@ -285,6 +285,7 @@ namespace internal {
     return angle;
   }
 
+  // Add abs here!
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
   angle_2(

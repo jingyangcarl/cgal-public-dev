@@ -28,8 +28,8 @@
 #include <CGAL/Shape_regularization/internal/Contour_base_2.h>
 
 // TODO:
-// * Improve orth segments, they are too far away.
 // * Improve make_segments_collinear().
+// * Improve orth segments, they are too far away.
 
 namespace CGAL {
 namespace Shape_regularization {
