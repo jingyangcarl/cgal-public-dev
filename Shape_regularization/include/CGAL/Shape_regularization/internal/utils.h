@@ -43,23 +43,68 @@
 #include <CGAL/property_map.h>
 #include <CGAL/squared_distance_2.h>
 #include <CGAL/squared_distance_3.h>
-#include <CGAL/Aff_transformation_2.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
 
+  ////////////////////////
+  // General utilities. //
+  ////////////////////////
+
+  // Universal tolerance.
   template<typename FT>
   static FT tolerance() {
     return FT(1) / FT(100000);
   }
 
+  // Max value for the type FT. It cannot be removed since we cannot use std
+  // numeric limits for exact number types.
   template<typename FT>
   static FT max_value() {
     return FT(1000000000000);
   }
 
+  template<typename FT>
+  double radians_2(FT angle_deg) {
+    return CGAL::to_double(
+      angle_deg * static_cast<FT>(CGAL_PI) / FT(180));
+  }
+
+  template<typename FT>
+  FT degrees_2(FT angle_rad) {
+    return angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
+  }
+
+  //////////////////////////
+  // Mostly for segments. //
+  //////////////////////////
+
+  // Rotates a direction.
+  template<
+  typename FT,
+  typename Direction_2>
+  void rotate_direction_2(
+    const FT angle_deg,
+    Direction_2& direction) {
+
+    const double angle_rad = radians_2(angle_deg);
+    const FT sin_val = static_cast<FT>(std::sin(angle_rad));
+    const FT cos_val = static_cast<FT>(std::cos(angle_rad));
+
+    const FT dx = direction.dx();
+    const FT dy = direction.dy();
+
+    const FT x = dx * cos_val + dy * sin_val;
+    const FT y = dy * cos_val - dx * sin_val;
+    direction = Direction_2(x, y);
+  }
+
+  // Each barycenter represents a segment.
+  // Frame origin is the barycenter of the first segment in a group.
+  // Rotates a point such that all segments in a group of parallel segments
+  // are orthogonal to the Y axis.
   template<
   typename FT,
   typename Point_2>
@@ -68,21 +113,18 @@ namespace internal {
     const Point_2& frame_origin,
     const FT angle_deg) {
 
-    const double angle_rad =
-      CGAL_PI * CGAL::to_double(angle_deg) / 180.0;
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    using Direction_2 = typename Traits::Direction_2;
 
-    const FT cos_val = static_cast<FT>(std::cos(angle_rad));
-    const FT sin_val = static_cast<FT>(std::sin(angle_rad));
+    const FT dx = barycenter.x() - frame_origin.x();
+    const FT dy = barycenter.y() - frame_origin.y();
+    Direction_2 direction = Direction_2(dx, dy);
 
-    const FT diff_x = barycenter.x() - frame_origin.x();
-    const FT diff_y = barycenter.y() - frame_origin.y();
-
-    const FT x = diff_x * cos_val + diff_y * sin_val;
-    const FT y = diff_y * cos_val - diff_x * sin_val;
-
-    return Point_2(x, y);
+    rotate_direction_2(angle_deg, direction);
+    return Point_2(direction.dx(), direction.dy());
   }
 
+  // Computes the middle point between two input points.
   template<typename Point_2>
   Point_2 middle_point_2(
     const Point_2& source, const Point_2& target) {
@@ -96,9 +138,10 @@ namespace internal {
     return Point_2(x, y);
   }
 
+  // Computes the length of a segment.
   template<typename Segment_2>
   typename Kernel_traits<Segment_2>::Kernel::FT
-  length_2(const Segment_2& segment) {
+  segment_length_2(const Segment_2& segment) {
 
     using Traits = typename Kernel_traits<Segment_2>::Kernel;
     using FT = typename Traits::FT;
@@ -107,8 +150,9 @@ namespace internal {
       CGAL::sqrt(CGAL::to_double(segment.squared_length())));
   }
 
+  // Normalizes a vector.
   template<typename Vector_d>
-  void normalize(Vector_d& v) {
+  void normalize_vector(Vector_d& v) {
 
     using Traits = typename Kernel_traits<Vector_d>::Kernel;
     using FT = typename Traits::FT;
@@ -117,6 +161,36 @@ namespace internal {
       CGAL::sqrt(CGAL::to_double(v.squared_length())));
   }
 
+  // Computes the counterclockwise perpendicular vector from a direction.
+  template<typename Direction_2>
+  typename Kernel_traits<Direction_2>::Kernel::Vector_2
+  perpendicular_vector_2(Direction_2& direction) {
+
+    using Traits = typename Kernel_traits<Direction_2>::Kernel;
+    using Vector_2 = typename Traits::Vector_2;
+
+    return Vector_2(
+      -direction.dy(), direction.dx()); // counterclockwise
+  }
+
+  // Computes line coefficients a, b, and c.
+  template<
+  typename FT,
+  typename Point_2,
+  typename Direction_2>
+  void line_coefficients_2(
+    const Point_2& barycenter,
+    const Direction_2& direction, // should be normalized!
+    FT& a, FT& b, FT& c) {
+
+    const auto normal =
+      internal::perpendicular_vector_2(direction);
+    a = normal.x();
+    b = normal.y();
+    c = -a * barycenter.x() - b * barycenter.y();
+  }
+
+  // Computes direction from a vector.
   template<typename Vector_2>
   typename Kernel_traits<Vector_2>::Kernel::Direction_2
   direction_2(Vector_2& v) {
@@ -127,57 +201,59 @@ namespace internal {
 
     if (v.y() < FT(0) || (v.y() == FT(0) && v.x() < FT(0)))
       v = -v;
-    normalize(v);
+    normalize_vector(v);
     return Direction_2(v);
   }
 
-  template<typename Vector_2>
-  typename Kernel_traits<Vector_2>::Kernel::FT
-  orientation_2(const Vector_2& v) {
-
-    using Traits = typename Kernel_traits<Vector_2>::Kernel;
-    using FT = typename Traits::FT;
-
-    const FT angle_rad = static_cast<FT>(std::atan2(
-      CGAL::to_double(v.y()),
-      CGAL::to_double(v.x())));
-
-    FT angle_deg = angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
-    if (angle_deg < FT(0))
-      angle_deg += FT(180);
-    return angle_deg;
-  }
-
-  template<typename FT>
-  FT orientation_to_angle_2(
-    const FT oi, const FT oj) {
-
-    const FT diff_ij = oi - oj;
-    const double diff_90 = std::floor(CGAL::to_double(diff_ij / FT(90)));
-    const FT to_lower = FT(90) *  static_cast<FT>(diff_90)          - diff_ij;
-    const FT to_upper = FT(90) * (static_cast<FT>(diff_90) + FT(1)) - diff_ij;
-
-    const FT angle_deg =
-      CGAL::abs(to_lower) < CGAL::abs(to_upper) ? to_lower : to_upper;
-    return angle_deg;
-  }
-
-  // It is used only in the contour regularization.
+  // Computes orientation of a direction.
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
-  invar90_angle_2(
-    const Direction_2& di,
-    const Direction_2& dj) {
+  orientation_2(const Direction_2& direction) {
 
     using Traits = typename Kernel_traits<Direction_2>::Kernel;
     using FT = typename Traits::FT;
 
-    const auto vdi = di.to_vector();
-    const FT oi = orientation_2(vdi);
-    const auto vdj = dj.to_vector();
-    const FT oj = orientation_2(vdj);
+    const FT angle_rad = static_cast<FT>(std::atan2(
+      CGAL::to_double(direction.dy()),
+      CGAL::to_double(direction.dx())));
+    FT angle_deg = degrees_2(angle_rad);
+    if (angle_deg < FT(0)) angle_deg += FT(180);
+    return angle_deg;
+  }
 
-    return orientation_to_angle_2(oi, oj);
+  // Computes the 90 mod angle difference.
+  template<typename FT>
+  FT mod90_angle_difference_2(
+    const FT anglei, const FT anglej) {
+
+    const FT diff_ij = anglei - anglej;
+    const int diff_90 = static_cast<int>(
+      std::floor(CGAL::to_double(diff_ij / FT(90))));
+
+    const FT to_lower = FT(90) * (static_cast<FT>(diff_90) + FT(0)) - diff_ij;
+    const FT to_upper = FT(90) * (static_cast<FT>(diff_90) + FT(1)) - diff_ij;
+
+    const FT abs_lower = CGAL::abs(to_lower);
+    const FT abs_upper = CGAL::abs(to_upper);
+
+    const FT angle_deg = abs_lower < abs_upper ? to_lower : to_upper;
+    return angle_deg;
+  }
+
+  //////////////////////////
+  // Mostly for contours. //
+  //////////////////////////
+
+  // Computes the mod 90 angle between two directions.
+  template<typename Direction_2>
+  typename Kernel_traits<Direction_2>::Kernel::FT
+  mod90_angle_2(
+    const Direction_2& di,
+    const Direction_2& dj) {
+
+    const auto anglei = orientation_2(di);
+    const auto anglej = orientation_2(dj);
+    return mod90_angle_difference_2(anglei, anglej);
   }
 
   template<typename Direction_2>
@@ -238,7 +314,6 @@ namespace internal {
     return Point_2(x, y);
   }
 
-  // Redo this function via CGAL affine transform!
   template<
   typename FT,
   typename Point_2>
@@ -260,7 +335,6 @@ namespace internal {
 		p = Point_2(x, y);
 	}
 
-  // Redo this function via CGAL affine transform!
   template<
   typename FT,
   typename Segment_2>
@@ -284,41 +358,14 @@ namespace internal {
     segment = Segment_2(source, target);
   }
 
-  template<
-  typename FT,
-  typename Direction_2>
-  void rotate_direction_2(
-    const FT angle_deg,
-    Direction_2& direction) {
-
-    using Traits = typename Kernel_traits<Direction_2>::Kernel;
-    using Transformation_2 = typename Traits::Aff_transformation_2;
-
-    const FT angle_rad = angle_deg * static_cast<FT>(CGAL_PI) / FT(180);
-    const double sinval = std::sin(CGAL::to_double(angle_rad));
-    const double cosval = std::cos(CGAL::to_double(angle_rad));
-    const Transformation_2 rotate_2(CGAL::ROTATION, sinval, cosval);
-    direction = rotate_2(direction);
-  }
-
-  template<typename FT>
-  double radians_2(FT angle) {
-
-    if (angle < FT(0)) angle += FT(180);
-    else if (angle > FT(180)) angle -= FT(180);
-    const double angle_rad = CGAL::to_double(
-      angle * static_cast<FT>(CGAL_PI) / FT(180));
-    return angle_rad;
-  }
-
-  // Remove this function since max_angle cannot be equal 0!
+  // Remove this function since max_angle cannot be equal to 0!
   template<typename Segment_2>
   std::size_t key_angle_2(
     const double max_angle,
     const Segment_2& segment) {
 
     auto v = segment.to_vector();
-    const auto direction = internal::direction_2(v).to_vector();
+    const auto direction = internal::direction_2(v);
     const auto orientation = internal::orientation_2(direction);
     double fvalue = std::ceil(CGAL::to_double(orientation));
     if (fvalue >= 180.0) fvalue -= 180.0;
@@ -329,6 +376,10 @@ namespace internal {
       num * max_angle);
     return angle;
   }
+
+  //////////////////////
+  // For planes only. //
+  //////////////////////
 
   template<typename Traits>
   struct Plane_cluster {

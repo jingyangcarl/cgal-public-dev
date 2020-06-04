@@ -208,8 +208,11 @@ namespace Contours {
         max_value, m_input_range, m_point_map, wraps);
 
       directions.clear(); directions.reserve(direction_range.size());
-      for (const auto& direction : direction_range)
-        directions.push_back(direction);
+      for (const auto& direction : direction_range) {
+        auto v = direction.to_vector();
+        internal::normalize_vector(v);
+        directions.push_back(Direction_2(v.x(), v.y()));
+      }
       CGAL_assertion(directions.size() == direction_range.size());
 
       bounds.clear(); bounds.reserve(directions.size());
@@ -241,8 +244,11 @@ namespace Contours {
         max_value, m_input_range, m_point_map, wraps);
 
       directions.clear(); directions.reserve(direction_range.size());
-      for (const auto& direction : direction_range)
-        directions.push_back(direction);
+      for (const auto& direction : direction_range) {
+        auto v = direction.to_vector();
+        internal::normalize_vector(v);
+        directions.push_back(Direction_2(v.x(), v.y()));
+      }
       CGAL_assertion(directions.size() == direction_range.size());
 
       bounds.clear(); bounds.reserve(directions.size());

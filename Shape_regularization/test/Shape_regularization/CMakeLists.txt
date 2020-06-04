@@ -32,7 +32,8 @@ if(CGAL_FOUND)
     test_100_segments_offsets
     test_cgal_solver
     test_plane_regularization
-    test_closed_contour
+    test_closed_contour_1
+    test_closed_contour_2
     test_open_contour
     test_equal_contours
     test_longest_direction

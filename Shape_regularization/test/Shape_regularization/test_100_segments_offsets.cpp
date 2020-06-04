@@ -70,7 +70,7 @@ void test_100_segments_offsets() {
   //   "/Users/monet/Documents/gsoc/ggr/logs/100o_offsets", 100);
 
   assert(segments.size() == 100);
-  assert(collinear_groups.size() == 25); // should be the same as parallel_groups!
+  assert(collinear_groups.size() == parallel_groups.size());
   assert(num_segments_offsets == 100);
 }
 

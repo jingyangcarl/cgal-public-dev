@@ -167,7 +167,7 @@ namespace Segments {
     */
     void operator()(
       const std::size_t query_index,
-      std::vector<std::size_t>& neighbors) {
+      std::vector<std::size_t>& neighbors) const {
 
       neighbors.clear();
       CGAL_precondition(
@@ -209,7 +209,7 @@ namespace Segments {
     }
 
     void get_edges(
-      std::vector<Segment_2>& edges) {
+      std::vector<Segment_2>& edges) const {
 
       // Create a graph.
       std::set<Size_pair> graph;
@@ -300,7 +300,7 @@ namespace Segments {
 
     // ALL BELOW USED ONLY FOR TESTING!
     void build_graph_of_neighbors(
-      std::set<Size_pair>& graph) {
+      std::set<Size_pair>& graph) const {
 
       Size_pair pair;
       Indices neighbors;

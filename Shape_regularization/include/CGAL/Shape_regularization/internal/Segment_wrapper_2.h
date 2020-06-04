@@ -57,12 +57,11 @@ namespace internal {
 
     void set_length(
       const Segment_2& segment) {
-      length = internal::length_2(segment);
+      length = internal::segment_length_2(segment);
     }
 
     void set_barycenter(
       const Segment_2& segment) {
-
       barycenter = internal::middle_point_2(
         segment.source(), segment.target());
     }
@@ -75,29 +74,21 @@ namespace internal {
 
     void set_orientation(
       const Segment_2& segment) {
-
       set_direction(segment);
-      const auto dir = direction.to_vector();
-      orientation = internal::orientation_2(dir);
+      orientation = internal::orientation_2(direction);
     }
 
     void set_abc(
       const Segment_2& segment) {
-
       set_barycenter(segment);
       set_orientation(segment);
-
-      const double angle_rad = CGAL::to_double(
-        orientation * static_cast<FT>(CGAL_PI) / FT(180));
-      a = -static_cast<FT>(std::sin(angle_rad));
-      b = +static_cast<FT>(std::cos(angle_rad));
-      c = -a * barycenter.x() - b * barycenter.y();
+      internal::line_coefficients_2(
+        barycenter, direction, a, b, c);
     }
 
     void set_qp(
       const std::size_t index_,
       const Segment_2& segment) {
-
       set_index(index_);
       set_length(segment);
       set_abc(segment);
@@ -105,32 +96,8 @@ namespace internal {
 
     void set_ref_coords(
       const Point_2& frame_origin) {
-
       ref_coords = internal::transform_coordinates_2(
         barycenter, frame_origin, orientation);
-    }
-
-    Segment_2 orient() const {
-
-      FT x1, y1, x2, y2;
-      if (
-        CGAL::abs(direction.dx()) >
-        CGAL::abs(direction.dy())) {
-
-        x1 = barycenter.x() - length * direction.dx() / FT(2);
-        x2 = barycenter.x() + length * direction.dx() / FT(2);
-        y1 = (-c - a * x1) / b;
-        y2 = (-c - a * x2) / b;
-      }  else {
-        y1 = barycenter.y() - length * direction.dy() / FT(2);
-        y2 = barycenter.y() + length * direction.dy() / FT(2);
-        x1 = (-c - b * y1) / a;
-        x2 = (-c - b * y2) / a;
-      }
-      const Point_2 source = Point_2(x1, y1);
-      const Point_2 target = Point_2(x2, y2);
-
-      return Segment_2(source, target);
     }
   };
 

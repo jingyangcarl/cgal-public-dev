@@ -76,7 +76,9 @@ namespace Segments {
     typedef typename GeomTraits::FT FT;
 
     /// \cond SKIP_IN_MANUAL
+    using Point_2 = typename Traits::Point_2;
     using Vector_2 = typename Traits::Vector_2;
+    using Segment_2 = typename Traits::Segment_2;
     using Direction_2 = typename Traits::Direction_2;
 
     using Segment_wrapper_2 = internal::Segment_wrapper_2<Traits>;
@@ -197,7 +199,7 @@ namespace Segments {
     */
     FT target(
       const std::size_t i,
-      const std::size_t j) {
+      const std::size_t j) const {
 
       CGAL_precondition(i >= 0 && i < m_input_range.size());
       CGAL_precondition(j >= 0 && j < m_input_range.size());
@@ -208,17 +210,9 @@ namespace Segments {
       const auto& wrapj = m_wraps[j];
       CGAL_assertion(wrapj.is_used);
 
-      const FT diff_ij = wrapi.orientation - wrapj.orientation;
-      const int diff_90 = static_cast<int>(
-        std::floor(CGAL::to_double(diff_ij / FT(90))));
-
-      const FT to_lower = FT(90) * (static_cast<FT>(diff_90) + FT(0)) - diff_ij;
-      const FT to_upper = FT(90) * (static_cast<FT>(diff_90) + FT(1)) - diff_ij;
-
-      const FT abs_lower = CGAL::abs(to_lower);
-      const FT abs_upper = CGAL::abs(to_upper);
-      const FT angle = abs_lower < abs_upper ? to_lower : to_upper;
-      const FT target_value = angle;
+      const FT angle_deg = internal::mod90_angle_difference_2(
+        wrapi.orientation, wrapj.orientation);
+      const FT target_value = angle_deg;
       return target_value;
     }
 
@@ -247,27 +241,34 @@ namespace Segments {
 
       CGAL_precondition(solution.size() >= 1);
       m_num_modified_segments = 0;
-      for (auto& wrap : m_wraps) {
+      for (const auto& wrap : m_wraps) {
         if (!wrap.is_used) continue;
 
+        // Get angle.
         const std::size_t seg_index = wrap.index;
-        wrap.orientation += solution[seg_index];
-        const double angle_rad = internal::radians_2(wrap.orientation);
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < solution.size());
+        const FT difference = solution[seg_index];
+        FT angle_deg = wrap.orientation + difference;
+        if (angle_deg < FT(0)) angle_deg += FT(180);
+        else if (angle_deg > FT(180)) angle_deg -= FT(180);
+        const double angle_rad = internal::radians_2(angle_deg);
 
+        // Get update values.
         const FT x = static_cast<FT>(std::cos(angle_rad));
         const FT y = static_cast<FT>(std::sin(angle_rad));
         Vector_2 v = Vector_2(x, y);
-        internal::normalize(v);
+        const auto direction = internal::direction_2(v);
+        FT a, b, c;
+        internal::line_coefficients_2(
+          wrap.barycenter, direction, a, b, c);
 
-        wrap.direction = internal::direction_2(v);
-        const Direction_2 orth = Direction_2(
-          -wrap.direction.dy(), wrap.direction.dx());
-        wrap.a = orth.dx();
-        wrap.b = orth.dy();
-        wrap.c = -wrap.a * wrap.barycenter.x() - wrap.b * wrap.barycenter.y();
-
+        // Update segment.
+        Segment_2 modified;
+        orient_segment(
+          direction, a, b, c, wrap, modified);
         put(m_segment_map,
-          *(m_input_range.begin() + seg_index), wrap.orient());
+          *(m_input_range.begin() + seg_index), modified);
         ++m_num_modified_segments;
       }
     }
@@ -327,7 +328,7 @@ namespace Segments {
     /// @{
 
     /*!
-      \brief returns the number of modifed segments.
+      \brief returns the number of modified segments.
     */
     std::size_t number_of_modified_segments() const {
       return m_num_modified_segments;
@@ -409,6 +410,32 @@ namespace Segments {
 
         wrap.is_used = true;
       }
+    }
+
+    void orient_segment(
+      const Direction_2& direction,
+      const FT a, const FT b, const FT c,
+      const Segment_wrapper_2& wrap,
+      Segment_2& modified) const {
+
+      FT x1, y1, x2, y2;
+      if (
+        CGAL::abs(direction.dx()) >
+        CGAL::abs(direction.dy())) {
+
+        x1 = wrap.barycenter.x() - wrap.length * direction.dx() / FT(2);
+        x2 = wrap.barycenter.x() + wrap.length * direction.dx() / FT(2);
+        y1 = (-c - a * x1) / b;
+        y2 = (-c - a * x2) / b;
+      }  else {
+        y1 = wrap.barycenter.y() - wrap.length * direction.dy() / FT(2);
+        y2 = wrap.barycenter.y() + wrap.length * direction.dy() / FT(2);
+        x1 = (-c - b * y1) / a;
+        x2 = (-c - b * y2) / a;
+      }
+      const Point_2 source = Point_2(x1, y1);
+      const Point_2 target = Point_2(x2, y2);
+      modified = Segment_2(source, target);
     }
   };
 

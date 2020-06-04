@@ -30,7 +30,6 @@
 
 // TODO:
 // * Simplify this class if possible.
-// * Use affine transform to rotate all segments if possible.
 // * Further improve find_central_segment(). Why it does not change the overall results?
 
 namespace CGAL {
@@ -86,7 +85,6 @@ namespace internal {
       }
     }
 
-    // Optimize this one. It doubles input points.
     template<
     typename Input_range,
     typename Point_map>
@@ -520,7 +518,7 @@ namespace internal {
         const auto& dj = wrap.direction;
 
         // Is it necessary here? Can I use angle_2() instead?
-        const FT angle = internal::invar90_angle_2(di, dj);
+        const FT angle = internal::mod90_angle_2(di, dj);
 
         angles[direction_index] += angle;
         counts[direction_index] += FT(1);

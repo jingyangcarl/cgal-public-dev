@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_closed_contour() {
+void test_closed_contour_1() {
 
   using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
@@ -47,9 +47,9 @@ void test_closed_contour() {
 }
 
 int main() {
-  test_closed_contour< CGAL::Simple_cartesian<double> >();
-  test_closed_contour< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_closed_contour< CGAL::Exact_predicates_exact_constructions_kernel >();
-  std::cout << "test_closed_contour: SUCCESS" << std::endl;
+  test_closed_contour_1< CGAL::Simple_cartesian<double> >();
+  test_closed_contour_1< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_closed_contour_1< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_closed_contour_1: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

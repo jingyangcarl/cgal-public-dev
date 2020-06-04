@@ -200,7 +200,7 @@ namespace Segments {
     */
     FT target(
       const std::size_t i,
-      const std::size_t j) {
+      const std::size_t j) const {
 
       CGAL_precondition(i >= 0 && i < m_input_range.size());
       CGAL_precondition(j >= 0 && j < m_input_range.size());
@@ -211,8 +211,9 @@ namespace Segments {
       const auto& wrapj = m_wraps[j];
       CGAL_assertion(wrapj.is_used);
 
-      const FT target_value =
-        wrapi.ref_coords.y() - wrapj.ref_coords.y();
+      const FT ydifference =
+        wrapj.ref_coords.y() - wrapi.ref_coords.y();
+      const FT target_value = ydifference;
       return target_value;
     }
 
@@ -241,34 +242,28 @@ namespace Segments {
 
       CGAL_precondition(solution.size() >= 1);
       m_num_modified_segments = 0;
-      for (auto& wrap : m_wraps) {
+      for (const auto& wrap : m_wraps) {
         if (!wrap.is_used) continue;
 
+        // Get segment.
         const std::size_t seg_index = wrap.index;
-        const FT difference = -solution[seg_index];
-
-        const auto& direction = wrap.direction;
-        const Vector_2 final_normal = Vector_2(
-          -direction.dy(), direction.dx());
-
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < m_input_range.size());
         const auto& segment = get(m_segment_map,
           *(m_input_range.begin() + seg_index));
         const auto& source = segment.source();
         const auto& target = segment.target();
 
-        const Point_2 new_source = Point_2(
-          source.x() + difference * final_normal.x(),
-          source.y() + difference * final_normal.y());
-        const Point_2 new_target = Point_2(
-          target.x() + difference * final_normal.x(),
-          target.y() + difference * final_normal.y());
+        // Get update values.
+        CGAL_assertion(
+          seg_index >= 0 && seg_index < solution.size());
+        const FT difference = solution[seg_index];
+        const auto normal =
+          internal::perpendicular_vector_2(wrap.direction);
 
-        const FT bx = (new_source.x() + new_target.x()) / FT(2);
-        const FT by = (new_source.y() + new_target.y()) / FT(2);
-        wrap.barycenter = Point_2(bx, by);
-        wrap.c = -wrap.a * bx - wrap.b * by;
-
-        const Segment_2 modified = Segment_2(new_source, new_target);
+        // Update segment.
+        Segment_2 modified;
+        align_segment(source, target, difference, normal, modified);
         put(m_segment_map,
           *(m_input_range.begin() + seg_index), modified);
         ++m_num_modified_segments;
@@ -308,7 +303,7 @@ namespace Segments {
     /// @{
 
     /*!
-      \brief returns the number of modifed segments.
+      \brief returns the number of modified segments.
     */
     std::size_t number_of_modified_segments() const {
       return m_num_modified_segments;
@@ -400,6 +395,22 @@ namespace Segments {
         if (i == 0) frame_origin = wrap.barycenter;
         wrap.set_ref_coords(frame_origin);
       }
+    }
+
+    void align_segment(
+      const Point_2& source,
+      const Point_2& target,
+      const FT difference,
+      const Vector_2& normal,
+      Segment_2& modified) const {
+
+      const Point_2 new_source = Point_2(
+        source.x() + difference * normal.x(),
+        source.y() + difference * normal.y());
+      const Point_2 new_target = Point_2(
+        target.x() + difference * normal.x(),
+        target.y() + difference * normal.y());
+      modified = Segment_2(new_source, new_target);
     }
   };
 
