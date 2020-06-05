@@ -26,7 +26,6 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Contour_base_2.h>
-#include <CGAL/Shape_regularization/internal/Unique_segments_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
