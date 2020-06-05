@@ -62,9 +62,11 @@ namespace internal {
       CGAL_precondition(input_range.size() > 0);
       const FT max_angle = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_angle), FT(5));
+      const bool preserve_order = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::preserve_order), false);
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
       m_max_angle = max_angle;
-      make_parallel_groups();
+      make_parallel_groups(preserve_order);
     }
 
     template<typename OutputIterator>
@@ -83,7 +85,8 @@ namespace internal {
     FT m_max_angle;
     std::vector<Indices> m_parallel_groups;
 
-    void make_parallel_groups() {
+    void make_parallel_groups(
+      const bool preserve_order) {
 
       m_parallel_groups.clear();
       std::vector<bool> states(m_input_range.size(), false);
@@ -98,12 +101,13 @@ namespace internal {
         parallel_group.clear();
         parallel_group.push_back(i);
 
-        traverse_group(i, si, states, parallel_group);
+        traverse_group(preserve_order, i, si, states, parallel_group);
         m_parallel_groups.push_back(parallel_group);
       }
     }
 
     void traverse_group(
+      const bool preserve_order,
       const std::size_t i,
       const Segment_2& si,
       std::vector<bool>& states,
@@ -119,7 +123,7 @@ namespace internal {
 
           states[j] = true;
           parallel_group.push_back(j);
-        }
+        } else if (preserve_order) return;
       }
     }
   };

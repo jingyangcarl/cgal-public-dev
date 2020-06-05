@@ -68,9 +68,11 @@ namespace internal {
       CGAL_precondition(input_range.size() > 0);
       const FT max_offset = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_offset), FT(1) / FT(5));
+      const bool preserve_order = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::preserve_order), false);
       CGAL_precondition(max_offset >= FT(0));
       m_max_offset = max_offset;
-      make_collinear_groups();
+      make_collinear_groups(preserve_order);
     }
 
     template<typename OutputIterator>
@@ -90,7 +92,8 @@ namespace internal {
     FT m_max_offset;
     std::vector<Indices> m_collinear_groups;
 
-    void make_collinear_groups() {
+    void make_collinear_groups(
+      const bool preserve_order) {
 
       std::vector<Indices> parallel_groups;
       m_grouping.groups(
@@ -107,6 +110,7 @@ namespace internal {
         states.clear();
         states.resize(parallel_group.size(), false);
         handle_parallel_group(
+          preserve_order,
           parallel_group, sq_max_dist,
           states, collinear_group);
       }
@@ -115,6 +119,7 @@ namespace internal {
     }
 
     void handle_parallel_group(
+      const bool preserve_order,
       const Indices& parallel_group,
       const FT sq_max_dist,
       std::vector<bool>& states,
@@ -133,13 +138,14 @@ namespace internal {
 
         const Line_2 line = Line_2(si.source(), si.target());
         traverse_group(
-          i, line, parallel_group, sq_max_dist,
+          preserve_order, i, line, parallel_group, sq_max_dist,
           states, collinear_group);
         m_collinear_groups.push_back(collinear_group);
       }
     }
 
     void traverse_group(
+      const bool preserve_order,
       const std::size_t i,
       const Line_2& line,
       const Indices& parallel_group,
@@ -162,7 +168,7 @@ namespace internal {
         if (sq_dist <= sq_max_dist) {
           states[j] = true;
           collinear_group.push_back(sj_index);
-        }
+        } else if (preserve_order) return;
       }
     }
   };

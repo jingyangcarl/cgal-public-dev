@@ -31,6 +31,7 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
 #include <CGAL/Shape_regularization/internal/Collinear_groups_2.h>
+#include <CGAL/Shape_regularization/internal/Unique_segments_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -86,6 +87,7 @@ namespace Segments {
 
     using Segment_wrapper_2 = internal::Segment_wrapper_2<Traits>;
     using Collinear_groups_2 = internal::Collinear_groups_2<Traits, Input_range, Segment_map>;
+    using Unique_segments_2 = internal::Unique_segments_2<Traits, Input_range, Segment_map>;
     using Indices = std::vector<std::size_t>;
     /// \endcond
 
@@ -307,6 +309,30 @@ namespace Segments {
     */
     std::size_t number_of_modified_segments() const {
       return m_num_modified_segments;
+    }
+
+    /*!
+      \brief returns segments, which best-fit collinear groups.
+
+      This function first calls `CGAL::Shape_regularization::Segments::collinear_groups()`
+      and then substitutes all segments from each collinear group by an average segment.
+      The number of returned segments is the number of detected collinear groups.
+
+      \tparam OutputIterator
+      must be a model of `OutputIterator`
+
+      \param segments
+      an instance of `OutputIterator`,
+      whose value type is `GeomTraits::Segment_2`
+    */
+    template<typename OutputIterator>
+    OutputIterator unique_segments(OutputIterator segments) const {
+
+      const Unique_segments_2 unique(
+        m_input_range,
+        CGAL::parameters::max_offset(m_max_offset),
+        m_segment_map, Traits());
+      return unique.segments(segments);
     }
 
     /// @}

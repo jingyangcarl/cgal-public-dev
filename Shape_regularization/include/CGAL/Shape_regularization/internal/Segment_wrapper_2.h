@@ -101,6 +101,23 @@ namespace internal {
     }
   };
 
+  template<typename GeomTraits>
+  class Wrap_segment_map {
+
+    using Self = Wrap_segment_map<GeomTraits>;
+    using key_type   = Segment_wrapper_2<GeomTraits>;
+    using value_type = typename GeomTraits::Segment_2;
+    using reference  = const value_type&;
+    using category   = boost::readable_property_map_tag;
+
+    reference operator[](const key_type& key) const {
+      return key.segment;
+    }
+    friend reference get(const Self& self, const key_type& key) {
+      return self[key];
+    }
+  };
+
 } // namespace internal
 } // namespace Shape_regularization
 } // namespace CGAL

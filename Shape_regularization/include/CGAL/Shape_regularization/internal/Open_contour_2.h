@@ -26,10 +26,7 @@
 
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/Contour_base_2.h>
-
-// TODO:
-// * Improve make_segments_collinear().
-// * Improve orth segments, they are too far away.
+#include <CGAL/Shape_regularization/internal/Unique_segments_2.h>
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -45,19 +42,9 @@ namespace internal {
     using Traits = GeomTraits;
 
     using FT = typename Traits::FT;
-    using Point_2 = typename Traits::Point_2;
-    using Vector_2 = typename Traits::Vector_2;
-    using Direction_2 = typename Traits::Direction_2;
     using Segment_2 = typename Traits::Segment_2;
-    using Line_2 = typename Traits::Line_2;
-
     using Base = internal::Contour_base_2<Traits>;
-
-    using FT_pair = std::pair<FT, FT>;
-    using Segments_2 = std::vector<Segment_2>;
-
     using Segment_wrapper_2 = typename Base::Segment_wrapper_2;
-    using Segment_wrappers_2 = typename Base::Segment_wrappers_2;
 
     Open_contour_2(
       const Contour_directions& estimator,
@@ -90,7 +77,7 @@ namespace internal {
         m_base.export_polylines(
           m_wraps, "/Users/monet/Documents/gsoc/ggr/logs/rotated");
 
-      bool success = optimize_contour(m_max_offset_2, m_wraps);
+      bool success = optimize_contour(m_wraps);
       if (!success) return contour;
       if (verbose())
         m_base.export_polylines(
@@ -126,227 +113,76 @@ namespace internal {
     }
 
     bool optimize_contour(
-      const FT max_offset_2,
       std::vector<Segment_wrapper_2>& wraps) const {
 
       // Clean.
       m_base.remove_zero_length_segments(wraps);
-      if (wraps.size() < 1) return false;
+      CGAL_assertion(wraps.size() >= 1);
+      if (wraps.size() < 1) return false; // should be at least a segment
 
-      // Create groups of collinear segments.
-      std::vector<Segment_wrappers_2> groups;
-      create_consecutive_groups(wraps, groups);
+      // Merge parallel/collinear segments.
+      std::vector<Segment_2> segments;
+      m_base.create_unique_segments(m_max_offset_2, wraps, segments);
       if (verbose())
         std::cout <<
-          "* number of consecutive groups = " << groups.size() << std::endl;
+          "* number of segments (merging) = " << segments.size() << std::endl;
+      if (wraps.size() < 1) return false;
 
-      // Optimize all groups with at least two collinear segments.
-      std::size_t count = 0;
-      for (auto& group : groups) {
-        if (group.size() > 1) {
-          m_base.optimize_group(max_offset_2, group);
-          update_group(group);
-          ++count;
-        }
-      }
+      // Add orthogonal segments.
+      create_orthogonal_segments(segments, wraps);
       if (verbose())
         std::cout <<
-          "* number of optimized groups = " << count << std::endl;
-
-      // Update segments.
-      m_base.create_segments_from_groups(groups, wraps);
+          "* number of segments (orthogonal) = " << wraps.size() << std::endl;
       if (wraps.size() < 1) return false;
+
       return true;
     }
 
-    void create_consecutive_groups(
-      std::vector<Segment_wrapper_2>& wraps,
-      std::vector<Segment_wrappers_2>& groups) const {
-
-      groups.clear();
-      for (auto& wrap : wraps)
-        wrap.is_used = false;
-      std::vector<Segment_wrapper_2> group;
-
-      const std::size_t n = wraps.size();
-      for (std::size_t i = 0; i < n - 1; ++i) {
-        auto& wrapi = wraps[i];
-        if (wrapi.is_used) continue;
-
-        group.clear();
-        wrapi.is_used = true;
-        group.push_back(wrapi);
-
-        const std::size_t ip = i + 1;
-        for (std::size_t j = ip; j < n; ++j) {
-          auto& wrapj = wraps[j];
-          const FT angle_2 = internal::angle_2(
-              wrapi.segment, wrapj.segment);
-
-          if (angle_2 <= m_base.get_angle_threshold_2()) {
-            wrapj.is_used = true;
-            group.push_back(wrapj);
-          } else break;
-        }
-        groups.push_back(group);
-      }
-
-      // Handle the last segment in case it is not included in any group.
-      auto& last = wraps[n - 1];
-      if (!last.is_used) {
-        last.is_used = true;
-
-        group.clear();
-        group.push_back(last);
-        groups.push_back(group);
-      }
-    }
-
-    void update_group(
+    void create_orthogonal_segments(
+      const std::vector<Segment_2>& segments,
       std::vector<Segment_wrapper_2>& wraps) const {
 
-      Segment_wrapper_2 orth;
-      std::vector<Segment_wrapper_2> updated;
+      Segment_wrapper_2 wrap;
+      const std::size_t n = segments.size();
+
+      wraps.clear();
+      wraps.reserve(n);
 
       std::size_t count = 0;
-      const std::size_t n = wraps.size();
       for (std::size_t i = 0; i < n; ++i) {
-        auto& wrap = wraps[i];
+        const auto& segmenti = segments[i];
 
-        // Add a collinear segment.
         wrap.index = count; ++count;
-        wrap.is_used = false;
-        updated.push_back(wrap);
+        wrap.segment = segmenti;
+        wraps.push_back(wrap);
 
-        // Handle last segment.
-        std::size_t j = std::size_t(-1);
-        if (i < n - 1) j = i + 1;
-        if (j == std::size_t(-1)) break;
+        const std::size_t j = (i + 1) % n;
+        if (j == 0) break;
+        const auto& segmentj = segments[j];
 
-        // All intermediate segments.
-        const auto& wrapi = wraps[i];
-        const auto& wrapj = wraps[j];
-
-        const std::size_t groupi = wrapi.group;
-        const std::size_t groupj = wrapj.group;
-        if (groupi != groupj) {
-
-          const Line_2 line = Line_2(
-            wrapj.segment.source(), wrapj.segment.target());
-          const auto source = internal::middle_point_2(
-            wrapi.segment.source(), wrapi.segment.target());
-          const auto target = line.projection(source);
-          orth.segment = Segment_2(source, target);
-
-          // Add an orthogonal segment that connects two collinear groups.
-          orth.index = count; ++count;
-          orth.is_used = false;
-          updated.push_back(orth);
+        if (m_base.is_parallel_segment(segmenti, segmentj)) {
+          wrap.index = count; ++count;
+          m_base.create_average_orth(
+            segmenti, segmentj, wrap.segment);
+          wraps.push_back(wrap);
         }
       }
-      wraps = updated;
+      CGAL_assertion(wraps.size() >= segments.size());
     }
 
     bool connect_contour(
       std::vector<Segment_wrapper_2>& wraps) const {
 
-      if (wraps.size() < 1)
-        return false;
-
-      bool success = false;
-      success = clean_segments(wraps);
-      if (!success) return false;
-
-      if (verbose())
-        std::cout << "* number of clean segments = " <<
-        wraps.size() << std::endl;
+      CGAL_assertion(wraps.size() >= 1);
+      if (wraps.size() < 1) return false;
 
       intersect_segments(wraps);
-      make_segments_collinear(wraps);
-      return success;
-    }
-
-    bool clean_segments(
-      std::vector<Segment_wrapper_2>& wraps) const {
-
-      // Clean.
-      m_base.remove_zero_length_segments(wraps);
       if (wraps.size() < 1) return false;
 
-      // Filter out wrong segments.
-      filter_out_wrong_segments(wraps);
-      if (wraps.size() < 1) return false;
-      return true;
-    }
+      // make_segments_collinear(wraps);
+      // intersect_segments(wraps);
+      // if (wraps.size() < 1) return false;
 
-    void filter_out_wrong_segments(
-      std::vector<Segment_wrapper_2>& wraps) const {
-
-      std::vector<Segment_wrapper_2> filtered;
-      const std::size_t n = wraps.size();
-      const std::size_t start = 0;
-
-      std::size_t count = 0;
-      std::size_t i = start;
-      std::vector<Segment_wrapper_2> parallel;
-      do {
-
-        const bool success = get_parallel_segments(
-          wraps, parallel, i);
-        CGAL_assertion(parallel.size() != 0);
-        if (!success) return;
-
-        Segment_2 segment;
-        m_base.parallel_segments_to_segment(parallel, segment);
-        if (parallel.size() > 1) {
-
-          Segment_wrapper_2 wrap;
-          wrap.segment = segment;
-          wrap.index = count; ++count;
-          filtered.push_back(wrap);
-
-        } else if (parallel.size() == 1) {
-
-          auto& wrap = parallel[0];
-          wrap.index = count; ++count;
-          filtered.push_back(wrap);
-        }
-
-      } while (i < n && count <= n);
-      if (count > n) return;
-      wraps = filtered;
-    }
-
-    bool get_parallel_segments(
-      const std::vector<Segment_wrapper_2>& wraps,
-      std::vector<Segment_wrapper_2>& parallel,
-      std::size_t& seed) const {
-
-      parallel.clear();
-      const std::size_t n = wraps.size();
-
-      std::size_t i = seed;
-      bool next_is_parallel = false;
-      std::size_t count = 0;
-      do {
-
-        std::size_t ip = std::size_t(-1);
-        if (i < n - 1) ip = i + 1;
-        parallel.push_back(wraps[i]);
-
-        if (ip == std::size_t(-1)) {
-          seed = n; return true;
-        }
-
-        const auto& si = wraps[i].segment;
-        const auto& sp = wraps[ip].segment;
-        next_is_parallel = m_base.is_parallel_segment(si, sp);
-        i = ip;
-
-        ++count;
-      } while (next_is_parallel && count < n);
-      if (count >= n) return false;
-      seed = i;
       return true;
     }
 
@@ -384,14 +220,37 @@ namespace internal {
       }
     }
 
+    // Do we need this function?
     void make_segments_collinear(
       std::vector<Segment_wrapper_2>& wraps) const {
 
+      Segment_wrapper_2 wrap;
+      std::vector<Segment_wrapper_2> clean, group;
 
+      const std::size_t n = wraps.size();
+      const FT sq_max_length = m_max_offset_2 * m_max_offset_2;
+      for (std::size_t i = 0; i < n; ++i) {
+        group.push_back(wraps[i]);
 
-      // if (verbose())
-      //   std::cout <<
-      //     "* segments before/after = " << before << "/" << after << std::endl;
+        const std::size_t j = (i + 1) % n;
+        if (j == 0) break;
+        const FT sq_length = wraps[j].segment.squared_length();
+        if (sq_length < sq_max_length) {
+          ++i; continue;
+        } else {
+          m_base.parallel_segments_to_segment(group, wrap.segment);
+          clean.push_back(wrap); group.clear();
+        }
+      }
+
+      const std::size_t before = wraps.size();
+      wraps = clean;
+      const std::size_t after = wraps.size();
+      CGAL_assertion(after <= before);
+
+      if (verbose())
+        std::cout <<
+          "* segments before/after = " << before << "/" << after << std::endl;
     }
 
     template<typename OutputIterator>

@@ -27,10 +27,10 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
 #include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
+#include <CGAL/Shape_regularization/internal/Unique_segments_2.h>
 
 // TODO:
 // * Simplify this class if possible.
-// * Why find_central_segment() does not change the overall results?
 
 namespace CGAL {
 namespace Shape_regularization {
@@ -183,8 +183,7 @@ namespace internal {
 
         wrap.index = i;
         wrap.segment = Segment_2(source, target);
-        auto v = wrap.segment.to_vector();
-        wrap.direction = internal::direction_2(v);
+        wrap.set_direction(wrap.segment);
         wraps.push_back(wrap);
       }
       CGAL_assertion(wraps.size() == n);
@@ -213,8 +212,7 @@ namespace internal {
 
         wrap.index = i;
         wrap.segment = Segment_2(source, target);
-        auto v = wrap.segment.to_vector();
-        wrap.direction = internal::direction_2(v);
+        wrap.set_direction(wrap.segment);
         wraps.push_back(wrap);
       }
       CGAL_assertion(wraps.size() == n - 1);
@@ -485,278 +483,27 @@ namespace internal {
       wraps = clean;
     }
 
-    void optimize_group(
+    void create_unique_segments(
       const FT max_offset_2,
-      std::vector<Segment_wrapper_2>& wraps) const {
-
-      std::vector<std::size_t> longest_to_short;
-      sort_segments_by_length(wraps, longest_to_short);
-
-      // If max_offset_2 = 0 then each segment is in its own group!
-      std::vector<Segment_wrappers_2> groups;
-      create_collinear_groups(
-        max_offset_2, wraps, longest_to_short, groups);
-
-      // if (m_verbose)
-      //   std::cout <<
-      //     "* number of collinear groups = " << groups.size() << std::endl;
-
-      std::vector<Line_2> lines;
-      create_lines(groups, lines);
-      move_segments_toward_lines(lines, wraps);
-    }
-
-    void create_collinear_groups(
-      const FT max_offset_2,
-      std::vector<Segment_wrapper_2>& wraps,
-      const std::vector<std::size_t>& seeds,
-      std::vector<Segment_wrappers_2>& groups) const {
-
-      groups.clear();
-      for (auto& wrap : wraps)
-        wrap.is_used = false;
-      std::vector<Segment_wrapper_2> group;
-
-      std::size_t group_index = 0;
-      const int n = static_cast<int>(wraps.size());
-      for (const std::size_t seed : seeds) {
-        const int i = static_cast<int>(seed);
-
-        auto& wrapi = wraps[i];
-        if (wrapi.is_used) continue;
-
-        group.clear();
-        wrapi.is_used = true;
-        wrapi.group = group_index;
-        group.push_back(wrapi);
-
-        const auto source = internal::middle_point_2(
-          wrapi.segment.source(), wrapi.segment.target());
-
-        // Traverse forward.
-        const int ip = i + 1;
-        if (i < n - 1 && !wraps[ip].is_used) {
-          int j = ip;
-          while (j < n) {
-            auto& wrapj = wraps[j];
-            if (wrapj.is_used) break;
-
-            if (does_satisfy_offset_conditions(
-              max_offset_2, source, wrapj.segment)) {
-
-              wrapj.is_used = true;
-              wrapj.group = group_index;
-              group.push_back(wrapj);
-            } else break;
-            ++j;
-          }
-        }
-
-        // Traverse backward.
-        const int im = i - 1;
-        if (i > 0 && !wraps[im].is_used) {
-          int j = im;
-          while (j >= 0) {
-            auto& wrapj = wraps[j];
-            if (wrapj.is_used) break;
-
-            if (does_satisfy_offset_conditions(
-              max_offset_2, source, wrapj.segment)) {
-
-              wrapj.is_used = true;
-              wrapj.group = group_index;
-              group.push_back(wrapj);
-            } else break;
-            --j;
-          }
-        }
-
-        groups.push_back(group);
-        ++group_index;
-      }
-    }
-
-    bool does_satisfy_offset_conditions(
-      const FT max_offset_2,
-      const Point_2& source,
-      const Segment_2& segment) const {
-
-      CGAL_assertion(max_offset_2 >= FT(0));
-      const Line_2 line = Line_2(
-        segment.source(), segment.target());
-      const auto target = line.projection(source);
-      const Segment_2 proj = Segment_2(source, target);
-
-      const FT threshold = max_offset_2;
-      const FT squared_threshold = threshold * threshold;
-      return proj.squared_length() <= squared_threshold;
-    }
-
-    void create_lines(
-      const std::vector<Segment_wrappers_2>& groups,
-      std::vector<Line_2>& lines) const {
-
-      CGAL_assertion(groups.size() > 0);
-      lines.clear();
-      lines.reserve(groups.size());
-
-      for (const auto& group : groups) {
-        const Segment_2 segment = find_weighted_segment(group);
-        const Line_2 line = Line_2(segment.source(), segment.target());
-        lines.push_back(line);
-      }
-    }
-
-    Segment_2 find_weighted_segment(
-      const std::vector<Segment_wrapper_2>& wraps) const {
-
-      std::vector<FT> weights;
-        compute_distance_weights(wraps, weights);
-      const Segment_2 ref_segment =
-        find_central_segment(wraps);
-      const Segment_2 weighted =
-        compute_weighted_segment(wraps, weights, ref_segment);
-      if (weighted.source() == weighted.target())
-        return ref_segment;
-      return weighted;
-    }
-
-    void compute_distance_weights(
       const std::vector<Segment_wrapper_2>& wraps,
-      std::vector<FT>& weights) const {
+      std::vector<Segment_2>& segments) const {
 
-      CGAL_assertion(wraps.size() > 0);
-      weights.clear();
-      weights.reserve(wraps.size());
+      using SegmentRange = std::vector<Segment_wrapper_2>;
+      using SegmentMap = Wrap_segment_map<Traits>;
+      using Unique_segments_2 = internal::Unique_segments_2<
+        Traits, SegmentRange, SegmentMap>;
 
-      FT sum_distance = FT(0);
-      for (const auto& wrap : wraps) {
-        const FT sq_distance = wrap.segment.squared_length();
-        sum_distance += sq_distance;
-        weights.push_back(sq_distance);
-      }
+      const SegmentMap segment_map;
+      const Unique_segments_2 unique(
+        wraps, CGAL::parameters::
+        max_angle(get_angle_threshold_2()).
+        max_offset(max_offset_2).
+        preserve_order(true),
+        segment_map, Traits());
 
-      CGAL_assertion(sum_distance > FT(0));
-      for (auto& weight : weights)
-        weight /= sum_distance;
-      CGAL_assertion(weights.size() == wraps.size());
-    }
-
-    Segment_2 find_central_segment(
-      const std::vector<Segment_wrapper_2>& wraps) const {
-
-      const auto longest = find_longest_segment(wraps);
-      const auto b = compute_barycenter(wraps);
-
-      const Line_2 line = Line_2(longest.source(), longest.target());
-      const auto proj = line.projection(b);
-
-      const Vector_2 dir = Vector_2(proj, b);
-      const auto source = longest.source() + dir;
-      const auto target = longest.target() + dir;
-
-      CGAL_assertion(source != target);
-      if (source == target) return longest;
-      return Segment_2(source, target);
-    }
-
-    Segment_2 find_longest_segment(
-      const std::vector<Segment_wrapper_2>& wraps) const {
-
-      FT max_length = -FT(1);
-      std::size_t longest = std::size_t(-1);
-
-      for (std::size_t i = 0; i < wraps.size(); ++i) {
-        const auto& wrap = wraps[i];
-        const FT length = wrap.segment.squared_length();
-        if (length > max_length) {
-          longest = i;
-          max_length = length;
-        }
-      }
-      return wraps[longest].segment;
-    }
-
-    Point_2 compute_barycenter(
-      const std::vector<Segment_wrapper_2>& wraps) const {
-
-      FT x = FT(0), y = FT(0);
-      for (const auto& wrap : wraps) {
-        x += wrap.segment.source().x();
-        x += wrap.segment.target().x();
-        y += wrap.segment.source().y();
-        y += wrap.segment.target().y();
-      }
-
-      CGAL_assertion(wraps.size() > 0);
-      const FT size = static_cast<FT>(wraps.size() * 2);
-      x /= size; y /= size;
-      return Point_2(x, y);
-    }
-
-    Segment_2 compute_weighted_segment(
-      const std::vector<Segment_wrapper_2>& wraps,
-      const std::vector<FT>& weights,
-      const Segment_2& ref_segment) const {
-
-      const auto& sref = ref_segment.source();
-      const auto& tref = ref_segment.target();
-
-      const auto center =
-        internal::middle_point_2(sref, tref);
-
-      CGAL_assertion(weights.size() == wraps.size());
-      Vector_2 dir = Vector_2(FT(0), FT(0));
-      for (std::size_t i = 0; i < weights.size(); ++i) {
-        const FT weight = weights[i];
-
-        const auto& wrap = wraps[i];
-        const Line_2 line = Line_2(
-          wrap.segment.source(), wrap.segment.target());
-        const Point_2 proj = line.projection(center);
-
-        const Vector_2 v = Vector_2(center, proj);
-        dir += v * weight;
-      }
-
-      const Point_2 source = sref + dir;
-      const Point_2 target = tref + dir;
-      return Segment_2(source, target);
-    }
-
-    void move_segments_toward_lines(
-      const std::vector<Line_2>& lines,
-      std::vector<Segment_wrapper_2>& wraps) const {
-
-      Point_2 p, q;
-      for (auto& wrap : wraps) {
-        const std::size_t group_index = wrap.group;
-        CGAL_assertion(group_index >= 0 && group_index < lines.size());
-        const auto& line = lines[group_index];
-
-        const auto& source = wrap.segment.source();
-        const auto& target = wrap.segment.target();
-
-        p = line.projection(source);
-        q = line.projection(target);
-        wrap.segment = Segment_2(p, q);
-      }
-    }
-
-    void create_segments_from_groups(
-      std::vector<Segment_wrappers_2>& groups,
-      std::vector<Segment_wrapper_2>& wraps) const {
-
-      std::size_t count = 0;
-      wraps.clear();
-      for (auto& group : groups) {
-        for (auto& wrap : group) {
-          wrap.index = count;
-          wrap.is_used = false;
-          wraps.push_back(wrap);
-          ++count;
-        }
-      }
+      segments.clear();
+      unique.segments(
+        std::back_inserter(segments));
     }
 
     std::pair<bool, bool> is_parallel_segment(
@@ -800,6 +547,89 @@ namespace internal {
       }
       update_segment(points, ref_segment);
       result = ref_segment;
+    }
+
+    Segment_2 find_weighted_segment(
+      const std::vector<Segment_wrapper_2>& wraps) const {
+
+      std::vector<FT> weights;
+        compute_distance_weights(wraps, weights);
+      const Segment_2 ref_segment =
+        find_longest_segment(wraps);
+      const Segment_2 weighted =
+        compute_weighted_segment(wraps, weights, ref_segment);
+      if (weighted.source() == weighted.target())
+        return ref_segment;
+      return weighted;
+    }
+
+    void compute_distance_weights(
+      const std::vector<Segment_wrapper_2>& wraps,
+      std::vector<FT>& weights) const {
+
+      CGAL_assertion(wraps.size() > 0);
+      weights.clear();
+      weights.reserve(wraps.size());
+
+      FT sum_distance = FT(0);
+      for (const auto& wrap : wraps) {
+        const FT sq_distance = wrap.segment.squared_length();
+        sum_distance += sq_distance;
+        weights.push_back(sq_distance);
+      }
+
+      CGAL_assertion(sum_distance > FT(0));
+      for (auto& weight : weights)
+        weight /= sum_distance;
+      CGAL_assertion(weights.size() == wraps.size());
+    }
+
+    Segment_2 find_longest_segment(
+      const std::vector<Segment_wrapper_2>& wraps) const {
+
+      FT max_length = -FT(1);
+      std::size_t longest = std::size_t(-1);
+
+      for (std::size_t i = 0; i < wraps.size(); ++i) {
+        const auto& wrap = wraps[i];
+        const FT length = wrap.segment.squared_length();
+        if (length > max_length) {
+          longest = i; max_length = length;
+        }
+      }
+      CGAL_assertion(longest != std::size_t(-1));
+      return wraps[longest].segment;
+    }
+
+    Segment_2 compute_weighted_segment(
+      const std::vector<Segment_wrapper_2>& wraps,
+      const std::vector<FT>& weights,
+      const Segment_2& ref_segment) const {
+
+      const auto& sref = ref_segment.source();
+      const auto& tref = ref_segment.target();
+
+      const auto center =
+        internal::middle_point_2(sref, tref);
+
+      CGAL_assertion(weights.size() == wraps.size());
+      Vector_2 dir = Vector_2(FT(0), FT(0));
+      for (std::size_t i = 0; i < weights.size(); ++i) {
+        const FT weight = weights[i];
+
+        const auto& wrap = wraps[i];
+        const Line_2 line = Line_2(
+          wrap.segment.source(), wrap.segment.target());
+        const Point_2 proj = line.projection(center);
+
+        const Vector_2 v = Vector_2(center, proj);
+        dir += v * weight;
+      }
+
+      const Point_2 source = sref + dir;
+      const Point_2 target = tref + dir;
+
+      return Segment_2(source, target);
     }
 
     void update_segment(
@@ -898,37 +728,39 @@ namespace internal {
       return false;
     }
 
+    // This one introduces a huge error.
+    // I should better use the one below.
     void create_middle_orth(
-      const Segment_wrapper_2& wrapi,
-      const Segment_wrapper_2& wrapj,
-      Segment_wrapper_2& orth) const {
+      const Segment_2& segmenti,
+      const Segment_2& segmentj,
+      Segment_2& orth) const {
 
       const Line_2 line = Line_2(
-        wrapj.segment.source(), wrapj.segment.target());
+        segmentj.source(), segmentj.target());
       const auto source = internal::middle_point_2(
-        wrapi.segment.source(), wrapi.segment.target());
+        segmenti.source(), segmenti.target());
       const auto target = line.projection(source);
-      orth.segment = Segment_2(source, target);
+      orth = Segment_2(source, target);
     }
 
-    void create_middle_middle_orth(
-      const Segment_wrapper_2& wrapi,
-      const Segment_wrapper_2& wrapj,
-      Segment_wrapper_2& orth) const {
+    void create_average_orth(
+      const Segment_2& segmenti,
+      const Segment_2& segmentj,
+      Segment_2& orth) const {
 
       const Line_2 linei = Line_2(
-        wrapi.segment.source(), wrapi.segment.target());
-      const auto p = linei.projection(wrapj.segment.source());
+        segmenti.source(), segmenti.target());
+      const auto p = linei.projection(segmentj.source());
       const auto source = internal::middle_point_2(
-        p, wrapi.segment.target());
+        p, segmenti.target());
 
       const Line_2 linej = Line_2(
-        wrapj.segment.source(), wrapj.segment.target());
-      const auto q = linej.projection(wrapi.segment.target());
+        segmentj.source(), segmentj.target());
+      const auto q = linej.projection(segmenti.target());
       const auto target = internal::middle_point_2(
-        q, wrapj.segment.source());
+        q, segmentj.source());
 
-      orth.segment = Segment_2(source, target);
+      orth = Segment_2(source, target);
     }
 
   private:

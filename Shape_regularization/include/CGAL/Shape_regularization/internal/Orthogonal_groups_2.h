@@ -68,9 +68,11 @@ namespace internal {
       CGAL_precondition(input_range.size() > 0);
       const FT max_angle = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_angle), FT(5));
+      const bool preserve_order = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::preserve_order), false);
       CGAL_precondition(max_angle >= FT(0) && max_angle <= FT(90));
       m_max_angle = max_angle;
-      make_orthogonal_groups();
+      make_orthogonal_groups(preserve_order);
     }
 
     template<typename OutputIterator>
@@ -90,7 +92,8 @@ namespace internal {
     FT m_max_angle;
     std::vector<Indices> m_orthogonal_groups;
 
-    void make_orthogonal_groups() {
+    void make_orthogonal_groups(
+      const bool preserve_order) {
 
       std::vector<Indices> parallel_groups;
       m_grouping.groups(
@@ -111,8 +114,9 @@ namespace internal {
         for (const std::size_t seg_index : parallel_groups[i])
           orthogonal_group.push_back(seg_index);
 
-        traverse_group(i, si, parallel_groups,
-        states, orthogonal_group);
+        traverse_group(
+          preserve_order, i, si, parallel_groups,
+          states, orthogonal_group);
         m_orthogonal_groups.push_back(orthogonal_group);
       }
       CGAL_assertion(
@@ -120,6 +124,7 @@ namespace internal {
     }
 
     void traverse_group(
+      const bool preserve_order,
       const std::size_t i,
       const Segment_2& si,
       const std::vector<Indices>& parallel_groups,
@@ -141,7 +146,7 @@ namespace internal {
           states[j] = true;
           for (const std::size_t seg_index : parallel_groups[j])
             orthogonal_group.push_back(seg_index);
-        }
+        } else if (preserve_order) return;
       }
     }
   };

@@ -50,7 +50,7 @@ void test_closed_contour_2() {
   //   "/Users/monet/Documents/gsoc/ggr/logs/cl_output", 100);
 
   assert(num_directions == 1);
-  assert(regularized.size() == 4);
+  assert(regularized.size() == 6);
 }
 
 int main() {

@@ -139,6 +139,7 @@ CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, r
 CGAL_add_named_parameter(regularize_coplanarity_t, regularize_coplanarity, regularize_coplanarity)
 CGAL_add_named_parameter(regularize_axis_symmetry_t, regularize_axis_symmetry, regularize_axis_symmetry)
 CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_direction)
+CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
 
 // meshing parameters
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
