@@ -99,6 +99,7 @@ namespace Contours {
     m_point_map(point_map) {
 
       CGAL_precondition(m_input_range.size() >= 2);
+
       if (is_closed)
         estimate_closed(m_bounds, m_directions, m_assigned);
       else

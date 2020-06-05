@@ -51,7 +51,7 @@ namespace Shape_regularization {
 namespace internal {
 
   ////////////////////////
-  // General utilities. //
+  // General Utilities. //
   ////////////////////////
 
   // Universal tolerance.
@@ -78,9 +78,9 @@ namespace internal {
     return angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
   }
 
-  //////////////////////////
-  // Mostly for segments. //
-  //////////////////////////
+  //////////////////////
+  // Mostly Segments. //
+  //////////////////////
 
   // Rotates an item clockwise.
   template<typename FT>
@@ -235,9 +235,9 @@ namespace internal {
     return angle_deg;
   }
 
-  //////////////////////////
-  // Mostly for contours. //
-  //////////////////////////
+  //////////////////////
+  // Mostly contours. //
+  //////////////////////
 
   // Rotates an item counterclockwise.
   template<typename FT>
@@ -386,9 +386,9 @@ namespace internal {
     return Point_2(x, y);
   }
 
-  //////////////////////
-  // For planes only. //
-  //////////////////////
+  //////////////////
+  // Planes Only. //
+  //////////////////
 
   template<typename Traits>
   struct Plane_cluster {

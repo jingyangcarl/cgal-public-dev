@@ -109,10 +109,12 @@ namespace Contours {
       const DirectionRange& direction_range,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
-    m_point_map(point_map) {
+    m_point_map(point_map),
+    m_max_angle_2(FT(5)) {
 
       CGAL_precondition(input_range.size() >= 2);
       CGAL_precondition(direction_range.size() >= 1);
+
       if (is_closed)
         estimate_closed(
           direction_range, m_bounds, m_directions, m_assigned);
@@ -182,6 +184,8 @@ namespace Contours {
     const Point_map m_point_map;
     const Base m_base;
 
+    const FT m_max_angle_2;
+
     std::vector<FT_pair> m_bounds;
     std::vector<Direction_2> m_directions;
     std::vector<std::size_t> m_assigned;
@@ -197,30 +201,21 @@ namespace Contours {
       std::vector<Direction_2>& directions,
       std::vector<std::size_t>& assigned) const {
 
-      if (direction_range.size() == 0)
-        return;
-
+      if (direction_range.size() == 0) return;
       CGAL_precondition(
         direction_range.size() == m_input_range.size());
-      std::vector<Segment_wrapper_2> wraps;
-      const FT max_value = internal::max_value<FT>();
-      m_base.initialize_closed(
-        max_value, m_input_range, m_point_map, wraps);
 
-      directions.clear(); directions.reserve(direction_range.size());
-      for (const auto& direction : direction_range) {
-        auto v = direction.to_vector();
-        internal::normalize_vector(v);
-        directions.push_back(Direction_2(v.x(), v.y()));
-      }
-      CGAL_assertion(directions.size() == direction_range.size());
+      std::vector<Segment_wrapper_2> wraps;
+      m_base.initialize_closed(
+        m_input_range, m_point_map, wraps);
+      initialize_directions(direction_range, directions);
 
       bounds.clear(); bounds.reserve(directions.size());
       for (std::size_t i = 0; i < directions.size(); ++i)
         bounds.push_back(std::make_pair(FT(45), FT(45)));
 
       assigned.clear(); assigned.resize(wraps.size());
-      m_base.set_directions(directions, wraps, assigned);
+      set_directions(directions, wraps, assigned);
 
       m_base.unify_along_contours_closed(wraps, assigned);
       m_base.correct_directions_closed(wraps, assigned);
@@ -233,33 +228,69 @@ namespace Contours {
       std::vector<Direction_2>& directions,
       std::vector<std::size_t>& assigned) const {
 
-      if (direction_range.size() == 0)
-        return;
-
+      if (direction_range.size() == 0) return;
       CGAL_precondition(
         direction_range.size() == m_input_range.size() - 1);
-      std::vector<Segment_wrapper_2> wraps;
-      const FT max_value = internal::max_value<FT>();
-      m_base.initialize_open(
-        max_value, m_input_range, m_point_map, wraps);
 
-      directions.clear(); directions.reserve(direction_range.size());
-      for (const auto& direction : direction_range) {
-        auto v = direction.to_vector();
-        internal::normalize_vector(v);
-        directions.push_back(Direction_2(v.x(), v.y()));
-      }
-      CGAL_assertion(directions.size() == direction_range.size());
+      std::vector<Segment_wrapper_2> wraps;
+      m_base.initialize_open(
+        m_input_range, m_point_map, wraps);
+      initialize_directions(direction_range, directions);
 
       bounds.clear(); bounds.reserve(directions.size());
       for (std::size_t i = 0; i < directions.size(); ++i)
         bounds.push_back(std::make_pair(FT(45), FT(45)));
 
       assigned.clear(); assigned.resize(wraps.size());
-      m_base.set_directions(directions, wraps, assigned);
+      set_directions(directions, wraps, assigned);
 
       m_base.unify_along_contours_open(wraps, assigned);
       m_base.correct_directions_open(wraps, assigned);
+    }
+
+    template<typename DirectionRange>
+    void initialize_directions(
+      const DirectionRange& direction_range,
+      std::vector<Direction_2>& directions) const {
+
+      directions.clear();
+      directions.reserve(direction_range.size());
+
+      for (const auto& direction : direction_range) {
+        auto v = direction.to_vector();
+        internal::normalize_vector(v);
+        directions.push_back(Direction_2(v.x(), v.y()));
+      }
+      CGAL_assertion(directions.size() == direction_range.size());
+    }
+
+    void set_directions(
+      const std::vector<Direction_2>& directions,
+      std::vector<Segment_wrapper_2>& wraps,
+      std::vector<std::size_t>& assigned) const {
+
+      for (auto& wrap : wraps) {
+        for (std::size_t i = 0; i < directions.size(); ++i) {
+          if (does_satisify_angle_conditions(
+            directions[i], wrap.direction)) {
+            assigned[wrap.index] = i;
+            wrap.is_used = true; break;
+          }
+        }
+      }
+    }
+
+    bool does_satisify_angle_conditions(
+      const Direction_2& longest,
+      const Direction_2& segment) const {
+
+      CGAL_precondition(
+        m_max_angle_2 >= FT(0) && m_max_angle_2 <= FT(90));
+      const FT bound_min = m_max_angle_2;
+      const FT bound_max = FT(90) - bound_min;
+
+      const FT angle_2 = internal::angle_2(longest, segment);
+      return (angle_2 <= bound_min) || (angle_2 >= bound_max);
     }
   };
 

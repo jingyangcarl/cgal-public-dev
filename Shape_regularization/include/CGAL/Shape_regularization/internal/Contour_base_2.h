@@ -61,6 +61,75 @@ namespace internal {
     m_angle_threshold_2(FT(5))
     { }
 
+    /////////////////////
+    // Debug and Save. //
+    /////////////////////
+
+    void export_polylines(
+      const std::vector<Segment_wrapper_2>& wraps,
+      const std::string path) const {
+
+      std::vector<Segment_2> segments;
+      segments.reserve(wraps.size());
+      for (const auto& wrap : wraps)
+        segments.push_back(wrap.segment);
+      export_polylines(segments, path);
+    }
+
+    void export_polylines(
+      const std::vector<Segment_2>& segments,
+      const std::string path) const {
+
+      std::vector<Polyline> polylines(segments.size());
+      for (std::size_t i = 0; i < segments.size(); ++i) {
+        const auto& s = segments[i].source();
+        const auto& t = segments[i].target();
+
+        polylines[i].push_back(Point_3(s.x(), s.y(), FT(0)));
+        polylines[i].push_back(Point_3(t.x(), t.y(), FT(0)));
+      }
+      export_polylines(polylines, path);
+    }
+
+    void export_polylines(
+      const std::vector<Polyline>& polylines,
+      const std::string path) const {
+
+      if (polylines.size() == 0) return;
+      std::stringstream out;
+      out.precision(20);
+
+      for (std::size_t i = 0; i < polylines.size(); ++i) {
+        const auto& polyline = polylines[i];
+
+        out << polyline.size() << " ";
+        for (std::size_t j = 0; j < polyline.size(); ++j)
+          out << polyline[j] << " ";
+        out << std::endl;
+      }
+      save(out, path + ".polylines");
+    }
+
+    void save(
+      const std::stringstream& out,
+      const std::string path) const {
+
+      std::ofstream file(path.c_str(), std::ios_base::out);
+      CGAL::set_ascii_mode(file);
+      if (!file) {
+        std::cout <<
+          "Error: cannot save the file: " << path << std::endl;
+        return;
+      }
+      file << out.str() << std::endl; file.close();
+      std::cout <<
+        "* segments are saved in " << path << std::endl;
+    }
+
+    ////////////////////////
+    // General Utilities. //
+    ////////////////////////
+
     const bool verbose() const {
       return m_verbose;
     }
@@ -69,11 +138,32 @@ namespace internal {
       return m_angle_threshold_2;
     }
 
+    void sort_segments_by_length(
+      const std::vector<Segment_wrapper_2>& wraps,
+      std::vector<std::size_t>& sorted) const {
+
+      sorted.clear();
+      sorted.reserve(wraps.size());
+      for (std::size_t i = 0; i < wraps.size(); ++i)
+        sorted.push_back(i);
+
+      std::sort(sorted.begin(), sorted.end(),
+      [&wraps](const std::size_t i, const std::size_t j) -> bool {
+
+        const FT length_1 = wraps[i].segment.squared_length();
+        const FT length_2 = wraps[j].segment.squared_length();
+        return length_1 > length_2;
+      });
+    }
+
+    /////////////////////
+    // Initialization. //
+    /////////////////////
+
     template<
     typename Input_range,
     typename Point_map>
     void initialize_closed(
-      const FT min_length_2,
       const Input_range& input_range,
       const Point_map point_map,
       std::vector<Segment_wrapper_2>& wraps) const {
@@ -95,8 +185,6 @@ namespace internal {
         wrap.segment = Segment_2(source, target);
         auto v = wrap.segment.to_vector();
         wrap.direction = internal::direction_2(v);
-        wrap.is_valid_direction =
-          is_valid_principal_direction(min_length_2, wrap.segment);
         wraps.push_back(wrap);
       }
       CGAL_assertion(wraps.size() == n);
@@ -106,7 +194,6 @@ namespace internal {
     typename Input_range,
     typename Point_map>
     void initialize_open(
-      const FT min_length_2,
       const Input_range& input_range,
       const Point_map point_map,
       std::vector<Segment_wrapper_2>& wraps) const {
@@ -128,180 +215,14 @@ namespace internal {
         wrap.segment = Segment_2(source, target);
         auto v = wrap.segment.to_vector();
         wrap.direction = internal::direction_2(v);
-        wrap.is_valid_direction =
-          is_valid_principal_direction(min_length_2, wrap.segment);
         wraps.push_back(wrap);
       }
       CGAL_assertion(wraps.size() == n - 1);
     }
 
-    const bool is_valid_principal_direction(
-      const FT min_length_2,
-      const Segment_2& segment) const {
-
-      CGAL_assertion(min_length_2 >= FT(0));
-      const FT threshold = min_length_2 * FT(2);
-      const FT squared_threshold = threshold * threshold;
-      return segment.squared_length() >= squared_threshold;
-    }
-
-    void estimate_initial_directions(
-      const FT max_angle_2,
-      std::vector<Segment_wrapper_2>& wraps,
-      std::vector<FT_pair>& bounds,
-      std::vector<Direction_2>& directions,
-      std::vector<std::size_t>& assigned) const {
-
-      std::vector<std::size_t> longest_to_short;
-      sort_segments_by_length(wraps, longest_to_short);
-      CGAL_assertion(longest_to_short.size() == wraps.size());
-
-      bounds.clear(); directions.clear(); assigned.clear();
-      assigned.resize(longest_to_short.size(), std::size_t(-1));
-
-      std::size_t group_index = 0;
-      std::size_t query_index = std::size_t(-1);
-      do {
-        query_index = find_next_longest_segment(
-          wraps, longest_to_short);
-        if (query_index != std::size_t(-1))
-          set_next_longest_direction(
-            max_angle_2, wraps, query_index, group_index,
-            bounds, directions, assigned);
-        ++group_index;
-      } while (query_index != std::size_t(-1));
-    }
-
-    void sort_segments_by_length(
-      const std::vector<Segment_wrapper_2>& wraps,
-      std::vector<std::size_t>& sorted) const {
-
-      sorted.clear();
-      sorted.reserve(wraps.size());
-      for (std::size_t i = 0; i < wraps.size(); ++i)
-        sorted.push_back(i);
-
-      std::sort(sorted.begin(), sorted.end(),
-      [&wraps](const std::size_t i, const std::size_t j) -> bool {
-
-        const FT length_1 = wraps[i].segment.squared_length();
-        const FT length_2 = wraps[j].segment.squared_length();
-        return length_1 > length_2;
-      });
-    }
-
-    std::size_t find_next_longest_segment(
-      const std::vector<Segment_wrapper_2>& wraps,
-      const std::vector<std::size_t>& longest_to_short) const {
-
-      std::size_t longest = std::size_t(-1);
-      for (std::size_t i = 0; i < longest_to_short.size(); ++i) {
-        const std::size_t wrap_index = longest_to_short[i];
-        const auto& wrap = wraps[wrap_index];
-
-        if (is_valid_wrap(wrap)) {
-          longest = wrap_index; break;
-        }
-      }
-      return longest;
-    }
-
-    bool is_valid_wrap(
-      const Segment_wrapper_2& wrap) const {
-
-      return !wrap.is_used && wrap.is_valid_direction;
-    }
-
-    void set_next_longest_direction(
-      const FT max_angle_2,
-      std::vector<Segment_wrapper_2>& wraps,
-      const std::size_t query_index,
-      const std::size_t group_index,
-      std::vector<FT_pair>& bounds,
-      std::vector<Direction_2>& directions,
-      std::vector<std::size_t>& assigned) const {
-
-      CGAL_assertion(query_index != std::size_t(-1));
-      CGAL_assertion(group_index != std::size_t(-1));
-
-      // Set current longest direction.
-      auto& longest = wraps[query_index];
-      assigned[query_index] = group_index;
-      longest.is_used = true;
-
-      for (auto& wrap : wraps) {
-        if (wrap.index == query_index) // skip longest
-          continue;
-
-        // Check if another wrap satisifes the conditions.
-        if (is_valid_wrap(wrap)) {
-          if (does_satisify_angle_conditions(
-            max_angle_2, longest.segment, wrap.segment)) {
-
-            assigned[wrap.index] = group_index;
-            wrap.is_used = true;
-          }
-        }
-      }
-
-      // Set internals.
-      directions.push_back(longest.direction);
-      bounds.push_back(std::make_pair(FT(45), FT(45)));
-    }
-
-    // Redo this function using a different method for computing angles.
-    template<typename Item>
-    bool does_satisify_angle_conditions(
-      const FT max_angle_2,
-      const Item& longest,
-      const Item& segment) const {
-
-      CGAL_precondition(
-        max_angle_2 >= FT(0) && max_angle_2 <= FT(90));
-      const FT bound_min = max_angle_2;
-      const FT bound_max = FT(90) - bound_min;
-
-      const FT angle_2 = internal::angle_2(longest, segment);
-      return (angle_2 <= bound_min) || (angle_2 >= bound_max);
-    }
-
-    void set_longest_direction(
-      const std::vector<Segment_wrapper_2>& wraps,
-      std::vector<FT_pair>& bounds,
-      std::vector<Direction_2>& directions,
-      std::vector<std::size_t>& assigned) const {
-
-      bounds.clear(); bounds.resize(1);
-      bounds[0] = std::make_pair(FT(45), FT(45));
-
-      directions.clear(); directions.resize(1);
-      directions[0] = compute_longest_direction(wraps);
-
-      // 0 is the index of the direction in the `directions`.
-      assigned.clear();
-      assigned.resize(wraps.size(), 0);
-    }
-
-    Direction_2 compute_longest_direction(
-      const std::vector<Segment_wrapper_2>& wraps) const {
-
-      const std::size_t n = wraps.size();
-      CGAL_assertion(n != 0);
-
-      FT max_length = -FT(1);
-      std::size_t longest = std::size_t(-1);
-
-      for (std::size_t i = 0; i < n; ++i) {
-        const auto& wrap = wraps[i];
-        const FT sq_length = wrap.segment.squared_length();
-        if (sq_length > max_length) {
-          longest = i; max_length = sq_length;
-        }
-      }
-
-      CGAL_assertion(longest != std::size_t(-1));
-      return wraps[longest].direction;
-    }
+    /////////////////
+    // Directions. //
+    /////////////////
 
     void unify_along_contours_closed(
       std::vector<Segment_wrapper_2>& wraps,
@@ -495,8 +416,6 @@ namespace internal {
 
         const auto& di = directions[direction_index];
         const auto& dj = wrap.direction;
-
-        // Is it necessary here? Can I use angle_2() instead?
         const FT angle = internal::mod90_angle_2(di, dj);
 
         angles[direction_index] += angle;
@@ -551,6 +470,10 @@ namespace internal {
         internal::rotate_segment_2(
           angle_deg, FT(90), segment); // orthogonal case
     }
+
+    ///////////////
+    // Contours. //
+    ///////////////
 
     void remove_zero_length_segments(
       std::vector<Segment_wrapper_2>& wraps) const {
@@ -883,7 +806,7 @@ namespace internal {
       const std::vector<Point_2>& points,
       Segment_2& segment) const {
 
-      FT min_proj_value =  internal::max_value<FT>();
+      FT min_proj_value = +internal::max_value<FT>();
       FT max_proj_value = -internal::max_value<FT>();
 
       const Vector_2 ref_vector = segment.to_vector();
@@ -973,86 +896,6 @@ namespace internal {
         }
       }
       return false;
-    }
-
-    void export_polylines(
-      const std::vector<Segment_wrapper_2>& wraps,
-      const std::string file_path) const {
-
-      std::vector<Segment_2> segments;
-      segments.reserve(wraps.size());
-      for (const auto& wrap : wraps)
-        segments.push_back(wrap.segment);
-      export_polylines(segments, file_path);
-    }
-
-    void export_polylines(
-      const std::vector<Segment_2>& segments,
-      const std::string file_path) const {
-
-      std::vector<Polyline> polylines(segments.size());
-      for (std::size_t i = 0; i < segments.size(); ++i) {
-        const auto& s = segments[i].source();
-        const auto& t = segments[i].target();
-
-        polylines[i].push_back(Point_3(s.x(), s.y(), FT(0)));
-        polylines[i].push_back(Point_3(t.x(), t.y(), FT(0)));
-      }
-      export_polylines(polylines, file_path);
-    }
-
-    void export_polylines(
-      const std::vector<Polyline>& polylines,
-      const std::string file_path) const {
-
-      if (polylines.size() == 0)
-        return;
-
-      std::stringstream out;
-      out.precision(20);
-
-      for (std::size_t i = 0; i < polylines.size(); ++i) {
-        const auto &polyline = polylines[i];
-
-        out << polyline.size() << " ";
-        for (std::size_t j = 0; j < polyline.size(); ++j)
-          out << polyline[j] << " ";
-        out << std::endl;
-      }
-      save(out, file_path + ".polylines");
-    }
-
-    void save(
-      const std::stringstream& out,
-      const std::string path) const {
-
-      std::ofstream file(path.c_str(), std::ios_base::out);
-      CGAL::set_ascii_mode(file);
-      if (!file) {
-        std::cout <<
-          "Error: cannot save the file: " << path << std::endl;
-        return;
-      }
-
-      file << out.str() << std::endl; file.close();
-      std::cout <<
-        "* segments are saved in " << path << std::endl;
-    }
-
-    void set_directions(
-      const std::vector<Direction_2>& directions,
-      std::vector<Segment_wrapper_2>& wraps,
-      std::vector<std::size_t>& assigned) const {
-
-      for (auto& wrap : wraps) {
-        for (std::size_t i = 0; i < directions.size(); ++i) {
-          if (does_satisify_angle_conditions(
-            FT(5), directions[i], wrap.direction)) {
-            assigned[wrap.index] = i;
-            wrap.is_used = true; break;
-          }
-        }
-      }
     }
 
     void create_middle_orth(

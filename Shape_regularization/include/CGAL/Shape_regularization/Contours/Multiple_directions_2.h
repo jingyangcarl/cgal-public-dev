@@ -126,16 +126,16 @@ namespace Contours {
     m_point_map(point_map) {
 
       CGAL_precondition(input_range.size() >= 2);
-      m_min_length_2 = parameters::choose_parameter(
-        parameters::get_parameter(np, internal_np::min_length), FT(3));
       m_max_angle_2 = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::max_angle), FT(10));
+      m_min_length_2 = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::min_length), FT(3));
 
-      CGAL_precondition(
-        m_min_length_2 >= FT(0));
       CGAL_precondition(
         m_max_angle_2 >= FT(0) &&
         m_max_angle_2 <= FT(90));
+      CGAL_precondition(
+        m_min_length_2 >= FT(0));
 
       if (is_closed)
         estimate_closed(m_bounds, m_directions, m_assigned);
@@ -204,8 +204,8 @@ namespace Contours {
     const Point_map m_point_map;
     const Base m_base;
 
-    FT m_min_length_2;
     FT m_max_angle_2;
+    FT m_min_length_2;
 
     std::vector<FT_pair> m_bounds;
     std::vector<Direction_2> m_directions;
@@ -222,12 +222,13 @@ namespace Contours {
 
       std::vector<Segment_wrapper_2> wraps;
       m_base.initialize_closed(
-        m_min_length_2, m_input_range, m_point_map, wraps);
-      m_base.estimate_initial_directions(
-        m_max_angle_2, wraps, bounds, directions, assigned);
+        m_input_range, m_point_map, wraps);
+      set_valid_directions(wraps);
+      estimate_initial_directions(
+        wraps, bounds, directions, assigned);
 
       if (directions.size() <= 1) {
-        m_base.set_longest_direction(
+        set_longest_direction(
           wraps, bounds, directions, assigned);
       } else {
         m_base.unify_along_contours_closed(wraps, assigned);
@@ -243,18 +244,169 @@ namespace Contours {
 
       std::vector<Segment_wrapper_2> wraps;
       m_base.initialize_open(
-        m_min_length_2, m_input_range, m_point_map, wraps);
-      m_base.estimate_initial_directions(
-        m_max_angle_2, wraps, bounds, directions, assigned);
+        m_input_range, m_point_map, wraps);
+      set_valid_directions(wraps);
+      estimate_initial_directions(
+        wraps, bounds, directions, assigned);
 
       if (directions.size() <= 1) {
-        m_base.set_longest_direction(
+        set_longest_direction(
           wraps, bounds, directions, assigned);
       } else {
         m_base.unify_along_contours_open(wraps, assigned);
         m_base.correct_directions_open(wraps, assigned);
         m_base.readjust_directions(wraps, assigned, directions);
       }
+    }
+
+    void set_valid_directions(
+      std::vector<Segment_wrapper_2>& wraps) const {
+
+      for (auto& wrap : wraps)
+        wrap.is_valid_direction =
+          is_valid_principal_direction(wrap.segment);
+    }
+
+    const bool is_valid_principal_direction(
+      const Segment_2& segment) const {
+
+      CGAL_assertion(m_min_length_2 >= FT(0));
+      const FT threshold = m_min_length_2 * FT(2);
+      const FT squared_threshold = threshold * threshold;
+      return segment.squared_length() >= squared_threshold;
+    }
+
+    void estimate_initial_directions(
+      std::vector<Segment_wrapper_2>& wraps,
+      std::vector<FT_pair>& bounds,
+      std::vector<Direction_2>& directions,
+      std::vector<std::size_t>& assigned) const {
+
+      std::vector<std::size_t> longest_to_short;
+      m_base.sort_segments_by_length(wraps, longest_to_short);
+      CGAL_assertion(longest_to_short.size() == wraps.size());
+
+      bounds.clear(); directions.clear(); assigned.clear();
+      assigned.resize(longest_to_short.size(), std::size_t(-1));
+
+      std::size_t group_index = 0;
+      std::size_t query_index = std::size_t(-1);
+      do {
+        query_index = find_next_longest_segment(
+          wraps, longest_to_short);
+        if (query_index != std::size_t(-1))
+          set_next_longest_direction(
+            wraps, query_index, group_index,
+            bounds, directions, assigned);
+        ++group_index;
+      } while (query_index != std::size_t(-1));
+    }
+
+    std::size_t find_next_longest_segment(
+      const std::vector<Segment_wrapper_2>& wraps,
+      const std::vector<std::size_t>& longest_to_short) const {
+
+      std::size_t longest = std::size_t(-1);
+      for (std::size_t i = 0; i < longest_to_short.size(); ++i) {
+        const std::size_t wrap_index = longest_to_short[i];
+        const auto& wrap = wraps[wrap_index];
+        if (is_valid_wrap(wrap)) {
+          longest = wrap_index; break;
+        }
+      }
+      return longest;
+    }
+
+    bool is_valid_wrap(
+      const Segment_wrapper_2& wrap) const {
+      return !wrap.is_used && wrap.is_valid_direction;
+    }
+
+    void set_next_longest_direction(
+      std::vector<Segment_wrapper_2>& wraps,
+      const std::size_t query_index,
+      const std::size_t group_index,
+      std::vector<FT_pair>& bounds,
+      std::vector<Direction_2>& directions,
+      std::vector<std::size_t>& assigned) const {
+
+      CGAL_assertion(query_index != std::size_t(-1));
+      CGAL_assertion(group_index != std::size_t(-1));
+
+      // Set current longest direction.
+      auto& longest = wraps[query_index];
+      assigned[query_index] = group_index;
+      longest.is_used = true;
+
+      for (auto& wrap : wraps) {
+        if (wrap.index == query_index) // skip longest
+          continue;
+
+        // Check if another wrap satisifes the conditions.
+        if (is_valid_wrap(wrap)) {
+          if (does_satisify_angle_conditions(
+            longest.segment, wrap.segment)) {
+
+            assigned[wrap.index] = group_index;
+            wrap.is_used = true;
+          }
+        }
+      }
+
+      // Set internals.
+      directions.push_back(longest.direction);
+      bounds.push_back(std::make_pair(FT(45), FT(45)));
+    }
+
+    bool does_satisify_angle_conditions(
+      const Segment_2& longest,
+      const Segment_2& segment) const {
+
+      CGAL_precondition(
+        m_max_angle_2 >= FT(0) && m_max_angle_2 <= FT(90));
+      const FT bound_min = m_max_angle_2;
+      const FT bound_max = FT(90) - bound_min;
+
+      const FT angle_2 = internal::angle_2(longest, segment);
+      return (angle_2 <= bound_min) || (angle_2 >= bound_max);
+    }
+
+    void set_longest_direction(
+      const std::vector<Segment_wrapper_2>& wraps,
+      std::vector<FT_pair>& bounds,
+      std::vector<Direction_2>& directions,
+      std::vector<std::size_t>& assigned) const {
+
+      bounds.clear(); bounds.resize(1);
+      bounds[0] = std::make_pair(FT(45), FT(45));
+
+      directions.clear(); directions.resize(1);
+      directions[0] = compute_longest_direction(wraps);
+
+      // 0 is the index of the direction in the `directions`.
+      assigned.clear();
+      assigned.resize(wraps.size(), 0);
+    }
+
+    Direction_2 compute_longest_direction(
+      const std::vector<Segment_wrapper_2>& wraps) const {
+
+      const std::size_t n = wraps.size();
+      CGAL_assertion(n != 0);
+
+      FT max_length = -FT(1);
+      std::size_t longest = std::size_t(-1);
+
+      for (std::size_t i = 0; i < n; ++i) {
+        const auto& wrap = wraps[i];
+        const FT sq_length = wrap.segment.squared_length();
+        if (sq_length > max_length) {
+          longest = i; max_length = sq_length;
+        }
+      }
+
+      CGAL_assertion(longest != std::size_t(-1));
+      return wraps[longest].direction;
     }
   };
 

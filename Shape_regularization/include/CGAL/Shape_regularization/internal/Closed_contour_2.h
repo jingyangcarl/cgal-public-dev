@@ -73,9 +73,8 @@ namespace internal {
       const Input_range& input_range,
       const Point_map point_map) {
 
-      const FT max_value = internal::max_value<FT>();
       m_base.initialize_closed(
-        max_value, input_range, point_map, m_wraps);
+        input_range, point_map, m_wraps);
       CGAL_assertion(m_wraps.size() == input_range.size());
     }
 
