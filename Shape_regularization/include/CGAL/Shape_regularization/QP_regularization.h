@@ -253,7 +253,7 @@ namespace Shape_regularization {
         const FT bound = m_regularization_type.bound(i);
         CGAL_assertion(bound >= 0);
         m_bounds.push_back(bound);
-        m_max_bound = CGAL::max(bound, m_max_bound);
+        m_max_bound = (CGAL::max)(bound, m_max_bound);
       }
 
       CGAL_assertion(m_max_bound >= 0);

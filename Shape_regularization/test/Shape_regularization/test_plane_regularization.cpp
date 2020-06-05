@@ -91,10 +91,10 @@ bool planes_difference(
   const Plane& b) {
 
   return (
-    (std::fabs(a.a() - b.a()) > 1e-6) ||
-    (std::fabs(a.b() - b.b()) > 1e-6) ||
-    (std::fabs(a.c() - b.c()) > 1e-6) ||
-    (std::fabs(a.d() - b.d()) > 1e-6) );
+    (CGAL::abs(a.a() - b.a()) > 1e-6) ||
+    (CGAL::abs(a.b() - b.b()) > 1e-6) ||
+    (CGAL::abs(a.c() - b.c()) > 1e-6) ||
+    (CGAL::abs(a.d() - b.d()) > 1e-6) );
 }
 
 void check_ransac_size(

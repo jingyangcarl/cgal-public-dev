@@ -261,8 +261,7 @@ namespace internal {
       const FT bound_min = max_angle_2;
       const FT bound_max = FT(90) - bound_min;
 
-      const FT angle_2 = CGAL::abs(
-        internal::angle_2(longest, segment));
+      const FT angle_2 = internal::angle_2(longest, segment);
       return (angle_2 <= bound_min) || (angle_2 >= bound_max);
     }
 
@@ -469,9 +468,6 @@ namespace internal {
 
         const FT angle_deg = angles[k];
         internal::rotate_direction_2(angle_deg, directions[k]);
-
-        // Stable version but requires a segment.
-        // internal::rotate_segment_2(angle_deg, FT(0), directions[k]);
       }
     }
 
@@ -845,8 +841,8 @@ namespace internal {
       const Segment_2& si,
       const Segment_2& sp) const {
 
-      const FT angle_mi_2 = CGAL::abs(internal::angle_2(sm, si));
-      const FT angle_pi_2 = CGAL::abs(internal::angle_2(si, sp));
+      const FT angle_mi_2 = internal::angle_2(sm, si);
+      const FT angle_pi_2 = internal::angle_2(si, sp);
 
       const bool source_cond = ( angle_mi_2 <= m_angle_threshold_2 );
       const bool target_cond = ( angle_pi_2 <= m_angle_threshold_2 );
@@ -857,7 +853,7 @@ namespace internal {
     bool is_parallel_segment(
       const Segment_2& si, const Segment_2& sp) const {
 
-      const FT angle_pi_2 = CGAL::abs(internal::angle_2(si, sp));
+      const FT angle_pi_2 = internal::angle_2(si, sp);
       const bool target_cond = ( angle_pi_2 <= m_angle_threshold_2 );
       return target_cond;
     }

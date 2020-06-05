@@ -40,7 +40,7 @@ namespace internal {
     using Segment_2 = typename Traits::Segment_2;
     using Direction_2  = typename Traits::Direction_2;
 
-    std::size_t index = std::size_t(-1); // regularize segments
+    std::size_t index = std::size_t(-1); // regularize segments and contours
     bool is_used = false;
 
     Point_2 barycenter, ref_coords; // regularize segments

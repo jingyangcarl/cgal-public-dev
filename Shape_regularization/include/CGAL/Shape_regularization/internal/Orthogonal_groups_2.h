@@ -134,8 +134,7 @@ namespace internal {
         const auto& sj = get(
           m_segment_map, *(m_input_range.begin() + sj_index));
 
-        const FT angle_2 =
-          CGAL::abs(internal::angle_2(si, sj));
+        const FT angle_2 = internal::angle_2(si, sj);
         if (angle_2 <= m_max_angle ||
             angle_2 >= FT(90) - m_max_angle) {
 

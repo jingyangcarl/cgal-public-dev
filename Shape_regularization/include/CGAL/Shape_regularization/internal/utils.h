@@ -34,6 +34,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <memory>
 #include <tuple>
 
 // CGAL includes.
@@ -81,24 +82,19 @@ namespace internal {
   // Mostly for segments. //
   //////////////////////////
 
-  // Rotates a direction.
-  template<
-  typename FT,
-  typename Direction_2>
-  void rotate_direction_2(
+  // Rotates an item clockwise.
+  template<typename FT>
+  void rotate_2_cw(
     const FT angle_deg,
-    Direction_2& direction) {
+    const FT x, const FT y,
+    FT& rx, FT& ry) {
 
     const double angle_rad = radians_2(angle_deg);
     const FT sin_val = static_cast<FT>(std::sin(angle_rad));
     const FT cos_val = static_cast<FT>(std::cos(angle_rad));
 
-    const FT dx = direction.dx();
-    const FT dy = direction.dy();
-
-    const FT x = dx * cos_val + dy * sin_val;
-    const FT y = dy * cos_val - dx * sin_val;
-    direction = Direction_2(x, y);
+    rx = x * cos_val + y * sin_val; // rotation matrix
+    ry = y * cos_val - x * sin_val;
   }
 
   // Each barycenter represents a segment.
@@ -116,12 +112,11 @@ namespace internal {
     using Traits = typename Kernel_traits<Point_2>::Kernel;
     using Direction_2 = typename Traits::Direction_2;
 
+    FT x, y;
     const FT dx = barycenter.x() - frame_origin.x();
     const FT dy = barycenter.y() - frame_origin.y();
-    Direction_2 direction = Direction_2(dx, dy);
-
-    rotate_direction_2(angle_deg, direction);
-    return Point_2(direction.dx(), direction.dy());
+    rotate_2_cw(angle_deg, dx, dy, x, y);
+    return Point_2(x, y);
   }
 
   // Computes the middle point between two input points.
@@ -205,7 +200,7 @@ namespace internal {
     return Direction_2(v);
   }
 
-  // Computes orientation of a direction.
+  // Computes orientation in degrees of a direction.
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
   orientation_2(const Direction_2& direction) {
@@ -221,7 +216,7 @@ namespace internal {
     return angle_deg;
   }
 
-  // Computes the 90 mod angle difference.
+  // Computes the 90 mod angle difference in degrees.
   template<typename FT>
   FT mod90_angle_difference_2(
     const FT anglei, const FT anglej) {
@@ -244,7 +239,22 @@ namespace internal {
   // Mostly for contours. //
   //////////////////////////
 
-  // Computes the mod 90 angle between two directions.
+  // Rotates an item counterclockwise.
+  template<typename FT>
+  void rotate_2_ccw(
+    const FT angle_deg,
+    const FT x, const FT y,
+    FT& rx, FT& ry) {
+
+    const double angle_rad = radians_2(angle_deg);
+    const FT sin_val = static_cast<FT>(std::sin(angle_rad));
+    const FT cos_val = static_cast<FT>(std::cos(angle_rad));
+
+    rx = x * cos_val - y * sin_val; // rotation matrix
+    ry = y * cos_val + x * sin_val;
+  }
+
+  // Computes the mod 90 angle in degrees between two directions.
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
   mod90_angle_2(
@@ -256,6 +266,7 @@ namespace internal {
     return mod90_angle_difference_2(anglei, anglej);
   }
 
+  // Computes an angle in degrees between two directions.
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
   compute_angle_2(
@@ -276,6 +287,8 @@ namespace internal {
     return angle_deg;
   }
 
+  // Converts an angle in degrees from the range [-180, 180]
+  // into the mod 90 angle.
   template<typename FT>
   FT convert_angle_2(const FT angle_2) {
 
@@ -285,7 +298,8 @@ namespace internal {
     return angle;
   }
 
-  // Add abs here!
+  // Computes a positive angle in degrees that
+  // is always in the range [0, 90].
   template<typename Direction_2>
   typename Kernel_traits<Direction_2>::Kernel::FT
   angle_2(
@@ -294,48 +308,43 @@ namespace internal {
 
     const auto angle_2 = compute_angle_2(
       reference, direction);
-    return convert_angle_2(angle_2);
+    return CGAL::abs(convert_angle_2(angle_2));
   }
 
-  template<typename Point_2>
-  Point_2 barycenter_2(
-    const std::vector<Point_2>& points) {
+  // Rotates a direction.
+  template<
+  typename FT,
+  typename Direction_2>
+  void rotate_direction_2(
+    const FT angle_deg,
+    Direction_2& direction) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    using FT = typename Traits::FT;
-
-    CGAL_assertion(points.size() > 0);
-    FT x = FT(0), y = FT(0);
-    for (const auto& p : points) {
-      x += p.x();
-      y += p.y();
-    }
-    x /= static_cast<FT>(points.size());
-    y /= static_cast<FT>(points.size());
-    return Point_2(x, y);
+    FT x, y;
+    const FT dx = direction.dx();
+    const FT dy = direction.dy();
+    rotate_2_ccw(angle_deg, dx, dy, x, y);
+    direction = Direction_2(x, y);
   }
 
+  // Rotates a point.
   template<
   typename FT,
   typename Point_2>
   void rotate_point_2(
-    const FT angle,
+    const FT angle_deg,
     const Point_2& barycenter,
     Point_2& p) {
 
-		FT x = p.x(); x -= barycenter.x();
-		FT y = p.y(); y -= barycenter.y();
-
-    p = Point_2(x, y);
-    const double tmp_angle = CGAL::to_double(angle);
-    const FT c = static_cast<FT>(std::cos(tmp_angle));
-		const FT s = static_cast<FT>(std::sin(tmp_angle));
-
-		x = p.x() * c - p.y() * s; x += barycenter.x();
-		y = p.y() * c + p.x() * s; y += barycenter.y();
+    FT x, y;
+		const FT dx = p.x() - barycenter.x();
+		const FT dy = p.y() - barycenter.y();
+    rotate_2_ccw(angle_deg, dx, dy, x, y);
+    x += barycenter.x();
+    y += barycenter.y();
 		p = Point_2(x, y);
 	}
 
+  // Rotates a segment.
   template<
   typename FT,
   typename Segment_2>
@@ -350,32 +359,31 @@ namespace internal {
 
     auto source = segment.source();
     auto target = segment.target();
+    const auto barycenter =
+      internal::middle_point_2(source, target);
 
-    const auto barycenter = internal::middle_point_2(source, target);
-    const FT angle_rad = angle_deg * static_cast<FT>(CGAL_PI) / FT(180);
-
-    rotate_point_2(angle_rad, barycenter, source);
-    rotate_point_2(angle_rad, barycenter, target);
+    rotate_point_2(angle_deg, barycenter, source);
+    rotate_point_2(angle_deg, barycenter, target);
     segment = Segment_2(source, target);
   }
 
-  // Remove this function since max_angle cannot be equal to 0!
-  template<typename Segment_2>
-  std::size_t key_angle_2(
-    const double max_angle,
-    const Segment_2& segment) {
+  // Computes the barycenter of a point set.
+  template<typename Point_2>
+  Point_2 barycenter_2(
+    const std::vector<Point_2>& points) {
 
-    auto v = segment.to_vector();
-    const auto direction = internal::direction_2(v);
-    const auto orientation = internal::orientation_2(direction);
-    double fvalue = std::ceil(CGAL::to_double(orientation));
-    if (fvalue >= 180.0) fvalue -= 180.0;
-    CGAL_assertion(max_angle != 0.0);
-    const std::size_t num = static_cast<std::size_t>(
-      std::floor(fvalue / max_angle));
-    const std::size_t angle = static_cast<std::size_t>(
-      num * max_angle);
-    return angle;
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    using FT = typename Traits::FT;
+
+    CGAL_assertion(points.size() > 0);
+    FT x = FT(0), y = FT(0);
+    for (const auto& point : points) {
+      x += point.x();
+      y += point.y();
+    }
+    x /= static_cast<FT>(points.size());
+    y /= static_cast<FT>(points.size());
+    return Point_2(x, y);
   }
 
   //////////////////////

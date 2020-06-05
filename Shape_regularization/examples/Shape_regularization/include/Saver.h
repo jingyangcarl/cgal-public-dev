@@ -304,15 +304,15 @@ namespace Examples {
         const auto& source = segment.source();
         const auto& target = segment.target();
 
-        minx = CGAL::min(minx, source.x());
-        maxx = CGAL::max(maxx, source.x());
-        miny = CGAL::min(miny, source.y());
-        maxy = CGAL::max(maxy, source.y());
+        minx = (CGAL::min)(minx, source.x());
+        maxx = (CGAL::max)(maxx, source.x());
+        miny = (CGAL::min)(miny, source.y());
+        maxy = (CGAL::max)(maxy, source.y());
 
-        minx = CGAL::min(minx, target.x());
-        maxx = CGAL::max(maxx, target.x());
-        miny = CGAL::min(miny, target.y());
-        maxy = CGAL::max(maxy, target.y());
+        minx = (CGAL::min)(minx, target.x());
+        maxx = (CGAL::max)(maxx, target.x());
+        miny = (CGAL::min)(miny, target.y());
+        maxy = (CGAL::max)(maxy, target.y());
       }
 
       const FT d = CGAL::abs(maxx - minx) / FT(10);
