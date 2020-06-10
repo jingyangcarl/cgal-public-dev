@@ -31,7 +31,7 @@ namespace CGAL {
   \ingroup PkgWeightInterfaceRef
 
   The namespace `Generalized_weights` contains implementations of all
-  generalized weights: 2D, 3D, related enumerations, etc.
+  generalized weights: 1D, 2D, 3D, related enumerations, etc.
 */
 namespace Generalized_weights {
 
@@ -39,30 +39,28 @@ namespace Generalized_weights {
 /// @{
 
 /*!
-  `Computation_policy` provides a way to choose an asymptotic time complexity
-  of the algorithm and its precision.
+  `Computation_policy_2` provides a way to choose a type of algorithm and
+  its precision for computing 2D generalized weights.
 */
-enum class Computation_policy {
+enum class Computation_policy_2 {
 
   /*!
-    Computation has a linear time complexity with respect to the number of the
-    polygon vertices, but may suffer imprecisions near the polygon boundary. In
-    addition, we check a position of the query point with respect to the polygon
-    and use different computation strategies for different positions.
+    The best trade-off linear-time algorithm for computing weights. In addition,
+    we check a position of the query point with respect to the polygon and use
+    different computation strategies for different positions. This is the default policy.
   */
-  FAST_COMPUTATION_WITH_EDGE_CASES = 0,
+  OPTIMAL_WITH_EDGE_CASES = 0,
 
   /*!
-    Computation has a linear time complexity with respect to the number of the
-    polygon vertices, but may suffer imprecisions near the polygon boundary.
+    The best trade-off linear-time algorithm for computing weights.
     No extra checks are carried out.
   */
-  FAST_COMPUTATION = 1,
+  OPTIMAL = 1,
 
   /*!
-    The default policy is `FAST_COMPUTATION_WITH_EDGE_CASES`.
+    The default policy is `OPTIMAL_WITH_EDGE_CASES`.
   */
-  DEFAULT = FAST_COMPUTATION_WITH_EDGE_CASES
+  DEFAULT = OPTIMAL_WITH_EDGE_CASES
 };
 
 /// @}

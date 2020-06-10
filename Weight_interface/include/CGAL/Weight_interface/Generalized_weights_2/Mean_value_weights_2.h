@@ -53,11 +53,13 @@ namespace Generalized_weights {
     is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
-    is a model of `GeneralizedWeightTraits_2`.
+    is a model of `AnalyticTraits_2`.
 
     \tparam VertexMap
     is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
+    \cgalModels `AnalyticWeights_2`
   */
   template<
   typename Polygon,
@@ -104,8 +106,8 @@ namespace Generalized_weights {
       An instance of `Polygon` with the vertices of a simple polygon.
 
       \param policy
-      One of the `CGAL::Generalized_weights::Computation_policy`.
-      The default is `CGAL::Generalized_weights::Computation_policy::DEFAULT`.
+      One of the `CGAL::Generalized_weights::Computation_policy_2`.
+      The default is `CGAL::Generalized_weights::Computation_policy_2::DEFAULT`.
 
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
@@ -119,8 +121,8 @@ namespace Generalized_weights {
     */
     Mean_value_weights_2(
       const Polygon& polygon,
-      const Computation_policy policy
-      = Computation_policy::DEFAULT,
+      const Computation_policy_2 policy
+      = Computation_policy_2::DEFAULT,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
     m_polygon(polygon),
@@ -190,7 +192,7 @@ namespace Generalized_weights {
 
     // Fields.
     const Polygon& m_polygon;
-    const Computation_policy m_computation_policy;
+    const Computation_policy_2 m_computation_policy;
     const GeomTraits m_traits;
     const VertexMap m_vertex_map;
     const Area_2 m_area_2;
@@ -223,15 +225,15 @@ namespace Generalized_weights {
 
       switch (m_computation_policy) {
 
-        case Computation_policy::FAST_COMPUTATION: {
-          return max_speed_weights(query, weights, normalize);
+        case Computation_policy_2::OPTIMAL: {
+          return optimal_weights(query, weights, normalize);
         }
 
-        case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
+        case Computation_policy_2::OPTIMAL_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, weights);
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
-          return max_speed_weights(query, weights, normalize);
+          return optimal_weights(query, weights, normalize);
         }
 
         default: {
@@ -268,7 +270,7 @@ namespace Generalized_weights {
     }
 
     template<typename OutputIterator>
-    OutputIterator max_speed_weights(
+    OutputIterator optimal_weights(
       const Point_2& query,
       OutputIterator weights,
       const bool normalize) {

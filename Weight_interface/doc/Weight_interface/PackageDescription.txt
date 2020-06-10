@@ -7,20 +7,15 @@
 Concepts, which are used to parameterize the functions and classes
 from `CGAL::Generalized_weights`.
 
-\defgroup PkgWeightInterfaceRef1D 1D Generalized Weights
-\ingroup PkgWeightInterfaceRef
-
-Models and functions that can be used to compute 1D generalized weights.
-
 \defgroup PkgWeightInterfaceRef2D 2D Generalized Weights
 \ingroup PkgWeightInterfaceRef
 
 Models and functions that can be used to compute 2D generalized weights.
 
-\defgroup PkgWeightInterfaceRef3D 3D Generalized Weights
+\defgroup PkgWeightInterfaceRef2DFunctions 2D Free Functions
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute 3D generalized weights.
+Free functions to compute 2D generalized weights.
 
 \addtogroup PkgWeightInterfaceRef
 
@@ -45,10 +40,20 @@ Models and functions that can be used to compute 3D generalized weights.
 ## Generalized Weights ##
 
 ### Concepts ###
+- `AnalyticTraits_2`
+- `AnalyticWeights_2`
 
-### 1D Generalized Weights ###
+## Enumerations ##
+- `CGAL::Generalized_weights::Computation_policy_2`
 
 ### 2D Generalized Weights ###
+- `CGAL::Generalized_weights::Wachspress_weights_2`
+- `CGAL::Generalized_weights::Mean_value_weights_2`
+- `CGAL::Generalized_weights::Discrete_harmonic_weights_2`
 
-### 3D Generalized Weights ###
+## 2D Free Functions ##
+- `CGAL::Generalized_weights::wachspress_weights_2()`
+- `CGAL::Generalized_weights::mean_value_weights_2()`
+- `CGAL::Generalized_weights::discrete_harmonic_weights_2()`
+
 */
