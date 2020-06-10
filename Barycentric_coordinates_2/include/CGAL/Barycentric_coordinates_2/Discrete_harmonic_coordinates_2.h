@@ -78,6 +78,7 @@ namespace Barycentric_coordinates {
 
     using Area_2 = typename GeomTraits::Compute_area_2;
     using Squared_distance_2 = typename GeomTraits::Compute_squared_distance_2;
+
     using Discrete_harmonic_weights_2 =
       CGAL::Generalized_weights::Discrete_harmonic_weights_2<Polygon, GeomTraits, Vertex_map>;
     /// \endcond
@@ -225,7 +226,6 @@ namespace Barycentric_coordinates {
     std::vector<FT> A;
     std::vector<FT> B;
     std::vector<FT> w;
-    bool m_is_strictly_convex_polygon;
 
     // Functions.
     void resize() {

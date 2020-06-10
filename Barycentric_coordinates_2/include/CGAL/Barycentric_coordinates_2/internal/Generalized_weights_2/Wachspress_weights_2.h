@@ -1,4 +1,4 @@
-// Copyright (c) 2019 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2020 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -20,40 +20,36 @@
 // Author(s)     : Dmitry Anisimov, David Bommes, Kai Hormann, Pierre Alliez
 //
 
-#ifndef CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_2_H
-#define CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_2_H
+#ifndef CGAL_GENERALIZED_WACHSPRESS_WEIGHTS_2_H
+#define CGAL_GENERALIZED_WACHSPRESS_WEIGHTS_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
+// #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
-#include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
-#include <CGAL/Barycentric_coordinates_2/internal/Generalized_weights_2/Wachspress_weights_2.h>
+#include <CGAL/Barycentric_coordinates_2/internal/Generalized_weights_2/enum_2.h>
 
 // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos.
 // A general construction of barycentric coordinates over convex polygons.
 // Advances in Computational Mathematics, 24(1-4):311-331, 2006.".
 
 namespace CGAL {
-namespace Barycentric_coordinates {
+namespace Generalized_weights {
 
   /*!
-    \ingroup PkgBarycentricCoordinates2RefAnalytic
+    \ingroup PkgWeightInterfaceRef2D
 
-    \brief 2D Wachspress coordinates.
+    \brief 2D Wachspress weights.
 
-    This class implements 2D Wachspress coordinates ( \cite cgal:bc:fhk-gcbcocp-06,
-    \cite cgal:bc:mlbd-gbcip-02, \cite cgal:bc:w-rfeb-75 ), which can be computed
-    at any point inside a strictly convex polygon.
-
-    Wachspress coordinates are well-defined and non-negative in the closure
-    of a strictly convex polygon. The coordinates are computed analytically.
+    This class implements 2D Wachspress weights ( \cite cgal:bc:fhk-gcbcocp-06,
+    \cite cgal:bc:mlbd-gbcip-02, \cite cgal:bc:w-rfeb-75 ).
 
     \tparam Polygon
     is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    is a model of `GeneralizedWeightTraits_2`.
 
     \tparam VertexMap
     is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
@@ -63,7 +59,7 @@ namespace Barycentric_coordinates {
   typename Polygon,
   typename GeomTraits,
   typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
-  class Wachspress_coordinates_2 {
+  class Wachspress_weights_2 {
 
   public:
 
@@ -76,9 +72,6 @@ namespace Barycentric_coordinates {
     using Vertex_map = VertexMap;
 
     using Area_2 = typename GeomTraits::Compute_area_2;
-
-    using Wachspress_weights_2 =
-      CGAL::Generalized_weights::Wachspress_weights_2<Polygon, GeomTraits, Vertex_map>;
     /// \endcond
 
     /// Number type.
@@ -95,15 +88,15 @@ namespace Barycentric_coordinates {
     /*!
       \brief initializes all internal data structures.
 
-      This class implements the behavior of Wachspress coordinates
+      This class implements the behavior of Wachspress weights
       for 2D query points.
 
       \param polygon
       An instance of `Polygon` with the vertices of a strictly convex polygon.
 
       \param policy
-      One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-      The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+      One of the `CGAL::Generalized_weights::Computation_policy`.
+      The default is `CGAL::Generalized_weights::Computation_policy::DEFAULT`.
 
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
@@ -116,7 +109,7 @@ namespace Barycentric_coordinates {
       \pre `polygon is simple`
       \pre `polygon is strictly convex`
     */
-    Wachspress_coordinates_2(
+    Wachspress_weights_2(
       const Polygon& polygon,
       const Computation_policy policy
       = Computation_policy::DEFAULT,
@@ -126,20 +119,15 @@ namespace Barycentric_coordinates {
     m_computation_policy(policy),
     m_traits(traits),
     m_vertex_map(vertex_map),
-    m_area_2(m_traits.compute_area_2_object()),
-    m_wachspress_weights_2(
-      polygon,
-      CGAL::Generalized_weights::Computation_policy::FAST_COMPUTATION,
-      traits,
-      vertex_map) {
+    m_area_2(m_traits.compute_area_2_object()) {
 
       CGAL_precondition(
         polygon.size() >= 3);
       CGAL_precondition(
-        internal::is_simple_2(polygon, traits, vertex_map));
+        CGAL::Barycentric_coordinates::internal::is_simple_2(polygon, traits, vertex_map));
       CGAL_precondition(
-        internal::polygon_type_2(polygon, traits, vertex_map) ==
-        internal::Polygon_type::STRICTLY_CONVEX);
+        CGAL::Barycentric_coordinates::internal::polygon_type_2(polygon, traits, vertex_map) ==
+        CGAL::Barycentric_coordinates::internal::Polygon_type::STRICTLY_CONVEX);
       resize();
     }
 
@@ -169,7 +157,7 @@ namespace Barycentric_coordinates {
       \return an output iterator.
     */
     template<typename OutputIterator>
-    OutputIterator weights(
+    OutputIterator operator()(
       const Point_2& query,
       OutputIterator weights) {
 
@@ -177,35 +165,18 @@ namespace Barycentric_coordinates {
       return compute(query, weights, normalize);
     }
 
-    /*!
-      \brief computes 2D Wachspress coordinates.
+    /// @}
 
-      This function fills `coordinates` with 2D Wachspress coordinates computed at the `query`
-      point with respect to the vertices of the input polygon.
-
-      The number of returned coordinates equals to the number of polygon vertices.
-
-      \tparam OutputIterator
-      is an output iterator whose value type is `FT`.
-
-      \param query
-      A query point.
-
-      \param coordinates
-      An output iterator that stores the computed coordinates.
-
-      \return an output iterator.
-    */
+    /// \cond SKIP_IN_MANUAL
     template<typename OutputIterator>
     OutputIterator operator()(
       const Point_2& query,
-      OutputIterator coordinates) {
+      OutputIterator weights,
+      const bool normalize) {
 
-      const bool normalize = true;
-      return compute(query, coordinates, normalize);
+      return compute(query, weights, normalize);
     }
-
-    /// @}
+    /// \endcond
 
   private:
 
@@ -216,14 +187,14 @@ namespace Barycentric_coordinates {
     const VertexMap m_vertex_map;
     const Area_2 m_area_2;
 
-    Wachspress_weights_2 m_wachspress_weights_2;
-
     std::vector<FT> A;
+    std::vector<FT> C;
     std::vector<FT> w;
 
     // Functions.
     void resize() {
       A.resize(m_polygon.size());
+      C.resize(m_polygon.size());
       w.resize(m_polygon.size());
     }
 
@@ -235,50 +206,22 @@ namespace Barycentric_coordinates {
 
       switch (m_computation_policy) {
 
-        case Computation_policy::PRECISE_COMPUTATION: {
-          if (normalize) {
-            return max_precision_weights(query, weights, normalize);
-          } else {
-            std::cerr << "WARNING: you can't use the precise version of unnormalized weights! ";
-            std::cerr << "They are not valid weights!" << std::endl;
-            internal::get_default(m_polygon.size(), weights);
-            return weights;
-          }
-        }
-
-        case Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
-          if (edge_case == internal::Edge_case::EXTERIOR)
-            std::cerr << std::endl <<
-            "WARNING: query does not belong to the polygon!" << std::endl;
-          if (normalize) {
-            return max_precision_weights(query, weights, normalize);
-          } else {
-            std::cerr << "WARNING: you can't use the precise version of unnormalized weights! ";
-            std::cerr << "They are not valid weights!" << std::endl;
-            internal::get_default(m_polygon.size(), weights);
-            return weights;
-          }
-        }
-
         case Computation_policy::FAST_COMPUTATION: {
-          return m_wachspress_weights_2(query, weights, normalize);
+          return max_speed_weights(query, weights, normalize);
         }
 
         case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
+          if (edge_case == CGAL::Barycentric_coordinates::internal::Edge_case::BOUNDARY)
             return weights;
-          if (edge_case == internal::Edge_case::EXTERIOR)
+          if (edge_case == CGAL::Barycentric_coordinates::internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
-          return m_wachspress_weights_2(query, weights, normalize);
+          return max_speed_weights(query, weights, normalize);
         }
 
         default: {
-          internal::get_default(m_polygon.size(), weights);
+          CGAL::Barycentric_coordinates::internal::get_default(m_polygon.size(), weights);
           return weights;
         }
       }
@@ -286,32 +229,32 @@ namespace Barycentric_coordinates {
     }
 
     template<typename OutputIterator>
-    internal::Edge_case verify(
+    CGAL::Barycentric_coordinates::internal::Edge_case verify(
       const Point_2& query,
       OutputIterator weights) const {
 
-      const auto result = internal::locate_wrt_polygon_2(
+      const auto result = CGAL::Barycentric_coordinates::internal::locate_wrt_polygon_2(
         m_polygon, query, m_traits, m_vertex_map);
       if (!result)
-        return internal::Edge_case::EXTERIOR;
+        return CGAL::Barycentric_coordinates::internal::Edge_case::EXTERIOR;
 
       const auto location = (*result).first;
       const std::size_t index = (*result).second;
-      if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE)
-        return internal::Edge_case::EXTERIOR;
+      if (location == CGAL::Barycentric_coordinates::internal::Query_point_location::ON_UNBOUNDED_SIDE)
+        return CGAL::Barycentric_coordinates::internal::Edge_case::EXTERIOR;
 
       if (
-        location == internal::Query_point_location::ON_VERTEX ||
-        location == internal::Query_point_location::ON_EDGE ) {
-        internal::boundary_coordinates_2(
+        location == CGAL::Barycentric_coordinates::internal::Query_point_location::ON_VERTEX ||
+        location == CGAL::Barycentric_coordinates::internal::Query_point_location::ON_EDGE ) {
+        CGAL::Barycentric_coordinates::internal::boundary_coordinates_2(
           m_polygon, query, location, index, weights, m_traits, m_vertex_map);
-        return internal::Edge_case::BOUNDARY;
+        return CGAL::Barycentric_coordinates::internal::Edge_case::BOUNDARY;
       }
-      return internal::Edge_case::INTERIOR;
+      return CGAL::Barycentric_coordinates::internal::Edge_case::INTERIOR;
     }
 
     template<typename OutputIterator>
-    OutputIterator max_precision_weights(
+    OutputIterator max_speed_weights(
       const Point_2& query,
       OutputIterator weights,
       const bool normalize) {
@@ -319,58 +262,54 @@ namespace Barycentric_coordinates {
       // Get the number of vertices in the polygon.
       const std::size_t n = m_polygon.size();
 
-      // Compute areas A following the area notation from [1].
+      // Compute areas A and C following the area notation from [1].
       // Split the loop to make this computation faster.
       const auto& p1 = get(m_vertex_map, *(m_polygon.begin() + 0));
       const auto& p2 = get(m_vertex_map, *(m_polygon.begin() + 1));
+      const auto& pn = get(m_vertex_map, *(m_polygon.begin() + (n - 1)));
+
       A[0] = m_area_2(p1, p2, query);
+      C[0] = m_area_2(pn, p1, p2);
 
       for (std::size_t i = 1; i < n - 1; ++i) {
-        const auto& pi1 = get(m_vertex_map, *(m_polygon.begin() + (i + 0)));
-        const auto& pi2 = get(m_vertex_map, *(m_polygon.begin() + (i + 1)));
-        A[i] = m_area_2(pi1, pi2, query);
-      }
-
-      const auto& pn = get(m_vertex_map, *(m_polygon.begin() + (n - 1)));
-      A[n - 1] = m_area_2(pn, p1, query);
-
-      // Initialize weights with areas C following the area notation from [1].
-      // Then we multiply them by areas A as in the formula (5) from [1].
-      // We also split the loop.
-      w[0] = m_area_2(pn, p1, p2);
-      for(std::size_t j = 1; j < n - 1; ++j)
-        w[0] *= A[j];
-
-      for(std::size_t i = 1; i < n - 1; ++i) {
         const auto& pi0 = get(m_vertex_map, *(m_polygon.begin() + (i - 1)));
         const auto& pi1 = get(m_vertex_map, *(m_polygon.begin() + (i + 0)));
         const auto& pi2 = get(m_vertex_map, *(m_polygon.begin() + (i + 1)));
-        w[i] = m_area_2(pi0, pi1, pi2);
 
-        for (std::size_t j = 0; j < i - 1; ++j)
-          w[i] *= A[j];
-        for (std::size_t j = i + 1; j < n; ++j)
-          w[i] *= A[j];
+        A[i] = m_area_2(pi1, pi2, query);
+        C[i] = m_area_2(pi0, pi1, pi2);
       }
 
       const auto& pm = get(m_vertex_map, *(m_polygon.begin() + (n - 2)));
-      w[n - 1] = m_area_2(pm, pn, p1);
-      for (std::size_t j = 0; j < n - 2; ++j)
-        w[n - 1] *= A[j];
+      A[n - 1] = m_area_2(pn, p1, query);
+      C[n - 1] = m_area_2(pm, pn, p1);
+
+      // Compute unnormalized weights following the formula (28) from [1].
+      CGAL_assertion(A[n - 1] != FT(0) && A[0] != FT(0));
+      w[0] = C[0] / (A[n - 1] * A[0]);
+
+      for (std::size_t i = 1; i < n - 1; ++i) {
+        CGAL_assertion(A[i - 1] != FT(0) && A[i] != FT(0));
+        w[i] = C[i] / (A[i - 1] * A[i]);
+      }
+
+      CGAL_assertion(A[n - 2] != FT(0) && A[n - 1] != FT(0));
+      w[n - 1] = C[n - 1] / (A[n - 2] * A[n - 1]);
 
       // Normalize if necessary.
       if (normalize)
-        internal::normalize(w);
+        CGAL::Barycentric_coordinates::internal::normalize(w);
 
       // Return weights.
       for (std::size_t i = 0; i < n; ++i)
         *(weights++) = w[i];
 
+      // Return weights.
       return weights;
     }
   };
 
-} // namespace Barycentric_coordinates
+} // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_2_H
+#endif // CGAL_GENERALIZED_WACHSPRESS_WEIGHTS_2_H

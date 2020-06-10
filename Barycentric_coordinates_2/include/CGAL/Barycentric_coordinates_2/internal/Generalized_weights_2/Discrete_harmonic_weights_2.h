@@ -194,7 +194,6 @@ namespace Generalized_weights {
     std::vector<FT> A;
     std::vector<FT> B;
     std::vector<FT> w;
-    bool m_is_strictly_convex_polygon;
 
     // Functions.
     void resize() {

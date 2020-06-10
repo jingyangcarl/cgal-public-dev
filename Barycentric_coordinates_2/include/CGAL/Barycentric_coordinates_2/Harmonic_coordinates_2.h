@@ -40,7 +40,7 @@
 
 // Todo:
 // * check the function get_edge_index_exact()
-// * try to use the class with DH coordinates instead of cotangent weights
+// * try to use the class with DH weights instead of cotangent weights
 // * try to avoid using lambda, alpha_cot, and beta_cot temporary containers
 
 namespace CGAL {
