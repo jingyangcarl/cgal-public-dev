@@ -49,11 +49,13 @@ namespace Generalized_weights {
     is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
-    is a model of `GeneralizedWeightTraits_2`.
+    is a model of `AnalyticTraits_2`.
 
     \tparam VertexMap
     is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
+    \cgalModels `AnalyticWeights_2`
   */
   template<
   typename Polygon,
