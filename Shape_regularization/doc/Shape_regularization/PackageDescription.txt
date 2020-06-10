@@ -42,7 +42,7 @@ to the user-defined conditions.}
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.2}
 \cgalPkgDependsOn{\ref PkgQPSolver}
-\cgalPkgBib{cgal:lgbfsa-sr}
+\cgalPkgBib{cgal:asgbl-sr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
 \cgalPkgShortInfoEnd
