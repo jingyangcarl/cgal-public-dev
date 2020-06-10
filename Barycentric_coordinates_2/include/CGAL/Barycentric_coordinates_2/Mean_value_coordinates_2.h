@@ -42,13 +42,13 @@ namespace CGAL {
 namespace Barycentric_coordinates {
 
   /*!
-    \ingroup PkgBarycentricCoordinates2RefWeights
+    \ingroup PkgBarycentricCoordinates2RefAnalytic
 
-    \brief 2D mean value weights.
+    \brief 2D mean value coordinates.
 
-    This class implements 2D mean value weights ( \cite cgal:bc:hf-mvcapp-06,
-    \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ), which can be normalized
-    to get the corresponding mean value coordinates.
+    This class implements 2D mean value coordinates ( \cite cgal:bc:hf-mvcapp-06,
+    \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ), which can be computed
+    at any point in the plane.
 
     Mean value coordinates are well-defined everywhere in the plane and are
     non-negative in the kernel of a star-shaped polygon. The coordinates are
@@ -63,14 +63,12 @@ namespace Barycentric_coordinates {
     \tparam VertexMap
     is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
-
-    \cgalModels `AnalyticWeights_2`
   */
   template<
   typename Polygon,
   typename GeomTraits,
   typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
-  class Mean_value_weights_2 {
+  class Mean_value_coordinates_2 {
 
   public:
 
@@ -104,7 +102,7 @@ namespace Barycentric_coordinates {
     /*!
       \brief initializes all internal data structures.
 
-      This class implements the behavior of mean value weights
+      This class implements the behavior of mean value coordinates
       for 2D query points.
 
       \param polygon
@@ -124,7 +122,7 @@ namespace Barycentric_coordinates {
       \pre `polygon.size() >= 3`
       \pre `polygon is simple`
     */
-    Mean_value_weights_2(
+    Mean_value_coordinates_2(
       const Polygon& polygon,
       const Computation_policy policy
       = Computation_policy::DEFAULT,
@@ -158,7 +156,7 @@ namespace Barycentric_coordinates {
       point with respect to the vertices of the input polygon. If `query` belongs to
       the polygon boundary, the returned weights are normalized.
 
-      The number of weights equals to the number of the polygon vertices.
+      The number of returned weights equals to the number of polygon vertices.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
@@ -172,7 +170,7 @@ namespace Barycentric_coordinates {
       \return an output iterator.
     */
     template<typename OutputIterator>
-    OutputIterator operator()(
+    OutputIterator weights(
       const Point_2& query,
       OutputIterator weights) {
 
@@ -186,7 +184,7 @@ namespace Barycentric_coordinates {
       This function fills `coordinates` with 2D mean value coordinates computed at the `query`
       point with respect to the vertices of the input polygon.
 
-      The number of coordinates equals to the number of the polygon vertices.
+      The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
@@ -200,7 +198,7 @@ namespace Barycentric_coordinates {
       \return an output iterator.
     */
     template<typename OutputIterator>
-    OutputIterator coordinates(
+    OutputIterator operator()(
       const Point_2& query,
       OutputIterator coordinates) {
 

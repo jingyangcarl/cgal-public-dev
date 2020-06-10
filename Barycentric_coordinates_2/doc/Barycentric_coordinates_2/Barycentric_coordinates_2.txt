@@ -28,8 +28,8 @@ because they allow an arbitrary simple polygon as input. Wachspress and discrete
 are, by definition, limited to strictly convex polygons. Segment coordinates take as input
 any non-degenerate segment, and triangle coordinates allow an arbitrary non-degenerate triangle.
 
-Wachspress, discrete harmonic, mean value, and harmonic coordinates are all models of the
-concept `AnalyticWeights_2`. However, while Wachspress, discrete harmonic, and mean value
+Wachspress, discrete harmonic, mean value, and harmonic coordinates are all generalized
+barycentric coordinates. However, while Wachspress, discrete harmonic, and mean value
 coordinates can be computed analytically, harmonic coordinates cannot. They first need
 to be approximated over a triangulation of the interior part of the polygon. Once approximated,
 they can be evaluated analytically at any point inside the polygon.
@@ -190,7 +190,7 @@ The interpolated data. The color bar represents the corresponding height.
 \subsection af_example Affine Coordinates
 This is another advanced example, where we show how the
 <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>
-can be used to define a model of the concept `AnalyticWeights_2`. To make this example
+can be used to define a model of generalized barycentric coordinates. To make this example
 useful, we implement affine generalized coordinates for a set of scattered points.
 The used `Kernel` is of floating precision.
 

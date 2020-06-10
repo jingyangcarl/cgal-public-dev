@@ -37,13 +37,13 @@ namespace CGAL {
 namespace Barycentric_coordinates {
 
   /*!
-    \ingroup PkgBarycentricCoordinates2RefWeights
+    \ingroup PkgBarycentricCoordinates2RefAnalytic
 
-    \brief 2D Wachspress weights.
+    \brief 2D Wachspress coordinates.
 
-    This class implements 2D Wachspress weights ( \cite cgal:bc:fhk-gcbcocp-06,
-    \cite cgal:bc:mlbd-gbcip-02, \cite cgal:bc:w-rfeb-75 ), which can be normalized
-    to get the corresponding Wachspress coordinates.
+    This class implements 2D Wachspress coordinates ( \cite cgal:bc:fhk-gcbcocp-06,
+    \cite cgal:bc:mlbd-gbcip-02, \cite cgal:bc:w-rfeb-75 ), which can be computed
+    at any point inside a strictly convex polygon.
 
     Wachspress coordinates are well-defined and non-negative in the closure
     of a strictly convex polygon. The coordinates are computed analytically.
@@ -57,14 +57,12 @@ namespace Barycentric_coordinates {
     \tparam VertexMap
     is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
-
-    \cgalModels `AnalyticWeights_2`
   */
   template<
   typename Polygon,
   typename GeomTraits,
   typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
-  class Wachspress_weights_2 {
+  class Wachspress_coordinates_2 {
 
   public:
 
@@ -93,7 +91,7 @@ namespace Barycentric_coordinates {
     /*!
       \brief initializes all internal data structures.
 
-      This class implements the behavior of Wachspress weights
+      This class implements the behavior of Wachspress coordinates
       for 2D query points.
 
       \param polygon
@@ -114,7 +112,7 @@ namespace Barycentric_coordinates {
       \pre `polygon is simple`
       \pre `polygon is strictly convex`
     */
-    Wachspress_weights_2(
+    Wachspress_coordinates_2(
       const Polygon& polygon,
       const Computation_policy policy
       = Computation_policy::DEFAULT,
@@ -148,7 +146,7 @@ namespace Barycentric_coordinates {
       point with respect to the vertices of the input polygon. If `query` belongs to
       the polygon boundary, the returned weights are normalized.
 
-      The number of weights equals to the number of the polygon vertices.
+      The number of returned weights equals to the number of polygon vertices.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
@@ -162,7 +160,7 @@ namespace Barycentric_coordinates {
       \return an output iterator.
     */
     template<typename OutputIterator>
-    OutputIterator operator()(
+    OutputIterator weights(
       const Point_2& query,
       OutputIterator weights) {
 
@@ -176,7 +174,7 @@ namespace Barycentric_coordinates {
       This function fills `coordinates` with 2D Wachspress coordinates computed at the `query`
       point with respect to the vertices of the input polygon.
 
-      The number of coordinates equals to the number of the polygon vertices.
+      The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
@@ -190,7 +188,7 @@ namespace Barycentric_coordinates {
       \return an output iterator.
     */
     template<typename OutputIterator>
-    OutputIterator coordinates(
+    OutputIterator operator()(
       const Point_2& query,
       OutputIterator coordinates) {
 

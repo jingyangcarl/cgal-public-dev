@@ -52,7 +52,8 @@ namespace Barycentric_coordinates {
     \brief 2D harmonic coordinates.
 
     This class implements 2D harmonic coordinate functions ( \cite cgal:bc:fhk-gcbcocp-06,
-    \cite cgal:bc:jmdgs-hcfca-07 ), which can be evaluated at any point inside a polygon.
+    \cite cgal:bc:jmdgs-hcfca-07 ), which can be evaluated at any point inside a
+    simple polygon.
 
     Harmonic coordinates are well-defined and non-negative in the closure
     of any simple polygon, however they cannot be computed analytically and hence
@@ -172,7 +173,7 @@ namespace Barycentric_coordinates {
       If `query` does not belong to the input domain or the located element has more than
       3 vertices, all coordinates are set to zero.
 
-      The number of coordinates equals to the number of the polygon vertices.
+      The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.
@@ -256,7 +257,7 @@ namespace Barycentric_coordinates {
       This function fills `coordinates` with harmonic coordinates computed at the
       vertex of the input domain with the index `query_index`.
 
-      The number of coordinates equals to the number of the polygon vertices.
+      The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
       is an output iterator whose value type is `FT`.

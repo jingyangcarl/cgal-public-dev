@@ -18,7 +18,7 @@ using Vertex_with_info = std::pair<Point_2, Info>;
 using Vertex_map       = CGAL::First_of_pair_property_map<Vertex_with_info>;
 
 using Polygon = std::vector<Vertex_with_info>;
-using DHC     = CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Polygon, Kernel, Vertex_map>;
+using DHC2    = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2<Polygon, Kernel, Vertex_map>;
 using Policy  = CGAL::Barycentric_coordinates::Computation_policy;
 
 int main() {
@@ -36,14 +36,14 @@ int main() {
   // We do not check for edge cases since we know the exact positions
   // of all our points. We speed up the computation by using the O(n) algorithm.
   const Policy policy = Policy::FAST_COMPUTATION;
-  DHC discrete_harmonic(square, policy, kernel, vertex_map);
+  DHC2 discrete_harmonic_2(square, policy, kernel, vertex_map);
 
   // Instantiate the center point of the unit square.
   const Point_2 center(FT(1) / FT(2), FT(1) / FT(2));
 
   // Compute discrete harmonic weights for the center point.
   std::list<FT> weights;
-  discrete_harmonic(center, std::back_inserter(weights));
+  discrete_harmonic_2.weights(center, std::back_inserter(weights));
 
   std::cout << std::endl << "discrete harmonic weights (center): ";
   for (const FT weight : weights)
@@ -52,7 +52,7 @@ int main() {
 
   // Compute discrete harmonic coordinates for the center point.
   std::list<FT> coordinates;
-  discrete_harmonic.coordinates(center, std::back_inserter(coordinates));
+  discrete_harmonic_2(center, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (center): ";
   for (const FT coordinate : coordinates)
@@ -74,7 +74,7 @@ int main() {
   std::vector<FT> ws;
   for (const auto& query : interior_points) {
     ws.clear();
-    discrete_harmonic(query, std::back_inserter(ws));
+    discrete_harmonic_2.weights(query, std::back_inserter(ws));
     for (std::size_t i = 0; i < ws.size() - 1; ++i)
       std::cout << ws[i] << ", ";
     std::cout << ws[ws.size() - 1] << std::endl;
@@ -88,7 +88,7 @@ int main() {
   std::vector<FT> bs;
   for (const auto& query : interior_points) {
     bs.clear();
-    discrete_harmonic.coordinates(query, std::back_inserter(bs));
+    discrete_harmonic_2(query, std::back_inserter(bs));
     for (std::size_t i = 0; i < bs.size() - 1; ++i)
       std::cout << bs[i] << ", ";
     std::cout << bs[bs.size() - 1] << std::endl;
@@ -144,8 +144,8 @@ int main() {
 
   // Compute discrete harmonic coordinates for all exterior points.
   coordinates.clear();
-  discrete_harmonic.coordinates(l, std::back_inserter(coordinates));
-  discrete_harmonic.coordinates(r, std::back_inserter(coordinates));
+  discrete_harmonic_2(l, std::back_inserter(coordinates));
+  discrete_harmonic_2(r, std::back_inserter(coordinates));
 
   std::cout << std::endl << "discrete harmonic coordinates (exterior): ";
   for (const FT coordinate : coordinates)

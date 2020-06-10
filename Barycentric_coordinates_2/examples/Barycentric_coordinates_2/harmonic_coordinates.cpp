@@ -8,7 +8,7 @@ using Point_2 = Kernel::Point_2;
 
 using Polygon = std::vector<Point_2>;
 using Domain  = CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, Kernel>;
-using HMC     = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, Kernel>;
+using HMC2    = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, Kernel>;
 
 int main() {
 
@@ -41,8 +41,8 @@ int main() {
   domain.create(0.01, list_of_seeds);
 
   // Compute harmonic coordinates at the vertices of the domain.
-  HMC harmonic(polygon, domain);
-  harmonic.compute();
+  HMC2 harmonic_coordinates_2(polygon, domain);
+  harmonic_coordinates_2.compute();
 
   // Use it to store coordinates.
   std::vector<double> coordinates;
@@ -57,7 +57,7 @@ int main() {
 
   for (std::size_t k = 0; k < 20; ++k) {
     coordinates.clear();
-    harmonic.coordinates(k, std::back_inserter(coordinates));
+    harmonic_coordinates_2(k, std::back_inserter(coordinates));
     for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
       std::cout << coordinates[i] << ", ";
     std::cout << coordinates[coordinates.size() - 1] << std::endl;
@@ -74,7 +74,7 @@ int main() {
 
   for (std::size_t k = 0; k < 20; ++k) {
     coordinates.clear();
-    harmonic(barycenters[k], std::back_inserter(coordinates));
+    harmonic_coordinates_2(barycenters[k], std::back_inserter(coordinates));
     for (std::size_t i = 0; i < coordinates.size() - 1; ++i)
       std::cout << coordinates[i] << ", ";
     std::cout << coordinates[coordinates.size() - 1] << std::endl;

@@ -6,10 +6,10 @@
 
 Generalized barycentric concepts.
 
-\defgroup PkgBarycentricCoordinates2RefWeights Generalized Weights
+\defgroup PkgBarycentricCoordinates2RefAnalytic Analytic Coordinates
 \ingroup PkgBarycentricCoordinates2Ref
 
-Generalized barycentric weights.
+Analytic coordinates and related classes.
 
 \defgroup PkgBarycentricCoordinates2RefHarmonic Harmonic Coordinates
 \ingroup PkgBarycentricCoordinates2Ref
@@ -50,14 +50,13 @@ are required, please refer to natural neighbor coordinates from the Package \ref
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `AnalyticWeights_2`
 - `BarycentricTraits_2`
 - `DiscretizedDomain_2`
 
-## Generalized Weights ##
-- `CGAL::Barycentric_coordinates::Wachspress_weights_2<Polygon, GeomTraits, VertexMap>`
-- `CGAL::Barycentric_coordinates::Mean_value_weights_2<Polygon, GeomTraits, VertexMap>`
-- `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2<Polygon, GeomTraits, VertexMap>`
+## Analytic Coordinates ##
+- `CGAL::Barycentric_coordinates::Wachspress_coordinates_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Barycentric_coordinates::Mean_value_coordinates_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2<Polygon, GeomTraits, VertexMap>`
 
 ## Harmonic Coordinates ##
 - `CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, GeomTraits, VertexMap>`
