@@ -53,8 +53,8 @@ Section \ref gbc_degeneracies.
 
 The output of the computation is a set of coordinate values at the given query point
 with respect to the polygon vertices. That means that the number of returned coordinates
-per query point equals to the number of the polygon vertices. The ordering of the coordinates
-is the same as the ordering of the polygon vertices.
+per query point equals to the number of polygon vertices. The ordering of the coordinates
+is the same as the ordering of polygon vertices.
 
 All coordinates are parameterized by a traits class of the concept `BarycentricTraits_2`
 that provides all necessary geometric primitives, predicates, and constructions, which are
@@ -265,7 +265,7 @@ To compute Wachspress weights, we follow \cgalCite{cgal:bc:fhk-gcbcocp-06} and u
 
 <center>\f$w_i = \frac{C_i}{A_{i-1}A_i}\f$</center>
 
-with \f$i = 1\dots n\f$ where \f$n\f$ is the number of the polygon vertices.
+with \f$i = 1\dots n\f$ where \f$n\f$ is the number of polygon vertices.
 In order to compute the coordinates, we normalize these weights,
 
 <center>\f$b_i = \frac{w_i}{W^{wp}}\qquad\f$ with \f$\qquad W^{wp} = \sum_{j=1}^n w_j.\f$</center>
@@ -313,7 +313,7 @@ To compute discrete harmonic weights, we follow \cgalCite{cgal:bc:fhk-gcbcocp-06
 
 <center>\f$w_i = \frac{r_{i+1}^2A_{i-1}-r_i^2B_i+r_{i-1}^2A_i}{A_{i-1}A_i}\f$</center>
 
-with \f$i = 1\dots n\f$ where \f$n\f$ is the number of the polygon vertices.
+with \f$i = 1\dots n\f$ where \f$n\f$ is the number of polygon vertices.
 In order to compute the coordinates, we normalize these weights,
 
 <center>\f$b_i = \frac{w_i}{W^{dh}}\qquad\f$ with \f$\qquad W^{dh} = \sum_{j=1}^n w_j.\f$</center>

@@ -612,7 +612,7 @@ namespace internal {
     // First, test the polygon on convexity.
     if (is_convex_2(polygon, traits, vertex_map)) {
 
-      // Test all the consequent triplets of the polygon vertices on collinearity.
+      // Test all the consequent triplets of polygon vertices on collinearity.
       // In case we find at least one, return WEAKLY_CONVEX polygon.
       const std::size_t n = polygon.size();
       for (std::size_t i = 0; i < n; ++i) {

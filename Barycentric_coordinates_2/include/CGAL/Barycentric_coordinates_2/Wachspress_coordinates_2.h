@@ -165,7 +165,7 @@ namespace Barycentric_coordinates {
       OutputIterator weights) {
 
       const bool normalize = false;
-      return compute(normalize, query, weights);
+      return compute(query, weights, normalize);
     }
 
     /*!
@@ -193,7 +193,7 @@ namespace Barycentric_coordinates {
       OutputIterator coordinates) {
 
       const bool normalize = true;
-      return compute(normalize, query, coordinates);
+      return compute(query, coordinates, normalize);
     }
 
     /// @}
@@ -221,15 +221,15 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator compute(
-      const bool normalize,
       const Point_2& query,
-      OutputIterator weights) {
+      OutputIterator weights,
+      const bool normalize) {
 
       switch (m_computation_policy) {
 
         case Computation_policy::PRECISE_COMPUTATION: {
           if (normalize) {
-            return max_precision_weights(normalize, query, weights);
+            return max_precision_weights(query, weights, normalize);
           } else {
             std::cerr << "WARNING: you can't use the precise version of unnormalized weights! ";
             std::cerr << "They are not valid weights!" << std::endl;
@@ -244,9 +244,9 @@ namespace Barycentric_coordinates {
             return weights;
           if (edge_case == internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
-            "WARNING: query does not belong to the polygon" << std::endl;
+            "WARNING: query does not belong to the polygon!" << std::endl;
           if (normalize) {
-            return max_precision_weights(normalize, query, weights);
+            return max_precision_weights(query, weights, normalize);
           } else {
             std::cerr << "WARNING: you can't use the precise version of unnormalized weights! ";
             std::cerr << "They are not valid weights!" << std::endl;
@@ -256,7 +256,7 @@ namespace Barycentric_coordinates {
         }
 
         case Computation_policy::FAST_COMPUTATION: {
-          return max_speed_weights(normalize, query, weights);
+          return max_speed_weights(query, weights, normalize);
         }
 
         case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
@@ -265,8 +265,8 @@ namespace Barycentric_coordinates {
             return weights;
           if (edge_case == internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
-            "query does not belong to the polygon" << std::endl;
-          return max_speed_weights(normalize, query, weights);
+            "WARNING: query does not belong to the polygon!" << std::endl;
+          return max_speed_weights(query, weights, normalize);
         }
 
         default: {
@@ -304,9 +304,9 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator max_precision_weights(
-      const bool normalize,
       const Point_2& query,
-      OutputIterator weights) {
+      OutputIterator weights,
+      const bool normalize) {
 
       // Get the number of vertices in the polygon.
       const std::size_t n = m_polygon.size();
@@ -363,9 +363,9 @@ namespace Barycentric_coordinates {
 
     template<typename OutputIterator>
     OutputIterator max_speed_weights(
-      const bool normalize,
       const Point_2& query,
-      OutputIterator weights) {
+      OutputIterator weights,
+      const bool normalize) {
 
       // Get the number of vertices in the polygon.
       const std::size_t n = m_polygon.size();
