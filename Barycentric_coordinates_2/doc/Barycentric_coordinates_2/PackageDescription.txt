@@ -54,7 +54,7 @@ are required, please refer to natural neighbor coordinates from the Package \ref
 - `DiscretizedDomain_2`
 
 ## Enumerations ##
-- `CGAL::Barycentric_coordinates::Computation_policy`
+- `CGAL::Barycentric_coordinates::Computation_policy_2`
 
 ## Analytic Coordinates ##
 - `CGAL::Barycentric_coordinates::Wachspress_coordinates_2<Polygon, GeomTraits, VertexMap>`

@@ -612,8 +612,8 @@ namespace Barycentric_coordinates {
     An instance of `GeomTraits`.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -630,8 +630,8 @@ namespace Barycentric_coordinates {
     const typename GeomTraits::Point_2& query,
     OutputIterator weights,
     const GeomTraits traits,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     Wachspress_coordinates_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
@@ -671,8 +671,8 @@ namespace Barycentric_coordinates {
     An output iterator that stores the computed weights.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -688,8 +688,8 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const Point_2& query,
     OutputIterator weights,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return wachspress_weights_2(
@@ -733,8 +733,8 @@ namespace Barycentric_coordinates {
     An instance of `GeomTraits`.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -751,8 +751,8 @@ namespace Barycentric_coordinates {
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     Wachspress_coordinates_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
@@ -792,8 +792,8 @@ namespace Barycentric_coordinates {
     An output iterator that stores the computed coordinates.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -809,8 +809,8 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const Point_2& query,
     OutputIterator coordinates,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return wachspress_coordinates_2(
@@ -854,8 +854,8 @@ namespace Barycentric_coordinates {
     An instance of `GeomTraits`.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -872,8 +872,8 @@ namespace Barycentric_coordinates {
     const typename GeomTraits::Point_2& query,
     OutputIterator weights,
     const GeomTraits traits,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
@@ -913,8 +913,8 @@ namespace Barycentric_coordinates {
     An output iterator that stores the computed weights.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -930,8 +930,8 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const Point_2& query,
     OutputIterator weights,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return discrete_harmonic_weights_2(
@@ -975,8 +975,8 @@ namespace Barycentric_coordinates {
     An instance of `GeomTraits`.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -993,8 +993,8 @@ namespace Barycentric_coordinates {
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
@@ -1034,8 +1034,8 @@ namespace Barycentric_coordinates {
     An output iterator that stores the computed coordinates.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -1051,8 +1051,8 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const Point_2& query,
     OutputIterator coordinates,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return discrete_harmonic_coordinates_2(
@@ -1096,8 +1096,8 @@ namespace Barycentric_coordinates {
     An instance of `GeomTraits`.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -1113,8 +1113,8 @@ namespace Barycentric_coordinates {
     const typename GeomTraits::Point_2& query,
     OutputIterator weights,
     const GeomTraits traits,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
@@ -1154,8 +1154,8 @@ namespace Barycentric_coordinates {
     An output iterator that stores the computed weights.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -1170,8 +1170,8 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const Point_2& query,
     OutputIterator weights,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return mean_value_weights_2(
@@ -1215,8 +1215,8 @@ namespace Barycentric_coordinates {
     An instance of `GeomTraits`.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -1232,8 +1232,8 @@ namespace Barycentric_coordinates {
     const typename GeomTraits::Point_2& query,
     OutputIterator coordinates,
     const GeomTraits traits,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
@@ -1273,8 +1273,8 @@ namespace Barycentric_coordinates {
     An output iterator that stores the computed coordinates.
 
     \param policy
-    One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-    The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+    One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+    The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
     \return an output iterator.
 
@@ -1289,8 +1289,8 @@ namespace Barycentric_coordinates {
     const PointRange& polygon,
     const Point_2& query,
     OutputIterator coordinates,
-    const Computation_policy policy =
-    Computation_policy::DEFAULT) {
+    const Computation_policy_2 policy =
+    Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return mean_value_coordinates_2(

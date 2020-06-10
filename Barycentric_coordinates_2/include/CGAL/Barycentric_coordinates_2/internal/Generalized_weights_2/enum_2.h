@@ -40,14 +40,15 @@ namespace Generalized_weights {
 /// @{
 
 /*!
-  `Computation_policy` provides a way to choose a type of algorithm and its precision.
+  `Computation_policy_2` provides a way to choose a type of algorithm and
+  its precision for computing 2D generalized weights.
 */
-enum class Computation_policy {
+enum class Computation_policy_2 {
 
   /*!
     The best trade-off linear-time algorithm for computing weights. In addition,
     we check a position of the query point with respect to the polygon and use
-    different computation strategies for different positions.
+    different computation strategies for different positions. This is the default policy.
   */
   OPTIMAL_WITH_EDGE_CASES = 0,
 

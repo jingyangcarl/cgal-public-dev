@@ -113,8 +113,8 @@ namespace Barycentric_coordinates {
       An instance of `Polygon` with the vertices of a simple polygon.
 
       \param policy
-      One of the `CGAL::Barycentric_coordinates::Computation_policy`.
-      The default is `CGAL::Barycentric_coordinates::Computation_policy::DEFAULT`.
+      One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
+      The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
@@ -128,8 +128,8 @@ namespace Barycentric_coordinates {
     */
     Mean_value_coordinates_2(
       const Polygon& polygon,
-      const Computation_policy policy
-      = Computation_policy::DEFAULT,
+      const Computation_policy_2 policy
+      = Computation_policy_2::DEFAULT,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
     m_polygon(polygon),
@@ -142,7 +142,7 @@ namespace Barycentric_coordinates {
     m_sqrt(Get_sqrt::sqrt_object(m_traits)),
     m_mean_value_weights_2(
       polygon,
-      CGAL::Generalized_weights::Computation_policy::OPTIMAL,
+      CGAL::Generalized_weights::Computation_policy_2::OPTIMAL,
       traits,
       vertex_map) {
 
@@ -221,7 +221,7 @@ namespace Barycentric_coordinates {
 
     // Fields.
     const Polygon& m_polygon;
-    const Computation_policy m_computation_policy;
+    const Computation_policy_2 m_computation_policy;
     const GeomTraits m_traits;
     const VertexMap m_vertex_map;
     const Area_2 m_area_2;
@@ -256,7 +256,7 @@ namespace Barycentric_coordinates {
 
       switch (m_computation_policy) {
 
-        case Computation_policy::PRECISE_COMPUTATION: {
+        case Computation_policy_2::PRECISE_COMPUTATION: {
           if (normalize) {
             return max_precision_weights(query, weights, normalize);
           } else {
@@ -267,7 +267,7 @@ namespace Barycentric_coordinates {
           }
         }
 
-        case Computation_policy::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
+        case Computation_policy_2::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, weights);
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;
@@ -281,11 +281,11 @@ namespace Barycentric_coordinates {
           }
         }
 
-        case Computation_policy::FAST_COMPUTATION: {
+        case Computation_policy_2::FAST_COMPUTATION: {
           return m_mean_value_weights_2(query, weights, normalize);
         }
 
-        case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
+        case Computation_policy_2::FAST_COMPUTATION_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, weights);
           if (edge_case == internal::Edge_case::BOUNDARY)
             return weights;

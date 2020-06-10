@@ -19,7 +19,7 @@ using Vertex_map       = CGAL::First_of_pair_property_map<Vertex_with_info>;
 
 using Polygon = std::vector<Vertex_with_info>;
 using DHC2    = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2<Polygon, Kernel, Vertex_map>;
-using Policy  = CGAL::Barycentric_coordinates::Computation_policy;
+using Policy  = CGAL::Barycentric_coordinates::Computation_policy_2;
 
 int main() {
 

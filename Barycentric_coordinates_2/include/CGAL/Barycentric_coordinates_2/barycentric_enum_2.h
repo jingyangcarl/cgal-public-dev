@@ -39,10 +39,10 @@ namespace Barycentric_coordinates {
 /// @{
 
 /*!
-  `Computation_policy` provides a way to choose an asymptotic time complexity
-  of the algorithm and its precision.
+  `Computation_policy_2` provides a way to choose an asymptotic time complexity
+  of the algorithm and its precision for computing 2D barycentric weights and coordinates.
 */
-enum class Computation_policy {
+enum class Computation_policy_2 {
 
   /*!
     Computation is very precise but has a quadratic time complexity with respect

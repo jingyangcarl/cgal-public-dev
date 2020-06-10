@@ -6,7 +6,7 @@ using Kernel = CGAL::Exact_predicates_inexact_constructions_kernel;
 
 using FT      = Kernel::FT;
 using Point_2 = Kernel::Point_2;
-using Policy  = CGAL::Barycentric_coordinates::Computation_policy;
+using Policy  = CGAL::Barycentric_coordinates::Computation_policy_2;
 
 int main() {
 
