@@ -53,6 +53,9 @@ are required, please refer to natural neighbor coordinates from the Package \ref
 - `BarycentricTraits_2`
 - `DiscretizedDomain_2`
 
+## Enumerations ##
+- `CGAL::Barycentric_coordinates::Computation_policy`
+
 ## Analytic Coordinates ##
 - `CGAL::Barycentric_coordinates::Wachspress_coordinates_2<Polygon, GeomTraits, VertexMap>`
 - `CGAL::Barycentric_coordinates::Mean_value_coordinates_2<Polygon, GeomTraits, VertexMap>`
@@ -61,9 +64,6 @@ are required, please refer to natural neighbor coordinates from the Package \ref
 ## Harmonic Coordinates ##
 - `CGAL::Barycentric_coordinates::Delaunay_domain_2<Polygon, GeomTraits, VertexMap>`
 - `CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Polygon, Domain, GeomTraits, VertexMap>`
-
-## Enumerations ##
-- `CGAL::Barycentric_coordinates::Computation_policy`
 
 ## Free Functions ##
 - `CGAL::Barycentric_coordinates::segment_coordinates_2()`
