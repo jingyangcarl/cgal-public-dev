@@ -7,10 +7,20 @@
 Concepts, which are used to parameterize the functions and classes
 from `CGAL::Generalized_weights`.
 
-\defgroup PkgWeightInterfaceRefBarycentric 2D Barycentric Weights
+\defgroup PkgWeightInterfaceRef1D 1D Generalized Weights
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute 2D barycentric weights.
+Models and functions that can be used to compute 1D generalized weights.
+
+\defgroup PkgWeightInterfaceRef2D 2D Generalized Weights
+\ingroup PkgWeightInterfaceRef
+
+Models and functions that can be used to compute 2D generalized weights.
+
+\defgroup PkgWeightInterfaceRef3D 3D Generalized Weights
+\ingroup PkgWeightInterfaceRef
+
+Models and functions that can be used to compute 3D generalized weights.
 
 \addtogroup PkgWeightInterfaceRef
 
@@ -36,6 +46,9 @@ Models and functions that can be used to compute 2D barycentric weights.
 
 ### Concepts ###
 
-### 2D Barycentric Weights ###
+### 1D Generalized Weights ###
 
+### 2D Generalized Weights ###
+
+### 3D Generalized Weights ###
 */
