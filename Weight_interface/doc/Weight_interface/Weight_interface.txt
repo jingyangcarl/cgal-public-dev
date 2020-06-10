@@ -1,0 +1,15 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Weight_Interface
+
+\cgalAutoToc
+\author Dmitry Anisimov
+
+\section Weight_Interface_Intro Introduction
+
+This chapter is about generalized weights.
+
+*/
+} /* namespace CGAL */

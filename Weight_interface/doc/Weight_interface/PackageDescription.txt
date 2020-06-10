@@ -1,0 +1,41 @@
+/*!
+\defgroup PkgWeightInterfaceRef Generalized Weights Reference
+
+\defgroup PkgWeightInterfaceRefConcepts Concepts
+\ingroup PkgWeightInterfaceRef
+
+Concepts, which are used to parameterize the functions and classes
+from `CGAL::Generalized_weights`.
+
+\defgroup PkgWeightInterfaceRefBarycentric 2D Barycentric Weights
+\ingroup PkgWeightInterfaceRef
+
+Models and functions that can be used to compute 2D barycentric weights.
+
+\addtogroup PkgWeightInterfaceRef
+
+\cgalPkgDescriptionBegin{Generalized Weights, PkgWeightInterfaceRef}
+\cgalPkgPicture{pkg-small.png}
+
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Dmitry Anisimov}
+\cgalPkgDesc{Various generalized weights.}
+\cgalPkgManuals{Chapter_Weight_Interface, PkgWeightInterfaceRef}
+\cgalPkgSummaryEnd
+
+\cgalPkgShortInfoBegin
+\cgalPkgSince{5.2}
+\cgalPkgBib{cgal:a-wi}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
+\cgalPkgShortInfoEnd
+
+\cgalPkgDescriptionEnd
+
+## Generalized Weights ##
+
+### Concepts ###
+
+### 2D Barycentric Weights ###
+
+*/
