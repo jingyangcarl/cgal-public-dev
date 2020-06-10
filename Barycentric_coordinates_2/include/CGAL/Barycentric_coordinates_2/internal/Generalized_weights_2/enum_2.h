@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Dmitry Anisimov, David Bommes, Kai Hormann, Pierre Alliez
+// Author(s)     : Dmitry Anisimov
 //
 
 #ifndef CGAL_GENERALIZED_WEIGHTS_ENUM_2_H
