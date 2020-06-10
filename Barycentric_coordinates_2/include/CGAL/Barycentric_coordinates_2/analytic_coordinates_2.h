@@ -28,9 +28,9 @@
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
-#include <CGAL/Barycentric_coordinates_2/Wachspress_weights_2.h>
-#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_weights_2.h>
-#include <CGAL/Barycentric_coordinates_2/Mean_value_weights_2.h>
+#include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
 
 namespace CGAL {
 namespace Barycentric_coordinates {
@@ -584,7 +584,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a strictly convex `polygon`, that is one
     weight per vertex. The weights are returned in `weights`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -633,9 +633,9 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Wachspress_weights_2<PointRange, GeomTraits> wachspress(
+    Wachspress_coordinates_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
-    return wachspress(query, weights);
+    return wachspress.weights(query, weights);
   }
 
   /*!
@@ -647,7 +647,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a strictly convex `polygon`, that is one
     weight per vertex. The weights are returned in `weights`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -705,7 +705,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a strictly convex `polygon`, that is one
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -754,9 +754,9 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Wachspress_weights_2<PointRange, GeomTraits> wachspress(
+    Wachspress_coordinates_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
-    return wachspress.coordinates(query, coordinates);
+    return wachspress(query, coordinates);
   }
 
   /*!
@@ -768,7 +768,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a strictly convex `polygon`, that is one
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Wachspress_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -826,7 +826,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a strictly convex `polygon`, that is one
     weight per vertex. The weights are returned in `weights`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -875,9 +875,9 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Discrete_harmonic_weights_2<PointRange, GeomTraits> discrete_harmonic(
+    Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
-    return discrete_harmonic(query, weights);
+    return discrete_harmonic.weights(query, weights);
   }
 
   /*!
@@ -889,7 +889,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a strictly convex `polygon`, that is one
     weight per vertex. The weights are returned in `weights`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -947,7 +947,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a strictly convex `polygon`, that is one
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -996,9 +996,9 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Discrete_harmonic_weights_2<PointRange, GeomTraits> discrete_harmonic(
+    Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
-    return discrete_harmonic.coordinates(query, coordinates);
+    return discrete_harmonic(query, coordinates);
   }
 
   /*!
@@ -1010,7 +1010,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a strictly convex `polygon`, that is one
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -1068,7 +1068,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a simple `polygon`, that is one
     weight per vertex. The weights are returned in `weights`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -1116,9 +1116,9 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Mean_value_weights_2<PointRange, GeomTraits> mean_value(
+    Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
-    return mean_value(query, weights);
+    return mean_value.weights(query, weights);
   }
 
   /*!
@@ -1130,7 +1130,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a simple `polygon`, that is one
     weight per vertex. The weights are returned in `weights`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -1187,7 +1187,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a simple `polygon`, that is one
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
@@ -1235,9 +1235,9 @@ namespace Barycentric_coordinates {
     const Computation_policy policy =
     Computation_policy::DEFAULT) {
 
-    Mean_value_weights_2<PointRange, GeomTraits> mean_value(
+    Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
-    return mean_value.coordinates(query, coordinates);
+    return mean_value(query, coordinates);
   }
 
   /*!
@@ -1249,7 +1249,7 @@ namespace Barycentric_coordinates {
     with respect to the vertices of a simple `polygon`, that is one
     coordinate per vertex. The coordinates are returned in `coordinates`.
 
-    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_weights_2` is used.
+    Internally, the class `CGAL::Barycentric_coordinates::Mean_value_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,

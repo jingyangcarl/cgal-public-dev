@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov, David Bommes, Kai Hormann, Pierre Alliez
 //
 
-#ifndef CGAL_BARYCENTRIC_WACHSPRESS_WEIGHTS_2_H
-#define CGAL_BARYCENTRIC_WACHSPRESS_WEIGHTS_2_H
+#ifndef CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_2_H
+#define CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_2_H
 
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
@@ -422,4 +422,4 @@ namespace Barycentric_coordinates {
 } // namespace Barycentric_coordinates
 } // namespace CGAL
 
-#endif // CGAL_BARYCENTRIC_WACHSPRESS_WEIGHTS_2_H
+#endif // CGAL_BARYCENTRIC_WACHSPRESS_COORDINATES_2_H

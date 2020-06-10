@@ -62,8 +62,7 @@ namespace Barycentric_coordinates {
 
     Once computed at the vertices of the discretized domain, the coordinate functions
     can be evaluated at any point inside a polygon by locating the finite element that
-    contains a query point and linearly interpolating within this element. That is why
-    this class is also a model of the concept `AnalyticWeights_2`.
+    contains a query point and linearly interpolating within this element.
 
     \tparam Polygon
     is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -78,8 +77,6 @@ namespace Barycentric_coordinates {
     \tparam VertexMap
     is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
-
-    \cgalModels `AnalyticWeights_2`
   */
   template<
   typename Polygon,
@@ -275,7 +272,7 @@ namespace Barycentric_coordinates {
       \pre `query >= 0 && query < domain.number_of_vertices()`
     */
     template<typename OutputIterator>
-    OutputIterator coordinates(
+    OutputIterator operator()(
       const std::size_t query_index,
       OutputIterator coordinates) {
 
