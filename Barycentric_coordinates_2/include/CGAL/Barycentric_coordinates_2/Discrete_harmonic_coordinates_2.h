@@ -132,7 +132,7 @@ namespace Barycentric_coordinates {
     m_squared_distance_2(m_traits.compute_squared_distance_2_object()),
     m_discrete_harmonic_weights_2(
       polygon,
-      CGAL::Generalized_weights::Computation_policy::FAST_COMPUTATION,
+      CGAL::Generalized_weights::Computation_policy::OPTIMAL,
       traits,
       vertex_map) {
 

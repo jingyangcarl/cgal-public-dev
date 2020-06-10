@@ -59,7 +59,7 @@ enum class Computation_policy {
   PRECISE_COMPUTATION = 1,
 
   /*!
-    Computation has a linear time complexity with respect to the number of the
+    Computation has a linear time complexity with respect to the number of
     polygon vertices, but may suffer imprecisions near the polygon boundary. In
     addition, we check a position of the query point with respect to the polygon
     and use different computation strategies for different positions.
@@ -67,7 +67,7 @@ enum class Computation_policy {
   FAST_COMPUTATION_WITH_EDGE_CASES = 2,
 
   /*!
-    Computation has a linear time complexity with respect to the number of the
+    Computation has a linear time complexity with respect to the number of
     polygon vertices, but may suffer imprecisions near the polygon boundary.
     No extra checks are carried out.
   */

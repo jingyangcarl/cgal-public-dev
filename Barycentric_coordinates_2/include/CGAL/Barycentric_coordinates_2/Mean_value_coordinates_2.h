@@ -142,7 +142,7 @@ namespace Barycentric_coordinates {
     m_sqrt(Get_sqrt::sqrt_object(m_traits)),
     m_mean_value_weights_2(
       polygon,
-      CGAL::Generalized_weights::Computation_policy::FAST_COMPUTATION,
+      CGAL::Generalized_weights::Computation_policy::OPTIMAL,
       traits,
       vertex_map) {
 

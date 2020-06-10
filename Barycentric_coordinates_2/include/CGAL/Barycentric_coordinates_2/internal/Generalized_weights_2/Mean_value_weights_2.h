@@ -224,15 +224,15 @@ namespace Generalized_weights {
 
       switch (m_computation_policy) {
 
-        case Computation_policy::FAST_COMPUTATION: {
-          return max_speed_weights(query, weights, normalize);
+        case Computation_policy::OPTIMAL: {
+          return optimal_weights(query, weights, normalize);
         }
 
-        case Computation_policy::FAST_COMPUTATION_WITH_EDGE_CASES: {
+        case Computation_policy::OPTIMAL_WITH_EDGE_CASES: {
           const auto edge_case = verify(query, weights);
           if (edge_case == CGAL::Barycentric_coordinates::internal::Edge_case::BOUNDARY)
             return weights;
-          return max_speed_weights(query, weights, normalize);
+          return optimal_weights(query, weights, normalize);
         }
 
         default: {
@@ -269,7 +269,7 @@ namespace Generalized_weights {
     }
 
     template<typename OutputIterator>
-    OutputIterator max_speed_weights(
+    OutputIterator optimal_weights(
       const Point_2& query,
       OutputIterator weights,
       const bool normalize) {
