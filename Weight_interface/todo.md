@@ -7,3 +7,5 @@
 * Finally, I will submit a set of features that will modify internals of such packages
   as Interpolation, Polygon_mesh_processing, Surface_mesh_parameterization, Surface_mesh_skeletonization,
   Surface_mesh_deformation, Surface_mesh_shortest_path, Heat_method_3, and possibly Kernel_d.
+* When computing weights one by one, we recompute certain areas/distances multiple times and so
+  using them e.g. in barycentric coordinates is not efficient. What should we do with that?

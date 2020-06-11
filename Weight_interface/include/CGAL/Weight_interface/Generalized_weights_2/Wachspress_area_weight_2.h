@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
-#define CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_WACHSPRESS_AREA_WEIGHT_2_H
+#define CGAL_GENERALIZED_WACHSPRESS_AREA_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -37,7 +37,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2D
 
-    \brief 2D discrete harmonic weight.
+    \brief 2D Wachspress area weight.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -45,7 +45,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Discrete_harmonic_weight_2 {
+  class Wachspress_area_weight_2 {
 
   public:
 
@@ -54,6 +54,7 @@ namespace Generalized_weights {
 
     /// \cond SKIP_IN_MANUAL
     using GT = GeomTraits;
+    using Area_2 = typename GeomTraits::Compute_area_2;
     /// \endcond
 
     /// Number type.
@@ -76,9 +77,10 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Discrete_harmonic_weight_2(
+    Wachspress_area_weight_2(
       const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
+    m_traits(traits),
+    m_area_2(m_traits.compute_area_2_object())
     { }
 
     /// @}
@@ -87,7 +89,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D discrete harmonic weight.
+      \brief computes 2D Wachspress area weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -99,7 +101,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D discrete harmonic weight.
+      \brief computes 2D Wachspress area weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -111,7 +113,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D discrete harmonic weight.
+      \brief computes 2D Wachspress area weight.
     */
     template<
     typename PolygonMesh,
@@ -139,13 +141,18 @@ namespace Generalized_weights {
 
   private:
     const GeomTraits m_traits;
+    const Area_2 m_area_2;
 
     const FT weight_2(
       const Point_2& query,
       const Point_2& vm,
       const Point_2& vj,
       const Point_2& vp) const {
-      return weight();
+
+      const FT Am = m_area_2(vm, vj, query);
+      const FT Aj = m_area_2(vj, vp, query);
+      const FT C  = m_area_2(vm, vj, vp);
+      return weight(Am, Aj, C);
     }
 
     const FT weight_3(
@@ -153,15 +160,24 @@ namespace Generalized_weights {
       const Point_3& vm,
       const Point_3& vj,
       const Point_3& vp) const {
-      return weight();
+
+      const FT Am = internal::area_3(vm, vj, query, m_traits);
+      const FT Aj = internal::area_3(vj, vp, query, m_traits);
+      const FT C  = internal::area_3(vm, vj, vp, m_traits);
+      return weight(Am, Aj, C);
     }
 
-    const FT weight() const {
-      return FT(0);
+    const FT weight(
+      const FT Am, const FT Aj, const FT C) const {
+
+      CGAL_assertion(Am != FT(0) && Aj != FT(0));
+      const FT inv = FT(1) / (Am * Aj);
+      const FT w = C * inv;
+      return w;
     }
   };
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_WACHSPRESS_AREA_WEIGHT_2_H

@@ -25,10 +25,34 @@
 
 // #include <CGAL/license/Weight_interface.h>
 
+// STL includes.
+#include <cmath>
+#include <string>
+#include <memory>
+#include <vector>
+#include <utility>
+#include <iterator>
+#include <iostream>
+
+// CGAL includes.
+#include <CGAL/utils.h>
+#include <CGAL/assertions.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/property_map.h>
+
 namespace CGAL {
 namespace Generalized_weights {
 namespace internal {
 
+template<typename GeomTraits>
+const typename GeomTraits::FT area_3(
+  const typename GeomTraits::Point_3& p,
+  const typename GeomTraits::Point_3& q,
+  const typename GeomTraits::Point_3& r,
+  const GeomTraits traits) {
+
+  return 0;
+}
 
 } // namespace internal
 } // namespace Generalized_weights
