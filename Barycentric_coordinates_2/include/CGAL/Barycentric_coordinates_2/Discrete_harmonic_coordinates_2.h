@@ -26,9 +26,8 @@
 #include <CGAL/license/Barycentric_coordinates_2.h>
 
 // Internal includes.
-#include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
 #include <CGAL/Barycentric_coordinates_2/barycentric_enum_2.h>
-#include <CGAL/Barycentric_coordinates_2/internal/Generalized_weights_2/Discrete_harmonic_weights_2.h>
+#include <CGAL/Barycentric_coordinates_2/internal/Discrete_harmonic_weights_2.h>
 
 // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos.
 // A general construction of barycentric coordinates over convex polygons.
@@ -80,7 +79,7 @@ namespace Barycentric_coordinates {
     using Squared_distance_2 = typename GeomTraits::Compute_squared_distance_2;
 
     using Discrete_harmonic_weights_2 =
-      CGAL::Generalized_weights::Discrete_harmonic_weights_2<Polygon, GeomTraits, Vertex_map>;
+      internal::Discrete_harmonic_weights_2<Polygon, GeomTraits, Vertex_map>;
     /// \endcond
 
     /// Number type.
@@ -131,10 +130,7 @@ namespace Barycentric_coordinates {
     m_area_2(m_traits.compute_area_2_object()),
     m_squared_distance_2(m_traits.compute_squared_distance_2_object()),
     m_discrete_harmonic_weights_2(
-      polygon,
-      CGAL::Generalized_weights::Computation_policy_2::OPTIMAL,
-      traits,
-      vertex_map) {
+      polygon, traits, vertex_map) {
 
       CGAL_precondition(
         polygon.size() >= 3);
@@ -238,65 +234,65 @@ namespace Barycentric_coordinates {
     template<typename OutputIterator>
     OutputIterator compute(
       const Point_2& query,
-      OutputIterator weights,
+      OutputIterator output,
       const bool normalize) {
 
       switch (m_computation_policy) {
 
-        case Computation_policy_2::PRECISE_COMPUTATION: {
+        case Computation_policy_2::PRECISE: {
           if (normalize) {
-            return max_precision_weights(query, weights, normalize);
+            return max_precision_coordinates(query, output);
           } else {
             std::cerr << "WARNING: you can't use the precise version of unnormalized weights! ";
             std::cerr << "They are not valid weights!" << std::endl;
-            internal::get_default(m_polygon.size(), weights);
-            return weights;
+            internal::get_default(m_polygon.size(), output);
+            return output;
           }
         }
 
-        case Computation_policy_2::PRECISE_COMPUTATION_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, weights);
+        case Computation_policy_2::PRECISE_WITH_EDGE_CASES: {
+          const auto edge_case = verify(query, output);
           if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
+            return output;
           if (edge_case == internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
           if (normalize) {
-            return max_precision_weights(query, weights, normalize);
+            return max_precision_coordinates(query, output);
           } else {
             std::cerr << "WARNING: you can't use the precise version of unnormalized weights! ";
             std::cerr << "They are not valid weights!" << std::endl;
-            internal::get_default(m_polygon.size(), weights);
-            return weights;
+            internal::get_default(m_polygon.size(), output);
+            return output;
           }
         }
 
-        case Computation_policy_2::FAST_COMPUTATION: {
-          return m_discrete_harmonic_weights_2(query, weights, normalize);
+        case Computation_policy_2::FAST: {
+          return m_discrete_harmonic_weights_2(query, output, normalize);
         }
 
-        case Computation_policy_2::FAST_COMPUTATION_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, weights);
+        case Computation_policy_2::FAST_WITH_EDGE_CASES: {
+          const auto edge_case = verify(query, output);
           if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
+            return output;
           if (edge_case == internal::Edge_case::EXTERIOR)
             std::cerr << std::endl <<
             "WARNING: query does not belong to the polygon!" << std::endl;
-          return m_discrete_harmonic_weights_2(query, weights, normalize);
+          return m_discrete_harmonic_weights_2(query, output, normalize);
         }
 
         default: {
-          internal::get_default(m_polygon.size(), weights);
-          return weights;
+          internal::get_default(m_polygon.size(), output);
+          return output;
         }
       }
-      return weights;
+      return output;
     }
 
     template<typename OutputIterator>
     internal::Edge_case verify(
       const Point_2& query,
-      OutputIterator weights) const {
+      OutputIterator output) const {
 
       const auto result = internal::locate_wrt_polygon_2(
         m_polygon, query, m_traits, m_vertex_map);
@@ -312,17 +308,16 @@ namespace Barycentric_coordinates {
         location == internal::Query_point_location::ON_VERTEX ||
         location == internal::Query_point_location::ON_EDGE ) {
         internal::boundary_coordinates_2(
-          m_polygon, query, location, index, weights, m_traits, m_vertex_map);
+          m_polygon, query, location, index, output, m_traits, m_vertex_map);
         return internal::Edge_case::BOUNDARY;
       }
       return internal::Edge_case::INTERIOR;
     }
 
     template<typename OutputIterator>
-    OutputIterator max_precision_weights(
+    OutputIterator max_precision_coordinates(
       const Point_2& query,
-      OutputIterator weights,
-      const bool normalize) {
+      OutputIterator coordinates) {
 
       // Get the number of vertices in the polygon.
       const std::size_t n = m_polygon.size();
@@ -371,15 +366,12 @@ namespace Barycentric_coordinates {
       for (std::size_t j = 0; j < n - 2; ++j)
         w[n - 1] *= A[j];
 
-      // Normalize if necessary.
-      if (normalize)
-        internal::normalize(w);
-
-      // Return weights.
+      // Return coordinates.
+      internal::normalize(w);
       for (std::size_t i = 0; i < n; ++i)
-        *(weights++) = w[i];
+        *(coordinates++) = w[i];
 
-      return weights;
+      return coordinates;
     }
   };
 

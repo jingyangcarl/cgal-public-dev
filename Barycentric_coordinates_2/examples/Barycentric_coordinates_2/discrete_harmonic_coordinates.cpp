@@ -35,7 +35,7 @@ int main() {
   // Instantiate the class with discrete harmonic weights.
   // We do not check for edge cases since we know the exact positions
   // of all our points. We speed up the computation by using the O(n) algorithm.
-  const Policy policy = Policy::FAST_COMPUTATION;
+  const Policy policy = Policy::FAST;
   DHC2 discrete_harmonic_2(square, policy, kernel, vertex_map);
 
   // Instantiate the center point of the unit square.

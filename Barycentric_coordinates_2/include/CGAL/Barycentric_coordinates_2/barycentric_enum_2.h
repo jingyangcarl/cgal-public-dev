@@ -50,13 +50,13 @@ enum class Computation_policy_2 {
     the query point with respect to the polygon and use different computation
     strategies for different positions. This is the default policy.
   */
-  PRECISE_COMPUTATION_WITH_EDGE_CASES = 0,
+  PRECISE_WITH_EDGE_CASES = 0,
 
   /*!
     Computation is very precise but has a quadratic time complexity with respect
     to the number of polygon vertices. No extra checks are carried out.
   */
-  PRECISE_COMPUTATION = 1,
+  PRECISE = 1,
 
   /*!
     Computation has a linear time complexity with respect to the number of
@@ -64,19 +64,19 @@ enum class Computation_policy_2 {
     addition, we check a position of the query point with respect to the polygon
     and use different computation strategies for different positions.
   */
-  FAST_COMPUTATION_WITH_EDGE_CASES = 2,
+  FAST_WITH_EDGE_CASES = 2,
 
   /*!
     Computation has a linear time complexity with respect to the number of
     polygon vertices, but may suffer imprecisions near the polygon boundary.
     No extra checks are carried out.
   */
-  FAST_COMPUTATION = 3,
+  FAST = 3,
 
   /*!
-    The default policy is `PRECISE_COMPUTATION_WITH_EDGE_CASES`.
+    The default policy is `PRECISE_WITH_EDGE_CASES`.
   */
-  DEFAULT = PRECISE_COMPUTATION_WITH_EDGE_CASES
+  DEFAULT = PRECISE_WITH_EDGE_CASES
 };
 
 /// @}

@@ -26,7 +26,7 @@ int main() {
   // Choose a computation policy.
   // We do not check for edge cases since we know
   // that all our points are strictly interior.
-  const Policy policy = Policy::PRECISE_COMPUTATION;
+  const Policy policy = Policy::PRECISE;
 
   // Create an std::vector to store coordinates.
   std::vector<FT> coordinates;
