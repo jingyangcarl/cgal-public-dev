@@ -17,16 +17,15 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Dmitry Anisimov, David Bommes, Kai Hormann, Pierre Alliez
+// Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHTS_2_H
-#define CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHTS_2_H
+#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
+#define CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/Generalized_weights_2/enum_2.h>
 #include <CGAL/Weight_interface/Generalized_weights_2/internal/utils_2.h>
 
 // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos.
@@ -39,9 +38,9 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2D
 
-    \brief 2D discrete harmonic weights.
+    \brief 2D discrete harmonic weight.
 
-    This class implements 2D discrete harmonic weights ( \cite cgal:bc:fhk-gcbcocp-06,
+    This class implements 2D discrete harmonic weight ( \cite cgal:bc:fhk-gcbcocp-06,
     \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ).
 
     \tparam Polygon
@@ -54,13 +53,13 @@ namespace Generalized_weights {
     is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
-    \cgalModels `AnalyticWeights_2`
+    \cgalModels `AnalyticWeight_2`
   */
   template<
   typename Polygon,
   typename GeomTraits,
   typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
-  class Discrete_harmonic_weights_2 {
+  class Discrete_harmonic_weight_2 {
 
   public:
 
@@ -96,10 +95,6 @@ namespace Generalized_weights {
       \param polygon
       An instance of `Polygon` with the vertices of a strictly convex polygon.
 
-      \param policy
-      One of the `CGAL::Generalized_weights::Computation_policy_2`.
-      The default is `CGAL::Generalized_weights::Computation_policy_2::DEFAULT`.
-
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
 
@@ -111,14 +106,11 @@ namespace Generalized_weights {
       \pre `polygon is simple`
       \pre `polygon is strictly convex`
     */
-    Discrete_harmonic_weights_2(
+    Discrete_harmonic_weight_2(
       const Polygon& polygon,
-      const Computation_policy_2 policy
-      = Computation_policy_2::DEFAULT,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
     m_polygon(polygon),
-    m_computation_policy(policy),
     m_traits(traits),
     m_vertex_map(vertex_map),
     m_area_2(m_traits.compute_area_2_object()),
@@ -140,7 +132,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D discrete harmonic weights.
+      \brief computes 2D discrete harmonic weight.
 
       This function fills `weights` with 2D discrete harmonic weights computed at the `query`
       point with respect to the vertices of the input polygon. If `query` belongs to
@@ -170,17 +162,6 @@ namespace Generalized_weights {
 
     /// @}
 
-    /// \cond SKIP_IN_MANUAL
-    template<typename OutputIterator>
-    OutputIterator operator()(
-      const Point_2& query,
-      OutputIterator weights,
-      const bool normalize) {
-
-      return compute(query, weights, normalize);
-    }
-    /// \endcond
-
   private:
 
     // Fields.
@@ -202,61 +183,6 @@ namespace Generalized_weights {
       A.resize(m_polygon.size());
       B.resize(m_polygon.size());
       w.resize(m_polygon.size());
-    }
-
-    template<typename OutputIterator>
-    OutputIterator compute(
-      const Point_2& query,
-      OutputIterator weights,
-      const bool normalize) {
-
-      switch (m_computation_policy) {
-
-        case Computation_policy_2::OPTIMAL: {
-          return optimal_weights(query, weights, normalize);
-        }
-
-        case Computation_policy_2::OPTIMAL_WITH_EDGE_CASES: {
-          const auto edge_case = verify(query, weights);
-          if (edge_case == internal::Edge_case::BOUNDARY)
-            return weights;
-          if (edge_case == internal::Edge_case::EXTERIOR)
-            std::cerr << std::endl <<
-            "WARNING: query does not belong to the polygon!" << std::endl;
-          return optimal_weights(query, weights, normalize);
-        }
-
-        default: {
-          internal::get_default(m_polygon.size(), weights);
-          return weights;
-        }
-      }
-      return weights;
-    }
-
-    template<typename OutputIterator>
-    internal::Edge_case verify(
-      const Point_2& query,
-      OutputIterator weights) const {
-
-      const auto result = internal::locate_wrt_polygon_2(
-        m_polygon, query, m_traits, m_vertex_map);
-      if (!result)
-        return internal::Edge_case::EXTERIOR;
-
-      const auto location = (*result).first;
-      const std::size_t index = (*result).second;
-      if (location == internal::Query_point_location::ON_UNBOUNDED_SIDE)
-        return internal::Edge_case::EXTERIOR;
-
-      if (
-        location == internal::Query_point_location::ON_VERTEX ||
-        location == internal::Query_point_location::ON_EDGE ) {
-        internal::boundary_coordinates_2(
-          m_polygon, query, location, index, weights, m_traits, m_vertex_map);
-        return internal::Edge_case::BOUNDARY;
-      }
-      return internal::Edge_case::INTERIOR;
     }
 
     template<typename OutputIterator>
@@ -321,4 +247,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHTS_2_H
+#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
