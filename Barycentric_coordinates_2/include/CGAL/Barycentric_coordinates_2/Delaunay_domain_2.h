@@ -52,13 +52,13 @@ namespace Barycentric_coordinates {
     Internally, the package \ref PkgMesh2 is used. See it for more details.
 
     \tparam Polygon
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \tparam VertexMap
-    is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+    must be a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
     \cgalModels `DiscretizedDomain_2`
@@ -172,17 +172,20 @@ namespace Barycentric_coordinates {
     /*!
       \brief computes barycenters of all generated triangles.
 
+      \tparam OutputIterator
+      must be an output iterator whose value type is `Point_2`.
+
       \param barycenters
-      An `std::vector` that stores the computed barycenters.
+      An output iterator that stores the computed barycenters.
+
+      \return an output iterator.
     */
-    void barycenters(
-      std::vector<Point_2>& barycenters) const {
+    template<typename OutputIterator>
+    OutputIterator barycenters(
+      OutputIterator barycenters) const {
 
       const std::size_t num_faces = get_number_of_faces();
-      if (num_faces == 0) return;
-
-      barycenters.clear();
-      barycenters.reserve(num_faces);
+      if (num_faces == 0) return barycenters;
 
       for (auto fh = m_cdt.finite_faces_begin();
       fh != m_cdt.finite_faces_end(); ++fh) {
@@ -192,9 +195,9 @@ namespace Barycentric_coordinates {
         fh->vertex(0)->point(), FT(1),
         fh->vertex(1)->point(), FT(1),
         fh->vertex(2)->point(), FT(1));
-        barycenters.push_back(b);
+        *(barycenters++) = b;
       }
-      CGAL_assertion(barycenters.size() == num_faces);
+      return barycenters;
     }
 
     /*!

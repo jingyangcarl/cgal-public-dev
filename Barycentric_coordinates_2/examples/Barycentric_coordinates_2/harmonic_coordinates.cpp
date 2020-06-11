@@ -70,7 +70,7 @@ int main() {
   << std::endl << std::endl;
 
   std::vector<Point_2> barycenters;
-  domain.barycenters(barycenters);
+  domain.barycenters(std::back_inserter(barycenters));
 
   for (std::size_t k = 0; k < 20; ++k) {
     coordinates.clear();

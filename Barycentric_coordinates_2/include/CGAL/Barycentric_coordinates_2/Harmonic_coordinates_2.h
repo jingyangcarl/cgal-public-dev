@@ -66,17 +66,17 @@ namespace Barycentric_coordinates {
     contains a query point and linearly interpolating within this element.
 
     \tparam Polygon
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam Domain
-    is a model of `DiscretizedDomain_2`. For the moment, we only support domains
+    must be a model of `DiscretizedDomain_2`. For the moment, we only support domains
     whose partition's finite elements are triangles.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \tparam VertexMap
-    is a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+    must be a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
   */
   template<
@@ -176,7 +176,7 @@ namespace Barycentric_coordinates {
       The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      is an output iterator whose value type is `FT`.
+      must be an output iterator whose value type is `FT`.
 
       \param query
       A query point.
@@ -260,7 +260,7 @@ namespace Barycentric_coordinates {
       The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      is an output iterator whose value type is `FT`.
+      must be an output iterator whose value type is `FT`.
 
       \param query_index
       A domain's vertex index.

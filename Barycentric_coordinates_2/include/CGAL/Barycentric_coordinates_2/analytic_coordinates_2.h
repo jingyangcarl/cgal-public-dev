@@ -48,10 +48,10 @@ namespace Barycentric_coordinates {
     projected onto this line, and only then the coordinates are computed.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param p0
     The first vertex of a segment.
@@ -101,10 +101,10 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam Point_2
-    is a point type.
+    must be a point type.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param p0
     The first vertex of a segment.
@@ -149,7 +149,7 @@ namespace Barycentric_coordinates {
     projected onto this line, and only then the coordinates are computed.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param p0
     The first vertex of a segment.
@@ -202,7 +202,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam Point_2
-    is a point type.
+    must be a point type.
 
     \param p0
     The first vertex of a segment.
@@ -242,10 +242,10 @@ namespace Barycentric_coordinates {
     coordinate per point. The coordinates are returned in `coordinates`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param p0
     The first vertex of a triangle.
@@ -296,10 +296,10 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam Point_2
-    is a point type.
+    must be a point type.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param p0
     The first vertex of a triangle.
@@ -345,7 +345,7 @@ namespace Barycentric_coordinates {
     coordinate per point. The coordinates are returned in a tuple.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param p0
     The first vertex of a triangle.
@@ -400,7 +400,7 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam Point_2
-    is a point type.
+    must be a point type.
 
     \param p0
     The first vertex of a triangle.
@@ -452,16 +452,16 @@ namespace Barycentric_coordinates {
     Internally, `CGAL::Barycentric_coordinates::segment_coordinates_2()` are used.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \tparam VertexMap
-    is a `ReadablePropertyMap` whose key type is `PointRange::value_type` and
+    must be a `ReadablePropertyMap` whose key type is `PointRange::value_type` and
     value type is `GeomTraits::Point_2`.
 
     \param polygon
@@ -529,16 +529,16 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam Point_2
-    is a point type.
+    must be a point type.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \tparam VertexMap
-    is a `ReadablePropertyMap` whose key type is `PointRange::value_type` and
+    must be a `ReadablePropertyMap` whose key type is `PointRange::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
 
     \param polygon
@@ -591,13 +591,13 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -656,10 +656,10 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -712,13 +712,13 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -777,10 +777,10 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -833,13 +833,13 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -898,10 +898,10 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -954,13 +954,13 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -1019,10 +1019,10 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -1075,13 +1075,13 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a simple polygon.
@@ -1139,10 +1139,10 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a simple polygon.
@@ -1194,13 +1194,13 @@ namespace Barycentric_coordinates {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `GeomTraits::FT`.
+    must be an output iterator whose value type is `GeomTraits::FT`.
 
     \tparam GeomTraits
-    is a model of `BarycentricTraits_2`.
+    must be a model of `BarycentricTraits_2`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a simple polygon.
@@ -1258,10 +1258,10 @@ namespace Barycentric_coordinates {
     This function infers a traits class from the `Point_2` class.
 
     \tparam PointRange
-    is a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    is an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a simple polygon.
