@@ -41,19 +41,14 @@ Free functions to compute 2D generalized weights.
 
 ### Concepts ###
 - `AnalyticTraits_2`
-- `AnalyticWeights_2`
-
-## Enumerations ##
-- `CGAL::Generalized_weights::Computation_policy_2`
+- `AnalyticWeight_2`
 
 ### 2D Generalized Weights ###
-- `CGAL::Generalized_weights::Wachspress_weights_2`
-- `CGAL::Generalized_weights::Mean_value_weights_2`
-- `CGAL::Generalized_weights::Discrete_harmonic_weights_2`
+- `CGAL::Generalized_weights::Uniform_weight_2`
+- `CGAL::Generalized_weights::Wachspress_weight_2`
+- `CGAL::Generalized_weights::Mean_value_weight_2`
+- `CGAL::Generalized_weights::Discrete_harmonic_weight_2`
 
 ## 2D Free Functions ##
-- `CGAL::Generalized_weights::wachspress_weights_2()`
-- `CGAL::Generalized_weights::mean_value_weights_2()`
-- `CGAL::Generalized_weights::discrete_harmonic_weights_2()`
 
 */

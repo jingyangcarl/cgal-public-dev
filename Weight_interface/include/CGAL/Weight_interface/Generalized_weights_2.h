@@ -25,9 +25,8 @@
 
 // #include <CGAL/license/Weight_interface.h>
 
-#include <CGAL/Weight_interface/Generalized_weights_2/enum_2.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Wachspress_weights_2>
-#include <CGAL/Weight_interface/Generalized_weights_2/Mean_value_weights_2>
-#include <CGAL/Weight_interface/Generalized_weights_2/Discrete_harmonic_weights_2>
+#include <CGAL/Weight_interface/Generalized_weights_2/Wachspress_weight_2>
+#include <CGAL/Weight_interface/Generalized_weights_2/Mean_value_weight_2>
+#include <CGAL/Weight_interface/Generalized_weights_2/Discrete_harmonic_weight_2>
 
 #endif // CGAL_GENERALIZED_WEIGHTS_2_H
