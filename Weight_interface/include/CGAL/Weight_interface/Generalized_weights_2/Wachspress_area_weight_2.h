@@ -112,9 +112,9 @@ namespace Generalized_weights {
       return weight_3(query, vm, vj, vp);
     }
 
-    /*!
-      \brief computes 2D Wachspress area weight.
-    */
+    /// @}
+
+    /// \cond SKIP_IN_MANUAL
     template<
     typename PolygonMesh,
     typename VertexDescriptor,
@@ -136,8 +136,7 @@ namespace Generalized_weights {
 
       return weight_3(query, vm, vj, vp);
     }
-
-    /// @}
+    /// \endcond
 
   private:
     const GeomTraits m_traits;
@@ -161,10 +160,11 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
-      const FT Am = internal::area_3(vm, vj, query, m_traits);
-      const FT Aj = internal::area_3(vj, vp, query, m_traits);
-      const FT C  = internal::area_3(vm, vj, vp, m_traits);
-      return weight(Am, Aj, C);
+      Point_2 pq, pm, pj, pp;
+      internal::flatten(
+        m_traits, query, vm, vj, vp,
+        pq, pm, pj, pp);
+      return weight_2(pq, pm, pj, pp);
     }
 
     const FT weight(

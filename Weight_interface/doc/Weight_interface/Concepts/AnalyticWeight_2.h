@@ -46,22 +46,4 @@ public:
     const Point_3& vp) const
   { }
 
-  /*!
-    computes a chosen weight at the vertex `vdi` of the `polygon_mesh`
-    given a circulator `vcj` around this vertex.
-
-    This configuration is arising when the weight is computed on a 2D surface
-    of a polygon mesh.
-
-    \return weight
-  */
-  template<
-  typename PolygonMesh,
-  typename VertexDescriptor,
-  typename VertextAroundTargetCirculator>
-  const FT operator()(
-    const PolygonMesh& polygon_mesh,
-    const VertexDescriptor vdi,
-    const VertextAroundTargetCirculator vcj) const
-  { }
 };

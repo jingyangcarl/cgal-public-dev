@@ -1,0 +1,4 @@
+/*!
+\example Weight_interface/uniform_weight.cpp
+\example Weight_interface/wachspress_area_weight.cpp
+*/

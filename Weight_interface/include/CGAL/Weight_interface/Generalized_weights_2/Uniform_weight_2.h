@@ -110,22 +110,21 @@ namespace Generalized_weights {
       return weight();
     }
 
-    /*!
-      \brief computes 2D uniform weight.
-    */
+    /// @}
+
+    /// \cond SKIP_IN_MANUAL
     template<
     typename PolygonMesh,
     typename VertexDescriptor,
     typename VertextAroundTargetCirculator>
-    FT operator()(
+    const FT operator()(
       const PolygonMesh&,
       const VertexDescriptor,
       const VertextAroundTargetCirculator) const {
 
       return weight();
     }
-
-    /// @}
+    /// \endcond
 
   private:
     const GeomTraits m_traits;

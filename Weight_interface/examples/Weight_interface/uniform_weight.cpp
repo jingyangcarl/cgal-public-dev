@@ -14,23 +14,19 @@ int main() {
   // 2D configuration.
   const Point_2 query2 = Point_2(+FT(0), FT(0));
   const Point_2 vm2    = Point_2(+FT(1), FT(0));
-  const Point_2 vi2    = Point_2(+FT(0), FT(1));
+  const Point_2 vj2    = Point_2(+FT(0), FT(1));
   const Point_2 vp2    = Point_2(-FT(1), FT(0));
 
   // 3D configuration.
   const Point_3 query3 = Point_3(+FT(0), FT(0), FT(1));
   const Point_3 vm3    = Point_3(+FT(1), FT(0), FT(1));
-  const Point_3 vi3    = Point_3(+FT(0), FT(1), FT(1));
+  const Point_3 vj3    = Point_3(+FT(0), FT(1), FT(1));
   const Point_3 vp3    = Point_3(-FT(1), FT(0), FT(1));
-
-  // Polygon mesh configuration.
-  // add polygon_mesh, vdi, and vcj
 
   // Compute weights.
   UN2 uniform;
-  std::cout << "2D: " << uniform(query2, vm2, vi2, vp2) << std::endl;
-  std::cout << "3D: " << uniform(query3, vm3, vi3, vp3) << std::endl;
-  // std::cout << "PM: " << uniform(polygon_mesh, vdi, vcj) << std::endl;
+  std::cout << "2D: " << uniform(query2, vm2, vj2, vp2) << std::endl;
+  std::cout << "3D: " << uniform(query3, vm3, vj3, vp3) << std::endl;
 
   return EXIT_SUCCESS;
 }

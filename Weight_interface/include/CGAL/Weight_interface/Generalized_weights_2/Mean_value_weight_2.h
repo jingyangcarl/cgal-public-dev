@@ -110,9 +110,9 @@ namespace Generalized_weights {
       return weight_3(query, vm, vj, vp);
     }
 
-    /*!
-      \brief computes 2D mean value weight.
-    */
+    /// @}
+
+    /// \cond SKIP_IN_MANUAL
     template<
     typename PolygonMesh,
     typename VertexDescriptor,
@@ -134,8 +134,7 @@ namespace Generalized_weights {
 
       return weight_3(query, vm, vj, vp);
     }
-
-    /// @}
+    /// \endcond
 
   private:
     const GeomTraits m_traits;
