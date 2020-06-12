@@ -16,6 +16,8 @@ if(CGAL_FOUND)
     "uniform_weight.cpp")
   create_single_source_cgal_program(
     "wachspress_area_weight.cpp")
+  create_single_source_cgal_program(
+    "wachspress_cot_weight.cpp")
 
 else()
   message(WARNING

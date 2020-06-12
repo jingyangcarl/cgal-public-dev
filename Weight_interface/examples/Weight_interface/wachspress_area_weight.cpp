@@ -55,8 +55,8 @@ int main() {
 
   // Compute weights.
   WP2 wachspress;
-  std::cout << "2D: " << wachspress(query2, vm2, vj2, vp2) << std::endl;
-  std::cout << "3D: " << wachspress(query3, vm3, vj3, vp3) << std::endl;
+  std::cout << "2D wp area: " << wachspress(query2, vm2, vj2, vp2) << std::endl;
+  std::cout << "3D wp area: " << wachspress(query3, vm3, vj3, vp3) << std::endl;
 
   return EXIT_SUCCESS;
 }
