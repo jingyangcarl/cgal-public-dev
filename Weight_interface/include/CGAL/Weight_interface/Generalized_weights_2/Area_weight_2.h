@@ -73,6 +73,9 @@ namespace Generalized_weights {
     /*!
       \brief initializes all internal data structures.
 
+      \param p
+      a power that indicates a type of weights.
+
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
