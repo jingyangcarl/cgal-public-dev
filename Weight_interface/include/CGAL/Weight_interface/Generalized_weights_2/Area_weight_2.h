@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_MEAN_VALUE_TAN_SAFE_WEIGHT_2_H
-#define CGAL_GENERALIZED_MEAN_VALUE_TAN_SAFE_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_AREA_WEIGHT_2_H
+#define CGAL_GENERALIZED_AREA_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -37,7 +37,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2D
 
-    \brief 2D mean value tan safe weight.
+    \brief 2D area weight.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -45,7 +45,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Mean_value_tan_safe_weight_2 {
+  class Area_weight_2 {
 
   public:
 
@@ -76,9 +76,10 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Mean_value_tan_safe_weight_2(
+    Area_weight_2(
+      const FT p = FT(1), // default is for mean value coordinates
       const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
+    m_p(p), m_traits(traits)
     { }
 
     /// @}
@@ -87,7 +88,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D mean value tan safe weight.
+      \brief computes 2D area weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -99,7 +100,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D mean value tan safe weight.
+      \brief computes 2D area weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -137,6 +138,7 @@ namespace Generalized_weights {
     /// \endcond
 
   private:
+    const FT m_p;
     const GeomTraits m_traits;
 
     const FT weight_2(
@@ -145,26 +147,18 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      const auto sm = vm - query;
-      const auto sj = vj - query;
-      const auto sp = vp - query;
-
-      const FT rm = internal::length_2(m_traits, sm);
-      const FT rj = internal::length_2(m_traits, sj);
-      const FT rp = internal::length_2(m_traits, sp);
+      const FT rm = internal::distance_2(m_traits, query, vm);
+      const FT rj = internal::distance_2(m_traits, query, vj);
+      const FT rp = internal::distance_2(m_traits, query, vp);
 
       const auto area_2 =
         m_traits.compute_area_2_object();
       const FT Am = area_2(vm, vj, query);
       const FT Aj = area_2(vj, vp, query);
-
-      const auto dot_product_2 =
-        m_traits.compute_scalar_product_2_object();
-      const FT Dm = dot_product_2(sm, sj);
-      const FT Dj = dot_product_2(sj, sp);
+      const FT Bj = area_2(vm, vp, query);
 
       return weight(
-        rm, rj, rp, Am, Aj, Dm, Dj);
+        rm, rj, rp, Am, Aj, Bj);
     }
 
     const FT weight_3(
@@ -173,46 +167,26 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
-      const auto sm = vm - query;
-      const auto sj = vj - query;
-      const auto sp = vp - query;
-
-      const FT rm = internal::length_3(m_traits, sm);
-      const FT rj = internal::length_3(m_traits, sj);
-      const FT rp = internal::length_3(m_traits, sp);
-
-      const FT Am = internal::area_3(m_traits, vm, vj, query);
-      const FT Aj = internal::area_3(m_traits, vj, vp, query);
-
-      const auto dot_product_3 =
-        m_traits.compute_scalar_product_3_object();
-      const FT Dm = dot_product_3(sm, sj);
-      const FT Dj = dot_product_3(sj, sp);
-
-      return weight(
-        rm, rj, rp, Am, Aj, Dm, Dj);
+      Point_2 pq, pm, pj, pp;
+      internal::flatten(
+        m_traits, query, vm, vj, vp,
+        pq, pm, pj, pp);
+      return weight_2(pq, pm, pj, pp);
     }
 
     const FT weight(
       const FT rm, const FT rj, const FT rp,
-      const FT Am, const FT Aj,
-      const FT Dm, const FT Dj) const {
-
-      const FT Pm = rm * rj + Dm;
-      const FT Pj = rj * rp + Dj;
+      const FT Am, const FT Aj, const FT Bj) const {
 
       FT w = FT(0);
-      CGAL_assertion(Pm != FT(0) && Pj != FT(0));
-      if (Pm != FT(0) && Pj != FT(0)) {
-        const FT invm = FT(1) / Pm;
-        const FT invj = FT(1) / Pj;
-        const FT tm = Am * invm;
-        const FT tj = Aj * invj;
-        CGAL_assertion(rj != FT(0));
-        if (rj != FT(0)) {
-          const FT inv = FT(1) / rj;
-          w = (tm + tj) * inv;
-        }
+      CGAL_assertion(Am != FT(0) && Aj != FT(0));
+      const FT prod = Am * Aj;
+      if (prod != FT(0)) {
+        const FT inv = FT(1) / prod;
+        const FT a = internal::power(m_traits, rm, m_p);
+        const FT b = internal::power(m_traits, rj, m_p);
+        const FT c = internal::power(m_traits, rp, m_p);
+        w = (a * Am - b * Bj + c * Aj) * inv;
       }
       return w;
     }
@@ -221,4 +195,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_MEAN_VALUE_TAN_SAFE_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_AREA_WEIGHT_2_H

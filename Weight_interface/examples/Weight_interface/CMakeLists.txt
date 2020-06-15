@@ -31,7 +31,9 @@ if(CGAL_FOUND)
   create_single_source_cgal_program(
     "mean_value_tan_weight.cpp")
   create_single_source_cgal_program(
-    "mean_value_tan_safe_weight.cpp")
+    "tangent_weight.cpp")
+  create_single_source_cgal_program(
+    "area_weight.cpp")
 
 else()
   message(WARNING

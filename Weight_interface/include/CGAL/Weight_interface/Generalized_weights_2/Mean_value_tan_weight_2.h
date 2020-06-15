@@ -145,10 +145,26 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      const FT tm = internal::tangent_2(m_traits, vj, query, vm);
-      const FT tj = internal::tangent_2(m_traits, vp, query, vj);
-      const FT rj = internal::distance_2(m_traits, query, vj);
-      return weight(tm, tj, rj);
+      const auto sm = vm - query;
+      const auto sj = vj - query;
+      const auto sp = vp - query;
+
+      const FT rm = internal::length_2(m_traits, sm);
+      const FT rj = internal::length_2(m_traits, sj);
+      const FT rp = internal::length_2(m_traits, sp);
+
+      const auto area_2 =
+        m_traits.compute_area_2_object();
+      const FT Am = FT(2) * area_2(vm, vj, query);
+      const FT Aj = FT(2) * area_2(vj, vp, query);
+
+      const auto dot_product_2 =
+        m_traits.compute_scalar_product_2_object();
+      const FT Dm = dot_product_2(sm, sj);
+      const FT Dj = dot_product_2(sj, sp);
+
+      return weight(
+        rm, rj, rp, Am, Aj, Dm, Dj);
     }
 
     const FT weight_3(
@@ -157,22 +173,46 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
-      const FT tm = internal::tangent_3(m_traits, vj, query, vm);
-      const FT tj = internal::tangent_3(m_traits, vp, query, vj);
-      const FT rj = internal::distance_3(m_traits, query, vj);
-      return weight(tm, tj, rj);
+      const auto sm = vm - query;
+      const auto sj = vj - query;
+      const auto sp = vp - query;
+
+      const FT rm = internal::length_3(m_traits, sm);
+      const FT rj = internal::length_3(m_traits, sj);
+      const FT rp = internal::length_3(m_traits, sp);
+
+      const FT Am = FT(2) * internal::area_3(m_traits, vm, vj, query);
+      const FT Aj = FT(2) * internal::area_3(m_traits, vj, vp, query);
+
+      const auto dot_product_3 =
+        m_traits.compute_scalar_product_3_object();
+      const FT Dm = dot_product_3(sm, sj);
+      const FT Dj = dot_product_3(sj, sp);
+
+      return weight(
+        rm, rj, rp, Am, Aj, Dm, Dj);
     }
 
     const FT weight(
-      const FT tm,
-      const FT tj,
-      const FT rj) const {
+      const FT rm, const FT rj, const FT rp,
+      const FT Am, const FT Aj,
+      const FT Dm, const FT Dj) const {
+
+      const FT Pm = rm * rj + Dm;
+      const FT Pj = rj * rp + Dj;
 
       FT w = FT(0);
-      CGAL_assertion(rj != FT(0));
-      if (rj != FT(0)) {
-        const FT inv = FT(1) / rj;
-        w = (tm + tj) * inv;
+      CGAL_assertion(Pm != FT(0) && Pj != FT(0));
+      if (Pm != FT(0) && Pj != FT(0)) {
+        const FT invm = FT(1) / Pm;
+        const FT invj = FT(1) / Pj;
+        const FT tm = Am * invm;
+        const FT tj = Aj * invj;
+        CGAL_assertion(rj != FT(0));
+        if (rj != FT(0)) {
+          const FT inv = FT(2) / rj;
+          w = (tm + tj) * inv;
+        }
       }
       return w;
     }

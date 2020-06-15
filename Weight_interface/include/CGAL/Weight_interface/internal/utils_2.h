@@ -44,6 +44,19 @@ namespace CGAL {
 namespace Generalized_weights {
 namespace internal {
 
+// Raises value to the power.
+template<typename GeomTraits>
+const typename GeomTraits::FT power(
+  const GeomTraits traits,
+  const typename GeomTraits::FT value,
+  const typename GeomTraits::FT p) {
+
+  using FT = typename GeomTraits::FT;
+  const double base = CGAL::to_double(value);
+  const double exp = CGAL::to_double(p);
+  return static_cast<FT>(std::pow(base, exp));
+}
+
 // Computes distance between two 2D points.
 template<typename GeomTraits>
 const typename GeomTraits::FT distance_2(
@@ -244,15 +257,18 @@ const typename GeomTraits::FT area_3(
   const typename GeomTraits::Point_3& q,
   const typename GeomTraits::Point_3& r) {
 
-  using Plane_3 = typename GeomTraits::Plane_3;
-  const Plane_3 plane = Plane_3(p, q, r);
-  const auto a = plane.to_2d(p);
-  const auto b = plane.to_2d(q);
-  const auto c = plane.to_2d(r);
+  using FT = typename GeomTraits::FT;
+  using Vector_3 = typename GeomTraits::Vector_3;
 
-  const auto area_2 =
-    traits.compute_area_2_object();
-  return area_2(a, b, c);
+  const Vector_3 u = Vector_3(q, r);
+  const Vector_3 v = Vector_3(q, p);
+
+  const auto cross_product_3 =
+    traits.construct_cross_product_vector_3_object();
+  const Vector_3 cross = cross_product_3(u, v);
+  const FT half = FT(1) / FT(2);
+  const FT area = half * length_3(traits, cross);
+  return area;
 }
 
 // Computes 3D barycenter of the points a, b, c, and d.
@@ -268,9 +284,10 @@ void barycenter_3(
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
 
-  const FT x = (a.x() + b.x() + c.x() + d.x()) / FT(4);
-  const FT y = (a.y() + b.y() + c.y() + d.y()) / FT(4);
-  const FT z = (a.z() + b.z() + c.z() + d.z()) / FT(4);
+  const FT quater = FT(1) / FT(4);
+  const FT x = quater * (a.x() + b.x() + c.x() + d.x());
+  const FT y = quater * (a.y() + b.y() + c.y() + d.y());
+  const FT z = quater * (a.z() + b.z() + c.z() + d.z());
   barycenter = Point_3(x, y, z);
 }
 
