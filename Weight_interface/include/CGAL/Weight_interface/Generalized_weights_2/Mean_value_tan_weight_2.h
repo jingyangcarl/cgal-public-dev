@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WACHSPRESS_COT_WEIGHT_2_H
-#define CGAL_GENERALIZED_WACHSPRESS_COT_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_MEAN_VALUE_TAN_WEIGHT_2_H
+#define CGAL_GENERALIZED_MEAN_VALUE_TAN_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -37,7 +37,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2D
 
-    \brief 2D Wachspress cot weight.
+    \brief 2D mean value tan weight.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -45,7 +45,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Wachspress_cot_weight_2 {
+  class Mean_value_tan_weight_2 {
 
   public:
 
@@ -76,7 +76,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Wachspress_cot_weight_2(
+    Mean_value_tan_weight_2(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -87,7 +87,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Wachspress cot weight.
+      \brief computes 2D mean value tan weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -99,7 +99,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D Wachspress cot weight.
+      \brief computes 2D mean value tan weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -145,15 +145,10 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      const FT cot_gamma = internal::cotangent_2(m_traits, vm, vj, query);
-      const FT cot_beta  = internal::cotangent_2(m_traits, query, vj, vp);
-
-      const auto squared_distance_2 =
-        m_traits.compute_squared_distance_2_object();
-      const FT rj2 = squared_distance_2(query, vj);
-
-      return weight(
-        cot_gamma, cot_beta, rj2);
+      const FT tm = internal::tangent_2(m_traits, vj, query, vm);
+      const FT tj = internal::tangent_2(m_traits, vp, query, vj);
+      const FT rj = internal::distance_2(m_traits, query, vj);
+      return weight(tm, tj, rj);
     }
 
     const FT weight_3(
@@ -162,27 +157,22 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
-      const FT cot_gamma = internal::cotangent_3(m_traits, vm, vj, query);
-      const FT cot_beta  = internal::cotangent_3(m_traits, query, vj, vp);
-
-      const auto squared_distance_3 =
-        m_traits.compute_squared_distance_3_object();
-      const FT rj2 = squared_distance_3(query, vj);
-
-      return weight(
-        cot_gamma, cot_beta, rj2);
+      const FT tm = internal::tangent_3(m_traits, vj, query, vm);
+      const FT tj = internal::tangent_3(m_traits, vp, query, vj);
+      const FT rj = internal::distance_3(m_traits, query, vj);
+      return weight(tm, tj, rj);
     }
 
     const FT weight(
-      const FT cot_gamma,
-      const FT cot_beta,
-      const FT rj2) const {
+      const FT tm,
+      const FT tj,
+      const FT rj) const {
 
       FT w = FT(0);
-      CGAL_assertion(rj2 != FT(0));
-      if (rj2 != FT(0)) {
-        const FT inv = FT(2) / rj2;
-        w = (cot_gamma + cot_beta) * inv;
+      CGAL_assertion(rj != FT(0));
+      if (rj != FT(0)) {
+        const FT inv = FT(1) / rj;
+        w = (tm + tj) * inv;
       }
       return w;
     }
@@ -191,4 +181,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WACHSPRESS_COT_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_MEAN_VALUE_TAN_WEIGHT_2_H

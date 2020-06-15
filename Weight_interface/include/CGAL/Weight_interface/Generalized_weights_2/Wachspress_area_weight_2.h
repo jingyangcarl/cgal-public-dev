@@ -149,8 +149,8 @@ namespace Generalized_weights {
         m_traits.compute_area_2_object();
       const FT Am = area_2(vm, vj, query);
       const FT Aj = area_2(vj, vp, query);
-      const FT C  = area_2(vm, vj, vp);
-      return weight(Am, Aj, C);
+      const FT Cj  = area_2(vm, vj, vp);
+      return weight(Am, Aj, Cj);
     }
 
     const FT weight_3(
@@ -167,11 +167,15 @@ namespace Generalized_weights {
     }
 
     const FT weight(
-      const FT Am, const FT Aj, const FT C) const {
+      const FT Am, const FT Aj, const FT Cj) const {
 
+      FT w = FT(0);
       CGAL_assertion(Am != FT(0) && Aj != FT(0));
-      const FT inv = FT(1) / (Am * Aj);
-      const FT w = C * inv;
+      const FT prod = Am * Aj;
+      if (prod != FT(0)) {
+        const FT inv = FT(1) / prod;
+        w = Cj * inv;
+      }
       return w;
     }
   };

@@ -44,6 +44,20 @@ namespace CGAL {
 namespace Generalized_weights {
 namespace internal {
 
+// Computes distance between two 2D points.
+template<typename GeomTraits>
+const typename GeomTraits::FT distance_2(
+  const GeomTraits traits,
+  const typename GeomTraits::Point_2& p,
+  const typename GeomTraits::Point_2& q) {
+
+  using FT = typename GeomTraits::FT;
+  const auto squared_distance_2 =
+    traits.compute_squared_distance_2_object();
+  return static_cast<FT>(
+    CGAL::sqrt(CGAL::to_double(squared_distance_2(p, q))));
+}
+
 // Computes length of a 2D vector.
 template<typename GeomTraits>
 const typename GeomTraits::FT length_2(
@@ -63,11 +77,14 @@ void normalize_2(
   const GeomTraits traits,
   typename GeomTraits::Vector_2& v) {
 
-  v /= length_2(traits, v);
+  using FT = typename GeomTraits::FT;
+  const FT length = length_2(traits, v);
+  CGAL_assertion(length != FT(0));
+  if (length == FT(0)) return;
+  v /= length;
 }
 
-// Computes cotanget between two 2D vectors: q - p and r - p, where
-// q and r are counterclockwise oriented.
+// Computes cotanget between two 2D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT cotangent_2(
   const GeomTraits traits,
@@ -83,19 +100,19 @@ const typename GeomTraits::FT cotangent_2(
   const auto cross_product_2 =
     traits.compute_determinant_2_object();
 
-  const Vector_2 u = Vector_2(p, q);
-  const Vector_2 v = Vector_2(p, r);
+  const Vector_2 u = Vector_2(q, r);
+  const Vector_2 v = Vector_2(q, p);
 
   const FT dot = dot_product_2(u, v);
   const FT cross = cross_product_2(u, v);
 
   const FT length = CGAL::abs(cross);
+  CGAL_assertion(length != FT(0));
   if (length != FT(0)) return dot / length;
   else return FT(0); // undefined
 }
 
-// Computes tanget between two 2D vectors: q - p and r - p, where
-// q and r are counterclockwise oriented.
+// Computes tanget between two 2D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT tangent_2(
   const GeomTraits traits,
@@ -111,15 +128,30 @@ const typename GeomTraits::FT tangent_2(
   const auto cross_product_2 =
     traits.compute_determinant_2_object();
 
-  const Vector_2 u = Vector_2(p, q);
-  const Vector_2 v = Vector_2(p, r);
+  const Vector_2 u = Vector_2(q, r);
+  const Vector_2 v = Vector_2(q, p);
 
   const FT dot = dot_product_2(u, v);
   const FT cross = cross_product_2(u, v);
 
   const FT length = CGAL::abs(cross);
+  CGAL_assertion(dot != FT(0));
   if (dot != FT(0)) return length / dot;
   else return FT(0); // undefined
+}
+
+// Computes distance between two 3D points.
+template<typename GeomTraits>
+const typename GeomTraits::FT distance_3(
+  const GeomTraits traits,
+  const typename GeomTraits::Point_3& p,
+  const typename GeomTraits::Point_3& q) {
+
+  using FT = typename GeomTraits::FT;
+  const auto squared_distance_3 =
+    traits.compute_squared_distance_3_object();
+  return static_cast<FT>(
+    CGAL::sqrt(CGAL::to_double(squared_distance_3(p, q))));
 }
 
 // Computes length of a 3D vector.
@@ -141,11 +173,14 @@ void normalize_3(
   const GeomTraits traits,
   typename GeomTraits::Vector_3& v) {
 
-  v /= length_3(traits, v);
+  using FT = typename GeomTraits::FT;
+  const FT length = length_3(traits, v);
+  CGAL_assertion(length != FT(0));
+  if (length == FT(0)) return;
+  v /= length;
 }
 
-// Computes cotanget between two 3D vectors: q - p and r - p, where
-// q and r are counterclockwise oriented.
+// Computes cotanget between two 3D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT cotangent_3(
   const GeomTraits traits,
@@ -161,19 +196,19 @@ const typename GeomTraits::FT cotangent_3(
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
 
-  const Vector_3 u = Vector_3(p, q);
-  const Vector_3 v = Vector_3(p, r);
+  const Vector_3 u = Vector_3(q, r);
+  const Vector_3 v = Vector_3(q, p);
 
   const FT dot = dot_product_3(u, v);
   const Vector_3 cross = cross_product_3(u, v);
 
   const FT length = length_3(traits, cross);
+  CGAL_assertion(length != FT(0));
   if (length != FT(0)) return dot / length;
   else return FT(0); // undefined
 }
 
-// Computes tanget between two 3D vectors: q - p and r - p, where
-// q and r are counterclockwise oriented.
+// Computes tanget between two 3D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT tangent_3(
   const GeomTraits traits,
@@ -189,15 +224,35 @@ const typename GeomTraits::FT tangent_3(
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
 
-  const Vector_3 u = Vector_3(p, q);
-  const Vector_3 v = Vector_3(p, r);
+  const Vector_3 u = Vector_3(q, r);
+  const Vector_3 v = Vector_3(q, p);
 
   const FT dot = dot_product_3(u, v);
   const Vector_3 cross = cross_product_3(u, v);
 
   const FT length = length_3(traits, cross);
+  CGAL_assertion(dot != FT(0));
   if (dot != FT(0)) return length / dot;
   else return FT(0); // undefined
+}
+
+// Computes area of a 3D triangle.
+template<typename GeomTraits>
+const typename GeomTraits::FT area_3(
+  const GeomTraits traits,
+  const typename GeomTraits::Point_3& p,
+  const typename GeomTraits::Point_3& q,
+  const typename GeomTraits::Point_3& r) {
+
+  using Plane_3 = typename GeomTraits::Plane_3;
+  const Plane_3 plane = Plane_3(p, q, r);
+  const auto a = plane.to_2d(p);
+  const auto b = plane.to_2d(q);
+  const auto c = plane.to_2d(r);
+
+  const auto area_2 =
+    traits.compute_area_2_object();
+  return area_2(a, b, c);
 }
 
 // Computes 3D barycenter of the points a, b, c, and d.

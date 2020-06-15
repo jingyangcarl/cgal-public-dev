@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WACHSPRESS_COT_WEIGHT_2_H
-#define CGAL_GENERALIZED_WACHSPRESS_COT_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_COT_WEIGHT_2_H
+#define CGAL_GENERALIZED_DISCRETE_HARMONIC_COT_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -37,7 +37,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2D
 
-    \brief 2D Wachspress cot weight.
+    \brief 2D discrete harmonic cot weight.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -45,7 +45,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Wachspress_cot_weight_2 {
+  class Discrete_harmonic_cot_weight_2 {
 
   public:
 
@@ -76,7 +76,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Wachspress_cot_weight_2(
+    Discrete_harmonic_cot_weight_2(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -87,7 +87,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Wachspress cot weight.
+      \brief computes 2D discrete harmonic cot weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -99,7 +99,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D Wachspress cot weight.
+      \brief computes 2D discrete harmonic cot weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -145,15 +145,9 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      const FT cot_gamma = internal::cotangent_2(m_traits, vm, vj, query);
-      const FT cot_beta  = internal::cotangent_2(m_traits, query, vj, vp);
-
-      const auto squared_distance_2 =
-        m_traits.compute_squared_distance_2_object();
-      const FT rj2 = squared_distance_2(query, vj);
-
-      return weight(
-        cot_gamma, cot_beta, rj2);
+      const FT cot_beta  = internal::cotangent_2(m_traits, query, vm, vj);
+      const FT cot_gamma = internal::cotangent_2(m_traits, vj, vp, query);
+      return weight(cot_beta, cot_gamma);
     }
 
     const FT weight_3(
@@ -162,28 +156,17 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
-      const FT cot_gamma = internal::cotangent_3(m_traits, vm, vj, query);
-      const FT cot_beta  = internal::cotangent_3(m_traits, query, vj, vp);
-
-      const auto squared_distance_3 =
-        m_traits.compute_squared_distance_3_object();
-      const FT rj2 = squared_distance_3(query, vj);
-
-      return weight(
-        cot_gamma, cot_beta, rj2);
+      const FT cot_beta  = internal::cotangent_3(m_traits, query, vm, vj);
+      const FT cot_gamma = internal::cotangent_3(m_traits, vj, vp, query);
+      return weight(cot_beta, cot_gamma);
     }
 
     const FT weight(
-      const FT cot_gamma,
       const FT cot_beta,
-      const FT rj2) const {
+      const FT cot_gamma) const {
 
-      FT w = FT(0);
-      CGAL_assertion(rj2 != FT(0));
-      if (rj2 != FT(0)) {
-        const FT inv = FT(2) / rj2;
-        w = (cot_gamma + cot_beta) * inv;
-      }
+      const FT w =
+        FT(2) * (cot_beta + cot_gamma);
       return w;
     }
   };
@@ -191,4 +174,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WACHSPRESS_COT_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_COT_WEIGHT_2_H

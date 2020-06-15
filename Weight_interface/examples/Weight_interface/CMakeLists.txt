@@ -18,6 +18,20 @@ if(CGAL_FOUND)
     "wachspress_area_weight.cpp")
   create_single_source_cgal_program(
     "wachspress_cot_weight.cpp")
+  create_single_source_cgal_program(
+    "authalic_weight.cpp")
+  create_single_source_cgal_program(
+    "discrete_harmonic_area_weight.cpp")
+  create_single_source_cgal_program(
+    "discrete_harmonic_cot_weight.cpp")
+  create_single_source_cgal_program(
+    "cotangent_weight.cpp")
+  create_single_source_cgal_program(
+    "mean_value_area_weight.cpp")
+  create_single_source_cgal_program(
+    "mean_value_tan_weight.cpp")
+  create_single_source_cgal_program(
+    "mean_value_tan_safe_weight.cpp")
 
 else()
   message(WARNING
