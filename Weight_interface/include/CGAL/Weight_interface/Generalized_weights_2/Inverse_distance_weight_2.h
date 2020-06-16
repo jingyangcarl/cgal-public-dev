@@ -73,16 +73,12 @@ namespace Generalized_weights {
     /*!
       \brief initializes all internal data structures.
 
-      \param p
-      the power parameter
-
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
     Inverse_distance_weight_2(
-      const FT p = FT(1), // default is for shepard weight
       const GeomTraits traits = GeomTraits()) :
-    m_p(p), m_traits(traits)
+    m_traits(traits)
     { }
 
     /// @}
@@ -139,7 +135,6 @@ namespace Generalized_weights {
     /// \endcond
 
   private:
-    const FT m_p;
     const GeomTraits m_traits;
 
     const FT weight(
@@ -147,12 +142,8 @@ namespace Generalized_weights {
 
       FT w = FT(0);
       CGAL_assertion(rj != FT(0));
-      if (rj != FT(0)) {
-        FT denom = rj;
-        if (m_p != FT(1))
-          denom = internal::power(m_traits, rj, m_p);
-        w = FT(1) / denom;
-      }
+      if (rj != FT(0))
+        w = FT(1) / rj;
       return w;
     }
   };

@@ -7,9 +7,15 @@ generalized weight functions, which can be computed analytically.
 
 \cgalHasModel
 - `CGAL::Generalized_weights::Uniform_weight_2`
+- `CGAL::Generalized_weights::Three_point_family_weight_2`
+- `CGAL::Generalized_weights::Inverse_distance_weight_2`
+- `CGAL::Generalized_weights::Shepard_weight_2`
 - `CGAL::Generalized_weights::Wachspress_weight_2`
+- `CGAL::Generalized_weights::Authalic_weight_2`
 - `CGAL::Generalized_weights::Mean_value_weight_2`
+- `CGAL::Generalized_weights::Tangent_weight_2`
 - `CGAL::Generalized_weights::Discrete_harmonic_weight_2`
+- `CGAL::Generalized_weights::Cotangent_weight_2`
 */
 class AnalyticWeight_2 {
 
@@ -45,5 +51,4 @@ public:
     const Point_3& vj,
     const Point_3& vp) const
   { }
-
 };

@@ -7,7 +7,7 @@ using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Point_3 = typename Kernel::Point_3;
 
-using UN2 = CGAL::Generalized_weights::Uniform_weight_2<Kernel>;
+using UW2 = CGAL::Generalized_weights::Uniform_weight_2<Kernel>;
 
 int main() {
 
@@ -24,7 +24,7 @@ int main() {
   const Point_3 vp3    = Point_3(-FT(1), FT(0), FT(1));
 
   // Compute weights.
-  UN2 uniform;
+  UW2 uniform;
   std::cout << "2D uniform: " << uniform(query2, vm2, vj2, vp2) << std::endl;
   std::cout << "3D uniform: " << uniform(query3, vm3, vj3, vp3) << std::endl;
 

@@ -30,7 +30,6 @@
 
 // Internal includes.
 #include <CGAL/Weight_interface/internal/utils_2.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Inverse_distance_weight_2.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -55,7 +54,6 @@ namespace Generalized_weights {
 
     /// \cond SKIP_IN_MANUAL
     using GT = GeomTraits;
-    using Base = Inverse_distance_weight_2<GeomTraits>;
     /// \endcond
 
     /// Number type.
@@ -75,12 +73,16 @@ namespace Generalized_weights {
     /*!
       \brief initializes all internal data structures.
 
+      \param p
+      the power parameter
+
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
     Shepard_weight_2(
+      const FT p = FT(1), // default is for inverse distance weight
       const GeomTraits traits = GeomTraits()) :
-    m_base(FT(1), traits)
+    m_p(p), m_traits(traits)
     { }
 
     /// @}
@@ -93,11 +95,13 @@ namespace Generalized_weights {
     */
     const FT operator()(
       const Point_2& query,
-      const Point_2& vm,
+      const Point_2&,
       const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2&) const {
 
-      return m_base(query, vm, vj, vp);
+      const FT rj =
+        internal::distance_2(m_traits, query, vj);
+      return weight(rj);
     }
 
     /*!
@@ -105,11 +109,13 @@ namespace Generalized_weights {
     */
     const FT operator()(
       const Point_3& query,
-      const Point_3& vm,
+      const Point_3&,
       const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3&) const {
 
-      return m_base(query, vm, vj, vp);
+      const FT rj =
+        internal::distance_3(m_traits, query, vj);
+      return weight(rj);
     }
 
     /// @}
@@ -124,12 +130,31 @@ namespace Generalized_weights {
       const VertexDescriptor vdi,
       const VertextAroundTargetCirculator vcj) const {
 
-      return m_base(polygon_mesh, vdi, vcj);
+      const Point_2 stub;
+      const auto point_map = get(vertex_point, polygon_mesh);
+      const Point_3& query = get(point_map, vdi);
+      const Point_3& vj = get(point_map, vcj);
+      return weight_3(query, stub, vj, stub);
     }
     /// \endcond
 
   private:
-    const Base m_base;
+    const FT m_p;
+    const GeomTraits m_traits;
+
+    const FT weight(
+      const FT rj) const {
+
+      FT w = FT(0);
+      CGAL_assertion(rj != FT(0));
+      if (rj != FT(0)) {
+        FT denom = rj;
+        if (m_p != FT(1))
+          denom = internal::power(m_traits, rj, m_p);
+        w = FT(1) / denom;
+      }
+      return w;
+    }
   };
 
 } // namespace Generalized_weights

@@ -13,31 +13,29 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program(
-    "inverse_distance_weight.cpp")
+    "uniform_weight_2.cpp")
   create_single_source_cgal_program(
-    "shepard_weight.cpp")
+    "three_point_family_weight_2.cpp")
+
   create_single_source_cgal_program(
-    "uniform_weight.cpp")
+    "inverse_distance_weight_2.cpp")
   create_single_source_cgal_program(
-    "wachspress_area_weight.cpp")
+    "shepard_weight_2.cpp")
+
   create_single_source_cgal_program(
-    "wachspress_cot_weight.cpp")
+    "wachspress_weight_2.cpp")
   create_single_source_cgal_program(
-    "authalic_weight.cpp")
+    "authalic_weight_2.cpp")
+
   create_single_source_cgal_program(
-    "discrete_harmonic_area_weight.cpp")
+    "mean_value_weight_2.cpp")
   create_single_source_cgal_program(
-    "discrete_harmonic_cot_weight.cpp")
+    "tangent_weight_2.cpp")
+
   create_single_source_cgal_program(
-    "cotangent_weight.cpp")
+    "discrete_harmonic_weight_2.cpp")
   create_single_source_cgal_program(
-    "mean_value_area_weight.cpp")
-  create_single_source_cgal_program(
-    "mean_value_tan_weight.cpp")
-  create_single_source_cgal_program(
-    "tangent_weight.cpp")
-  create_single_source_cgal_program(
-    "area_weight.cpp")
+    "cotangent_weight_2.cpp")
 
 else()
   message(WARNING

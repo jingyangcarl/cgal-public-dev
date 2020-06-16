@@ -30,7 +30,6 @@
 
 // Internal includes.
 #include <CGAL/Weight_interface/internal/utils_2.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Discrete_harmonic_cot_weight_2.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -55,7 +54,6 @@ namespace Generalized_weights {
 
     /// \cond SKIP_IN_MANUAL
     using GT = GeomTraits;
-    using Base = Discrete_harmonic_cot_weight_2<GeomTraits>;
     /// \endcond
 
     /// Number type.
@@ -80,7 +78,7 @@ namespace Generalized_weights {
     */
     Cotangent_weight_2(
       const GeomTraits traits = GeomTraits()) :
-    m_base(traits)
+    m_traits(traits)
     { }
 
     /// @}
@@ -97,7 +95,7 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      return m_base(query, vm, vj, vp);
+      return weight_2(query, vm, vj, vp);
     }
 
     /*!
@@ -109,7 +107,7 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
-      return m_base(query, vm, vj, vp);
+      return weight_3(query, vm, vj, vp);
     }
 
     /// @}
@@ -124,12 +122,53 @@ namespace Generalized_weights {
       const VertexDescriptor vdi,
       const VertextAroundTargetCirculator vcj) const {
 
-      return m_base(polygon_mesh, vdi, vcj);
+      const auto point_map = get(vertex_point, polygon_mesh);
+      const Point_3& query = get(point_map, vdi);
+
+      auto vcm = vcj; vcm--;
+      auto vcp = vcj; vcp++;
+
+      const Point_3& vm = get(point_map, vcm);
+      const Point_3& vj = get(point_map, vcj);
+      const Point_3& vp = get(point_map, vcp);
+
+      return weight_3(query, vm, vj, vp);
     }
     /// \endcond
 
   private:
-    const Base m_base;
+    const GeomTraits m_traits;
+
+    const FT weight_2(
+      const Point_2& query,
+      const Point_2& vm,
+      const Point_2& vj,
+      const Point_2& vp) const {
+
+      const FT cot_beta  = internal::cotangent_2(m_traits, query, vm, vj);
+      const FT cot_gamma = internal::cotangent_2(m_traits, vj, vp, query);
+      return weight(cot_beta, cot_gamma);
+    }
+
+    const FT weight_3(
+      const Point_3& query,
+      const Point_3& vm,
+      const Point_3& vj,
+      const Point_3& vp) const {
+
+      const FT cot_beta  = internal::cotangent_3(m_traits, query, vm, vj);
+      const FT cot_gamma = internal::cotangent_3(m_traits, vj, vp, query);
+      return weight(cot_beta, cot_gamma);
+    }
+
+    const FT weight(
+      const FT cot_beta,
+      const FT cot_gamma) const {
+
+      const FT w =
+        FT(2) * (cot_beta + cot_gamma);
+      return w;
+    }
   };
 
 } // namespace Generalized_weights

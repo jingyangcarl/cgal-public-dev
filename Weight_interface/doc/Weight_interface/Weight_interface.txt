@@ -9,7 +9,63 @@ namespace CGAL {
 
 \section Weight_Interface_Intro Introduction
 
-This chapter is about generalized weights.
+This chapter is about generalized weights in 2D.
+For more information see examples below.
+
+
+\section Weight_Interface_Examples Examples
+
+Here, you can find a few examples on how to compute weights.
+
+
+\subsection Weight_Interface_Examples_UW2 Uniform Weight 2
+
+\cgalExample{Weight_interface/uniform_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_TPF2 Three Point Family Weight 2
+
+\cgalExample{Weight_interface/three_point_family_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_ID2 Inverse Distance Weight 2
+
+\cgalExample{Weight_interface/inverse_distance_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_SW2 Shepard Weight 2
+
+\cgalExample{Weight_interface/shepard_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_WP2 Wachspress Weight 2
+
+\cgalExample{Weight_interface/wachspress_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_AW2 Authalic Weight 2
+
+\cgalExample{Weight_interface/authalic_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_MV2 Mean Value Weight 2
+
+\cgalExample{Weight_interface/mean_value_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_TW2 Tangent Weight 2
+
+\cgalExample{Weight_interface/tangent_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_DH2 Discrete Harmonic Weight 2
+
+\cgalExample{Weight_interface/discrete_harmonic_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_CW2 Cotangent Weight 2
+
+\cgalExample{Weight_interface/cotangent_weight_2.cpp}
 
 */
 } /* namespace CGAL */

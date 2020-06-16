@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_AREA_WEIGHT_2_H
-#define CGAL_GENERALIZED_DISCRETE_HARMONIC_AREA_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_2_H
+#define CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -37,7 +37,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2D
 
-    \brief 2D discrete harmonic area weight.
+    \brief 2D mean value weight.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -45,7 +45,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Discrete_harmonic_area_weight_2 {
+  class Mean_value_weight_2 {
 
   public:
 
@@ -76,7 +76,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Discrete_harmonic_area_weight_2(
+    Mean_value_weight_2(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -87,7 +87,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D discrete harmonic area weight.
+      \brief computes 2D mean value weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -99,7 +99,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D discrete harmonic area weight.
+      \brief computes 2D mean value weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -145,20 +145,29 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      const auto squared_distance_2 =
-        m_traits.compute_squared_distance_2_object();
-      const FT rm2 = squared_distance_2(query, vm);
-      const FT rj2 = squared_distance_2(query, vj);
-      const FT rp2 = squared_distance_2(query, vp);
+      const auto sm = vm - query;
+      const auto sj = vj - query;
+      const auto sp = vp - query;
+
+      const FT rm = internal::length_2(m_traits, sm);
+      const FT rj = internal::length_2(m_traits, sj);
+      const FT rp = internal::length_2(m_traits, sp);
+
+      const auto dot_product_2 =
+        m_traits.compute_scalar_product_2_object();
+      const FT Dm = dot_product_2(sm, sj);
+      const FT Dj = dot_product_2(sj, sp);
+      const FT Dq = dot_product_2(sm, sp);
 
       const auto area_2 =
         m_traits.compute_area_2_object();
       const FT Am = area_2(vm, vj, query);
       const FT Aj = area_2(vj, vp, query);
       const FT Bj = area_2(vm, vp, query);
+      const FT sign = sign_of_weight(Am, Aj, Bj);
 
       return weight(
-        rm2, rj2, rp2, Am, Aj, Bj);
+        rm, rj, rp, Dm, Dj, Dq, sign);
     }
 
     const FT weight_3(
@@ -175,21 +184,42 @@ namespace Generalized_weights {
     }
 
     const FT weight(
-      const FT rm2, const FT rj2, const FT rp2,
-      const FT Am, const FT Aj, const FT Bj) const {
+      const FT rm, const FT rj, const FT rp,
+      const FT Dm, const FT Dj, const FT Dq,
+      const FT sign) const {
+
+      const FT Pm = rm * rj + Dm;
+      const FT Pj = rj * rp + Dj;
 
       FT w = FT(0);
-      CGAL_assertion(Am != FT(0) && Aj != FT(0));
-      const FT prod = Am * Aj;
+      CGAL_assertion(Pm != FT(0) && Pj != FT(0));
+      const FT prod = Pm * Pj;
       if (prod != FT(0)) {
         const FT inv = FT(1) / prod;
-        w = (rp2 * Am - rj2 * Bj + rm2 * Aj) * inv;
+        w = FT(2) * (rm * rp - Dq) * inv;
+        CGAL_assertion(w >= FT(0));
+        if (w < FT(0)) w = CGAL::abs(w);
+        w = static_cast<FT>(
+          CGAL::sqrt(CGAL::to_double(w)));
       }
+      w *= FT(2); w *= sign;
       return w;
+    }
+
+    FT sign_of_weight(
+      const FT& Am,
+      const FT& Aj,
+      const FT& Bj) const {
+
+      if (Am > FT(0) && Aj > FT(0) && Bj <= FT(0)) return  FT(1);
+      if (Am < FT(0) && Aj < FT(0) && Bj >= FT(0)) return -FT(1);
+      if (Bj > FT(0)) return  FT(1);
+      if (Bj < FT(0)) return -FT(1);
+      return FT(0);
     }
   };
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_AREA_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_2_H
