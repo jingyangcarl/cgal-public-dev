@@ -47,7 +47,7 @@ namespace internal {
 // Raises value to the power.
 template<typename GeomTraits>
 const typename GeomTraits::FT power(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::FT value,
   const typename GeomTraits::FT p) {
 
@@ -60,7 +60,7 @@ const typename GeomTraits::FT power(
 // Computes distance between two 2D points.
 template<typename GeomTraits>
 const typename GeomTraits::FT distance_2(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_2& p,
   const typename GeomTraits::Point_2& q) {
 
@@ -74,7 +74,7 @@ const typename GeomTraits::FT distance_2(
 // Computes length of a 2D vector.
 template<typename GeomTraits>
 const typename GeomTraits::FT length_2(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Vector_2& v) {
 
   using FT = typename GeomTraits::FT;
@@ -87,7 +87,7 @@ const typename GeomTraits::FT length_2(
 // Normalizes a 2D vector.
 template<typename GeomTraits>
 void normalize_2(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   typename GeomTraits::Vector_2& v) {
 
   using FT = typename GeomTraits::FT;
@@ -100,7 +100,7 @@ void normalize_2(
 // Computes cotanget between two 2D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT cotangent_2(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_2& p,
   const typename GeomTraits::Point_2& q,
   const typename GeomTraits::Point_2& r) {
@@ -128,7 +128,7 @@ const typename GeomTraits::FT cotangent_2(
 // Computes tanget between two 2D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT tangent_2(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_2& p,
   const typename GeomTraits::Point_2& q,
   const typename GeomTraits::Point_2& r) {
@@ -156,7 +156,7 @@ const typename GeomTraits::FT tangent_2(
 // Computes distance between two 3D points.
 template<typename GeomTraits>
 const typename GeomTraits::FT distance_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_3& p,
   const typename GeomTraits::Point_3& q) {
 
@@ -170,7 +170,7 @@ const typename GeomTraits::FT distance_3(
 // Computes length of a 3D vector.
 template<typename GeomTraits>
 const typename GeomTraits::FT length_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Vector_3& v) {
 
   using FT = typename GeomTraits::FT;
@@ -183,7 +183,7 @@ const typename GeomTraits::FT length_3(
 // Normalizes a 3D vector.
 template<typename GeomTraits>
 void normalize_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   typename GeomTraits::Vector_3& v) {
 
   using FT = typename GeomTraits::FT;
@@ -196,7 +196,7 @@ void normalize_3(
 // Computes cotanget between two 3D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT cotangent_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_3& p,
   const typename GeomTraits::Point_3& q,
   const typename GeomTraits::Point_3& r) {
@@ -224,7 +224,7 @@ const typename GeomTraits::FT cotangent_3(
 // Computes tanget between two 3D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT tangent_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_3& p,
   const typename GeomTraits::Point_3& q,
   const typename GeomTraits::Point_3& r) {
@@ -252,7 +252,7 @@ const typename GeomTraits::FT tangent_3(
 // Computes area of a 3D triangle.
 template<typename GeomTraits>
 const typename GeomTraits::FT area_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_3& p,
   const typename GeomTraits::Point_3& q,
   const typename GeomTraits::Point_3& r) {
@@ -274,7 +274,7 @@ const typename GeomTraits::FT area_3(
 // Computes 3D barycenter of the points a, b, c, and d.
 template<typename GeomTraits>
 void barycenter_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_3& a,
   const typename GeomTraits::Point_3& b,
   const typename GeomTraits::Point_3& c,
@@ -294,7 +294,7 @@ void barycenter_3(
 // Computes 3D angle between two vectors.
 template<typename GeomTraits>
 const double angle_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Vector_3& v1,
   const typename GeomTraits::Vector_3& v2) {
 
@@ -313,7 +313,7 @@ const double angle_3(
 // Rotates a 3D point around axis.
 template<typename GeomTraits>
 const typename GeomTraits::Point_3 rotate_point_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const double angle_rad,
   const typename GeomTraits::Vector_3& axis,
   const typename GeomTraits::Point_3& query) {
@@ -344,7 +344,7 @@ const typename GeomTraits::Point_3 rotate_point_3(
 // Computes two 3D orthogonal base vectors wrt a given normal.
 template<typename GeomTraits>
 void orthogonal_bases_3(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Vector_3& normal,
   typename GeomTraits::Vector_3& b1,
   typename GeomTraits::Vector_3& b2) {
@@ -370,7 +370,7 @@ void orthogonal_bases_3(
 // Converts a 3D point into a 2D point wrt to a given plane.
 template<typename GeomTraits>
 const typename GeomTraits::Point_2 to_2d(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Vector_3& b1,
   const typename GeomTraits::Vector_3& b2,
   const typename GeomTraits::Point_3& origin,
@@ -390,7 +390,7 @@ const typename GeomTraits::Point_2 to_2d(
 // Flattens an arbitrary quad into a planar quad.
 template<typename GeomTraits>
 void flatten(
-  const GeomTraits traits,
+  const GeomTraits& traits,
   const typename GeomTraits::Point_3& query, // query point
   const typename GeomTraits::Point_3& nm,    // prev neighbor/vertex
   const typename GeomTraits::Point_3& nj,    // curr neighbor/vertex

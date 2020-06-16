@@ -13,6 +13,10 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program(
+    "inverse_distance_weight.cpp")
+  create_single_source_cgal_program(
+    "shepard_weight.cpp")
+  create_single_source_cgal_program(
     "uniform_weight.cpp")
   create_single_source_cgal_program(
     "wachspress_area_weight.cpp")
