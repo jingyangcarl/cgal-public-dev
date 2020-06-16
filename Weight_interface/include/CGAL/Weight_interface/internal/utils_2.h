@@ -113,11 +113,11 @@ const typename GeomTraits::FT cotangent_2(
   const auto cross_product_2 =
     traits.compute_determinant_2_object();
 
-  const Vector_2 u = Vector_2(q, r);
-  const Vector_2 v = Vector_2(q, p);
+  const Vector_2 v = Vector_2(q, r);
+  const Vector_2 w = Vector_2(q, p);
 
-  const FT dot = dot_product_2(u, v);
-  const FT cross = cross_product_2(u, v);
+  const FT dot = dot_product_2(v, w);
+  const FT cross = cross_product_2(v, w);
 
   const FT length = CGAL::abs(cross);
   CGAL_assertion(length != FT(0));
@@ -141,11 +141,11 @@ const typename GeomTraits::FT tangent_2(
   const auto cross_product_2 =
     traits.compute_determinant_2_object();
 
-  const Vector_2 u = Vector_2(q, r);
-  const Vector_2 v = Vector_2(q, p);
+  const Vector_2 v = Vector_2(q, r);
+  const Vector_2 w = Vector_2(q, p);
 
-  const FT dot = dot_product_2(u, v);
-  const FT cross = cross_product_2(u, v);
+  const FT dot = dot_product_2(v, w);
+  const FT cross = cross_product_2(v, w);
 
   const FT length = CGAL::abs(cross);
   CGAL_assertion(dot != FT(0));
@@ -209,11 +209,11 @@ const typename GeomTraits::FT cotangent_3(
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
 
-  const Vector_3 u = Vector_3(q, r);
-  const Vector_3 v = Vector_3(q, p);
+  const Vector_3 v = Vector_3(q, r);
+  const Vector_3 w = Vector_3(q, p);
 
-  const FT dot = dot_product_3(u, v);
-  const Vector_3 cross = cross_product_3(u, v);
+  const FT dot = dot_product_3(v, w);
+  const Vector_3 cross = cross_product_3(v, w);
 
   const FT length = length_3(traits, cross);
   CGAL_assertion(length != FT(0));
@@ -237,11 +237,11 @@ const typename GeomTraits::FT tangent_3(
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
 
-  const Vector_3 u = Vector_3(q, r);
-  const Vector_3 v = Vector_3(q, p);
+  const Vector_3 v = Vector_3(q, r);
+  const Vector_3 w = Vector_3(q, p);
 
-  const FT dot = dot_product_3(u, v);
-  const Vector_3 cross = cross_product_3(u, v);
+  const FT dot = dot_product_3(v, w);
+  const Vector_3 cross = cross_product_3(v, w);
 
   const FT length = length_3(traits, cross);
   CGAL_assertion(dot != FT(0));
@@ -260,12 +260,12 @@ const typename GeomTraits::FT area_3(
   using FT = typename GeomTraits::FT;
   using Vector_3 = typename GeomTraits::Vector_3;
 
-  const Vector_3 u = Vector_3(q, r);
-  const Vector_3 v = Vector_3(q, p);
+  const Vector_3 v = Vector_3(q, r);
+  const Vector_3 w = Vector_3(q, p);
 
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
-  const Vector_3 cross = cross_product_3(u, v);
+  const Vector_3 cross = cross_product_3(v, w);
   const FT half = FT(1) / FT(2);
   const FT area = half * length_3(traits, cross);
   return area;
