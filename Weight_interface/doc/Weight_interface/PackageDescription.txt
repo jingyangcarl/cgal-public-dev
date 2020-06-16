@@ -42,6 +42,7 @@ Free functions to compute 2D generalized weights.
 ### Concepts ###
 - `AnalyticTraits_2`
 - `AnalyticWeight_2`
+- `HalfWeight_2`
 
 ### 2D Generalized Weights ###
 - `CGAL::Generalized_weights::Uniform_weight_2`

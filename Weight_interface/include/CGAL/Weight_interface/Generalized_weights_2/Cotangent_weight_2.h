@@ -42,7 +42,7 @@ namespace Generalized_weights {
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
-    \cgalModels `AnalyticWeight_2`
+    \cgalModels `AnalyticWeight_2`, `HalfWeight_2`
   */
   template<typename GeomTraits>
   class Cotangent_weight_2 {
@@ -85,6 +85,28 @@ namespace Generalized_weights {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief computes the half of a 2D cotangent weight.
+    */
+    const FT operator()(
+      const Point_2& query,
+      const Point_2& vj,
+      const Point_2& vp) const {
+
+      return half_weight_2(query, vj, vp);
+    }
+
+    /*!
+      \brief computes the half of a 2D cotangent weight.
+    */
+    const FT operator()(
+      const Point_3& query,
+      const Point_3& vj,
+      const Point_3& vp) const {
+
+      return half_weight_3(query, vj, vp);
+    }
 
     /*!
       \brief computes 2D cotangent weight.
@@ -138,6 +160,34 @@ namespace Generalized_weights {
 
   private:
     const GeomTraits m_traits;
+
+    const FT half_weight_2(
+      const Point_2& query,
+      const Point_2& vj,
+      const Point_2& vp) const {
+
+      const FT cot_angle =
+        internal::cotangent_2(m_traits, vj, vp, query);
+      return half_weight(cot_angle);
+    }
+
+    const FT half_weight_3(
+      const Point_3& query,
+      const Point_3& vj,
+      const Point_3& vp) const {
+
+      const FT cot_angle =
+        internal::cotangent_3(m_traits, vj, vp, query);
+      return half_weight(cot_angle);
+    }
+
+    const FT half_weight(
+      const FT cot_angle) const {
+
+      const FT w =
+        FT(2) * cot_angle;
+      return w;
+    }
 
     const FT weight_2(
       const Point_2& query,

@@ -27,6 +27,15 @@ int main() {
   CW2 cotangent;
   std::cout << "2D cot: " << cotangent(query2, vm2, vj2, vp2) << std::endl;
   std::cout << "3D cot: " << cotangent(query3, vm3, vj3, vp3) << std::endl;
+  std::cout << "---------" << std::endl;
+
+  // Construct a 2D weight.
+  const FT w2 = cotangent(query2, vm2, vj2) + cotangent(query2, vj2, vp2);
+  std::cout << "2D cot: " << w2 << std::endl;
+
+  // Construct a 3D weight.
+  const FT w3 = cotangent(query3, vm3, vj3) + cotangent(query3, vj3, vp3);
+  std::cout << "3D cot: " << w3 << std::endl;
 
   return EXIT_SUCCESS;
 }

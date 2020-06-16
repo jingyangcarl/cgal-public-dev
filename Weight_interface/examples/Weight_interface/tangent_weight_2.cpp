@@ -27,6 +27,15 @@ int main() {
   TW2 tangent;
   std::cout << "2D tan: " << tangent(query2, vm2, vj2, vp2) << std::endl;
   std::cout << "3D tan: " << tangent(query3, vm3, vj3, vp3) << std::endl;
+  std::cout << "---------" << std::endl;
+
+  // Construct a 2D weight.
+  const FT w2 = tangent(query2, vm2, vj2) + tangent(query2, vj2, vp2);
+  std::cout << "2D tan: " << w2 << std::endl;
+
+  // Construct a 3D weight.
+  const FT w3 = tangent(query3, vm3, vj3) + tangent(query3, vj3, vp3);
+  std::cout << "3D tan: " << w3 << std::endl;
 
   return EXIT_SUCCESS;
 }

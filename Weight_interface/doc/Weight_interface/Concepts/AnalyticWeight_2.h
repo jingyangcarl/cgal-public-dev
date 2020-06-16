@@ -3,7 +3,7 @@
 \cgalConcept
 
 A concept that describes the set of methods that should be defined for all 2D
-generalized weight functions, which can be computed analytically.
+generalized weights, which can be computed analytically.
 
 \cgalHasModel
 - `CGAL::Generalized_weights::Uniform_weight_2`
@@ -23,7 +23,7 @@ public:
 
   /*!
     computes a chosen weight at the `query` point given its three 2D neighbors
-    `vm` - previous, `vj` - j neighbor, `vp` - next.
+    `vm` - previous neighbor, `vj` - j neighbor, and `vp` - next neighbor.
 
     This configuration is arising when the weight is computed on a 2D plane.
 
@@ -38,7 +38,7 @@ public:
 
   /*!
     computes a chosen weight at the `query` point given its three 3D neighbors
-    `vm` - previous, `vj` - j neighbor, `vp` - next.
+    `vm` - previous neighbor, `vj` - j neighbor, and `vp` - next neighbor.
 
     This configuration is arising when the weight is computed on a 2D surface
     of a polygon mesh.

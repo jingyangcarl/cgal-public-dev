@@ -27,6 +27,15 @@ int main() {
   AW2 authalic;
   std::cout << "2D authalic: " << authalic(query2, vm2, vj2, vp2) << std::endl;
   std::cout << "3D authalic: " << authalic(query3, vm3, vj3, vp3) << std::endl;
+  std::cout << "--------------" << std::endl;
+
+  // Construct a 2D weight.
+  const FT w2 = authalic(query2, vm2, vj2) + authalic(query2, vj2, vp2);
+  std::cout << "2D authalic: " << w2 << std::endl;
+
+  // Construct a 3D weight.
+  const FT w3 = authalic(query3, vm3, vj3) + authalic(query3, vj3, vp3);
+  std::cout << "3D authalic: " << w3 << std::endl;
 
   return EXIT_SUCCESS;
 }

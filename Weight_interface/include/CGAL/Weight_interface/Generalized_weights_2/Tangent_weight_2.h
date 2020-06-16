@@ -42,7 +42,7 @@ namespace Generalized_weights {
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
-    \cgalModels `AnalyticWeight_2`
+    \cgalModels `AnalyticWeight_2`, `HalfWeight_2`
   */
   template<typename GeomTraits>
   class Tangent_weight_2 {
@@ -85,6 +85,28 @@ namespace Generalized_weights {
 
     /// \name Access
     /// @{
+
+    /*!
+      \brief computes the half of a 2D tangent weight.
+    */
+    const FT operator()(
+      const Point_2& query,
+      const Point_2& vj,
+      const Point_2& vp) const {
+
+      return half_weight_2(query, vj, vp);
+    }
+
+    /*!
+      \brief computes the half of a 2D tangent weight.
+    */
+    const FT operator()(
+      const Point_3& query,
+      const Point_3& vj,
+      const Point_3& vp) const {
+
+      return half_weight_3(query, vj, vp);
+    }
 
     /*!
       \brief computes 2D tangent weight.
@@ -138,6 +160,69 @@ namespace Generalized_weights {
 
   private:
     const GeomTraits m_traits;
+
+    const FT half_weight_2(
+      const Point_2& query,
+      const Point_2& vj,
+      const Point_2& vp) const {
+
+      const auto sj = vj - query;
+      const auto sp = vp - query;
+
+      const FT rj = internal::length_2(m_traits, sj);
+      const FT rp = internal::length_2(m_traits, sp);
+
+      const auto area_2 =
+        m_traits.compute_area_2_object();
+      const FT Aj = FT(2) * area_2(vj, vp, query);
+
+      const auto dot_product_2 =
+        m_traits.compute_scalar_product_2_object();
+      const FT Dj = dot_product_2(sj, sp);
+
+      return half_weight(rj, rp, Aj, Dj);
+    }
+
+    const FT half_weight_3(
+      const Point_3& query,
+      const Point_3& vj,
+      const Point_3& vp) const {
+
+      const auto sj = vj - query;
+      const auto sp = vp - query;
+
+      const FT rj = internal::length_3(m_traits, sj);
+      const FT rp = internal::length_3(m_traits, sp);
+
+      const FT Aj = FT(2) *
+        internal::area_3(m_traits, vj, vp, query);
+
+      const auto dot_product_3 =
+        m_traits.compute_scalar_product_3_object();
+      const FT Dj = dot_product_3(sj, sp);
+
+      return half_weight(rj, rp, Aj, Dj);
+    }
+
+    const FT half_weight(
+      const FT rj, const FT rp,
+      const FT Aj, const FT Dj) const {
+
+      const FT Pj = rj * rp + Dj;
+
+      FT w = FT(0);
+      CGAL_assertion(Pj != FT(0));
+      if (Pj != FT(0)) {
+        const FT invj = FT(1) / Pj;
+        const FT tj = Aj * invj;
+        CGAL_assertion(rj != FT(0));
+        if (rj != FT(0)) {
+          const FT inv = FT(2) / rj;
+          w = tj * inv;
+        }
+      }
+      return w;
+    }
 
     const FT weight_2(
       const Point_2& query,
