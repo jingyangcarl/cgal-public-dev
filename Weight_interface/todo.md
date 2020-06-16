@@ -9,4 +9,29 @@
   Surface_mesh_deformation, Surface_mesh_shortest_path, Heat_method_3, and possibly Kernel_d.
 * When computing weights one by one, we recompute certain areas/distances multiple times and so
   using them e.g. in barycentric coordinates is not efficient. What should we do with that?
-* Check if all necessary functions are in the traits class.
+* Use the code:
+  ```
+    /// \cond SKIP_IN_MANUAL
+    template<
+    typename PolygonMesh,
+    typename VertexDescriptor,
+    typename VertextAroundTargetCirculator>
+    const FT operator()(
+      const PolygonMesh& polygon_mesh,
+      const VertexDescriptor vdi,
+      const VertextAroundTargetCirculator vcj) const {
+
+      const auto point_map = get(vertex_point, polygon_mesh);
+      const Point_3& query = get(point_map, vdi);
+
+      auto vcm = vcj; vcm--;
+      auto vcp = vcj; vcp++;
+
+      const Point_3& vm = get(point_map, vcm);
+      const Point_3& vj = get(point_map, vcj);
+      const Point_3& vp = get(point_map, vcp);
+
+      return weight_3(query, vm, vj, vp);
+    }
+    /// \endcond
+  ```

@@ -25,9 +25,6 @@
 
 // #include <CGAL/license/Weight_interface.h>
 
-// Boost includes.
-#include <CGAL/boost/graph/helpers.h>
-
 // Internal includes.
 #include <CGAL/Weight_interface/internal/utils_2.h>
 
@@ -35,7 +32,7 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2D
+    \ingroup PkgWeightInterfaceRef2DWeights
 
     \brief 2D uniform weight.
 
@@ -111,20 +108,6 @@ namespace Generalized_weights {
     }
 
     /// @}
-
-    /// \cond SKIP_IN_MANUAL
-    template<
-    typename PolygonMesh,
-    typename VertexDescriptor,
-    typename VertextAroundTargetCirculator>
-    const FT operator()(
-      const PolygonMesh&,
-      const VertexDescriptor,
-      const VertextAroundTargetCirculator) const {
-
-      return weight();
-    }
-    /// \endcond
 
   private:
     const GeomTraits m_traits;

@@ -13,9 +13,9 @@ This chapter is about generalized weights in 2D.
 For more information see examples below.
 
 
-\section Weight_Interface_Examples Examples
+\section Weight_Interface_Examples2DWeights 2D Generalized Weights
 
-Here, you can find a few examples on how to compute weights.
+Here, you can find a few examples on how to compute 2D generalized weights.
 
 
 \subsection Weight_Interface_Examples_UW2 Uniform Weight 2
@@ -66,6 +66,11 @@ Here, you can find a few examples on how to compute weights.
 \subsection Weight_Interface_Examples_CW2 Cotangent Weight 2
 
 \cgalExample{Weight_interface/cotangent_weight_2.cpp}
+
+
+\section Weight_Interface_Examples2DAverage 2D Local Averaging Regions
+
+Here, you can find a few examples on how to compute 2D local averaging regions.
 
 */
 } /* namespace CGAL */

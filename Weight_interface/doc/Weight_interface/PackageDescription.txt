@@ -7,10 +7,15 @@
 Concepts, which are used to parameterize the functions and classes
 from `CGAL::Generalized_weights`.
 
-\defgroup PkgWeightInterfaceRef2D 2D Generalized Weights
+\defgroup PkgWeightInterfaceRef2DWeights 2D Generalized Weights
 \ingroup PkgWeightInterfaceRef
 
 Models and functions that can be used to compute 2D generalized weights.
+
+\defgroup PkgWeightInterfaceRef2DAverage 2D Local Averaging Regions
+\ingroup PkgWeightInterfaceRef
+
+Models and functions that can be used to compute 2D local averaging regions.
 
 \defgroup PkgWeightInterfaceRef2DFunctions 2D Free Functions
 \ingroup PkgWeightInterfaceRef
@@ -55,6 +60,13 @@ Free functions to compute 2D generalized weights.
 - `CGAL::Generalized_weights::Tangent_weight_2`
 - `CGAL::Generalized_weights::Discrete_harmonic_weight_2`
 - `CGAL::Generalized_weights::Cotangent_weight_2`
+
+### 2D Local Averaging Regions ###
+- `CGAL::Generalized_weights::Uniform_cell_weight_2`
+- `CGAL::Generalized_weights::Triangle_cell_weight_2`
+- `CGAL::Generalized_weights::Barycentric_cell_weight_2`
+- `CGAL::Generalized_weights::Voronoi_cell_weight_2`
+- `CGAL::Generalized_weights::Mixed_voronoi_cell_weight_2`
 
 ## 2D Free Functions ##
 

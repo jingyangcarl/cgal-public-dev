@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
-#define CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_BARYCENTRIC_CELL_WEIGHT_2_H
+#define CGAL_GENERALIZED_BARYCENTRIC_CELL_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,17 +32,17 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DWeights
+    \ingroup PkgWeightInterfaceRef2DAverage
 
-    \brief 2D Shepard weight.
+    \brief 2D barycentric cell weight.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
-    \cgalModels `AnalyticWeight_2`
+    \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
-  class Shepard_weight_2 {
+  class Barycentric_cell_weight_2 {
 
   public:
 
@@ -70,16 +70,12 @@ namespace Generalized_weights {
     /*!
       \brief initializes all internal data structures.
 
-      \param p
-      the power parameter
-
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Shepard_weight_2(
-      const FT p = FT(1), // default is for inverse distance weight
+    Barycentric_cell_weight_2(
       const GeomTraits traits = GeomTraits()) :
-    m_p(p), m_traits(traits)
+    m_traits(traits)
     { }
 
     /// @}
@@ -88,55 +84,53 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Shepard weight.
+      \brief computes the half of a 2D barycentric cell weight.
     */
     const FT operator()(
       const Point_2& query,
-      const Point_2&,
       const Point_2& vj,
-      const Point_2&) const {
+      const Point_2& vp) const {
 
-      const FT rj =
-        internal::distance_2(m_traits, query, vj);
-      return weight(rj);
+      return half_weight_2(query, vj, vp);
     }
 
     /*!
-      \brief computes 2D Shepard weight.
+      \brief computes the half of a 2D barycentric cell weight.
     */
     const FT operator()(
       const Point_3& query,
-      const Point_3&,
       const Point_3& vj,
-      const Point_3&) const {
+      const Point_3& vp) const {
 
-      const FT rj =
-        internal::distance_3(m_traits, query, vj);
-      return weight(rj);
+      return half_weight_3(query, vj, vp);
     }
 
     /// @}
 
   private:
-    const FT m_p;
     const GeomTraits m_traits;
 
-    const FT weight(
-      const FT rj) const {
+    const FT half_weight_2(
+      const Point_2& query,
+      const Point_2& vj,
+      const Point_2& vp) const {
 
-      FT w = FT(0);
-      CGAL_assertion(rj != FT(0));
-      if (rj != FT(0)) {
-        FT denom = rj;
-        if (m_p != FT(1))
-          denom = internal::power(m_traits, rj, m_p);
-        w = FT(1) / denom;
-      }
-      return w;
+    }
+
+    const FT half_weight_3(
+      const Point_3& query,
+      const Point_3& vj,
+      const Point_3& vp) const {
+
+    }
+
+    const FT half_weight(
+      const FT, const FT) const {
+
     }
   };
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_BARYCENTRIC_CELL_WEIGHT_2_H
