@@ -72,5 +72,20 @@ Here, you can find a few examples on how to compute 2D generalized weights.
 
 Here, you can find a few examples on how to compute 2D local averaging regions.
 
+
+\subsection Weight_Interface_Examples_UC2 Uniform Cell Weight 2
+
+\cgalExample{Weight_interface/uniform_cell_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_TC2 Triangle Cell Weight 2
+
+\cgalExample{Weight_interface/triangle_cell_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_BC2 Barycentric Cell Weight 2
+
+\cgalExample{Weight_interface/barycentric_cell_weight_2.cpp}
+
 */
 } /* namespace CGAL */

@@ -84,25 +84,25 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes the half of a 2D triangle cell weight.
+      \brief computes 2D triangle cell weight.
     */
     const FT operator()(
       const Point_2& query,
       const Point_2& vj,
       const Point_2& vp) const {
 
-      return half_weight_2(query, vj, vp);
+      return weight_2(query, vj, vp);
     }
 
     /*!
-      \brief computes the half of a 2D triangle cell weight.
+      \brief computes 2D triangle cell weight.
     */
     const FT operator()(
       const Point_3& query,
       const Point_3& vj,
       const Point_3& vp) const {
 
-      return half_weight_3(query, vj, vp);
+      return weight_3(query, vj, vp);
     }
 
     /// @}
@@ -110,23 +110,32 @@ namespace Generalized_weights {
   private:
     const GeomTraits m_traits;
 
-    const FT half_weight_2(
+    const FT weight_2(
       const Point_2& query,
       const Point_2& vj,
       const Point_2& vp) const {
 
+      const auto area_2 =
+        m_traits.compute_area_2_object();
+      const FT Aj = area_2(vj, vp, query);
+      return weight(Aj);
     }
 
-    const FT half_weight_3(
+    const FT weight_3(
       const Point_3& query,
       const Point_3& vj,
       const Point_3& vp) const {
 
+      const FT Aj =
+        internal::area_3(m_traits, vj, vp, query);
+      return weight(Aj);
     }
 
-    const FT half_weight(
-      const FT, const FT) const {
+    const FT weight(
+      const FT Aj) const {
 
+      const FT w = Aj;
+      return w;
     }
   };
 

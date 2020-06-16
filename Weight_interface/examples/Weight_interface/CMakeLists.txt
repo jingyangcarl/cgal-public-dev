@@ -37,6 +37,13 @@ if(CGAL_FOUND)
   create_single_source_cgal_program(
     "cotangent_weight_2.cpp")
 
+  create_single_source_cgal_program(
+    "uniform_cell_weight_2.cpp")
+  create_single_source_cgal_program(
+    "triangle_cell_weight_2.cpp")
+  create_single_source_cgal_program(
+    "barycentric_cell_weight_2.cpp")
+
 else()
   message(WARNING
   "This program requires the CGAL library, and will not be compiled.")

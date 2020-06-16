@@ -84,25 +84,25 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes the half of a 2D uniform cell weight.
+      \brief computes 2D uniform cell weight.
     */
     const FT operator()(
       const Point_2&,
       const Point_2&,
       const Point_2&) const {
 
-      return half_weight();
+      return weight();
     }
 
     /*!
-      \brief computes the half of a 2D uniform cell weight.
+      \brief computes 2D uniform cell weight.
     */
     const FT operator()(
       const Point_3&,
       const Point_3&,
       const Point_3&) const {
 
-      return half_weight();
+      return weight();
     }
 
     /// @}
@@ -110,7 +110,7 @@ namespace Generalized_weights {
   private:
     const GeomTraits m_traits;
 
-    const FT half_weight() const {
+    const FT weight() const {
       return FT(1);
     }
   };

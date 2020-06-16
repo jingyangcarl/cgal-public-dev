@@ -271,15 +271,100 @@ const typename GeomTraits::FT area_3(
   return area;
 }
 
+// Computes 2D barycenter of the points a and b.
+template<typename GeomTraits>
+const typename GeomTraits::Point_2 barycenter_2(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_2& a,
+  const typename GeomTraits::Point_2& b) {
+
+  using FT = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
+
+  const FT half = FT(1) / FT(2);
+  const FT x = half * (a.x() + b.x());
+  const FT y = half * (a.y() + b.y());
+  return Point_2(x, y);
+}
+
+// Computes 3D barycenter of the points a and b.
+template<typename GeomTraits>
+const typename GeomTraits::Point_3 barycenter_3(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_3& a,
+  const typename GeomTraits::Point_3& b) {
+
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+
+  const FT half = FT(1) / FT(2);
+  const FT x = half * (a.x() + b.x());
+  const FT y = half * (a.y() + b.y());
+  const FT z = half * (a.z() + b.z());
+  return Point_3(x, y, z);
+}
+
+// Computes 2D barycenter of the points a, b, and c.
+template<typename GeomTraits>
+const typename GeomTraits::Point_2 barycenter_2(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_2& a,
+  const typename GeomTraits::Point_2& b,
+  const typename GeomTraits::Point_2& c) {
+
+  using FT = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
+
+  const FT third = FT(1) / FT(3);
+  const FT x = third * (a.x() + b.x() + c.x());
+  const FT y = third * (a.y() + b.y() + c.y());
+  return Point_2(x, y);
+}
+
+// Computes 3D barycenter of the points a, b, and c.
+template<typename GeomTraits>
+const typename GeomTraits::Point_3 barycenter_3(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_3& a,
+  const typename GeomTraits::Point_3& b,
+  const typename GeomTraits::Point_3& c) {
+
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+
+  const FT third = FT(1) / FT(3);
+  const FT x = third * (a.x() + b.x() + c.x());
+  const FT y = third * (a.y() + b.y() + c.y());
+  const FT z = third * (a.z() + b.z() + c.z());
+  return Point_3(x, y, z);
+}
+
+// Computes 2D barycenter of the points a, b, c, and d.
+template<typename GeomTraits>
+const typename GeomTraits::Point_2 barycenter_2(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_2& a,
+  const typename GeomTraits::Point_2& b,
+  const typename GeomTraits::Point_2& c,
+  const typename GeomTraits::Point_2& d) {
+
+  using FT = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
+
+  const FT quater = FT(1) / FT(4);
+  const FT x = quater * (a.x() + b.x() + c.x() + d.x());
+  const FT y = quater * (a.y() + b.y() + c.y() + d.y());
+  return Point_2(x, y);
+}
+
 // Computes 3D barycenter of the points a, b, c, and d.
 template<typename GeomTraits>
-void barycenter_3(
+const typename GeomTraits::Point_3 barycenter_3(
   const GeomTraits& traits,
   const typename GeomTraits::Point_3& a,
   const typename GeomTraits::Point_3& b,
   const typename GeomTraits::Point_3& c,
-  const typename GeomTraits::Point_3& d,
-  typename GeomTraits::Point_3& barycenter) {
+  const typename GeomTraits::Point_3& d) {
 
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
@@ -288,7 +373,7 @@ void barycenter_3(
   const FT x = quater * (a.x() + b.x() + c.x() + d.x());
   const FT y = quater * (a.y() + b.y() + c.y() + d.y());
   const FT z = quater * (a.z() + b.z() + c.z() + d.z());
-  barycenter = Point_3(x, y, z);
+  return Point_3(x, y, z);
 }
 
 // Computes 3D angle between two vectors.
@@ -407,8 +492,8 @@ void flatten(
     traits.construct_cross_product_vector_3_object();
 
   // Compute barycenter.
-  Point_3 center;
-  barycenter_3(traits, query, nm, nj, np, center);
+  const Point_3 center =
+    barycenter_3(traits, query, nm, nj, np);
   // std::cout << "barycenter: " << center << std::endl;
 
   // Translate.

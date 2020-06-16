@@ -84,25 +84,25 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes the half of a 2D barycentric cell weight.
+      \brief computes 2D barycentric cell weight.
     */
     const FT operator()(
       const Point_2& query,
       const Point_2& vj,
       const Point_2& vp) const {
 
-      return half_weight_2(query, vj, vp);
+      return weight_2(query, vj, vp);
     }
 
     /*!
-      \brief computes the half of a 2D barycentric cell weight.
+      \brief computes 2D barycentric cell weight.
     */
     const FT operator()(
       const Point_3& query,
       const Point_3& vj,
       const Point_3& vp) const {
 
-      return half_weight_3(query, vj, vp);
+      return weight_3(query, vj, vp);
     }
 
     /// @}
@@ -110,23 +110,47 @@ namespace Generalized_weights {
   private:
     const GeomTraits m_traits;
 
-    const FT half_weight_2(
+    const FT weight_2(
       const Point_2& query,
       const Point_2& vj,
       const Point_2& vp) const {
 
+      const Point_2 center =
+        internal::barycenter_2(m_traits, vj, vp, query);
+      const Point_2 m1 =
+        internal::barycenter_2(m_traits, query, vj);
+      const Point_2 m2 =
+        internal::barycenter_2(m_traits, query, vp);
+
+      const auto area_2 =
+        m_traits.compute_area_2_object();
+      const FT A1 = area_2(m1, center, query);
+      const FT A2 = area_2(center, m2, query);
+      return weight(A1, A2);
     }
 
-    const FT half_weight_3(
+    const FT weight_3(
       const Point_3& query,
       const Point_3& vj,
       const Point_3& vp) const {
 
+      const Point_3 center =
+        internal::barycenter_3(m_traits, vj, vp, query);
+      const Point_3 m1 =
+        internal::barycenter_3(m_traits, query, vj);
+      const Point_3 m2 =
+        internal::barycenter_3(m_traits, query, vp);
+
+      const FT A1 = internal::area_3(m_traits, m1, center, query);
+      const FT A2 = internal::area_3(m_traits, center, m2, query);
+      return weight(A1, A2);
     }
 
-    const FT half_weight(
-      const FT, const FT) const {
+    const FT weight(
+      const FT A1, const FT A2) const {
 
+      const FT w = A1 + A2;
+      return w;
     }
   };
 

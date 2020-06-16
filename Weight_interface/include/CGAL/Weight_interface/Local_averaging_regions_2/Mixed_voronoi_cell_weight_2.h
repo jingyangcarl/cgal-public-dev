@@ -84,25 +84,25 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes the half of a 2D mixed Voronoi cell weight.
+      \brief computes 2D mixed Voronoi cell weight.
     */
     const FT operator()(
       const Point_2& query,
       const Point_2& vj,
       const Point_2& vp) const {
 
-      return half_weight_2(query, vj, vp);
+      return weight_2(query, vj, vp);
     }
 
     /*!
-      \brief computes the half of a 2D mixed Voronoi cell weight.
+      \brief computes 2D mixed Voronoi cell weight.
     */
     const FT operator()(
       const Point_3& query,
       const Point_3& vj,
       const Point_3& vp) const {
 
-      return half_weight_3(query, vj, vp);
+      return weight_3(query, vj, vp);
     }
 
     /// @}
@@ -110,21 +110,21 @@ namespace Generalized_weights {
   private:
     const GeomTraits m_traits;
 
-    const FT half_weight_2(
+    const FT weight_2(
       const Point_2& query,
       const Point_2& vj,
       const Point_2& vp) const {
 
     }
 
-    const FT half_weight_3(
+    const FT weight_3(
       const Point_3& query,
       const Point_3& vj,
       const Point_3& vp) const {
 
     }
 
-    const FT half_weight(
+    const FT weight(
       const FT, const FT) const {
 
     }

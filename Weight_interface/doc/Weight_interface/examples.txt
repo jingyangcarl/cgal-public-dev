@@ -9,4 +9,7 @@
 \example Weight_interface/tangent_weight_2.cpp
 \example Weight_interface/discrete_harmonic_weight_2.cpp
 \example Weight_interface/cotangent_weight_2.cpp
+\example Weight_interface/uniform_cell_weight_2.cpp
+\example Weight_interface/triangle_cell_weight_2.cpp
+\example Weight_interface/barycentric_cell_weight_2.cpp
 */
