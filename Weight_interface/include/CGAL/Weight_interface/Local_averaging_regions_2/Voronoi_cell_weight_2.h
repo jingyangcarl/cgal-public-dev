@@ -1,4 +1,4 @@
-// Copyright (c) 2020 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2020 GeometryFactory SARL (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -115,6 +115,20 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
+      const auto circumcenter_2 =
+        m_traits.construct_circumcenter_2_object();
+      const Point_2 center =
+        circumcenter_2(vj, vp, query);
+      const Point_2 m1 =
+        internal::barycenter_2(m_traits, query, vj);
+      const Point_2 m2 =
+        internal::barycenter_2(m_traits, query, vp);
+
+      const auto area_2 =
+        m_traits.compute_area_2_object();
+      const FT A1 = area_2(m1, center, query);
+      const FT A2 = area_2(center, m2, query);
+      return weight(A1, A2);
     }
 
     const FT weight_3(
@@ -122,11 +136,25 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
+      const auto circumcenter_3 =
+        m_traits.construct_circumcenter_3_object();
+      const Point_3 center =
+        circumcenter_3(vj, vp, query);
+      const Point_3 m1 =
+        internal::barycenter_3(m_traits, query, vj);
+      const Point_3 m2 =
+        internal::barycenter_3(m_traits, query, vp);
+
+      const FT A1 = internal::area_3(m_traits, m1, center, query);
+      const FT A2 = internal::area_3(m_traits, center, m2, query);
+      return weight(A1, A2);
     }
 
     const FT weight(
-      const FT, const FT) const {
+      const FT A1, const FT A2) const {
 
+      const FT w = A1 + A2;
+      return w;
     }
   };
 

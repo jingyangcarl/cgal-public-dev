@@ -43,6 +43,10 @@ if(CGAL_FOUND)
     "triangle_cell_weight_2.cpp")
   create_single_source_cgal_program(
     "barycentric_cell_weight_2.cpp")
+  create_single_source_cgal_program(
+    "voronoi_cell_weight_2.cpp")
+  create_single_source_cgal_program(
+    "mixed_voronoi_cell_weight_2.cpp")
 
 else()
   message(WARNING

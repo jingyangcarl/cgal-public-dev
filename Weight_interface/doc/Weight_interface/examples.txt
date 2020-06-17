@@ -12,4 +12,6 @@
 \example Weight_interface/uniform_cell_weight_2.cpp
 \example Weight_interface/triangle_cell_weight_2.cpp
 \example Weight_interface/barycentric_cell_weight_2.cpp
+\example Weight_interface/voronoi_cell_weight_2.cpp
+\example Weight_interface/mixed_voronoi_cell_weight_2.cpp
 */

@@ -87,5 +87,15 @@ Here, you can find a few examples on how to compute 2D local averaging regions.
 
 \cgalExample{Weight_interface/barycentric_cell_weight_2.cpp}
 
+
+\subsection Weight_Interface_Examples_VC2 Voronoi Cell Weight 2
+
+\cgalExample{Weight_interface/voronoi_cell_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_MVC2 Mixed Voronoi Cell Weight 2
+
+\cgalExample{Weight_interface/mixed_voronoi_cell_weight_2.cpp}
+
 */
 } /* namespace CGAL */
