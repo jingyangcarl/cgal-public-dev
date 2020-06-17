@@ -41,7 +41,7 @@ public:
     next neighbor in the counterclockwise order.
 
     This configuration is arising when the half weight is computed on a 2D surface
-    of a polygon mesh.
+    embedded in 3D.
 
     \return half weight
   */

@@ -51,7 +51,7 @@ public:
     neighbor, and `vp` is the next neighbor in the counterclockwise order.
 
     This configuration is arising when the weight is computed on a 2D surface
-    of a polygon mesh.
+    embedded in 3D.
 
     \return weight
   */
