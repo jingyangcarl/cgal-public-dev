@@ -36,6 +36,22 @@ namespace Generalized_weights {
 
     \brief 2D cotangent weight.
 
+    The full weight is computed as
+
+    \f$w = 2 (\cot\beta + \cot\gamma)\f$
+
+    and the half weight as
+
+    \f$h = 2 \cot\gamma\f$
+
+    with notations shown in the Figure below. This weight is equal to the
+    `CGAL::Generalized_weights::Discrete_harmonic_weight_2`. This weight is a special
+    case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
+
+    \cgalFigureBegin{cotangent_weight, cotangent.svg}
+      Notation used for the cotangent weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

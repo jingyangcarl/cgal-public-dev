@@ -36,6 +36,17 @@ namespace Generalized_weights {
 
     \brief 2D inverse distance weight.
 
+    The full weight is computed as
+
+    \f$w = \frac{1}{r}\f$
+
+    with notations shown in the Figure below. This weight is a special case of
+    the `CGAL::Generalized_weights::Shepard_weight_2`.
+
+    \cgalFigureBegin{inverse_distance_weight, inverse_distance.svg}
+      Notation used for the inverse distance weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

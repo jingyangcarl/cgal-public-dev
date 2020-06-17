@@ -36,6 +36,8 @@ namespace Generalized_weights {
 
     \brief 2D uniform weight.
 
+    This weight always returns 1.
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

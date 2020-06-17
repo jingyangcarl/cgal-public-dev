@@ -36,6 +36,24 @@ namespace Generalized_weights {
 
     \brief 2D mean value weight.
 
+    The full weight is computed as
+
+    \f$w = \pm 2 \sqrt{\frac{2 (r_m r_p - D)}{(r r_m + D_m)(r r_p + D_p)}}\f$,
+
+    with notations shown in the Figure below and dot products
+
+    \f$D_m = (v_j - q) \cdot (v_m - q)\f$,
+    \f$D_p = (v_j - q) \cdot (v_p - q)\f$, and
+    \f$D = (v_m - q) \cdot (v_p - q)\f$.
+
+    The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
+    This weight is equal to the `CGAL::Generalized_weights::Tangent_weight_2`.
+    This weight is a special case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
+
+    \cgalFigureBegin{mean_value_weight, mean_value.svg}
+      Notation used for the mean value weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

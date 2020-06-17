@@ -44,7 +44,9 @@ namespace Generalized_weights {
 
     \f$h = 2 \frac{\cot\beta}{r^2}\f$
 
-    with notations as in the Figure below.
+    with notations shown in the Figure below. This weight is equal to the
+    `CGAL::Generalized_weights::Wachspress_weight_2`. This weight is a special
+    case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
 
     \cgalFigureBegin{authalic_weight, authalic.svg}
       Notation used for the authalic weight.

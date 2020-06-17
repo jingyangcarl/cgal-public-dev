@@ -36,6 +36,18 @@ namespace Generalized_weights {
 
     \brief 2D Wachspress weight.
 
+    The full weight is computed as
+
+    \f$w = \frac{C}{A_m A}\f$
+
+    with notations shown in the Figure below. This weight is equal to the
+    `CGAL::Generalized_weights::Authalic_weight_2`. This weight is a special
+    case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
+
+    \cgalFigureBegin{wachspress_weight, wachspress.svg}
+      Notation used for the Wachspress weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

@@ -36,6 +36,18 @@ namespace Generalized_weights {
 
     \brief 2D discrete harmonic weight.
 
+    The full weight is computed as
+
+    \f$w = \frac{r_p^2 A_m - r^2 B + r_m^2 A}{A_m A}\f$
+
+    with notations shown in the Figure below. This weight is equal to the
+    `CGAL::Generalized_weights::Cotangent_weight_2`. This weight is a special
+    case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
+
+    \cgalFigureBegin{discrete_harmonic_weight, discrete_harmonic.svg}
+      Notation used for the discrete harmonic weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

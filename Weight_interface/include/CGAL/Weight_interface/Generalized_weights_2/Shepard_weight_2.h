@@ -36,6 +36,20 @@ namespace Generalized_weights {
 
     \brief 2D Shepard weight.
 
+    The full weight is computed as
+
+    \f$w = \frac{1}{r^p}\f$
+
+    with notations shown in the Figure below and \f$p\f$ any real number
+    being the power parameter.
+
+    For \f$p = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::Inverse_distance_weight_2`.
+
+    \cgalFigureBegin{shepard_weight, shepard.svg}
+      Notation used for the Shepard weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

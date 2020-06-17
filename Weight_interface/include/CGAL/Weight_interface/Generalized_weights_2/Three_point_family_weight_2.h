@@ -36,6 +36,29 @@ namespace Generalized_weights {
 
     \brief 2D three point family weight.
 
+    The full weight is computed as
+
+    \f$w = \frac{r_p^p A_m - r^p B + r_m^p A}{A_m A}\f$
+
+    with notations shown in the Figure below and \f$p\f$ any real number
+    being the power parameter.
+
+    For \f$p = 0\f$ this weight is equal to the
+    `CGAL::Generalized_weights::Wachspress_weight_2` and
+    `CGAL::Generalized_weights::Authalic_weight_2`.
+
+    For \f$p = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::Mean_value_weight_2` and
+    `CGAL::Generalized_weights::Tangent_weight_2`.
+
+    For \f$p = 2\f$ this weight is equal to the
+    `CGAL::Generalized_weights::Discrete_harmonic_weight_2` and
+    `CGAL::Generalized_weights::Cotangent_weight_2`.
+
+    \cgalFigureBegin{three_point_family_weight, three_point_family.svg}
+      Notation used for the three point family weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
