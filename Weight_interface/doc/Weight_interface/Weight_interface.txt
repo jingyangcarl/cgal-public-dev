@@ -15,7 +15,7 @@ For more information see examples below.
 
 \section Weight_Interface_Examples2DWeights 2D Generalized Weights
 
-Here, you can find a few examples on how to compute 2D generalized weights.
+Here, you can find a few examples on how to compute various 2D generalized weights.
 
 
 \subsection Weight_Interface_Examples_UW2 Uniform Weight 2
@@ -70,7 +70,7 @@ Here, you can find a few examples on how to compute 2D generalized weights.
 
 \section Weight_Interface_Examples2DAverage 2D Local Averaging Regions
 
-Here, you can find a few examples on how to compute 2D local averaging regions.
+Here, you can find a few examples on how to compute various 2D local averaging regions.
 
 
 \subsection Weight_Interface_Examples_UC2 Uniform Cell Weight 2
