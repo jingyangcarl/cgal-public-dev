@@ -36,6 +36,12 @@ namespace Generalized_weights {
 
     \brief 2D triangle cell weight.
 
+    This weight is the area of the shaded triangle in the Figure below.
+
+    \cgalFigureBegin{triangle_cell_weight, triangle_cell.svg}
+      Notation used for the triangle cell weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

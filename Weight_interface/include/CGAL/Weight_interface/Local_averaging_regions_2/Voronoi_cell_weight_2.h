@@ -36,6 +36,14 @@ namespace Generalized_weights {
 
     \brief 2D Voronoi cell weight.
 
+    This weight is the area of the shaded region in the Figure below. The region
+    is formed by two mid points of the edges incident to `q` and the circumcenter of
+    the triangle `[vj, vp, q]`.
+
+    \cgalFigureBegin{voronoi_cell_weight, voronoi_cell.svg}
+      Notation used for the Voronoi cell weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 

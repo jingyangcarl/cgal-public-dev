@@ -36,6 +36,19 @@ namespace Generalized_weights {
 
     \brief 2D mixed Voronoi cell weight.
 
+    This weight is the area of the shaded region in the Figure below. The region
+    is formed by two mid points of the edges incident to `q` and the circumcenter of
+    the triangle `[vj, vp, q]`.
+
+    However, unlike the original `CGAL::Generalized_weights::Voronoi_cell_weight_2`,
+    if one of the angles in the triangle `[vj, vp, q]` is obtuse and the circumcenter
+    vertex of the region is outside this triangle, this vertex is moved to the mid
+    point of the edge `[vj, vp]`.
+
+    \cgalFigureBegin{mixed_voronoi_cell_weight, mixed_voronoi_cell.svg}
+      Notation used for the mixed Voronoi cell weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
