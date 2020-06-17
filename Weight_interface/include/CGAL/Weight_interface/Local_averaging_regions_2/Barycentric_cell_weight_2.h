@@ -36,8 +36,8 @@ namespace Generalized_weights {
 
     \brief 2D barycentric cell weight.
 
-    This weight is the area of the shaded region in the Figure below. The region
-    is formed by two mid points of the edges incident to `q` and the barycenter of
+    This weight is the area of the shaded region in the figure below. The region
+    is formed by two midpoints of the edges incident to `q` and the barycenter of
     the triangle `[vj, vp, q]`.
 
     \cgalFigureBegin{barycentric_cell_weight, barycentric_cell.svg}

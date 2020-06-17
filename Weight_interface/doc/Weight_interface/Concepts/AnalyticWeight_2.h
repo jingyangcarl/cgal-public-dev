@@ -23,7 +23,12 @@ public:
 
   /*!
     computes a chosen weight at the `query` point given its three 2D neighbors
-    `vm` - previous neighbor, `vj` - j neighbor, and `vp` - next neighbor.
+    `vm` - previous neighbor (m stands for minus), `vj` - jth neighbor, and
+    `vp` - next neighbor (p stands for plus).
+
+    Here, `query` is usually a query point inside a polygon, `vj` is the jth vertex
+    of a polygon, `vm` is the previous polygon vertex, and `vp` is the next polygon
+    vertex in the counterclockwise order.
 
     This configuration is arising when the weight is computed on a 2D plane.
 
@@ -38,7 +43,12 @@ public:
 
   /*!
     computes a chosen weight at the `query` point given its three 3D neighbors
-    `vm` - previous neighbor, `vj` - j neighbor, and `vp` - next neighbor.
+    `vm` - previous neighbor (m stands for minus), `vj` - jth neighbor, and
+    `vp` - next neighbor (p stands for plus).
+
+    Here, `query` is usually the center vertex of the one-ring neighborhood in a
+    polygon mesh, `vj` is the jth neighbor of the center vertex, `vm` is the previous
+    neighbor, and `vp` is the next neighbor in the counterclockwise order.
 
     This configuration is arising when the weight is computed on a 2D surface
     of a polygon mesh.

@@ -45,7 +45,7 @@ namespace Generalized_weights {
 
     \f$h = 2 \frac{t}{r}\f$
 
-    with notations shown in the Figure below and dot products
+    with notations shown in the figure below and dot products
 
     \f$D_m = (v_j - q) \cdot (v_m - q)\f$ and
     \f$D_p = (v_j - q) \cdot (v_p - q)\f$.

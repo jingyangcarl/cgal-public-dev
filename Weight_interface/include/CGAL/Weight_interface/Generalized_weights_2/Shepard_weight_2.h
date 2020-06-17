@@ -38,12 +38,12 @@ namespace Generalized_weights {
 
     The full weight is computed as
 
-    \f$w = \frac{1}{r^p}\f$
+    \f$w = \frac{1}{r^a}\f$
 
-    with notations shown in the Figure below and \f$p\f$ any real number
+    with notations shown in the figure below and \f$a\f$ any real number
     being the power parameter.
 
-    For \f$p = 1\f$ this weight is equal to the
+    For \f$a = 1\f$ this weight is equal to the
     `CGAL::Generalized_weights::Inverse_distance_weight_2`.
 
     \cgalFigureBegin{shepard_weight, shepard.svg}
@@ -84,16 +84,16 @@ namespace Generalized_weights {
     /*!
       \brief initializes all internal data structures.
 
-      \param p
+      \param a
       the power parameter
 
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
     Shepard_weight_2(
-      const FT p = FT(1), // default is for inverse distance weight
+      const FT a = FT(1), // default is for inverse distance weight
       const GeomTraits traits = GeomTraits()) :
-    m_p(p), m_traits(traits)
+    m_p(a), m_traits(traits)
     { }
 
     /// @}

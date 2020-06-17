@@ -17,7 +17,10 @@ public:
 
   /*!
     computes a half weight at the `query` point given its two 2D neighbors
-    `vj` - j neighbor and `vp` - next neighbor.
+    `vj` - jth neighbor and `vp` - next neighbor (p stands for plus).
+
+    Here, `query` is usually a query point inside a polygon, `vj` is the jth vertex
+    of a polygon and `vp` is the next polygon vertex in the counterclockwise order.
 
     This configuration is arising when the half weight is computed on a 2D plane.
 
@@ -31,7 +34,11 @@ public:
 
   /*!
     computes a half weight at the `query` point given its two 3D neighbors
-    `vj` - j neighbor and `vp` - next neighbor.
+    `vj` - jth neighbor and `vp` - next neighbor (p stands for plus).
+
+    Here, `query` is usually the center vertex of the one-ring neighborhood in a
+    polygon mesh, `vj` is the jth neighbor of the center vertex and `vp` is the
+    next neighbor in the counterclockwise order.
 
     This configuration is arising when the half weight is computed on a 2D surface
     of a polygon mesh.

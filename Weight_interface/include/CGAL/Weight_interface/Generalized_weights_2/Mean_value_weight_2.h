@@ -40,7 +40,7 @@ namespace Generalized_weights {
 
     \f$w = \pm 2 \sqrt{\frac{2 (r_m r_p - D)}{(r r_m + D_m)(r r_p + D_p)}}\f$,
 
-    with notations shown in the Figure below and dot products
+    with notations shown in the figure below and dot products
 
     \f$D_m = (v_j - q) \cdot (v_m - q)\f$,
     \f$D_p = (v_j - q) \cdot (v_p - q)\f$, and

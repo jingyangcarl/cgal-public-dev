@@ -40,7 +40,7 @@ namespace Generalized_weights {
 
     \f$w = \frac{r_p^2 A_m - r^2 B + r_m^2 A}{A_m A}\f$
 
-    with notations shown in the Figure below. This weight is equal to the
+    with notations shown in the figure below. This weight is equal to the
     `CGAL::Generalized_weights::Cotangent_weight_2`. This weight is a special
     case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
 

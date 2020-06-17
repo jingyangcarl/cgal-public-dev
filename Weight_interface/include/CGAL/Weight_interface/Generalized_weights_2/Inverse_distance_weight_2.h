@@ -40,7 +40,7 @@ namespace Generalized_weights {
 
     \f$w = \frac{1}{r}\f$
 
-    with notations shown in the Figure below. This weight is a special case of
+    with notations shown in the figure below. This weight is a special case of
     the `CGAL::Generalized_weights::Shepard_weight_2`.
 
     \cgalFigureBegin{inverse_distance_weight, inverse_distance.svg}

@@ -38,20 +38,20 @@ namespace Generalized_weights {
 
     The full weight is computed as
 
-    \f$w = \frac{r_p^p A_m - r^p B + r_m^p A}{A_m A}\f$
+    \f$w = \frac{r_p^a A_m - r^a B + r_m^a A}{A_m A}\f$
 
-    with notations shown in the Figure below and \f$p\f$ any real number
+    with notations shown in the figure below and \f$a\f$ any real number
     being the power parameter.
 
-    For \f$p = 0\f$ this weight is equal to the
+    For \f$a = 0\f$ this weight is equal to the
     `CGAL::Generalized_weights::Wachspress_weight_2` and
     `CGAL::Generalized_weights::Authalic_weight_2`.
 
-    For \f$p = 1\f$ this weight is equal to the
+    For \f$a = 1\f$ this weight is equal to the
     `CGAL::Generalized_weights::Mean_value_weight_2` and
     `CGAL::Generalized_weights::Tangent_weight_2`.
 
-    For \f$p = 2\f$ this weight is equal to the
+    For \f$a = 2\f$ this weight is equal to the
     `CGAL::Generalized_weights::Discrete_harmonic_weight_2` and
     `CGAL::Generalized_weights::Cotangent_weight_2`.
 
@@ -93,16 +93,16 @@ namespace Generalized_weights {
     /*!
       \brief initializes all internal data structures.
 
-      \param p
+      \param a
       the power parameter.
 
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
     Three_point_family_weight_2(
-      const FT p = FT(1), // default is for mean value coordinates
+      const FT a = FT(1), // default is for mean value coordinates
       const GeomTraits traits = GeomTraits()) :
-    m_p(p), m_traits(traits)
+    m_p(a), m_traits(traits)
     { }
 
     /// @}
