@@ -84,7 +84,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes the half value of a 2D cotangent weight.
+      \brief computes the half value of 2D cotangent weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -95,7 +95,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes the half value of a 2D cotangent weight.
+      \brief computes the half value of 2D cotangent weight.
     */
     const FT operator()(
       const Point_3& query,

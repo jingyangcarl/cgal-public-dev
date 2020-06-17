@@ -36,6 +36,20 @@ namespace Generalized_weights {
 
     \brief 2D authalic weight.
 
+    The full weight is computed as
+
+    \f$w = 2 \frac{\cot\beta + \cot\gamma}{r^2}\f$
+
+    and the half weight as
+
+    \f$h = 2 \frac{\cot\beta}{r^2}\f$
+
+    with notations as in the Figure below.
+
+    \cgalFigureBegin{authalic_weight, authalic.svg}
+      Notation used for the authalic weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
@@ -84,7 +98,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes the half value of a 2D authalic weight.
+      \brief computes the half value of 2D authalic weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -95,7 +109,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes the half value of a 2D authalic weight.
+      \brief computes the half value of 2D authalic weight.
     */
     const FT operator()(
       const Point_3& query,
