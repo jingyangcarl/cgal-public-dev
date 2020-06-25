@@ -9,7 +9,7 @@ models used to parameterize the class `CGAL::Barycentric_coordinates_depr::Gener
 \cgalHasModel `CGAL::Barycentric_coordinates_depr::Mean_value_2`
 \cgalHasModel `CGAL::Barycentric_coordinates_depr::Discrete_harmonic_2`
 
-\deprecated This part of the package is deprecated since the version 5.1 of \cgal.
+\deprecated This part of the package is deprecated since the version 5.2 of \cgal.
 */
 class BarycentricCoordinates_2 {
 

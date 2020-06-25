@@ -25,7 +25,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/barycentric_enum_2_depr.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.1 of CGAL!"
+  "This part of the package is deprecated since the version 5.2 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 // CGAL namespace.
@@ -35,7 +35,7 @@ namespace CGAL {
  * \ingroup PkgBarycentricCoordinates2RefDeprecated
  * The namespace Barycentric_coordinates contains implementations of all generalized barycentric coordinates: 2D, 3D, related enumerations, and so on.
 
- * \deprecated This part of the package is deprecated since the version 5.1 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
  */
 
 // Barycentric_coordinates namespace.

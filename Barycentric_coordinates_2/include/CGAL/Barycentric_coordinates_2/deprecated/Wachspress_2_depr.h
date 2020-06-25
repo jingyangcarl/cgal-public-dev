@@ -25,7 +25,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Wachspress_2_depr.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.1 of CGAL!"
+  "This part of the package is deprecated since the version 5.2 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
@@ -56,7 +56,7 @@ namespace Barycentric_coordinates_depr {
  * For a polygon with three vertices it is better to use the class `Triangle_coordinates_2`.
  * Wachspress coordinates can be computed exactly, and they are always positive in the closure of a strictly convex polygon.
 
- * \deprecated This part of the package is deprecated since the version 5.1 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
 
 \tparam Traits must be a model of the concepts `BarycentricTraits_2` and `PolygonTraits_2`.
 
@@ -383,7 +383,7 @@ private:
         output_stream << "5. Boundedness between 0 and 1;" << std::endl;
         output_stream << "6. Linearity along edges;" << std::endl;
         output_stream << "7. Smoothness;" << std::endl;
-        output_stream << "8. Similarity invariance;" << std::endl;
+        output_stream << "8. Similarity invariance." << std::endl;
 
         output_stream << std::endl;
         output_stream << "For polygons, whose vertices lie on a common circle, they coincide with discrete harmonic coordinates." << std::endl;

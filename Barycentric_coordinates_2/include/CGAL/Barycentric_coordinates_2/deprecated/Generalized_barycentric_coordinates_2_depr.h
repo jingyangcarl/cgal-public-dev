@@ -25,7 +25,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Generalized_barycentric_coordinates_2_depr.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.1 of CGAL!"
+  "This part of the package is deprecated since the version 5.2 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
@@ -53,7 +53,7 @@ namespace Barycentric_coordinates_depr {
  * The class `Generalized_barycentric_coordinates_2` implements generalized barycentric coordinates along the polygon's boundary and provides a common interface for all coordinate classes.
  * This class is parameterized by a coordinate class `Coordinate_2`, and a traits class `Traits`.
 
- * \deprecated This part of the package is deprecated since the version 5.1 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
 
 \tparam Coordinate_2 must be a model of the concept `BarycentricCoordinates_2`.
 

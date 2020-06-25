@@ -7,4 +7,5 @@
 \example Barycentric_coordinates_2/harmonic_coordinates.cpp
 \example Barycentric_coordinates_2/terrain_height_modeling.cpp
 \example Barycentric_coordinates_2/affine_coordinates.cpp
+\example Barycentric_coordinates_2/deprecated_coordinates.cpp
 */

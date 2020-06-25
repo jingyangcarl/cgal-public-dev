@@ -24,6 +24,8 @@ if(CGAL_FOUND)
     "mean_value_coordinates.cpp")
   create_single_source_cgal_program(
     "terrain_height_modeling.cpp")
+  # create_single_source_cgal_program(
+  #   "deprecated_coordinates.cpp")
 
   find_package(Eigen3 REQUIRED)
   if(EIGEN3_FOUND)

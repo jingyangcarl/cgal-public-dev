@@ -25,7 +25,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Triangle_coordinates_2_depr.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.1 of CGAL!"
+  "This part of the package is deprecated since the version 5.2 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
@@ -55,7 +55,7 @@ namespace Barycentric_coordinates_depr {
  * <a href="https://en.wikipedia.org/wiki/Barycentric_coordinate_system" target=blanc>[2]</a> ) with respect to an arbitrary non-degenerate triangle in the plane.
  * This class is parameterized by a traits class `Traits`.
 
- * \deprecated This part of the package is deprecated since the version 5.1 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 

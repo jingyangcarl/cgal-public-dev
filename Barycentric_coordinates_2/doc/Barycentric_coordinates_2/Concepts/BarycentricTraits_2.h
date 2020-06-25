@@ -63,20 +63,20 @@ typedef unspecified_type Compute_area_2;
 typedef unspecified_type Compute_squared_distance_2;
 
 /*!
-  A model of this concept must provide an `FT operator(const Vector_2& p)`
-  that returns the squared length of the vector `p`.
+  A model of this concept must provide an `FT operator(const Vector_2& v)`
+  that returns the squared length of the vector `v`.
 */
 typedef unspecified_type Compute_squared_length_2;
 
 /*!
-  A model of this concept must provide an `FT operator(const Vector_2& p, const Vector_2& q)`
-  that returns the scalar product of the vectors `p` and `q`.
+  A model of this concept must provide an `FT operator(const Vector_2& v, const Vector_2& w)`
+  that returns the scalar product of the vectors `v` and `w`.
 */
 typedef unspecified_type Compute_scalar_product_2;
 
 /*!
-  A model of this concept must provide an `FT operator(const Vector_2& p, const Vector_2& q)`
-  that returns the determinant of the vectors `p` and `q`.
+  A model of this concept must provide an `FT operator(const Vector_2& v, const Vector_2& w)`
+  that returns the determinant of the vectors `v` and `w`.
 */
 typedef unspecified_type Compute_determinant_2;
 

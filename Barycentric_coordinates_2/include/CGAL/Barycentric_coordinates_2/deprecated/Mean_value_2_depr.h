@@ -25,7 +25,7 @@
 
 #define CGAL_DEPRECATED_HEADER "<CGAL/Barycentric_coordinates_2/deprecated/Mean_value_2_depr.h>"
 #define CGAL_DEPRECATED_MESSAGE_DETAILS \
-  "This part of the package is deprecated since the version 5.1 of CGAL!"
+  "This part of the package is deprecated since the version 5.2 of CGAL!"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/disable_warnings.h>
@@ -108,7 +108,7 @@ public:
  * For a polygon with three vertices (triangle) it is better to use the class `Triangle_coordinates_2`.
  * Mean value coordinates can be computed only approximately due to an inevitable square root operation, and they are necesserily positive only inside the kernel of a star-shaped polygon and inside any quadrilateral.
 
- * \deprecated This part of the package is deprecated since the version 5.1 of \cgal.
+ * \deprecated This part of the package is deprecated since the version 5.2 of \cgal.
 
 \tparam Traits must be a model of the concept `BarycentricTraits_2`.
 
@@ -497,7 +497,7 @@ private:
         output_stream << "5. Smoothness;" << std::endl;
         output_stream << "6. Similarity invariance;" << std::endl;
         output_stream << "7. Linear independence;" << std::endl;
-        output_stream << "8. Refinability;" << std::endl;
+        output_stream << "8. Refinability." << std::endl;
 
         output_stream << std::endl;
         output_stream << "Mean value coordinates satisfy the non-negativity and boundedness between 0 and 1 properties inside the kernel of an arbitrary star-shaped polygon, too." << std::endl;
