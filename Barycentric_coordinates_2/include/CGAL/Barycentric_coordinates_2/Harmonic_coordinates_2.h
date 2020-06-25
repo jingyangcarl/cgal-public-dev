@@ -176,20 +176,21 @@ namespace Barycentric_coordinates {
       The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `FT`.
+      the dereferenced output iterator type must be convertible to `FT`.
 
       \param query
       A query point.
 
-      \param coordinates
-      An output iterator that stores the computed coordinates.
+      \param c_begin
+      The beginning of the destination range with the computed coordinates.
 
-      \return an output iterator.
+      \return an output iterator to the element in the destination range,
+      one past the last coordinate stored.
     */
     template<typename OutputIterator>
     OutputIterator operator()(
       const Point_2& query,
-      OutputIterator coordinates) {
+      OutputIterator c_begin) {
 
       CGAL_precondition(
         m_setup_is_called &&
@@ -198,15 +199,15 @@ namespace Barycentric_coordinates {
       if (!(
         m_setup_is_called &&
         m_factorize_is_called &&
-        m_solve_is_called)) return coordinates;
+        m_solve_is_called)) return c_begin;
 
       const std::size_t n = m_polygon.size();
 
       m_element.clear();
       m_domain.locate(query, m_element);
       if (m_element.size() != 3) {
-        internal::get_default(n, coordinates);
-        return coordinates;
+        internal::get_default(n, c_begin);
+        return c_begin;
       }
 
       const std::size_t i0 = m_element[0];
@@ -246,9 +247,9 @@ namespace Barycentric_coordinates {
         CGAL_assertion(hm0 >= FT(0) && hm0 <= FT(1));
         CGAL_assertion(hm1 >= FT(0) && hm1 <= FT(1));
         CGAL_assertion(hm2 >= FT(0) && hm2 <= FT(1));
-        *(coordinates++) = hm0 * b[0] + hm1 * b[1] + hm2 * b[2];
+        *(c_begin++) = hm0 * b[0] + hm1 * b[1] + hm2 * b[2];
       }
-      return coordinates;
+      return c_begin;
     }
 
     /*!
@@ -260,22 +261,23 @@ namespace Barycentric_coordinates {
       The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `FT`.
+      the dereferenced output iterator type must be convertible to `FT`.
 
       \param query_index
       A domain's vertex index.
 
-      \param coordinates
-      An output iterator that stores the computed coordinates.
+      \param c_begin
+      The beginning of the destination range with the computed coordinates.
 
-      \return an output iterator.
+      \return an output iterator to the element in the destination range,
+      one past the last coordinate stored.
 
       \pre `query >= 0 && query < domain.number_of_vertices()`
     */
     template<typename OutputIterator>
     OutputIterator operator()(
       const std::size_t query_index,
-      OutputIterator coordinates) {
+      OutputIterator c_begin) {
 
       CGAL_precondition(
         m_setup_is_called &&
@@ -284,7 +286,7 @@ namespace Barycentric_coordinates {
       if (!(
         m_setup_is_called &&
         m_factorize_is_called &&
-        m_solve_is_called)) return coordinates;
+        m_solve_is_called)) return c_begin;
 
       CGAL_precondition(
         query_index >= 0 && query_index < m_domain.number_of_vertices());
@@ -295,12 +297,12 @@ namespace Barycentric_coordinates {
       const std::size_t n = m_polygon.size();
       if (m_domain.is_on_boundary(query_index)) {
         for (std::size_t k = 0; k < n; ++k)
-          *(coordinates++) = m_boundary(m_indices[query_index], k);
+          *(c_begin++) = m_boundary(m_indices[query_index], k);
       } else {
         for (std::size_t k = 0; k < n; ++k)
-          *(coordinates++) = m_interior(m_indices[query_index], k);
+          *(c_begin++) = m_interior(m_indices[query_index], k);
       }
-      return coordinates;
+      return c_begin;
     }
 
     /// @}

@@ -23,8 +23,7 @@ int main() {
   // Generate a set of random query points.
   queries.reserve(num_queries);
   Generator generator(1.0);
-  std::copy_n(
-    generator, num_queries, std::back_inserter(queries));
+  std::copy_n(generator, num_queries, std::back_inserter(queries));
 
   // Find the convex hull of the generated query points.
   // This convex hull gives the vertices of a convex polygon

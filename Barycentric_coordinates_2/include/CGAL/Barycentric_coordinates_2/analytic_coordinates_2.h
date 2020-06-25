@@ -42,13 +42,14 @@ namespace Barycentric_coordinates {
 
     This function computes barycentric coordinates at a given `query` point
     with respect to the end points `p0` and `p1` of a segment that is one
-    coordinate per end point. The coordinates are returned in `coordinates`.
+    coordinate per end point. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     If `query` does not belong to the line through `p0` and `p1`, it is
     projected onto this line, and only then the coordinates are computed.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -62,13 +63,14 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `p0 != p1`
   */
@@ -79,11 +81,11 @@ namespace Barycentric_coordinates {
     const typename GeomTraits::Point_2& p0,
     const typename GeomTraits::Point_2& p1,
     const typename GeomTraits::Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const GeomTraits traits) {
 
     return internal::linear_coordinates_2(
-      p0, p1, query, coordinates, traits);
+      p0, p1, query, c_begin, traits);
   }
 
   /*!
@@ -93,7 +95,8 @@ namespace Barycentric_coordinates {
 
     This function computes barycentric coordinates at a given `query` point
     with respect to the end points `p0` and `p1` of a segment that is one
-    coordinate per end point. The coordinates are returned in `coordinates`.
+    coordinate per end point. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     If `query` does not belong to the line through `p0` and `p1`, it is
     projected onto this line, and only then the coordinates are computed.
@@ -104,7 +107,7 @@ namespace Barycentric_coordinates {
     must be a point type.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param p0
     The first vertex of a segment.
@@ -115,10 +118,11 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `p0 != p1`
   */
@@ -129,11 +133,11 @@ namespace Barycentric_coordinates {
     const Point_2& p0,
     const Point_2& p1,
     const Point_2& query,
-    OutputIterator coordinates) {
+    OutputIterator c_begin) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return segment_coordinates_2(
-      p0, p1, query, coordinates, GeomTraits());
+      p0, p1, query, c_begin, GeomTraits());
   }
 
   /*!
@@ -239,10 +243,11 @@ namespace Barycentric_coordinates {
 
     This function computes barycentric coordinates at a given `query` point
     with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
-    coordinate per point. The coordinates are returned in `coordinates`.
+    coordinate per point. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -259,13 +264,14 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `area_2(p0, p1, p2) != 0`
   */
@@ -277,11 +283,11 @@ namespace Barycentric_coordinates {
     const typename GeomTraits::Point_2& p1,
     const typename GeomTraits::Point_2& p2,
     const typename GeomTraits::Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const GeomTraits traits) {
 
     return internal::planar_coordinates_2(
-      p0, p1, p2, query, coordinates, traits);
+      p0, p1, p2, query, c_begin, traits);
   }
 
   /*!
@@ -291,7 +297,8 @@ namespace Barycentric_coordinates {
 
     This function computes barycentric coordinates at a given `query` point
     with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
-    coordinate per point. The coordinates are returned in `coordinates`.
+    coordinate per point. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     This function infers a traits class from the `Point_2` class.
 
@@ -299,7 +306,7 @@ namespace Barycentric_coordinates {
     must be a point type.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param p0
     The first vertex of a triangle.
@@ -313,10 +320,11 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `area_2(p0, p1, p2) != 0`
   */
@@ -328,11 +336,11 @@ namespace Barycentric_coordinates {
     const Point_2& p1,
     const Point_2& p2,
     const Point_2& query,
-    OutputIterator coordinates) {
+    OutputIterator c_begin) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return triangle_coordinates_2(
-      p0, p1, p2, query, coordinates, GeomTraits());
+      p0, p1, p2, query, c_begin, GeomTraits());
   }
 
   /*!
@@ -442,7 +450,8 @@ namespace Barycentric_coordinates {
 
     This function computes boundary barycentric coordinates at a given `query` point
     with respect to the vertices of a simple `polygon`, that is one
-    coordinate per vertex. The coordinates are returned in `coordinates`.
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     If `query` is at the vertex, the corresponding coordinate is set to one, while
     all other coordinates are zero. If `query` is on the edge, the two corresponding
@@ -455,7 +464,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -470,8 +479,8 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
@@ -480,8 +489,9 @@ namespace Barycentric_coordinates {
     An instance of `VertexMap` that maps a vertex from `polygon`
     to `GeomTraits::Point_2`.
 
-    \return an output iterator with the flag indicating whether
-    the query point belongs to the polygon boundary.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored + the flag indicating whether the
+    query point belongs to the polygon boundary.
 
     \pre `polygon.size() >= 3`
   */
@@ -493,7 +503,7 @@ namespace Barycentric_coordinates {
   std::pair<OutputIterator, bool> boundary_coordinates_2(
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const GeomTraits traits,
     const VertexMap vertex_map) {
 
@@ -507,7 +517,7 @@ namespace Barycentric_coordinates {
       location = internal::Query_point_location::UNSPECIFIED;
     }
     return internal::boundary_coordinates_2(
-      polygon, query, location, index, coordinates, traits, vertex_map);
+      polygon, query, location, index, c_begin, traits, vertex_map);
   }
 
   /*!
@@ -517,7 +527,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D boundary barycentric coordinates at a given `query` point
     with respect to the vertices of a simple `polygon`, that is one
-    coordinate per vertex. The coordinates are returned in `coordinates`.
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     If `query` is at the vertex, the corresponding coordinate is set to one, while
     all other coordinates are zero. If `query` is on the edge, the two corresponding
@@ -535,7 +546,7 @@ namespace Barycentric_coordinates {
     must be a point type.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \tparam VertexMap
     must be a `ReadablePropertyMap` whose key type is `PointRange::value_type` and
@@ -547,15 +558,16 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param vertex_map
     An instance of `VertexMap` that maps a vertex from `polygon`
     to `Point_2`. The default is the identity property map.
 
-    \return an output iterator with the flag indicating whether
-    the query point belongs to the polygon boundary.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored + the flag indicating whether the
+    query point belongs to the polygon boundary.
 
     \pre `polygon.size() >= 3`
   */
@@ -567,12 +579,12 @@ namespace Barycentric_coordinates {
   std::pair<OutputIterator, bool> boundary_coordinates_2(
     const PointRange& polygon,
     const Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const VertexMap vertex_map = VertexMap()) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return boundary_coordinates_2(
-      polygon, query, coordinates, GeomTraits(), vertex_map);
+      polygon, query, c_begin, GeomTraits(), vertex_map);
   }
 
   /*!
@@ -582,7 +594,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D Wachspress weights at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
-    weight per vertex. The weights are returned in `weights`.
+    weight per vertex. The weights are stored in a destination range
+    beginning at 'w_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Wachspress_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -594,7 +607,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -605,8 +618,8 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param weights
-    An output iterator that stores the computed weights.
+    \param w_begin
+    The beginning of the destination range with the computed weights.
 
     \param traits
     An instance of `GeomTraits`.
@@ -615,7 +628,8 @@ namespace Barycentric_coordinates {
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -628,14 +642,14 @@ namespace Barycentric_coordinates {
   OutputIterator wachspress_weights_2(
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
-    OutputIterator weights,
+    OutputIterator w_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     Wachspress_coordinates_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
-    return wachspress.weights(query, weights);
+    return wachspress.weights(query, w_begin);
   }
 
   /*!
@@ -645,7 +659,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D Wachspress weights at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
-    weight per vertex. The weights are returned in `weights`.
+    weight per vertex. The weights are stored in a destination range
+    beginning at 'w_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Wachspress_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -659,7 +674,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -667,14 +682,15 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param weights
-    An output iterator that stores the computed weights.
+    \param w_begin
+    The beginning of the destination range with the computed weights.
 
     \param policy
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -687,13 +703,13 @@ namespace Barycentric_coordinates {
   OutputIterator wachspress_weights_2(
     const PointRange& polygon,
     const Point_2& query,
-    OutputIterator weights,
+    OutputIterator w_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return wachspress_weights_2(
-      polygon, query, weights, GeomTraits(), policy);
+      polygon, query, w_begin, GeomTraits(), policy);
   }
 
   /*!
@@ -703,7 +719,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D Wachspress coordinates at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
-    coordinate per vertex. The coordinates are returned in `coordinates`.
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Wachspress_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -715,7 +732,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -726,8 +743,8 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
@@ -736,7 +753,8 @@ namespace Barycentric_coordinates {
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -749,14 +767,14 @@ namespace Barycentric_coordinates {
   OutputIterator wachspress_coordinates_2(
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     Wachspress_coordinates_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
-    return wachspress(query, coordinates);
+    return wachspress(query, c_begin);
   }
 
   /*!
@@ -766,7 +784,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D Wachspress coordinates at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
-    coordinate per vertex. The coordinates are returned in `coordinates`.
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Wachspress_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -780,7 +799,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -788,14 +807,15 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param policy
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -808,13 +828,13 @@ namespace Barycentric_coordinates {
   OutputIterator wachspress_coordinates_2(
     const PointRange& polygon,
     const Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return wachspress_coordinates_2(
-      polygon, query, coordinates, GeomTraits(), policy);
+      polygon, query, c_begin, GeomTraits(), policy);
   }
 
   /*!
@@ -824,7 +844,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D discrete harmonic weights at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
-    weight per vertex. The weights are returned in `weights`.
+    weight per vertex. The weights are stored in a destination range
+    beginning at 'w_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -836,7 +857,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -847,8 +868,8 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param weights
-    An output iterator that stores the computed weights.
+    \param w_begin
+    The beginning of the destination range with the computed weights.
 
     \param traits
     An instance of `GeomTraits`.
@@ -857,7 +878,8 @@ namespace Barycentric_coordinates {
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -870,14 +892,14 @@ namespace Barycentric_coordinates {
   OutputIterator discrete_harmonic_weights_2(
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
-    OutputIterator weights,
+    OutputIterator w_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
-    return discrete_harmonic.weights(query, weights);
+    return discrete_harmonic.weights(query, w_begin);
   }
 
   /*!
@@ -887,7 +909,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D discrete harmonic weights at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
-    weight per vertex. The weights are returned in `weights`.
+    weight per vertex. The weights are stored in a destination range
+    beginning at 'w_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -901,7 +924,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -909,14 +932,15 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param weights
-    An output iterator that stores the computed weights.
+    \param w_begin
+    The beginning of the destination range with the computed weights.
 
     \param policy
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -929,13 +953,13 @@ namespace Barycentric_coordinates {
   OutputIterator discrete_harmonic_weights_2(
     const PointRange& polygon,
     const Point_2& query,
-    OutputIterator weights,
+    OutputIterator w_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return discrete_harmonic_weights_2(
-      polygon, query, weights, GeomTraits(), policy);
+      polygon, query, w_begin, GeomTraits(), policy);
   }
 
   /*!
@@ -945,7 +969,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D discrete harmonic coordinates at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
-    coordinate per vertex. The coordinates are returned in `coordinates`.
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -957,7 +982,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -968,8 +993,8 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
@@ -978,7 +1003,8 @@ namespace Barycentric_coordinates {
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -991,14 +1017,14 @@ namespace Barycentric_coordinates {
   OutputIterator discrete_harmonic_coordinates_2(
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
-    return discrete_harmonic(query, coordinates);
+    return discrete_harmonic(query, c_begin);
   }
 
   /*!
@@ -1008,7 +1034,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D discrete harmonic coordinates at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
-    coordinate per vertex. The coordinates are returned in `coordinates`.
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -1022,7 +1049,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -1030,14 +1057,15 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param policy
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -1050,13 +1078,13 @@ namespace Barycentric_coordinates {
   OutputIterator discrete_harmonic_coordinates_2(
     const PointRange& polygon,
     const Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return discrete_harmonic_coordinates_2(
-      polygon, query, coordinates, GeomTraits(), policy);
+      polygon, query, c_begin, GeomTraits(), policy);
   }
 
   /*!
@@ -1066,7 +1094,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D mean value weights at a given `query` point
     with respect to the vertices of a simple `polygon`, that is one
-    weight per vertex. The weights are returned in `weights`.
+    weight per vertex. The weights are stored in a destination range
+    beginning at 'w_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Mean_value_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -1078,7 +1107,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -1089,8 +1118,8 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param weights
-    An output iterator that stores the computed weights.
+    \param w_begin
+    The beginning of the destination range with the computed weights.
 
     \param traits
     An instance of `GeomTraits`.
@@ -1099,7 +1128,8 @@ namespace Barycentric_coordinates {
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -1111,14 +1141,14 @@ namespace Barycentric_coordinates {
   OutputIterator mean_value_weights_2(
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
-    OutputIterator weights,
+    OutputIterator w_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
-    return mean_value.weights(query, weights);
+    return mean_value.weights(query, w_begin);
   }
 
   /*!
@@ -1128,7 +1158,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D mean value weights at a given `query` point
     with respect to the vertices of a simple `polygon`, that is one
-    weight per vertex. The weights are returned in `weights`.
+    weight per vertex. The weights are stored in a destination range
+    beginning at 'w_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Mean_value_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -1142,7 +1173,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a simple polygon.
@@ -1150,14 +1181,15 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param weights
-    An output iterator that stores the computed weights.
+    \param w_begin
+    The beginning of the destination range with the computed weights.
 
     \param policy
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -1169,13 +1201,13 @@ namespace Barycentric_coordinates {
   OutputIterator mean_value_weights_2(
     const PointRange& polygon,
     const Point_2& query,
-    OutputIterator weights,
+    OutputIterator w_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return mean_value_weights_2(
-      polygon, query, weights, GeomTraits(), policy);
+      polygon, query, w_begin, GeomTraits(), policy);
   }
 
   /*!
@@ -1185,7 +1217,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D mean value coordinates at a given `query` point
     with respect to the vertices of a simple `polygon`, that is one
-    coordinate per vertex. The coordinates are returned in `coordinates`.
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Mean_value_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -1197,7 +1230,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::FT`.
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -1208,8 +1241,8 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param traits
     An instance of `GeomTraits`.
@@ -1218,7 +1251,8 @@ namespace Barycentric_coordinates {
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -1230,14 +1264,14 @@ namespace Barycentric_coordinates {
   OutputIterator mean_value_coordinates_2(
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
-    return mean_value(query, coordinates);
+    return mean_value(query, c_begin);
   }
 
   /*!
@@ -1247,7 +1281,8 @@ namespace Barycentric_coordinates {
 
     This function computes 2D mean value coordinates at a given `query` point
     with respect to the vertices of a simple `polygon`, that is one
-    coordinate per vertex. The coordinates are returned in `coordinates`.
+    coordinate per vertex. The coordinates are stored in a destination range
+    beginning at 'c_begin'.
 
     Internally, the class `CGAL::Barycentric_coordinates::Mean_value_coordinates_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
@@ -1261,7 +1296,7 @@ namespace Barycentric_coordinates {
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `Kernel_traits<Point_2>::Kernel::FT`.
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a simple polygon.
@@ -1269,14 +1304,15 @@ namespace Barycentric_coordinates {
     \param query
     A query point.
 
-    \param coordinates
-    An output iterator that stores the computed coordinates.
+    \param c_begin
+    The beginning of the destination range with the computed coordinates.
 
     \param policy
     One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
     The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
 
-    \return an output iterator.
+    \return an output iterator to the element in the destination range,
+    one past the last coordinate stored.
 
     \pre `polygon.size() >= 3`
     \pre `polygon is simple`
@@ -1288,13 +1324,13 @@ namespace Barycentric_coordinates {
   OutputIterator mean_value_coordinates_2(
     const PointRange& polygon,
     const Point_2& query,
-    OutputIterator coordinates,
+    OutputIterator c_begin,
     const Computation_policy_2 policy =
     Computation_policy_2::DEFAULT) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return mean_value_coordinates_2(
-      polygon, query, coordinates, GeomTraits(), policy);
+      polygon, query, c_begin, GeomTraits(), policy);
   }
 
 } // namespace Barycentric_coordinates

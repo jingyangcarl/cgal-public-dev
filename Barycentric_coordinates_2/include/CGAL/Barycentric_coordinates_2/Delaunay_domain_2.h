@@ -173,19 +173,20 @@ namespace Barycentric_coordinates {
       \brief computes barycenters of all generated triangles.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `Point_2`.
+      the dereferenced output iterator type must be convertible to `Point_2`.
 
-      \param barycenters
-      An output iterator that stores the computed barycenters.
+      \param b_begin
+      The beginning of the destination range with the computed barycenters.
 
-      \return an output iterator.
+      \return an output iterator to the element in the destination range,
+      one past the last barycenter stored.
     */
     template<typename OutputIterator>
     OutputIterator barycenters(
-      OutputIterator barycenters) const {
+      OutputIterator b_begin) const {
 
       const std::size_t num_faces = get_number_of_faces();
-      if (num_faces == 0) return barycenters;
+      if (num_faces == 0) return b_begin;
 
       for (auto fh = m_cdt.finite_faces_begin();
       fh != m_cdt.finite_faces_end(); ++fh) {
@@ -195,9 +196,9 @@ namespace Barycentric_coordinates {
         fh->vertex(0)->point(), FT(1),
         fh->vertex(1)->point(), FT(1),
         fh->vertex(2)->point(), FT(1));
-        *(barycenters++) = b;
+        *(b_begin++) = b;
       }
-      return barycenters;
+      return b_begin;
     }
 
     /*!

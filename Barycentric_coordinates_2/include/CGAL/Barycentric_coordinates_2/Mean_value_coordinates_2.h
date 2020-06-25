@@ -164,23 +164,24 @@ namespace Barycentric_coordinates {
       The number of returned weights equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `FT`.
+      the dereferenced output iterator type must be convertible to `FT`.
 
       \param query
       A query point.
 
-      \param weights
-      An output iterator that stores the computed weights.
+      \param w_begin
+      The beginning of the destination range with the computed weights.
 
-      \return an output iterator.
+      \return an output iterator to the element in the destination range,
+      one past the last weight stored.
     */
     template<typename OutputIterator>
     OutputIterator weights(
       const Point_2& query,
-      OutputIterator weights) {
+      OutputIterator w_begin) {
 
       const bool normalize = false;
-      return compute(query, weights, normalize);
+      return compute(query, w_begin, normalize);
     }
 
     /*!
@@ -192,23 +193,24 @@ namespace Barycentric_coordinates {
       The number of returned coordinates equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      must be an output iterator whose value type is `FT`.
+      the dereferenced output iterator type must be convertible to `FT`.
 
       \param query
       A query point.
 
-      \param coordinates
-      An output iterator that stores the computed coordinates.
+      \param c_begin
+      The beginning of the destination range with the computed coordinates.
 
-      \return an output iterator.
+      \return an output iterator to the element in the destination range,
+      one past the last coordinate stored.
     */
     template<typename OutputIterator>
     OutputIterator operator()(
       const Point_2& query,
-      OutputIterator coordinates) {
+      OutputIterator c_begin) {
 
       const bool normalize = true;
-      return compute(query, coordinates, normalize);
+      return compute(query, c_begin, normalize);
     }
 
     /// @}

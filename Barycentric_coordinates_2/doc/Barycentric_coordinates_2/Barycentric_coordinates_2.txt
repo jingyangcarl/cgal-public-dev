@@ -43,24 +43,24 @@ All analytic barycentric coordinates for polygons can be computed either by inst
 or through one of the free functions. Harmonic coordinates can be computed only by
 instantiating a class that must be parameterized by a model of the concept `DiscretizedDomain_2`.
 Segment and triangle coordinates can be computed only through the free functions.
-See more in the \ref PkgBarycentricCoordinates2Ref "Reference Manual".
+For more information see the \ref PkgBarycentricCoordinates2Ref "Reference Manual".
 
-Any point in the plane may be taken as a query point. However, we do not recommend to
-use Wachspress and discrete harmonic coordinates with query points outside the closure
+Any point in the plane may be taken as a query point. However, we do not recommend using
+Wachspress and discrete harmonic coordinates with query points outside the closure
 of a polygon, because they are not well-defined for some of these points. The same holds
-for harmonic coordinates, which are not defined at any point outside the polygon. See more in
-Section \ref gbc_degeneracies.
+for harmonic coordinates, which are not defined at any point outside the polygon. For more
+information see Section \ref gbc_degeneracies.
 
 The output of the computation is a set of coordinate values at the given query point
 with respect to the polygon vertices. That means that the number of returned coordinates
 per query point equals to the number of polygon vertices. The ordering of the coordinates
 is the same as the ordering of polygon vertices.
 
-All coordinates are parameterized by a traits class of the concept `BarycentricTraits_2`
-that provides all necessary geometric primitives, predicates, and constructions, which are
-required for the computation. All models of `Kernel` can be used. A polygon is provided
-as a range of vertices with a \ref PkgPropertyMapRef "propery map" that maps a vertex
-from the polygon to `CGAL::Point_2`.
+All class and function templates are parameterized by a traits class, which is a model
+of the concept `BarycentricTraits_2`. It provides all necessary geometric primitives,
+predicates, and constructions, which are required for the computation. All models of `Kernel`
+can be used. A polygon is provided as a range of vertices with a
+\ref PkgPropertyMapRef "propery map" that maps a vertex from the polygon to `CGAL::Point_2`.
 
 
 \section gbc_examples Examples
@@ -303,7 +303,7 @@ outside the polygon is possible only at points that do not belong to this curve.
 Zero set (red) of the Wachspress coordinates' denominator \f$W^{wp}\f$ for a non-regular hexagon.
 \cgalFigureEnd
 
-\b Warning: we do not recommend to use Wachspress coordinates for exterior points!
+\b Warning: we do not recommend using Wachspress coordinates for exterior points!
 
 
 \subsection gbc_deg_discrete_harmonic_coordinates Discrete Harmonic Coordinates
@@ -341,7 +341,7 @@ weights \f$w_i\f$. Again, mathematically this modification does not change the c
 but you should be cautious when using the unnormalized discrete harmonic weights. In that case,
 you must choose the \f$O(n)\f$ type.
 
-\b Warning: as for Wachspress coordinates, we do not recommend to use discrete harmonic coordinates
+\b Warning: as for Wachspress coordinates, we do not recommend using discrete harmonic coordinates
 for exterior points, because the curve \f$W^{dh} = 0\f$ may have several components,
 and one of them interpolates the polygon vertices. However, if you are sure that
 the query point does not belong to this curve, you can compute the coordinates
