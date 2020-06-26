@@ -64,9 +64,7 @@ int main() {
   };
 
   // Compute affine coordinates for all query points.
-  std::cout << std::endl <<
-    "affine coordinates (all queries): "
-  << std::endl << std::endl;
+  std::cout << std::endl << "affine coordinates (all queries): " << std::endl << std::endl;
 
   std::vector<double> coordinates;
   coordinates.reserve(4);

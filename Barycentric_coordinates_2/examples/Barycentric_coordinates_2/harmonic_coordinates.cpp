@@ -33,7 +33,7 @@ int main() {
     Point_2(0.01, 0.10), Point_2(0.02, 0.07)
   };
 
-  // Instantiate a Delaunay domain.
+  // Construct a Delaunay domain.
   std::list<Point_2> list_of_seeds;
   list_of_seeds.push_back(Point_2(0.1, 0.1));
 
@@ -51,9 +51,7 @@ int main() {
   // Compute harmonic coordinates.
   // We output only the first 20 results.
   std::cout.precision(1);
-  std::cout << std::endl <<
-    "harmonic coordinates (computed): "
-  << std::endl << std::endl;
+  std::cout << std::endl << "harmonic coordinates (computed): " << std::endl << std::endl;
 
   for (std::size_t k = 0; k < 20; ++k) {
     coordinates.clear();
@@ -65,9 +63,7 @@ int main() {
 
   // Evaluate harmonic coordinates at the barycenters of the domain triangles.
   // We output only the first 20 results.
-  std::cout << std::endl <<
-    "harmonic coordinates (evaluated): "
-  << std::endl << std::endl;
+  std::cout << std::endl << "harmonic coordinates (evaluated): " << std::endl << std::endl;
 
   std::vector<Point_2> barycenters;
   domain.barycenters(std::back_inserter(barycenters));

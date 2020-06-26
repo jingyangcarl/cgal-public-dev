@@ -21,7 +21,7 @@ int main() {
     Point_2(0.6, 0.1), Point_2( 1.1,  0.6), Point_2(0.3, 0.2), Point_2(0.1,  0.8),
     Point_2(0.1, 0.2), Point_2(-0.7,  0.0) };
 
-  // Instantiate the class with mean value coordinates
+  // Construct the class with mean value coordinates
   // for the star-shaped polygon defined above.
   Mean_value_coordinates mean_value_coordinates(
     star_shaped.begin(), star_shaped.end());
@@ -29,7 +29,7 @@ int main() {
   // Print some information about the polygon and coordinates.
   mean_value_coordinates.print_information();
 
-  // Instantiate some interior points in the polygon.
+  // Construct some interior points in the polygon.
   const std::vector<Point_2> interior_points = {
     Point_2(0.12, -0.45), Point_2(0.55, -0.3), Point_2(0.9 , 0.45),
     Point_2(0.15,  0.35), Point_2(-0.4, 0.04), Point_2(0.11, 0.11),
@@ -58,8 +58,7 @@ int main() {
 
     // Status of the computation.
     const std::string status = (result ? "SUCCESS." : "FAILURE.");
-    std::cout << std::endl << "point: " << count <<
-      ", status of the computation: " << status << std::endl;
+    std::cout << std::endl << "point: " << count << ", status of the computation: " << status << std::endl;
     ++count;
 
     // Output the coordinates.

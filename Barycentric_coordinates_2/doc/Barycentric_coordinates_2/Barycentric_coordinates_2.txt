@@ -111,10 +111,10 @@ all the generated points. The used `Kernel` is of floating precision.
 \subsection dh_example Discrete Harmonic Coordinates
 
 In this example, we compute discrete harmonic coordinates for a set of green (interior),
-red (boundary), and blue (exterior) points with respect to a unit square. We also show
-that package accepts various containers, both random access and not, different property maps,
-and lets the user choose a `CGAL::Barycentric_coordinates::Computation_policy`. For points
-on the polygon boundary, we use a free function `CGAL::Barycentric_coordinates::boundary_coordinates_2()`.
+red (boundary), and blue (exterior) points with respect to a unit square. We also demonstrate
+the use of various containers, both random access and serial access, different property maps,
+and the ability to choose a computation policy. For points on the polygon boundary,
+we use the free function `CGAL::Barycentric_coordinates::boundary_coordinates_2()`.
 The used `Kernel` is exact.
 
 \anchor dh_coord_example
@@ -132,7 +132,7 @@ in a star-shaped polygon. We note that this type of coordinates is well-defined 
 while Wachspress and discrete harmonic coordinates are not. However, it may give negative
 coordinate values for points outside <a href="https://en.wikipedia.org/wiki/Star-shaped_polygon">the polygon's kernel</a>
 (shown in red). We speed up the computation using the linear time complexity algorithm by specifying
-the corresponding `CGAL::Barycentric_coordinates::Computation_policy`. The used `Kernel` is inexact.
+the policy `CGAL::Barycentric_coordinates::Computation_policy`. The used `Kernel` is inexact.
 
 \anchor mv_coord_example
 \cgalFigureBegin{mv_example, mv_coord_example.png}
@@ -188,7 +188,7 @@ The interpolated data. The color bar represents the corresponding height.
 
 
 \subsection af_example Affine Coordinates
-This is another advanced example, where we show how the
+This is another advanced example, where we show how a
 <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>
 can be used to define a model of generalized barycentric coordinates. To make this example
 useful, we implement affine generalized coordinates for a set of scattered points.
@@ -213,21 +213,23 @@ mean value coordinates. The result is identical to the one from
 \section gbc_degeneracies Edge Cases
 
 Not all presented coordinates are general enough to handle any query point in the plane, that is
-why we highly recommend to address this section in order to learn what can be expected from
+why we highly recommend addressing this section in order to learn what can be expected from
 each coordinate function. If you want to get more mathematical details about each coordinate
 function as well as complete history and theory behind barycentric coordinates, you should
-read \cgalCite{cgal:bc:hs-gbcicg-17}.
+read \cgalCite{cgal:bc:hs-gbcicg-17}. You can also read an overview
+<a href="https://www.anisimovdmitry.com/assets/files/phd_thesis_anisimov.pdf">here</a>
+(chapters 1 and 2).
 
 
 \anchor compute_seg_coord
 \subsection gbc_deg_segment_coordinates Segment Coordinates
 
-Segment coordinates can be computed exactly if an exact data type is chosen.
+Segment coordinates can be computed exactly if an exact number type is chosen.
 The segment itself, with respect to which we compute coordinates, must be non-degenerate.
 If both conditions are satisfied, then the computation never fails. However, to compute coordinates,
 the user must be sure about the query point being exactly on the line \f$L\f$ supporting the segment.
 Since in many applications this is not the case, and a query point may lie very close but not exactly on this line,
-the class is also able to handle this situation.
+the class provides a solution to remedy this situation.
 
 \cgalFigureBegin{seg_coord_projection, seg_coord_projection.png}
 The orthogonal projection \f$p'\f$ of the vector \f$p\f$ (green) onto the vector \f$q\f$ (red).
@@ -248,25 +250,27 @@ when computing the location of the point \f$v\f$ or any other problem,
 which causes the point to be not exactly on the line, the final segment coordinates will be,
 at least approximately, correct.
 
-With inexact data types, the resulting coordinate values are correct up to the precision of the chosen type.
+With inexact number types, the resulting coordinate values are correct up to the precision of the chosen type.
 
 
 \subsection gbc_deg_triangular_coordinates Triangle Coordinates
 
-These coordinates can be computed exactly if an exact data type is chosen, for any query point
+These coordinates can be computed exactly if an exact number type is chosen, for any query point
 in the plane and with respect to any non-degenerate triangle. No special cases are handled.
 The computation always gives the correct result. The notion of correctness depends on the precision
-of the used data type. Note that for exterior points some coordinate values will be negative.
+of the used number type. Note that for exterior points some coordinate values will be negative.
 
 
 \subsection gbc_deg_wachspress_coordinates Wachspress Coordinates
 
 Wachspress coordinates are well-defined in the closure of any <em>strictly convex polygon</em>.
-Therefore, when using an exact data type, for any query point from the polygon's closure,
-these coordinates are computed exactly and no false result is expected. For inexact data types,
-the resulting precision of the computation is due to the involved algorithm and chosen data type.
-In the following paragraph, we discuss two available algorithms for computing Wachspress coordinates.
-The chosen algorithm is defined by `CGAL::Barycentric_coordinates::Computation_policy`.
+Therefore, when using an exact number type, for any query point from the polygon's closure,
+these coordinates are computed exactly and no false result is expected. For exterior query points,
+the coordinates can also be computed but not everywhere (see below for more details). For inexact number types,
+the resulting precision of the computation is due to the involved algorithm and a chosen number type.
+In the following paragraph, we discuss two available algorithms for computing Wachspress coordinates
+when an inexact number type is used. The chosen algorithm is defined by
+`CGAL::Barycentric_coordinates::Computation_policy`.
 
 \anchor wp_polygon
 \cgalFigureBegin{wp_notations, wp_notations.png}
@@ -310,11 +314,12 @@ Zero set (red) of the Wachspress coordinates' denominator \f$W^{wp}\f$ for a non
 
 Discrete harmonic coordinates have the same requirements as Wachspress coordinates.
 They are well-defined in the closure of any <em>strictly convex polygon</em> and,
-if an exact data type is chosen, they are computed exactly. But, unlike Wachspress basis functions,
+if an exact number type is chosen, they are computed exactly. But, unlike Wachspress basis functions,
 these coordinates are not necessarily positive. In particular, the weight \f$w_i\f$ is positive
-if and only if \f$\alpha+\beta < \pi\f$ (see the figure below for notation). For inexact data types,
-the precision of the computation is due to the involved algorithm and chosen data type. Again,
-we describe two algorithms to compute the coordinates: one is of max precision and one is of max speed.
+if and only if \f$\alpha+\beta < \pi\f$ (see the figure below for notation). For inexact number types,
+the precision of the computation is due to the involved algorithm and a chosen number type. Again,
+we describe two algorithms to compute the coordinates when an inexact number type is used:
+one is of max precision and one is of max speed.
 
 \anchor dh_polygon
 \cgalFigureBegin{dh_notations, dh_notations.png}
@@ -351,20 +356,23 @@ as shown in \ref dh_example " this example".
 \subsection gbc_deg_mean_value_coordinates Mean Value Coordinates
 
 Unlike the previous coordinates, mean value coordinates cannot be computed exactly due to
-an inevitable square root operation. Although, if an exact data type is used, the default precision
+an inevitable square root operation. Although, if an exact number type is used, the default precision
 of the computation depends only on two \cgal functions: `CGAL::to_double()` and `CGAL::sqrt()`.
-On the other hand, mean value coordinates are well-defined everywhere in the plane for any simple polygon.
-In addition, if your traits class provides a more precise version of the square root function,
-the final precision of the computation with exact data types will depend only on the precision of that function.
+It is worth saying that providing a number type that supports exact or nearly exact computation
+of the square root is possible, however since such types are usually impractical due to the
+large overhead, the conversion to a floating type above is always effective. On the other hand,
+mean value coordinates are well-defined everywhere in the plane for any simple polygon. In addition,
+if your traits class provides a more precise version of the square root function, the final precision
+of the computation with exact number types will depend only on the precision of that function.
 
 \anchor mv_polygon
 \cgalFigureBegin{mv_notations, mv_notations.png}
 Notation for mean value coordinates.
 \cgalFigureEnd
 
-For these coordinates we also have two algorithms: one is of max precision and one is of max speed.
+For these coordinates, we also have two algorithms: one is of max precision and one is of max speed.
 The first one works everywhere in the plane, and the precision of the computation depends only
-on the chosen data type, including the remarks above. This algorithm is based on the following weight
+on the chosen number type, including the remarks above. This algorithm is based on the following weight
 formula from \cgalCite{cgal:bc:f-wmvc-14}
 
 <center>\f$w_i = \sigma_i\bar{w}_i\qquad\f$ with \f$\qquad\bar{w}_i = (r_{i-1}r_{i+1}-d_{i-1}d_{i+1})^{1/2}\prod_{j\not= i-1,i}(r_jr_{j+1} + d_jd_{j+1})^{1/2}\qquad\f$
@@ -412,12 +420,12 @@ by discretizing over the space of piecewise linear functions with respect to
 a triangulation of the polygon. The denser triangulation of the interior part of
 the polygon, the better approximation of the coordinates. To get a high quality
 approximation of the coordinates, the user should provide a rather dense partition
-of the polygon's interior domain that in turn leads to higher running times when
+of the polygon's interior domain that in turn leads to larger running times when
 computing the coordinates.
 
 \cgalFigureBegin{terrain_triangulation, terrain_triangulation.png}
-Sparse triangulation of the polygon's interior domain (left): lower running times,
-lower coordinates quality; dense triangulation (right): higher running times,
+Sparse triangulation of the polygon's interior domain (left): smaller running times,
+lower coordinates quality; dense triangulation (right): larger running times,
 higher coordinates quality.
 \cgalFigureEnd
 
@@ -431,11 +439,11 @@ triangle to the query point with the help of \ref gbc_deg_triangular_coordinates
 
 \section gbc_performance Performance
 
-Apart from the most important requirement on barycentric coordinates to be as precise as possible,
-it is very important for them to be as fast as possible to compute. These coordinates are used
-in many applications where they must be computed for millions of points and, thus, the real time usage
-of coordinates is crucial. When writing the code, we tried to fulfil this important requirement,
-and in this section we present a few results about the computation times of the implemented coordinates.
+We strive for robustness and efficiency at the same time. The efficiency is especially important.
+These coordinates are used in many applications where they must be computed for millions of points
+and, thus, the real time computation of coordinates is crucial. When writing the code,
+we tried to fulfil this important requirement. In this section, we present a few results
+about the computation running times of the implemented algorithms.
 
 The structure of the speed test that we use to evaluate the running times consists
 of computing coordinate values (or weights) at >= 1 million strictly interior points
@@ -451,7 +459,7 @@ number of points, etc. In our tests, we used the most standard C++ and \cgal fea
 Therefore, the final time presented is the average time that can be expected without deep optimization
 but still with efficient memory allocation. It also means that it may vary depending on the usage of the package.
 
-For all tests above, we used a MacBook Pro 2011 with 2 GHz Intel Core i7 processor (2 cores)
+For all tests, we used a MacBook Pro 2011 with 2 GHz Intel Core i7 processor (2 cores)
 and 8 GB 1333 MHz DDR3 memory. The installed operating system was OS X 10.9 Maverick.
 In order to compile the speed test suite, we used the Clang 5.0 64bit compiler.
 The resulting timings for all closed-form coordinates can be found in the figure below.

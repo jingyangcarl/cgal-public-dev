@@ -43,7 +43,7 @@ int main() {
     Point(0.01, 0.10, 0.97), Point(0.02, 0.07, 1.00)
   };
 
-  // Instantiate a Delaunay domain.
+  // Construct a Delaunay domain.
   std::list<Point> list_of_seeds;
   list_of_seeds.push_back(Point(0.1, 0.1, 0.0));
 
@@ -56,7 +56,7 @@ int main() {
     vertex_function_value.insert(
       std::make_pair(vertex, vertex.z()));
 
-  // Instantiate the class with the mean value weights.
+  // Construct the class with the mean value weights.
   MVC2 mean_value_coordinates_2(polygon);
 
   // Compute mean value coordinates and use them to interpolate data
@@ -85,9 +85,7 @@ int main() {
   }
 
   // Output interpolated heights.
-  std::cout << std::endl <<
-    "interpolated heights (all queries): "
-  << std::endl << std::endl;
+  std::cout << std::endl << "interpolated heights (all queries): " << std::endl << std::endl;
   for (const auto& query : queries)
     std::cout << query.z() << std::endl;
   std::cout << std::endl;

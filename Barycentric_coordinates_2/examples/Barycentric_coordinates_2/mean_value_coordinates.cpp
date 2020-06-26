@@ -16,7 +16,7 @@ int main() {
     Point_2(0.6, 0.1), Point_2( 1.1,  0.6), Point_2(0.3, 0.2), Point_2(0.1,  0.8),
     Point_2(0.1, 0.2), Point_2(-0.7,  0.0) };
 
-  // Instantiate some interior points in the polygon.
+  // Construct some interior points in the polygon.
   const std::vector<Point_2> interior_points = {
     Point_2(0.12, -0.45), Point_2(0.55, -0.3), Point_2(0.9 , 0.45),
     Point_2(0.15,  0.35), Point_2(-0.4, 0.04), Point_2(0.11, 0.11),
@@ -33,9 +33,7 @@ int main() {
   coordinates.reserve(star_shaped.size());
 
   // Compute mean value coordinates for all interior points.
-  std::cout << std::endl <<
-    "mean value coordinates (interior): "
-  << std::endl << std::endl;
+  std::cout << std::endl << "mean value coordinates (interior): " << std::endl << std::endl;
 
   for (const auto& query : interior_points) {
     coordinates.clear();

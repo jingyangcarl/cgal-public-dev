@@ -15,7 +15,7 @@ int main() {
   const Point_2 source(FT(0), y);
   const Point_2 target(FT(2), y);
 
-  // Instantiate three interior and two exterior query points.
+  // Construct three interior and two exterior query points.
   const std::vector<Point_2> queries = {
     Point_2(FT(2) / FT(5), y), // interior query points
     Point_2(FT(5) / FT(5), y),
@@ -33,8 +33,7 @@ int main() {
       source, target, query, std::back_inserter(coordinates));
 
   // Output all segment coordinates.
-  std::cout << std::endl <<
-    "segment coordinates (all queries): " << std::endl << std::endl;
+  std::cout << std::endl << "segment coordinates (all queries): " << std::endl << std::endl;
   for (std::size_t i = 0; i < coordinates.size(); i += 2)
     std::cout <<
     coordinates[i + 0] << ", " <<

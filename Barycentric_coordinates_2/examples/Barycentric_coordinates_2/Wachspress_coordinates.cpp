@@ -32,9 +32,7 @@ int main() {
     queries.begin(), queries.end(), std::back_inserter(convex));
 
   // Compute Wachspress coordinates for all query points.
-  std::cout << std::endl <<
-    "Wachspress coordinates (interior + boundary): "
-  << std::endl << std::endl;
+  std::cout << std::endl << "Wachspress coordinates (interior + boundary): " << std::endl << std::endl;
 
   std::vector<FT> coordinates;
   coordinates.reserve(convex.size());
