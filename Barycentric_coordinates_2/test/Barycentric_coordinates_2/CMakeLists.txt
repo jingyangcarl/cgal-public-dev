@@ -20,6 +20,8 @@ if(CGAL_FOUND)
     "test_boundary_coordinates_at_vertices.cpp")
   create_single_source_cgal_program(
     "test_boundary_coordinates_on_edges.cpp")
+  create_single_source_cgal_program(
+    "test_dh_almost_degenerate_polygon.cpp")
 
 else()
   message(WARNING
