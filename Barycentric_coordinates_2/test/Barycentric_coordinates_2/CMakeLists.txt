@@ -12,6 +12,15 @@ if(CGAL_FOUND)
   include(${CGAL_USE_FILE})
   include(CGAL_CreateSingleSourceCGALProgram)
 
+  create_single_source_cgal_program(
+    "test_almost_degenerate_segment.cpp")
+  create_single_source_cgal_program(
+    "test_almost_degenerate_triangle.cpp")
+  create_single_source_cgal_program(
+    "test_boundary_coordinates_at_vertices.cpp")
+  create_single_source_cgal_program(
+    "test_boundary_coordinates_on_edges.cpp")
+
 else()
   message(WARNING
   "This program requires the CGAL library, and will not be compiled.")

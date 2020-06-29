@@ -13,6 +13,6 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
 else()
-  message(WARNING 
+  message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
 endif()
