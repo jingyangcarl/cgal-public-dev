@@ -3,14 +3,16 @@
 #include <cmath>
 #include <vector>
 #include <cassert>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/analytic_coordinates_2.h>
 
-using Kernel  = CGAL::Exact_predicates_exact_constructions_kernel;
-using FT      = typename Kernel::FT;
-using Point_2 = typename Kernel::Point_2;
+template<typename Kernel>
+void test_triangle_coordinates() {
 
-int main() {
+  using FT      = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
 
   const Point_2 p0 = Point_2(0, 0);
   const Point_2 p1 = Point_2(1, 0);
@@ -55,6 +57,13 @@ int main() {
       std::get<2>(tuple) - expected[count + 2] == FT(0) );
     count += 3;
   }
+}
+
+int main() {
+
+  test_triangle_coordinates< CGAL::Simple_cartesian<double> >();
+  test_triangle_coordinates< CGAL::Exact_predicates_exact_constructions_kernel >();
+  test_triangle_coordinates< CGAL::Exact_predicates_inexact_constructions_kernel >();
 
   std::cout << "test_triangle_coordinates: PASSED" << std::endl;
   return EXIT_SUCCESS;

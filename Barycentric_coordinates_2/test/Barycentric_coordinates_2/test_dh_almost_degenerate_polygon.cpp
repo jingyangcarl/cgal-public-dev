@@ -63,9 +63,9 @@ int main() {
   const Point_2 zero(0, 0);
   std::vector<FT> coordinates;
   for (std::size_t i = 0; i < 31; ++i) {
+
     CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_2(
       vertices, queries[i], std::back_inserter(coordinates));
-
     const FT coordinate_sum =
       coordinates[count + 0] +
       coordinates[count + 1] +

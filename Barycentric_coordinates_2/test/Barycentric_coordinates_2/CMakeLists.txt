@@ -15,11 +15,40 @@ if(CGAL_FOUND)
   create_single_source_cgal_program(
     "test_almost_degenerate_segment.cpp")
   create_single_source_cgal_program(
+    "test_segment_coordinates.cpp")
+  create_single_source_cgal_program(
+    "test_segment_coordinates_with_offset.cpp")
+
+  create_single_source_cgal_program(
     "test_almost_degenerate_triangle.cpp")
+  create_single_source_cgal_program(
+    "test_triangle_coordinates.cpp")
+
   create_single_source_cgal_program(
     "test_boundary_coordinates_at_vertices.cpp")
   create_single_source_cgal_program(
     "test_boundary_coordinates_on_edges.cpp")
+
+  create_single_source_cgal_program(
+    "test_wp_almost_degenerate_polygon.cpp")
+  create_single_source_cgal_program(
+    "test_wp_const_linear_precision.cpp")
+  create_single_source_cgal_program(
+    "test_wp_triangle.cpp")
+  create_single_source_cgal_program(
+    "test_wp_weights.cpp")
+
+  create_single_source_cgal_program(
+    "test_mv_special_points.cpp")
+  create_single_source_cgal_program(
+    "test_mv_weakly_convex_polygon.cpp")
+  create_single_source_cgal_program(
+    "test_mv_const_linear_precision.cpp")
+  create_single_source_cgal_program(
+    "test_mv_triangle.cpp")
+  create_single_source_cgal_program(
+    "test_mv_weights.cpp")
+
   create_single_source_cgal_program(
     "test_dh_almost_degenerate_polygon.cpp")
   create_single_source_cgal_program(
@@ -28,32 +57,9 @@ if(CGAL_FOUND)
     "test_dh_triangle.cpp")
   create_single_source_cgal_program(
     "test_dh_weights.cpp")
-  create_single_source_cgal_program(
-    "test_mv_const_linear_precision.cpp")
-  create_single_source_cgal_program(
-    "test_mv_special_points.cpp")
-  create_single_source_cgal_program(
-    "test_mv_triangle.cpp")
-  create_single_source_cgal_program(
-    "test_mv_weakly_convex_polygon.cpp")
-  create_single_source_cgal_program(
-    "test_mv_weights.cpp")
-  create_single_source_cgal_program(
-    "test_segment_coordinates.cpp")
-  create_single_source_cgal_program(
-    "test_segment_coordinates_with_offset.cpp")
-  create_single_source_cgal_program(
-    "test_triangle_coordinates.cpp")
-  create_single_source_cgal_program(
-    "test_wp_almost_degenerate_polygon.cpp")
-  create_single_source_cgal_program(
-    "test_wp_const_linear_precision.cpp")
+
   create_single_source_cgal_program(
     "test_wp_dh_unit_square.cpp")
-  create_single_source_cgal_program(
-    "test_wp_triangle.cpp")
-  create_single_source_cgal_program(
-    "test_wp_weights.cpp")
 
 else()
   message(WARNING

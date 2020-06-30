@@ -3,14 +3,16 @@
 #include <cmath>
 #include <vector>
 #include <cassert>
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/analytic_coordinates_2.h>
 
-using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT      = typename Kernel::FT;
-using Point_2 = typename Kernel::Point_2;
+template<typename Kernel>
+void test_mv_triangle() {
 
-int main() {
+  using FT      = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
 
   const std::vector<Point_2> vertices = {
     Point_2(0, 0),
@@ -43,6 +45,13 @@ int main() {
       count += 3;
     }
   }
+}
+
+int main() {
+
+  test_mv_triangle< CGAL::Simple_cartesian<double> >();
+  test_mv_triangle< CGAL::Exact_predicates_exact_constructions_kernel >();
+  test_mv_triangle< CGAL::Exact_predicates_inexact_constructions_kernel >();
 
   std::cout << "test_mv_triangle: PASSED" << std::endl;
   return EXIT_SUCCESS;

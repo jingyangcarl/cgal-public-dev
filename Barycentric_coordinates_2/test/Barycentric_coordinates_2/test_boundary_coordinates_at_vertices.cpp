@@ -3,14 +3,16 @@
 #include <cmath>
 #include <vector>
 #include <cassert>
+#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/analytic_coordinates_2.h>
 
-using Kernel  = CGAL::Exact_predicates_exact_constructions_kernel;
-using FT      = typename Kernel::FT;
-using Point_2 = typename Kernel::Point_2;
+template<typename Kernel>
+void test_boundary_coordinates_at_vertices() {
 
-int main() {
+  using FT      = typename Kernel::FT;
+  using Point_2 = typename Kernel::Point_2;
 
   const std::vector<Point_2> vertices = {
     Point_2(0, 0),
@@ -45,6 +47,13 @@ int main() {
       coordinates[count + 5] - expected[count + 5] == FT(0) );
     count += 6;
   }
+}
+
+int main() {
+
+  test_boundary_coordinates_at_vertices< CGAL::Simple_cartesian<double> >();
+  test_boundary_coordinates_at_vertices< CGAL::Exact_predicates_exact_constructions_kernel >();
+  test_boundary_coordinates_at_vertices< CGAL::Exact_predicates_inexact_constructions_kernel >();
 
   std::cout << "test_boundary_coordinates_at_vertices: PASSED" << std::endl;
   return EXIT_SUCCESS;
