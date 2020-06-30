@@ -57,15 +57,15 @@ int main() {
     Point_2(
       FT(1) / FT(2),
       FT(1) / FT(2) * FT(vertices[0].y() + vertices[3].y()))
-    };
+  };
 
   std::size_t count = 0;
   const Point_2 zero(0, 0);
   std::vector<FT> coordinates;
-  for (std::size_t i = 0; i < 31; ++i) {
-    CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_2(
-      vertices, queries[i], std::back_inserter(coordinates));
+  for (int i = 0; i < 31; ++i) {
 
+    CGAL::Barycentric_coordinates::wachspress_coordinates_2(
+      vertices, queries[i], std::back_inserter(coordinates));
     const FT coordinate_sum =
       coordinates[count + 0] +
       coordinates[count + 1] +
@@ -87,13 +87,11 @@ int main() {
     count += 4;
   }
 
-  const FT quater = FT(1) / FT(4);
+  const FT quater = FT(1)/FT(4);
   assert(
-    coordinates[120] - quater == FT(0) &&
-    coordinates[121] - quater == FT(0) &&
-    coordinates[122] - quater == FT(0) &&
-    coordinates[123] - quater == FT(0) );
+    coordinates[120] - quater == FT(0) && coordinates[121] - quater == FT(0) &&
+    coordinates[122] - quater == FT(0) && coordinates[123] - quater == FT(0) );
 
-  std::cout << "test_dh_almost_degenerate_polygon: PASSED" << std::endl;
+  std::cout << "test_wp_almost_degenerate_polygon: PASSED" << std::endl;
   return EXIT_SUCCESS;
 }

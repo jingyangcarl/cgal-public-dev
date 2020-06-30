@@ -1,10 +1,3 @@
-// Author: Dmitry Anisimov.
-// We use an almost degenerate triangle with one side of length 1 and an exact data type
-// in order to test coordinates computed for some strictly interior points.
-// The test itself consists of generating some strictly interior points and then checking
-// the linear precision property of the obtained coordinates. Some points close to the boundary
-// up to 1.0e-300 are used, and the coordinates for the center point are checked to be exactly 1/3.
-
 // Does not work with inexact kernel!
 // Get inconsistency when comparing the difference with zero.
 

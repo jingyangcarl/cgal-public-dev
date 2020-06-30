@@ -645,7 +645,7 @@ namespace Barycentric_coordinates {
     OutputIterator w_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
-    Computation_policy_2::DEFAULT) {
+    Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
     Wachspress_coordinates_2<PointRange, GeomTraits> wachspress(
       polygon, policy, traits);
@@ -705,7 +705,7 @@ namespace Barycentric_coordinates {
     const Point_2& query,
     OutputIterator w_begin,
     const Computation_policy_2 policy =
-    Computation_policy_2::DEFAULT) {
+    Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return wachspress_weights_2(
@@ -895,7 +895,7 @@ namespace Barycentric_coordinates {
     OutputIterator w_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
-    Computation_policy_2::DEFAULT) {
+    Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
     Discrete_harmonic_coordinates_2<PointRange, GeomTraits> discrete_harmonic(
       polygon, policy, traits);
@@ -955,7 +955,7 @@ namespace Barycentric_coordinates {
     const Point_2& query,
     OutputIterator w_begin,
     const Computation_policy_2 policy =
-    Computation_policy_2::DEFAULT) {
+    Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return discrete_harmonic_weights_2(
@@ -1144,7 +1144,7 @@ namespace Barycentric_coordinates {
     OutputIterator w_begin,
     const GeomTraits traits,
     const Computation_policy_2 policy =
-    Computation_policy_2::DEFAULT) {
+    Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
     Mean_value_coordinates_2<PointRange, GeomTraits> mean_value(
       polygon, policy, traits);
@@ -1203,7 +1203,7 @@ namespace Barycentric_coordinates {
     const Point_2& query,
     OutputIterator w_begin,
     const Computation_policy_2 policy =
-    Computation_policy_2::DEFAULT) {
+    Computation_policy_2::FAST_WITH_EDGE_CASES) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     return mean_value_weights_2(
