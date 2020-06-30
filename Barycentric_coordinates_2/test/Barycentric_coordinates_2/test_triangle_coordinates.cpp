@@ -1,5 +1,3 @@
-// Works with inexact kernel, too.
-
 #include <cmath>
 #include <vector>
 #include <cassert>

@@ -40,8 +40,7 @@
 
 // Todo:
 // * check the function get_edge_index_exact()
-// * try to use the class with DH weights instead of cotangent weights
-// * try to avoid using lambda, alpha_cot, and beta_cot temporary containers
+// * refactor using new weights interface
 
 namespace CGAL {
 namespace Barycentric_coordinates {
@@ -510,7 +509,6 @@ namespace Barycentric_coordinates {
       }
     }
 
-    // Can I use here the class for discrete harmonic coordinates?
     void set_harmonic_data(
       const std::size_t numI,
       const std::vector<std::size_t>& indices,

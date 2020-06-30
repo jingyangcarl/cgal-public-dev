@@ -1,6 +1,3 @@
-// Does not work with inexact kernel.
-// We get inconsistency when comparing the difference with zero.
-
 #include <cmath>
 #include <vector>
 #include <cassert>

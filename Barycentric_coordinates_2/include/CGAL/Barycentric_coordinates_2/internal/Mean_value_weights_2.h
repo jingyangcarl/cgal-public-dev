@@ -28,6 +28,10 @@
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
 
+// [1] Reference: "K. Hormann and M. Floater.
+// Mean value coordinates for arbitrary planar polygons.
+// ACM Transactions on Graphics, 25(4):1424-1441, 2006.".
+
 namespace CGAL {
 namespace Barycentric_coordinates {
 namespace internal {
@@ -126,8 +130,7 @@ namespace internal {
       }
 
       // Compute lengths r, areas A, and dot products D following the pseudo-code
-      // in the Figure 10 from [1].
-      // Split the loop to make this computation faster.
+      // in the Figure 10 from [1]. Split the loop to make this computation faster.
       const auto& p1 = get(m_vertex_map, *(m_polygon.begin() + 0));
       const auto& p2 = get(m_vertex_map, *(m_polygon.begin() + 1));
 
@@ -178,8 +181,6 @@ namespace internal {
       // Return weights.
       for (std::size_t i = 0; i < n; ++i)
         *(weights++) = w[i];
-
-      // Return weights.
       return weights;
     }
   };

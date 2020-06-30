@@ -1,6 +1,3 @@
-// Does not work with inexact kernel.
-// Get inconsistency when comparing coordinates with expected coordinates.
-
 #include <cmath>
 #include <vector>
 #include <cassert>

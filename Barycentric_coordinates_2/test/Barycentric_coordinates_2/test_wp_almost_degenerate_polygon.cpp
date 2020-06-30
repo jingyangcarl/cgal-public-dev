@@ -1,6 +1,3 @@
-// Does not work with inexact kernel.
-// We get division by zero due to W = 0.
-
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -89,8 +86,10 @@ int main() {
 
   const FT quater = FT(1)/FT(4);
   assert(
-    coordinates[120] - quater == FT(0) && coordinates[121] - quater == FT(0) &&
-    coordinates[122] - quater == FT(0) && coordinates[123] - quater == FT(0) );
+    coordinates[120] - quater == FT(0) &&
+    coordinates[121] - quater == FT(0) &&
+    coordinates[122] - quater == FT(0) &&
+    coordinates[123] - quater == FT(0) );
 
   std::cout << "test_wp_almost_degenerate_polygon: PASSED" << std::endl;
   return EXIT_SUCCESS;

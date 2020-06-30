@@ -1,5 +1,3 @@
-// Works with an exact kernel, too.
-
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -44,7 +42,7 @@ void test_mv_weakly_convex_polygon() {
   };
 
   std::size_t count = 0;
-  const FT epsilon = FT(1) / FT(std::pow(10.0, 15.0));
+  const FT epsilon = FT(1) / FT(1000000000000000);
 
   std::vector<FT> coordinates;
   for (std::size_t i = 0; i < 5; ++i) {

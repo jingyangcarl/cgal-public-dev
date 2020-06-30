@@ -1,5 +1,3 @@
-// Works with an exact kernel, too.
-
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -32,7 +30,7 @@ void test_mv_const_linear_precision() {
   const FT y_scale = FT(100);
 
   std::size_t count = 0;
-  const FT epsilon = FT(1) / FT(std::pow(10.0, 8.0));
+  const FT epsilon = FT(1) / FT(100000000);
 
   const FT limit_x = x_scale * step;
   const FT half    = FT(1) / FT(2);
@@ -82,9 +80,9 @@ void test_mv_const_linear_precision() {
         linear_combination.x() - query.x(),
         linear_combination.y() - query.y());
       assert(
-        ( (coordinate_sum - FT(1)) < epsilon) &&
-          difference.x() < epsilon &&
-          difference.y() < epsilon );
+        CGAL::abs(coordinate_sum - FT(1)) < epsilon &&
+        CGAL::abs(difference.x()) < epsilon &&
+        CGAL::abs(difference.y()) < epsilon );
       count += 10;
     }
   }

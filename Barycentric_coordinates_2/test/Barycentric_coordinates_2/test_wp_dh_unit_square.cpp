@@ -1,6 +1,3 @@
-// Does not work with inexact kernel.
-// We get inconsistency when comparing Wachspress and discrete harmonic coordinates.
-
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -36,11 +33,23 @@ int main() {
         vertices, query, std::back_inserter(wp_coordinates));
       CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_2(
         vertices, query, std::back_inserter(dh_coordinates));
+
+      assert(wp_coordinates[count + 0] >= FT(0) && wp_coordinates[count + 0] <= FT(1));
+      assert(wp_coordinates[count + 1] >= FT(0) && wp_coordinates[count + 1] <= FT(1));
+      assert(wp_coordinates[count + 2] >= FT(0) && wp_coordinates[count + 2] <= FT(1));
+      assert(wp_coordinates[count + 3] >= FT(0) && wp_coordinates[count + 3] <= FT(1));
+
+      assert(dh_coordinates[count + 0] >= FT(0) && dh_coordinates[count + 0] <= FT(1));
+      assert(dh_coordinates[count + 1] >= FT(0) && dh_coordinates[count + 1] <= FT(1));
+      assert(dh_coordinates[count + 2] >= FT(0) && dh_coordinates[count + 2] <= FT(1));
+      assert(dh_coordinates[count + 3] >= FT(0) && dh_coordinates[count + 3] <= FT(1));
+
       assert(
-        wp_coordinates[count + 0] - dh_coordinates[count + 0] == FT(0) &&
-        wp_coordinates[count + 1] - dh_coordinates[count + 1] == FT(0) &&
-        wp_coordinates[count + 2] - dh_coordinates[count + 2] == FT(0) );
-      count += 3;
+        CGAL::abs(wp_coordinates[count + 0] - dh_coordinates[count + 0]) == FT(0) &&
+        CGAL::abs(wp_coordinates[count + 1] - dh_coordinates[count + 1]) == FT(0) &&
+        CGAL::abs(wp_coordinates[count + 2] - dh_coordinates[count + 2]) == FT(0) &&
+        CGAL::abs(wp_coordinates[count + 3] - dh_coordinates[count + 3]) == FT(0) );
+      count += 4;
     }
   }
 

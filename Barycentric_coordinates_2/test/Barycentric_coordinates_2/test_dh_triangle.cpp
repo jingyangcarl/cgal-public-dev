@@ -1,6 +1,3 @@
-// Does not work with inexact kernel.
-// We get inconsistency when comparing triangle and discrete harmonic coordinates.
-
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -36,6 +33,15 @@ int main() {
         vertices[0], vertices[1], vertices[2], query, std::back_inserter(tri_coordinates));
       CGAL::Barycentric_coordinates::discrete_harmonic_coordinates_2(
         vertices, query, std::back_inserter(dh_coordinates));
+
+      assert(tri_coordinates[count + 0] >= FT(0) && tri_coordinates[count + 0] <= FT(1));
+      assert(tri_coordinates[count + 1] >= FT(0) && tri_coordinates[count + 1] <= FT(1));
+      assert(tri_coordinates[count + 2] >= FT(0) && tri_coordinates[count + 2] <= FT(1));
+
+      assert(dh_coordinates[count + 0] >= FT(0) && dh_coordinates[count + 0] <= FT(1));
+      assert(dh_coordinates[count + 1] >= FT(0) && dh_coordinates[count + 1] <= FT(1));
+      assert(dh_coordinates[count + 2] >= FT(0) && dh_coordinates[count + 2] <= FT(1));
+
       assert(
         tri_coordinates[count + 0] - dh_coordinates[count + 0] == FT(0) &&
         tri_coordinates[count + 1] - dh_coordinates[count + 1] == FT(0) &&

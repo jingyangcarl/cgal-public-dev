@@ -28,6 +28,10 @@
 // Internal includes.
 #include <CGAL/Barycentric_coordinates_2/internal/utils_2.h>
 
+// [1] Reference: "M. S. Floater, K. Hormann, and G. Kos.
+// A general construction of barycentric coordinates over convex polygons.
+// Advances in Computational Mathematics, 24(1-4):311-331, 2006.".
+
 namespace CGAL {
 namespace Barycentric_coordinates {
 namespace internal {
@@ -146,8 +150,6 @@ namespace internal {
       // Return weights.
       for (std::size_t i = 0; i < n; ++i)
         *(weights++) = w[i];
-
-      // Return weights.
       return weights;
     }
   };

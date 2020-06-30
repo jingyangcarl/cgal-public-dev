@@ -1,5 +1,3 @@
-// Does not work with an exact kernel.
-
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -42,7 +40,7 @@ void test_mv_special_points() {
   };
 
   std::size_t count = 0;
-  const FT epsilon = FT(1) / FT(std::pow(10.0, 15.0));
+  const FT epsilon = FT(1) / FT(1000000000000000);
 
   std::vector<FT> coordinates;
   for (std::size_t i = 0; i < 11; ++i) {
@@ -97,9 +95,9 @@ void test_mv_special_points() {
       linear_combination.x() - queries[i].x(),
       linear_combination.y() - queries[i].y());
     assert(
-      ( (coordinate_sum - FT(1)) < epsilon) &&
-        difference.x() < epsilon &&
-        difference.y() < epsilon );
+      CGAL::abs(coordinate_sum - FT(1)) < epsilon &&
+      CGAL::abs(difference.x()) < epsilon &&
+      CGAL::abs(difference.y()) < epsilon );
     count += 7;
   }
 }

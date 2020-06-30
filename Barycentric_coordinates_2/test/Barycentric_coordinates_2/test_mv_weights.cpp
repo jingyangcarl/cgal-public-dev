@@ -1,6 +1,3 @@
-// Does not work with inexact kernel.
-// We get inconsistency when comparing coordinates and expected coordinates.
-
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -27,7 +24,7 @@ int main() {
 
   const FT step    = FT(1) / FT(100);
   const FT scale   = FT(100);
-  const FT epsilon = FT(1) / FT(std::pow(10.0, 14.0));
+  const FT epsilon = FT(1) / FT(100000000000000);
 
   std::size_t count = 0;
   const FT limit = scale * step;
@@ -48,11 +45,11 @@ int main() {
       CGAL::Barycentric_coordinates::mean_value_coordinates_2(
         vertices, query, std::back_inserter(expected));
       assert(
-        coordinates[count + 0] - expected[count + 0] < epsilon &&
-        coordinates[count + 1] - expected[count + 1] < epsilon &&
-        coordinates[count + 2] - expected[count + 2] < epsilon &&
-        coordinates[count + 3] - expected[count + 3] < epsilon &&
-        coordinates[count + 4] - expected[count + 4] < epsilon );
+        CGAL::abs(coordinates[count + 0] - expected[count + 0]) < epsilon &&
+        CGAL::abs(coordinates[count + 1] - expected[count + 1]) < epsilon &&
+        CGAL::abs(coordinates[count + 2] - expected[count + 2]) < epsilon &&
+        CGAL::abs(coordinates[count + 3] - expected[count + 3]) < epsilon &&
+        CGAL::abs(coordinates[count + 4] - expected[count + 4]) < epsilon );
       count += 5;
     }
   }

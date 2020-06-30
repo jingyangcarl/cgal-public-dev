@@ -1,5 +1,3 @@
-// Works with an exact kernel, too.
-
 #include <cmath>
 #include <vector>
 #include <cassert>
@@ -28,7 +26,7 @@ void test_mv_triangle() {
 
   std::size_t count = 0;
   const FT limit = scale * step;
-  const FT epsilon = FT(1) / FT(std::pow(10.0, 14.0));
+  const FT epsilon = FT(1) / FT(100000000000000);
 
   for (FT x = step; x < limit; x += step) {
     for (FT y = step; y < limit; y += step) {
@@ -38,10 +36,19 @@ void test_mv_triangle() {
         vertices[0], vertices[1], vertices[2], query, std::back_inserter(tri_coordinates));
       CGAL::Barycentric_coordinates::mean_value_coordinates_2(
         vertices, query, std::back_inserter(mv_coordinates));
+
+      assert(tri_coordinates[count + 0] >= FT(0) && tri_coordinates[count + 0] <= FT(1));
+      assert(tri_coordinates[count + 1] >= FT(0) && tri_coordinates[count + 1] <= FT(1));
+      assert(tri_coordinates[count + 2] >= FT(0) && tri_coordinates[count + 2] <= FT(1));
+
+      assert(mv_coordinates[count + 0] >= FT(0) && mv_coordinates[count + 0] <= FT(1));
+      assert(mv_coordinates[count + 1] >= FT(0) && mv_coordinates[count + 1] <= FT(1));
+      assert(mv_coordinates[count + 2] >= FT(0) && mv_coordinates[count + 2] <= FT(1));
+
       assert(
-        (tri_coordinates[count + 0] - mv_coordinates[count + 0]) < epsilon &&
-        (tri_coordinates[count + 1] - mv_coordinates[count + 1]) < epsilon &&
-        (tri_coordinates[count + 2] - mv_coordinates[count + 2]) < epsilon );
+        CGAL::abs(tri_coordinates[count + 0] - mv_coordinates[count + 0]) < epsilon &&
+        CGAL::abs(tri_coordinates[count + 1] - mv_coordinates[count + 1]) < epsilon &&
+        CGAL::abs(tri_coordinates[count + 2] - mv_coordinates[count + 2]) < epsilon );
       count += 3;
     }
   }

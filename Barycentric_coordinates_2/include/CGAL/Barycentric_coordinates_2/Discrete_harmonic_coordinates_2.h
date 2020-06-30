@@ -372,7 +372,6 @@ namespace Barycentric_coordinates {
       internal::normalize(w);
       for (std::size_t i = 0; i < n; ++i)
         *(coordinates++) = w[i];
-
       return coordinates;
     }
   };

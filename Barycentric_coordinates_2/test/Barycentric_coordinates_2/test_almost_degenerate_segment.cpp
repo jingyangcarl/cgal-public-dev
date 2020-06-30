@@ -1,6 +1,3 @@
-// Does not work with inexact kernel!
-// Get division by zero during the normalization step.
-
 #include <cmath>
 #include <vector>
 #include <cassert>

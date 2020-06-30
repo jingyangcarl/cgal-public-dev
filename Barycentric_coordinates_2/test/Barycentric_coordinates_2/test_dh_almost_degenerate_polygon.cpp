@@ -1,6 +1,3 @@
-// Does not work with inexact kernel.
-// We get division by zero due to W = 0.
-
 #include <cmath>
 #include <vector>
 #include <cassert>

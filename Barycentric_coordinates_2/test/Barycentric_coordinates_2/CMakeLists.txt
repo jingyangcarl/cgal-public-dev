@@ -30,6 +30,8 @@ if(CGAL_FOUND)
     "test_boundary_coordinates_on_edges.cpp")
 
   create_single_source_cgal_program(
+    "test_wp_dh_unit_square.cpp")
+  create_single_source_cgal_program(
     "test_wp_almost_degenerate_polygon.cpp")
   create_single_source_cgal_program(
     "test_wp_const_linear_precision.cpp")
@@ -58,9 +60,21 @@ if(CGAL_FOUND)
   create_single_source_cgal_program(
     "test_dh_weights.cpp")
 
-  create_single_source_cgal_program(
-    "test_wp_dh_unit_square.cpp")
+  find_package(Eigen3 REQUIRED)
+  if(EIGEN3_FOUND)
+    include(${EIGEN3_USE_FILE})
 
+    create_single_source_cgal_program(
+      "test_hm_unit_square.cpp")
+    create_single_source_cgal_program(
+      "test_hm_const_linear_precision.cpp")
+    create_single_source_cgal_program(
+      "test_hm_triangle.cpp")
+
+  else()
+    message(WARNING
+    "Harmonic coordinates require the Eigen library, and will not be compiled.")
+  endif()
 else()
   message(WARNING
   "This program requires the CGAL library, and will not be compiled.")
