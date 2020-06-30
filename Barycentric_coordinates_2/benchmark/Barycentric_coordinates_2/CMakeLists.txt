@@ -17,6 +17,11 @@ if(CGAL_FOUND)
   create_single_source_cgal_program(
     "Triangle_coordinates/benchmark_triangle_coordinates.cpp")
 
+  create_single_source_cgal_program(
+    "Wachspress_coordinates/benchmark_wp_16_vertices.cpp")
+  create_single_source_cgal_program(
+    "Wachspress_coordinates/benchmark_wp_100_vertices.cpp")
+
 else()
   message(WARNING
   "This program requires the CGAL library, and will not be compiled.")

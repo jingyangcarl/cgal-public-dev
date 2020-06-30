@@ -43,7 +43,7 @@ int main() {
   const double mean_time =
     time / static_cast<double>(number_of_runs);
   std::cout.precision(10);
-  std::cout << "segment coordinates (CPU time): " <<
+  std::cout << "benchmark_segment_coordinates (CPU time): " <<
     mean_time << " seconds" << std::endl;
   return EXIT_SUCCESS;
 }
