@@ -13,15 +13,31 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program(
-    "Segment_coordinates/benchmark_segment_coordinates.cpp")
+    "benchmark_segment_coordinates.cpp")
   create_single_source_cgal_program(
-    "Triangle_coordinates/benchmark_triangle_coordinates.cpp")
+    "benchmark_triangle_coordinates.cpp")
+  create_single_source_cgal_program(
+    "benchmark_polygon_4_vertices.cpp")
+  create_single_source_cgal_program(
+    "benchmark_polygon_16_vertices.cpp")
+  create_single_source_cgal_program(
+    "benchmark_polygon_100_vertices.cpp")
+  create_single_source_cgal_program(
+    "benchmark_mv_34_vertices.cpp")
 
-  create_single_source_cgal_program(
-    "Wachspress_coordinates/benchmark_wp_16_vertices.cpp")
-  create_single_source_cgal_program(
-    "Wachspress_coordinates/benchmark_wp_100_vertices.cpp")
+  find_package(Eigen3 REQUIRED)
+  if(EIGEN3_FOUND)
+    include(${EIGEN3_USE_FILE})
 
+    create_single_source_cgal_program(
+      "benchmark_hm_4_vertices.cpp")
+    create_single_source_cgal_program(
+      "benchmark_hm_50_vertices.cpp")
+
+  else()
+    message(WARNING
+    "Harmonic coordinates require the Eigen library, and will not be compiled.")
+  endif()
 else()
   message(WARNING
   "This program requires the CGAL library, and will not be compiled.")

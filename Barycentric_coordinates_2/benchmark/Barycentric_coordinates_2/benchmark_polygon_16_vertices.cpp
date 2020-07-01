@@ -2,14 +2,18 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Barycentric_coordinates_2/Wachspress_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Mean_value_coordinates_2.h>
+#include <CGAL/Barycentric_coordinates_2/Discrete_harmonic_coordinates_2.h>
 
-using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
-using FT      = typename Kernel::FT;
-using Point_2 = typename Kernel::Point_2;
-using Timer   = CGAL::Real_timer;
-
+using Kernel   = CGAL::Exact_predicates_inexact_constructions_kernel;
+using FT       = typename Kernel::FT;
+using Point_2  = typename Kernel::Point_2;
+using Timer    = CGAL::Real_timer;
 using Vertices = std::vector<Point_2>;
-using WPC2     = CGAL::Barycentric_coordinates::Wachspress_coordinates_2<Vertices, Kernel>;
+
+using WPC2 = CGAL::Barycentric_coordinates::Wachspress_coordinates_2<Vertices, Kernel>;
+using MVC2 = CGAL::Barycentric_coordinates::Mean_value_coordinates_2<Vertices, Kernel>;
+using DHC2 = CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2<Vertices, Kernel>;
 
 int main() {
 
@@ -33,15 +37,19 @@ int main() {
     Point_2(FT(3) / FT(2), FT(13) / FT(4)),
     Point_2(1, FT(7) / FT(2)),
     Point_2(0, FT(7) / FT(2)),
-    Point_2(FT(-1) / FT(2), FT(13) / FT(4)),
+    Point_2(-FT(1) / FT(2), FT(13) / FT(4)),
     Point_2(-1, FT(11) / FT(4)),
-    Point_2(FT(-5) / FT(4), FT(9) / FT(4)),
-    Point_2(FT(-5) / FT(4), FT(5) / FT(4)),
+    Point_2(-FT(5) / FT(4), FT(9) / FT(4)),
+    Point_2(-FT(5) / FT(4), FT(5) / FT(4)),
     Point_2(-1, FT(3) / FT(4)),
-    Point_2(FT(-1) / FT(2), FT(1) / FT(4))
+    Point_2(-FT(1) / FT(2), FT(1) / FT(4))
   };
 
   WPC2 wachspress_coordinates_2(
+    vertices, CGAL::Barycentric_coordinates::Computation_policy_2::FAST);
+  MVC2 mean_value_coordinates_2(
+    vertices, CGAL::Barycentric_coordinates::Computation_policy_2::FAST);
+  DHC2 discrete_harmonic_coordinates_2(
     vertices, CGAL::Barycentric_coordinates::Computation_policy_2::FAST);
 
   Timer timer;
@@ -54,7 +62,14 @@ int main() {
     for (FT x = zero; x <= one; x += x_step) {
       for (FT y = zero; y <= one; y += y_step) {
         const Point_2 query(x, y);
-        wachspress_coordinates_2(query, it);
+
+           wachspress_coordinates_2(query, it);
+        // mean_value_coordinates_2(query, it);
+        // discrete_harmonic_coordinates_2(query, it);
+
+        // wachspress_coordinates_2.weights(query, it);
+        // mean_value_coordinates_2.weights(query, it);
+        // discrete_harmonic_coordinates_2.weights(query, it);
       }
     }
     timer.stop();
@@ -65,7 +80,7 @@ int main() {
   const double mean_time =
     time / static_cast<double>(number_of_runs);
   std::cout.precision(10);
-  std::cout << "benchmark_wp_16_vertices (CPU time): " <<
+  std::cout << "benchmark_polygon_16_vertices (CPU time): " <<
     mean_time << " seconds" << std::endl;
   return EXIT_SUCCESS;
 }
