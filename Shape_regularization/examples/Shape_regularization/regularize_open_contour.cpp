@@ -1,10 +1,10 @@
 #include "include/utils.h"
 #include "include/Saver.h"
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_regularization/regularize_contours.h>
 
 // Typedefs.
-using Kernel    = CGAL::Exact_predicates_exact_constructions_kernel;
+using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT        = typename Kernel::FT;
 using Point_2   = typename Kernel::Point_2;
 using Contour   = std::vector<Point_2>;

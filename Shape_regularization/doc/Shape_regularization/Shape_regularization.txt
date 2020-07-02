@@ -105,7 +105,8 @@ To apply the angle regularization on a set of 2D segments, the user has to:
 interval [0, 90] degrees. If no bound is provided, a bound of 25 degrees will be set as the default value;
 - add groups of segments, if any, through the
 `CGAL::Shape_regularization::Segments::Angle_regularization_2::add_group()` method.
-These groups are identical to the ones from \ref QP_Regularization_Segments_Delaunay.
+
+After the optimization, each segment is rotated with respect to its midpoint.
 
 \cgalFigureBegin{regularize_100_segments_angles_example, regularize_100_segments_angles.svg}
 A generated set of 2D segments before (red) and after (green) the angle regularization.
@@ -128,8 +129,18 @@ interval [0, +inf). If no bound is provided, a bound of 0.5 unit length will be 
 - add groups of parallel segments through the
 `CGAL::Shape_regularization::Segments::Offset_regularization_2::add_group()` method.
 If the user does not have these groups, they can be obtained from \ref QP_Regularization_Segments_Angles
-"Angle Regularization" by orienting original segments or they can be computed by using the utility function
+"Angle Regularization" by orienting original segments or from the utility function
 `CGAL::Shape_regularization::Segments::parallel_groups()`. See more details \ref QP_Regularization_Segments_Groups "here".
+
+After the optimization, each segment is translated along its orthogonal direction.
+
+Note that if the input segments within the same group are not exactly parallel, the distance between
+the supporting lines of these segments is not well-defined that may lead to deviations in
+the result from what the user would expect in case of exactly parallel segments. The offset
+regularization does not internally orient segments to make them exactly parallel. This is
+what the \ref QP_Regularization_Segments_Angles "Angle Regularization" class for. The
+utility function `CGAL::Shape_regularization::Segments::parallel_groups()` does not orient
+segments, too, but only returns groups of near-parallel segments.
 
 \cgalFigureBegin{regularize_100_segments_offsets_example, regularize_100_segments_offsets.svg}
 A generated set of 2D segments before (red) and after (green) the offset regularization.
@@ -161,7 +172,7 @@ directly instead of calling the function `CGAL::Shape_regularization::Segments::
 
 \anchor Regularize_15_Segments_Figure
 \cgalFigureBegin{regularize_15_segments_example, regularize_15_segments.svg}
-A set of 2D segments before (red) and after (green) the shape regularization.
+A set of 2D segments before (red), after the angle (yellow), and the offset (green) regularization.
 \cgalFigureEnd
 
 \cgalExample{Shape_regularization/regularize_15_segments.cpp}
@@ -175,7 +186,7 @@ using the bounds of 80 degrees and 2 unit lengths respectively.
 The `CGAL::Exact_predicates_inexact_constructions_kernel` kernel is used.
 
 \cgalFigureBegin{regularize_real_data_2_example, regularize_real_data_2.svg}
-A set of 2D segments before (red) and after (green) the shape regularization.
+A set of 2D segments before (red), after the angle (yellow), and the offset (green) regularization.
 \cgalFigureEnd
 
 \cgalExample{Shape_regularization/regularize_real_data_2.cpp}
@@ -211,6 +222,9 @@ segments are either parallel or orthogonal to each other. The one `CGAL::Shape_r
 first creates groups of parallel segments and then splits each of these groups
 into groups of collinear segments, if any.
 
+Note that none of these functions applies the regularization of the input segments. They
+only return groups of indices of segments with similar orientations and/or positions.
+
 
 \section Contour_Regularization Contours
 
@@ -234,7 +248,8 @@ collinear or orthogonal to the reference direction(s).
 
 \cgalFigureBegin{multiple_directions, multiple_directions.svg}
 A closed contour before (red) and after (green) the contour regularization.
-The found principal directions are marked yellow.
+The found principal directions are marked yellow and they are found using the
+multiple directions estimator below.
 \cgalFigureEnd
 
 To estimate principal directions of the contour, this component provides three
@@ -260,10 +275,10 @@ each segment by calling the `ContourDirections::orient()` method.
 
 \subsection Contour_Regularization_Closed Closed
 
-In the example below, we regularize a closed contour. We first try to find multiple
-directions, but since the original contour is very rectilinear, we revert back to the
-direction defined by the longest contour edge. The used kernel is
-`Exact_predicates_inexact_constructions_kernel`.
+In the example below, we regularize a closed contour. We use multiple directions
+estimator, which returns only one direction, because the contour is quite rectilinear.
+In fact, the returned direction in this case coincides with the longest edge direction.
+The used kernel is `Exact_predicates_inexact_constructions_kernel`.
 
 \cgalFigureBegin{regularize_closed_contour_example, regularize_closed_contour.svg}
 A closed contour before (red) and after (green) the contour regularization.
@@ -277,12 +292,9 @@ A closed contour before (red) and after (green) the contour regularization.
 Open contours are contours where the head and tail of the contour are not connected.
 This case requires a special treatment, but the core of the algorithm is the same.
 In the example below, we regularize an open contour with respect to
-its longest edge. The used kernel is `Exact_predicates_exact_constructions_kernel`.
-Though this exact kernel provides better quality results, please note that it may
-significantly slow down the execution of the program, so if you need a faster version
-of the algorithm, use a floating type based kernel. This example also shows how to
-provide a property map in the algorithm in order to give the algorithm access to
-the coordinates of the contour vertices.
+its longest edge. This example also shows how to provide a property map in the algorithm
+in order to give the algorithm access to the coordinates of the contour vertices.
+The used kernel is `Exact_predicates_inexact_constructions_kernel`.
 
 \cgalFigureBegin{regularize_open_contour_example, regularize_open_contour.svg}
 An open contour before (red) and after (green) the contour regularization.

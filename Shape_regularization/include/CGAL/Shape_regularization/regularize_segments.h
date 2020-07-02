@@ -261,6 +261,8 @@ namespace Segments {
     far away from each other. This algorithm concerns only the angle relationship
     among segments, but not the distance.
 
+    This function does not regularize input segments, but only groups them.
+
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
@@ -337,6 +339,8 @@ namespace Segments {
     far away from each other. This algorithm concerns only the angle relationship
     among segments, but not the distance.
 
+    This function does not regularize input segments, but only groups them.
+
     This function infers a traits class from the `InputRange` iterator's value type.
 
     \tparam InputRange
@@ -409,6 +413,8 @@ namespace Segments {
     This algorithm first finds the groups of
     `CGAL::Shape_regularization::Segments::parallel_segments()` and then splits
     these groups into groups of collinear segments.
+
+    This function does not regularize input segments, but only groups them.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -486,6 +492,8 @@ namespace Segments {
     `CGAL::Shape_regularization::Segments::parallel_segments()` and then splits
     these groups into groups of collinear segments.
 
+    This function does not regularize input segments, but only groups them.
+
     This function infers a traits class from the `InputRange` iterator's value type.
 
     \tparam InputRange
@@ -558,6 +566,8 @@ namespace Segments {
     This algorithm first finds the groups of
     `CGAL::Shape_regularization::Segments::parallel_segments()` and then merges
     these groups into groups of orthogonal segments.
+
+    This function does not regularize input segments, but only groups them.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -634,6 +644,8 @@ namespace Segments {
     This algorithm first finds the groups of
     `CGAL::Shape_regularization::Segments::parallel_segments()` and then merges
     these groups into groups of orthogonal segments.
+
+    This function does not regularize input segments, but only groups them.
 
     This function infers a traits class from the `InputRange` iterator's value type.
 
