@@ -46,7 +46,7 @@ namespace Barycentric_coordinates {
     at any point inside a strictly convex polygon.
 
     Discrete harmonic coordinates are well-defined in the closure of a strictly
-    convex polygon but they are not necesserily positive. The coordinates are
+    convex polygon but they are not necessarily positive. The coordinates are
     computed analytically.
 
     \tparam Polygon

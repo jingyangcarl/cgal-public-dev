@@ -11,7 +11,7 @@ used to approximate certain types of generalized barycentric coordinate function
 The domain is bounded by the polygon.
 
 \cgalHasModel
-- `CGAL::Barycentric_coordinates::Delaunay_domain_2`
+`CGAL::Barycentric_coordinates::Delaunay_domain_2`
 */
 class DiscretizedDomain_2 {
 

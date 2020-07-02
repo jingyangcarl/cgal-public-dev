@@ -36,8 +36,8 @@ they can be evaluated analytically at any point inside the polygon.
 
 For all analytic coordinates, we provide two algorithms. One has a linear time complexity,
 but may suffer imprecisions near the polygon boundary, while the second one is precise
-but has a quadratic time complexity. The user can choose the prefered algorithm by
-specifying a `CGAL::Barycentric_coordinates::Computation_policy`.
+but has a quadratic time complexity. The user can choose the preferred algorithm by
+specifying a `CGAL::Barycentric_coordinates::Computation_policy_2`.
 
 All analytic barycentric coordinates for polygons can be computed either by instantiating a class
 or through one of the free functions. Harmonic coordinates can be computed only by
@@ -60,7 +60,7 @@ All class and function templates are parameterized by a traits class, which is a
 of the concept `BarycentricTraits_2`. It provides all necessary geometric primitives,
 predicates, and constructions, which are required for the computation. All models of `Kernel`
 can be used. A polygon is provided as a range of vertices with a
-\ref PkgPropertyMapRef "propery map" that maps a vertex from the polygon to `CGAL::Point_2`.
+\ref PkgPropertyMapRef "property map" that maps a vertex from the polygon to `CGAL::Point_2`.
 
 
 \section gbc_examples Examples
@@ -74,7 +74,7 @@ with basic uses of different barycentric components.
 This example shows the use of the global function `CGAL::Barycentric_coordinates::segment_coordinates_2()`.
 We compute coordinates at three green points along the segment \f$[v_0, v_1]\f$ and at two blue points outside this segment
 but along its supporting line. The symmetry of the query points helps recognizing errors that
-may have occured during construction of the example. The used `Kernel` is exact.
+may have occurred during construction of the example. The used `Kernel` is exact.
 
 \anchor seg_coord_example
 \cgalFigureBegin{seg_example, seg_coord_example.png}
@@ -132,7 +132,7 @@ in a star-shaped polygon. We note that this type of coordinates is well-defined 
 while Wachspress and discrete harmonic coordinates are not. However, it may give negative
 coordinate values for points outside <a href="https://en.wikipedia.org/wiki/Star-shaped_polygon">the polygon's kernel</a>
 (shown in red). We speed up the computation using the linear time complexity algorithm by specifying
-the policy `CGAL::Barycentric_coordinates::Computation_policy`. The used `Kernel` is inexact.
+the policy `CGAL::Barycentric_coordinates::Computation_policy_2`. The used `Kernel` is inexact.
 
 \anchor mv_coord_example
 \cgalFigureBegin{mv_example, mv_coord_example.png}
@@ -270,7 +270,7 @@ the coordinates can also be computed but not everywhere (see below for more deta
 the resulting precision of the computation is due to the involved algorithm and a chosen number type.
 In the following paragraph, we discuss two available algorithms for computing Wachspress coordinates
 when an inexact number type is used. The chosen algorithm is defined by
-`CGAL::Barycentric_coordinates::Computation_policy`.
+`CGAL::Barycentric_coordinates::Computation_policy_2`.
 
 \anchor wp_polygon
 \cgalFigureBegin{wp_notations, wp_notations.png}
@@ -442,7 +442,7 @@ triangle to the query point with the help of \ref gbc_deg_triangular_coordinates
 We strive for robustness and efficiency at the same time. The efficiency is especially important.
 These coordinates are used in many applications where they must be computed for millions of points
 and, thus, the real time computation of coordinates is crucial. When writing the code,
-we tried to fulfil this important requirement. In this section, we present a few results
+we tried to fulfill this important requirement. In this section, we present a few results
 about the computation running times of the implemented algorithms.
 
 The structure of the speed test that we use to evaluate the running times consists
