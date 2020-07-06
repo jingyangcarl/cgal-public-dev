@@ -40,13 +40,17 @@ namespace Generalized_weights {
     is formed by two midpoints of the edges incident to `q` and the circumcenter of
     the triangle `[vj, vp, q]`.
 
+    \cgalFigureBegin{mixed_voronoi_cell_weight, mixed_voronoi_cell.svg}
+      Notation used for the mixed Voronoi cell weight.
+    \cgalFigureEnd
+
     However, unlike the original `CGAL::Generalized_weights::Voronoi_cell_weight_2`,
     if one of the angles in the triangle `[vj, vp, q]` is obtuse and the circumcenter
     vertex of the region is outside this triangle, this vertex is moved to the mid
     point of the edge `[vj, vp]`.
 
-    \cgalFigureBegin{mixed_voronoi_cell_weight, mixed_voronoi_cell.svg}
-      Notation used for the mixed Voronoi cell weight.
+    \cgalFigureBegin{mixed_voronoi_cell_obtuse_weight, mixed_voronoi_cell_obtuse.svg}
+      The case with the obtuse angle.
     \cgalFigureEnd
 
     \tparam GeomTraits

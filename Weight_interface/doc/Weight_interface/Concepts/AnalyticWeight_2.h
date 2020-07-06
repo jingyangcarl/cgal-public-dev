@@ -5,6 +5,10 @@
 A concept that describes the set of methods that should be defined for all 2D
 generalized weights, which can be computed analytically.
 
+\cgalFigureBegin{neighborhood, neighborhood.svg}
+  Notation used for the local neighborhood.
+\cgalFigureEnd
+
 \cgalHasModel
 - `CGAL::Generalized_weights::Uniform_weight_2`
 - `CGAL::Generalized_weights::Three_point_family_weight_2`
@@ -28,7 +32,7 @@ public:
 
     Here, `query` is usually a query point inside a polygon, `vj` is the jth vertex
     of a polygon, `vm` is the previous polygon vertex, and `vp` is the next polygon
-    vertex in the counterclockwise order.
+    vertex in the counterclockwise order (see the figure above).
 
     This configuration is arising when the weight is computed on a 2D plane.
 
@@ -48,7 +52,7 @@ public:
 
     Here, `query` is usually the center vertex of the one-ring neighborhood in a
     polygon mesh, `vj` is the jth neighbor of the center vertex, `vm` is the previous
-    neighbor, and `vp` is the next neighbor in the counterclockwise order.
+    neighbor, and `vp` is the next neighbor in the counterclockwise order (see the figure above).
 
     This configuration is arising when the weight is computed on a 2D surface
     embedded in 3D.
