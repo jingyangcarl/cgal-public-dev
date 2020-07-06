@@ -54,10 +54,10 @@ of each segment by constructing a Delaunay triangulation. See more details
 And two models of the `RegularizationType` concept:
 
 - `CGAL::Shape_regularization::Segments::Angle_regularization_2` - orients segments
-to preserve parallelism and orthogonality among them. See more details
+to reinforce parallelism and orthogonality among them. See more details
 \ref QP_Regularization_Segments_Angles "here".
 - `CGAL::Shape_regularization::Segments::Offset_regularization_2` - aligns parallel segments
-to preserve collinearity among them. See more details
+to reinforce collinearity among them. See more details
 \ref QP_Regularization_Segments_Offset "here".
 
 \remark The core of this algorithm is the \ref QP_Regularization framework. For more details, please
@@ -99,7 +99,7 @@ and interior bottom rhombus.
 
 \subsection QP_Regularization_Segments_Angles Angle Regularization
 
-This class orients 2D segments in order to preserve parallelism and orthogonality among them.
+This class orients 2D segments in order to reinforce parallelism and orthogonality among them.
 To apply the angle regularization on a set of 2D segments, the user has to:
 - specify the max angle deviation of a segment from its initial orientation that has to be within the
 interval [0, 90] degrees. If no bound is provided, a bound of 25 degrees will be set as the default value;
@@ -122,7 +122,7 @@ The max angle bound is set to 40 degrees and the `CGAL::Simple_cartesian<double>
 
 \subsection QP_Regularization_Segments_Offset Offset Regularization
 
-This class aligns 2D parallel segments in order to preserve collinearity among them.
+This class aligns 2D parallel segments in order to reinforce collinearity among them.
 To apply the offset regularization on a set of 2D segments, the user has to:
 - specify the max distance between two parallel segments that has to be within the
 interval [0, +inf). If no bound is provided, a bound of 0.5 unit length will be set as the default value.
@@ -134,12 +134,13 @@ If the user does not have these groups, they can be obtained from \ref QP_Regula
 
 After the optimization, each segment is translated along its orthogonal direction.
 
-Note that if the input segments within the same group are not exactly parallel, the distance between
-the supporting lines of these segments is not well-defined that may lead to deviations in
-the result from what the user would expect in case of exactly parallel segments. The offset
-regularization does not internally orient segments to make them exactly parallel. This is
-what the \ref QP_Regularization_Segments_Angles "Angle Regularization" class for. The
-utility function `CGAL::Shape_regularization::Segments::parallel_groups()` does not orient
+Note that if the input segments within the same group are not exactly parallel, the distance, which
+is defined as the distance between the midpoint of one segment and the projection of this point
+onto the supporting line of another segment, is not a good metric to optimize positions of the
+segments that may lead to deviations in the result from what the user would expect in case of
+exactly parallel segments. The offset regularization does not internally orient segments to make
+them exactly parallel. This is what the \ref QP_Regularization_Segments_Angles "Angle Regularization"
+class for. The utility function `CGAL::Shape_regularization::Segments::parallel_groups()` does not orient
 segments, too, but only returns groups of near-parallel segments.
 
 \cgalFigureBegin{regularize_100_segments_offsets_example, regularize_100_segments_offsets.svg}
@@ -244,7 +245,9 @@ We assume that each contour has at least one principal direction that is a refer
 direction towards which the contour edges are either rotated or displaced. Given a
 user defined max angle deviation between an edge and a principal direction and a max distance
 between two consecutive parallel edges, each edge within these thresholds is made either parallel,
-collinear or orthogonal to the reference direction(s).
+collinear or orthogonal to the reference direction(s). The distance here is defined as
+the distance between the midpoint of the first edge and the projection of this point
+onto the supporting line of the next edge.
 
 \cgalFigureBegin{multiple_directions, multiple_directions.svg}
 A closed contour before (red) and after (green) the contour regularization.
@@ -366,7 +369,7 @@ these two terms. By setting up the correct types of \f$D(\boldsymbol{x})\f$ and 
 the problem can be reformulated into a quadratic optimization problem with \f$(n + m)\f$ variables
 and \f$2(n + m)\f$ linear constraints, where \f$m\f$ is the number of unique pairs formed by connecting
 an item to one of its closest neighbors. Let us explain how it all works when the input items
-are segments and we want to regularize their orientations in order to preserve parallelism and
+are segments and we want to regularize their orientations in order to reinforce parallelism and
 orthogonality among them.
 
 To set up the framework, we first need to find closest neigbors for each segment.

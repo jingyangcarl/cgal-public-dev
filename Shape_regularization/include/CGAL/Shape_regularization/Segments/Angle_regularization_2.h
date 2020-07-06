@@ -40,7 +40,7 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief An angle-based regularization type for 2D segments that preserves
+    \brief An angle-based regularization type for 2D segments that reinforces
     parallelism and orthogonality relationships.
 
     \tparam GeomTraits

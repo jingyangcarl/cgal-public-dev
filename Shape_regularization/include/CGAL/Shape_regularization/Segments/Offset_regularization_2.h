@@ -40,7 +40,7 @@ namespace Segments {
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
-    \brief An offset-based regularization type for 2D segments that preserves
+    \brief An offset-based regularization type for 2D segments that reinforces
     collinearity relationships.
 
     All input segments should be either orthogonal or parallel to each other.
@@ -189,7 +189,10 @@ namespace Segments {
       \brief calculates the target value between 2 parallel segments, which are
       direct neighbors to each other.
 
-      The target value is the distance between two parallel segments `i` and `j`.
+      The target value is the distance between two parallel segments `i` and `j`,
+      where the distance is defined as the distance between the midpoint of the
+      ith segment and the projection of this point onto the supporting line
+      of the jth segment.
 
       \param i
       index of the first segment
