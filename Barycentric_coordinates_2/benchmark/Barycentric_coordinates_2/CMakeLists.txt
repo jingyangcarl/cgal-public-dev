@@ -32,7 +32,7 @@ if(CGAL_FOUND)
     create_single_source_cgal_program(
       "benchmark_hm_4_vertices.cpp")
     create_single_source_cgal_program(
-      "benchmark_hm_50_vertices.cpp")
+      "benchmark_hm_n_vertices.cpp")
 
   else()
     message(WARNING

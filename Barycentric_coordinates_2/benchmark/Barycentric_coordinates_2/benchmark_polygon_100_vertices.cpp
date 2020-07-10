@@ -39,7 +39,7 @@ int main() {
   const FT y_step = one / static_cast<FT>(number_of_y_coordinates);
 
   const std::size_t n = 100;
-  const double radius = 2;
+  const double radius = 2.0;
   Vertices vertices;
   generate_regular_polygon(
     n, radius, vertices);

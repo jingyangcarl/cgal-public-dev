@@ -13,31 +13,44 @@ using Vertices = std::vector<Point_2>;
 using Domain = CGAL::Barycentric_coordinates::Delaunay_domain_2<Vertices, Kernel>;
 using HMC2   = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Vertices, Domain, Kernel>;
 
+void generate_regular_polygon(
+  const std::size_t n,
+  const double radius,
+  Vertices& vertices) {
+
+  vertices.clear();
+  vertices.reserve(n);
+  for (std::size_t i = 0; i < n; ++i)
+    vertices.push_back(Point_2(
+      static_cast<FT>(+radius * sin((CGAL_PI / n) + ((i * 2.0 * CGAL_PI) / n))),
+      static_cast<FT>(-radius * cos((CGAL_PI / n) + ((i * 2.0 * CGAL_PI) / n)))));
+}
+
 int main() {
 
   Timer timer;
   std::cout.precision(10);
-
-  const std::vector<Point_2> vertices = {
-    Point_2(0, 0), Point_2(1, 0),
-    Point_2(1, 1), Point_2(0, 1)
+  const double radius = 1.0;
+  const std::vector<std::size_t> ns = {
+    5, 10, 25, 50, 100, 500, 1000
   };
-
   const std::vector<FT> scales = {
-    0.175, 0.072, 0.05, 0.01, 0.0071, 0.00502, 0.00224, 0.00158
+    0.00718, 0.0086, 0.00885, 0.00886, 0.00887, 0.00888, 0.00888
   };
 
   std::list<Point_2> list_of_seeds;
-  list_of_seeds.push_back(Point_2(0.5, 0.5));
+  list_of_seeds.push_back(Point_2(0.0, 0.0));
 
-  Domain domain(vertices);
-  HMC2 harmonic_coordinates_2(vertices, domain);
+  for (std::size_t i = 0; i < ns.size(); ++i) {
+    Vertices vertices;
+    generate_regular_polygon(ns[i], radius, vertices);
 
-  for (const FT scale : scales) {
-    domain.clear();
-    domain.create(scale, list_of_seeds);
-    std::cout << "benchmark_hm_4_vertices, num queries: " <<
-      domain.number_of_vertices() << std::endl;
+    Domain domain(vertices);
+    domain.create(scales[i], list_of_seeds);
+
+    HMC2 harmonic_coordinates_2(vertices, domain);
+    std::cout << "benchmark_hm_n_vertices, num vertices/num queries: " <<
+      ns[i] << "/" << domain.number_of_vertices() << std::endl;
     harmonic_coordinates_2.clear();
 
     timer.reset(); timer.start();
@@ -57,7 +70,7 @@ int main() {
 
     const double total = setup + factorize + solve;
     std::cout <<
-      "benchmark_hm_4_vertices, compute (CPU time setup/factorize/solve/total): " <<
+      "benchmark_hm_n_vertices, compute (CPU time setup/factorize/solve/total): " <<
     setup << "/" << factorize << "/" << solve << "/" << total << " seconds" << std::endl;
   }
   return EXIT_SUCCESS;
