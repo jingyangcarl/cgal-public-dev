@@ -38,13 +38,27 @@ int main() {
     domain.create(scale, list_of_seeds);
     std::cout << "benchmark_hm_4_vertices, num vertices: " <<
       domain.number_of_vertices() << std::endl;
-
     harmonic_coordinates_2.clear();
+
     timer.reset(); timer.start();
-    harmonic_coordinates_2.compute();
+    harmonic_coordinates_2.setup();
     timer.stop();
-    std::cout << "benchmark_hm_4_vertices, compute (CPU time): " <<
-      timer.time() << " seconds" << std::endl;
+    const double setup = timer.time();
+
+    timer.reset(); timer.start();
+    harmonic_coordinates_2.factorize();
+    timer.stop();
+    const double factorize = timer.time();
+
+    timer.reset(); timer.start();
+    harmonic_coordinates_2.solve();
+    timer.stop();
+    const double solve = timer.time();
+
+    const double total = setup + factorize + solve;
+    std::cout <<
+      "benchmark_hm_4_vertices, compute (CPU time setup/factorize/solve/total): " <<
+    setup << "/" << factorize << "/" << solve << "/" << total << " seconds" << std::endl;
   }
   return EXIT_SUCCESS;
 }

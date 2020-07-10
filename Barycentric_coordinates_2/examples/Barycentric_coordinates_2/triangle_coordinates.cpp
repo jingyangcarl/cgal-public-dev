@@ -16,16 +16,16 @@ int main() {
 
   // Construct several interior, boundary, and exterior query points.
   const std::vector<Point_2> queries = {
-    Point_2(0.5, 0.5), // interior query points
-    Point_2(1.0, 0.5), Point_2(1.0, 0.75), Point_2(1.0, 1.0),
+    Point_2(0.50, 0.50), // interior query points
+    Point_2(1.00, 0.50), Point_2(1.0, 0.75), Point_2(1.00, 1.0),
+    Point_2(1.00, 1.25), Point_2(1.0, 1.50), Point_2(0.75, 1.0),
+    Point_2(1.25, 1.00), Point_2(1.5, 0.75),
 
-    Point_2(1.0, 1.25), // boundary query points
-    Point_2(1.0, 1.50), Point_2(0.75, 1.0) , Point_2(1.25, 1.0),
-    Point_2(1.5, 0.75), Point_2(1.0 , 0.25), Point_2(0.5 , 1.0),
-    Point_2(1.5, 1.25), Point_2(1.0 , 2.0) , Point_2(2.0 , 0.5),
+    Point_2(2.0, 0.50), Point_2(1.0, 2.00), // boundary query points
+    Point_2(1.0, 0.25), Point_2(1.5, 1.25), Point_2(0.5, 1.0),
 
-    Point_2(0.25, 1.0), // exterior query points
-    Point_2(0.5, 1.75), Point_2(1.5, 1.75), Point_2(1.75, 1.5) };
+    Point_2(0.25, 1.00), Point_2(0.50, 1.75), // exterior query points
+    Point_2(1.50, 1.75), Point_2(1.75, 1.50) };
 
   // Compute triangle coordinates.
   std::vector<FT> coordinates;
