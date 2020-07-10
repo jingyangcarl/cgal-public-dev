@@ -236,7 +236,7 @@ the user must be sure about the query point being exactly on the line \f$L\f$ su
 Since in many applications this is not the case, and a query point may lie very close but not exactly on this line,
 the class provides a solution to remedy this situation.
 
-\cgalFigureBegin{seg_coord_projection, seg_coord_projection.png}
+\cgalFigureBegin{seg_coord_projection, seg_coord_projection.svg}
 The orthogonal projection \f$p'\f$ of the vector \f$p\f$ (green) onto the vector \f$q\f$ (red).
 \cgalFigureEnd
 
@@ -278,7 +278,7 @@ when an inexact number type is used. The chosen algorithm is defined by
 `CGAL::Barycentric_coordinates::Computation_policy_2`.
 
 \anchor wp_polygon
-\cgalFigureBegin{wp_notations, wp_notations.png}
+\cgalFigureBegin{wp_notations, wp_notations.svg}
 Notation for Wachspress coordinates.
 \cgalFigureEnd
 
@@ -308,7 +308,7 @@ far away from the polygon. Speaking precisely, it interpolates the intersection 
 the continuations of the polygon edges. Therefore, the computation of Wachspress coordinates
 outside the polygon is possible only at points that do not belong to this curve.
 
-\cgalFigureBegin{wp_zero_set, wp_zero_set.png}
+\cgalFigureBegin{wp_zero_set, wp_zero_set.svg}
 Zero set (red) of the Wachspress coordinates' denominator \f$W^{wp}\f$ for a non-regular hexagon.
 \cgalFigureEnd
 
@@ -327,7 +327,7 @@ we describe two algorithms to compute the coordinates when an inexact number typ
 one is of max precision and one is of max speed.
 
 \anchor dh_polygon
-\cgalFigureBegin{dh_notations, dh_notations.png}
+\cgalFigureBegin{dh_notations, dh_notations.svg}
 Notation for discrete harmonic coordinates.
 \cgalFigureEnd
 
@@ -371,7 +371,7 @@ if your traits class provides a more precise version of the square root function
 of the computation with exact number types will depend only on the precision of that function.
 
 \anchor mv_polygon
-\cgalFigureBegin{mv_notations, mv_notations.png}
+\cgalFigureBegin{mv_notations, mv_notations.svg}
 Notation for mean value coordinates.
 \cgalFigureEnd
 
@@ -388,7 +388,7 @@ of the signed mean value weight, which can be found efficiently (see the figures
 Basically, this weight is always positive to the left of the red piecewise linear curve,
 and it is negative to the right of this curve, moving in the counterclockwise direction.
 
-\cgalFigureBegin{mv_weight_signs, mv_weight_signs_convex.png, mv_weight_signs_concave.png}
+\cgalFigureBegin{mv_weight_signs, mv_weight_signs.svg}
 Signs of the mean value weight \f$w_i\f$ depending on the region with respect to a
 convex polygon \f$P\f$ and a concave polygon \f$P'\f$.
 \cgalFigureEnd
@@ -428,7 +428,7 @@ approximation of the coordinates, the user should provide a rather dense partiti
 of the polygon's interior domain that in turn leads to larger running times when
 computing the coordinates.
 
-\cgalFigureBegin{terrain_triangulation, terrain_triangulation.png}
+\cgalFigureBegin{terrain_triangulation, terrain_triangulation.svg}
 Sparse triangulation of the polygon's interior domain (left): smaller running times,
 lower coordinates quality; dense triangulation (right): larger running times,
 higher coordinates quality.
