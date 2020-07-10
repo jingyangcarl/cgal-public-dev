@@ -42,7 +42,7 @@ is no segment from one group will be oriented and/or aligned towards a segment f
 (see more details \ref QP_Regularization_Segments_Delaunay "here").
 
 To apply the algorithm, one has to define two models: one of the concept `NeighborQuery` that provides
-an access to the closest neigbors of a segment; and the other one of the concept `RegularizationType`
+an access to the closest neighbors of a segment; and the other one of the concept `RegularizationType`
 that provides one of the available regularities, which should be adjusted.
 
 This \cgal component provides a model of the `NeighborQuery` concept:
@@ -372,7 +372,7 @@ an item to one of its closest neighbors. Let us explain how it all works when th
 are segments and we want to regularize their orientations in order to reinforce parallelism and
 orthogonality among them.
 
-To set up the framework, we first need to find closest neigbors for each segment.
+To set up the framework, we first need to find closest neighbors for each segment.
 These neighbors are provided via the concept `NeighborQuery`. Internally, we create a graph
 based on these neighbors. Every edge \f$\{i, j\}\f$, where \f$i\f$ is the index of the ith
 segment and \f$j\f$ is the index of the jth segment is inserted in the graph whenever \f$i < j\f$.
@@ -485,15 +485,40 @@ This table includes some timings of running several representative examples from
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadCenter">Example </th><th class="markdownTableHeadCenter">Number of segments </th><th class="markdownTableHeadCenter">Number of modified segments: Angle regularization  </th><th class="markdownTableHeadCenter">Number of modified segments: Offset regularization  </th><th class="markdownTableHeadCenter">Time (in seconds): Angle regularization </th><th class="markdownTableHeadCenter">Time (in seconds): Offset regularization </th></tr>
+<th class="markdownTableHeadCenter">Example </th>
+<th class="markdownTableHeadCenter">Number of segments </th>
+<th class="markdownTableHeadCenter">Number of modified segments: Angle regularization </th>
+<th class="markdownTableHeadCenter">Number of modified segments: Offset regularization </th>
+<th class="markdownTableHeadCenter">Time (in seconds): Angle regularization </th>
+<th class="markdownTableHeadCenter">Time (in seconds): Offset regularization </th></tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_15_segments  </td><td class="markdownTableBodyCenter">15  </td><td class="markdownTableBodyCenter">15  </td><td class="markdownTableBodyCenter">11  </td><td class="markdownTableBodyCenter">0.000247   </td><td class="markdownTableBodyCenter">0.000140   </td></tr>
+<td class="markdownTableBodyCenter">regularize_15_segments </td>
+<td class="markdownTableBodyCenter">15 </td>
+<td class="markdownTableBodyCenter">15 </td>
+<td class="markdownTableBodyCenter">11 </td>
+<td class="markdownTableBodyCenter">0.000247 </td>
+<td class="markdownTableBodyCenter">0.000140 </td></tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_100_segments_angles  </td><td class="markdownTableBodyCenter">100  </td><td class="markdownTableBodyCenter">100  </td><td class="markdownTableBodyCenter">N/A  </td><td class="markdownTableBodyCenter">0.002310   </td><td class="markdownTableBodyCenter">N/A  </td></tr>
+<td class="markdownTableBodyCenter">regularize_100_segments_angles </td>
+<td class="markdownTableBodyCenter">100 </td>
+<td class="markdownTableBodyCenter">100 </td>
+<td class="markdownTableBodyCenter">N/A </td>
+<td class="markdownTableBodyCenter">0.002310 </td>
+<td class="markdownTableBodyCenter">N/A </td></tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_100_segments_offsets  </td><td class="markdownTableBodyCenter">100  </td><td class="markdownTableBodyCenter">N/A  </td><td class="markdownTableBodyCenter">100  </td><td class="markdownTableBodyCenter">N/A   </td><td class="markdownTableBodyCenter">0.001109  </td></tr>
+<td class="markdownTableBodyCenter">regularize_100_segments_offsets </td>
+<td class="markdownTableBodyCenter">100 </td>
+<td class="markdownTableBodyCenter">N/A </td>
+<td class="markdownTableBodyCenter">100 </td>
+<td class="markdownTableBodyCenter">N/A </td>
+<td class="markdownTableBodyCenter">0.001109 </td></tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_real_data_2  </td><td class="markdownTableBodyCenter">65  </td><td class="markdownTableBodyCenter">65 </td><td class="markdownTableBodyCenter">64  </td><td class="markdownTableBodyCenter">0.001873   </td><td class="markdownTableBodyCenter">0.000396  </td></tr>
+<td class="markdownTableBodyCenter">regularize_real_data_2 </td>
+<td class="markdownTableBodyCenter">65 </td>
+<td class="markdownTableBodyCenter">65 </td>
+<td class="markdownTableBodyCenter">64 </td>
+<td class="markdownTableBodyCenter">0.001873 </td>
+<td class="markdownTableBodyCenter">0.000396 </td></tr>
 </table>
 
 
