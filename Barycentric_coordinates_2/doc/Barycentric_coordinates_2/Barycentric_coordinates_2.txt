@@ -66,7 +66,7 @@ can be used. A polygon is provided as a range of vertices with a
 \section gbc_examples Examples
 
 In order to facilitate the process of learning this package, we provide various examples
-with basic uses of different barycentric components.
+with a basic usage of different barycentric components.
 
 
 \subsection seg_example Segment Coordinates
@@ -305,7 +305,7 @@ be cautious when using the unnormalized Wachspress weights. In that case, you mu
 It is known that for strictly convex polygons the denominator's zero set of the
 Wachspress coordinates (\f$W^{wp} = 0~\f$) is a curve, which (in many cases) lies quite
 far away from the polygon. Speaking precisely, it interpolates the intersection points of
-the continuations of the polygon edges. Therefore, the computation of Wachspress coordinates
+the supporting lines of the polygon edges. Therefore, the computation of Wachspress coordinates
 outside the polygon is possible only at points that do not belong to this curve.
 
 \cgalFigureBegin{wp_zero_set, wp_zero_set.svg}
@@ -488,7 +488,7 @@ The time to compute harmonic coordinates can be found in the tables below.
 
 The first table shows how the time to compute the coordinates on a unit square depends on the number of
 triangulation vertices. We show separately the time to setup the matrix, factorize it, and solve it
-with resepect to the four vertices of the unit square.
+with respect to the four vertices of the unit square.
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
@@ -549,7 +549,7 @@ with resepect to the four vertices of the unit square.
 
 The second table shows how the time to compute the coordinates for 100k queries depends on the number of
 the polygon vertices. We show separately the time to setup the matrix, factorize it, and solve it
-with resepect to the \f$n\f$ vertices of the polygon.
+with respect to the \f$n\f$ vertices of the polygon.
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
