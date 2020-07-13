@@ -492,59 +492,68 @@ with respect to the four vertices of the unit square.
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadCenter">Number of queries (approx.) </th>
-<th class="markdownTableHeadCenter">Setup (in seconds) </th>
-<th class="markdownTableHeadCenter">Factorize (in seconds) </th>
-<th class="markdownTableHeadCenter">Solve (in seconds) </th>
-<th class="markdownTableHeadCenter">Total (in seconds) </th></tr>
+<th class="markdownTableHeadCenter">Number of queries (approx.)</th>
+<th class="markdownTableHeadCenter">Setup (in seconds)</th>
+<th class="markdownTableHeadCenter">Factorize (in seconds)</th>
+<th class="markdownTableHeadCenter">Solve (in seconds)</th>
+<th class="markdownTableHeadCenter">Total (in seconds)</th>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">100 </td>
-<td class="markdownTableBodyCenter">5.602836609e-05 </td>
-<td class="markdownTableBodyCenter">9.894371033e-05 </td>
-<td class="markdownTableBodyCenter">1.502037048e-05 </td>
-<td class="markdownTableBodyCenter">0.0001699924469 </td></tr>
+<td class="markdownTableBodyCenter">100</td>
+<td class="markdownTableBodyCenter">5.602836609e-05</td>
+<td class="markdownTableBodyCenter">9.894371033e-05</td>
+<td class="markdownTableBodyCenter">1.502037048e-05</td>
+<td class="markdownTableBodyCenter">0.0001699924469</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">500 </td>
-<td class="markdownTableBodyCenter">0.0002660751343 </td>
-<td class="markdownTableBodyCenter">0.0005741119385 </td>
-<td class="markdownTableBodyCenter">6.389617920e-05 </td>
-<td class="markdownTableBodyCenter">0.0009040832520 </td></tr>
+<td class="markdownTableBodyCenter">500</td>
+<td class="markdownTableBodyCenter">0.0002660751343</td>
+<td class="markdownTableBodyCenter">0.0005741119385</td>
+<td class="markdownTableBodyCenter">6.389617920e-05</td>
+<td class="markdownTableBodyCenter">0.0009040832520</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">1000 </td>
-<td class="markdownTableBodyCenter">0.0005090236664 </td>
-<td class="markdownTableBodyCenter">0.0011940002440 </td>
-<td class="markdownTableBodyCenter">0.0001468658447 </td>
-<td class="markdownTableBodyCenter">0.0018498897550 </td></tr>
+<td class="markdownTableBodyCenter">1000</td>
+<td class="markdownTableBodyCenter">0.0005090236664</td>
+<td class="markdownTableBodyCenter">0.0011940002440</td>
+<td class="markdownTableBodyCenter">0.0001468658447</td>
+<td class="markdownTableBodyCenter">0.0018498897550</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">25000 </td>
-<td class="markdownTableBodyCenter">0.0147488117200 </td>
-<td class="markdownTableBodyCenter">0.0711522102400 </td>
-<td class="markdownTableBodyCenter">0.0081908702850 </td>
-<td class="markdownTableBodyCenter">0.0940918922400 </td></tr>
+<td class="markdownTableBodyCenter">25000</td>
+<td class="markdownTableBodyCenter">0.0147488117200</td>
+<td class="markdownTableBodyCenter">0.0711522102400</td>
+<td class="markdownTableBodyCenter">0.0081908702850</td>
+<td class="markdownTableBodyCenter">0.0940918922400</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">50000 </td>
-<td class="markdownTableBodyCenter">0.0342550277700 </td>
-<td class="markdownTableBodyCenter">0.1842370033000 </td>
-<td class="markdownTableBodyCenter">0.0181660652200 </td>
-<td class="markdownTableBodyCenter">0.2366580963000 </td></tr>
+<td class="markdownTableBodyCenter">50000</td>
+<td class="markdownTableBodyCenter">0.0342550277700</td>
+<td class="markdownTableBodyCenter">0.1842370033000</td>
+<td class="markdownTableBodyCenter">0.0181660652200</td>
+<td class="markdownTableBodyCenter">0.2366580963000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">100000 </td>
-<td class="markdownTableBodyCenter">0.0651171207400 </td>
-<td class="markdownTableBodyCenter">0.5431768894000 </td>
-<td class="markdownTableBodyCenter">0.0440881252300 </td>
-<td class="markdownTableBodyCenter">0.6523821354000 </td></tr>
+<td class="markdownTableBodyCenter">100000</td>
+<td class="markdownTableBodyCenter">0.0651171207400</td>
+<td class="markdownTableBodyCenter">0.5431768894000</td>
+<td class="markdownTableBodyCenter">0.0440881252300</td>
+<td class="markdownTableBodyCenter">0.6523821354000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">500000 </td>
-<td class="markdownTableBodyCenter">0.5765299797000 </td>
-<td class="markdownTableBodyCenter">7.6971430780000 </td>
-<td class="markdownTableBodyCenter">0.3107650280000 </td>
-<td class="markdownTableBodyCenter">8.5844380860000 </td></tr>
+<td class="markdownTableBodyCenter">500000</td>
+<td class="markdownTableBodyCenter">0.5765299797000</td>
+<td class="markdownTableBodyCenter">7.6971430780000</td>
+<td class="markdownTableBodyCenter">0.3107650280000</td>
+<td class="markdownTableBodyCenter">8.5844380860000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">1000000 </td>
-<td class="markdownTableBodyCenter">1.2951629160000 </td>
-<td class="markdownTableBodyCenter">26.769452810000 </td>
-<td class="markdownTableBodyCenter">0.7373721600000 </td>
-<td class="markdownTableBodyCenter">28.801987890000 </td></tr>
+<td class="markdownTableBodyCenter">1000000</td>
+<td class="markdownTableBodyCenter">1.2951629160000</td>
+<td class="markdownTableBodyCenter">26.769452810000</td>
+<td class="markdownTableBodyCenter">0.7373721600000</td>
+<td class="markdownTableBodyCenter">28.801987890000</td>
+</tr>
 </table>
 
 The second table shows how the time to compute the coordinates for 100k queries depends on the number of
@@ -553,53 +562,61 @@ with respect to the \f$n\f$ vertices of the polygon.
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
-<th class="markdownTableHeadCenter">Number of vertices (approx.) </th>
-<th class="markdownTableHeadCenter">Setup (in seconds) </th>
-<th class="markdownTableHeadCenter">Factorize (in seconds) </th>
-<th class="markdownTableHeadCenter">Solve (in seconds) </th>
-<th class="markdownTableHeadCenter">Total (in seconds) </th></tr>
+<th class="markdownTableHeadCenter">Number of vertices (approx.)</th>
+<th class="markdownTableHeadCenter">Setup (in seconds)</th>
+<th class="markdownTableHeadCenter">Factorize (in seconds)</th>
+<th class="markdownTableHeadCenter">Solve (in seconds)</th>
+<th class="markdownTableHeadCenter">Total (in seconds)</th>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">5 </td>
-<td class="markdownTableBodyCenter">0.0834438800800 </td>
-<td class="markdownTableBodyCenter">0.6318230629000 </td>
-<td class="markdownTableBodyCenter">0.0598270893100 </td>
-<td class="markdownTableBodyCenter">0.7750940323000 </td></tr>
+<td class="markdownTableBodyCenter">5</td>
+<td class="markdownTableBodyCenter">0.0834438800800</td>
+<td class="markdownTableBodyCenter">0.6318230629000</td>
+<td class="markdownTableBodyCenter">0.0598270893100</td>
+<td class="markdownTableBodyCenter">0.7750940323000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">10 </td>
-<td class="markdownTableBodyCenter">0.0602939128900 </td>
-<td class="markdownTableBodyCenter">0.4505341053000 </td>
-<td class="markdownTableBodyCenter">0.0945830345200 </td>
-<td class="markdownTableBodyCenter">0.6054110527000 </td></tr>
+<td class="markdownTableBodyCenter">10</td>
+<td class="markdownTableBodyCenter">0.0602939128900</td>
+<td class="markdownTableBodyCenter">0.4505341053000</td>
+<td class="markdownTableBodyCenter">0.0945830345200</td>
+<td class="markdownTableBodyCenter">0.6054110527000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">25 </td>
-<td class="markdownTableBodyCenter">0.0627598762500 </td>
-<td class="markdownTableBodyCenter">0.4786829948000 </td>
-<td class="markdownTableBodyCenter">0.2549531460000 </td>
-<td class="markdownTableBodyCenter">0.7963960171000 </td></tr>
+<td class="markdownTableBodyCenter">25</td>
+<td class="markdownTableBodyCenter">0.0627598762500</td>
+<td class="markdownTableBodyCenter">0.4786829948000</td>
+<td class="markdownTableBodyCenter">0.2549531460000</td>
+<td class="markdownTableBodyCenter">0.7963960171000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">50 </td>
-<td class="markdownTableBodyCenter">0.0973591804500 </td>
-<td class="markdownTableBodyCenter">0.4922330379000 </td>
-<td class="markdownTableBodyCenter">0.5396540165000 </td>
-<td class="markdownTableBodyCenter">1.1292462350000 </td></tr>
+<td class="markdownTableBodyCenter">50</td>
+<td class="markdownTableBodyCenter">0.0973591804500</td>
+<td class="markdownTableBodyCenter">0.4922330379000</td>
+<td class="markdownTableBodyCenter">0.5396540165000</td>
+<td class="markdownTableBodyCenter">1.1292462350000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">100 </td>
-<td class="markdownTableBodyCenter">0.1294870377000 </td>
+<td class="markdownTableBodyCenter">100</td>
+<td class="markdownTableBodyCenter">0.1294870377000</td>
 <td class="markdownTableBodyCenter">0.4507710934000</td>
-<td class="markdownTableBodyCenter">1.1525440220000 </td>
-<td class="markdownTableBodyCenter">1.7328021530000 </td></tr>
+<td class="markdownTableBodyCenter">1.1525440220000</td>
+<td class="markdownTableBodyCenter">1.7328021530000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">500 </td>
-<td class="markdownTableBodyCenter">0.4306938648000 </td>
-<td class="markdownTableBodyCenter">0.4603209496000 </td>
-<td class="markdownTableBodyCenter">6.6200611590000 </td>
-<td class="markdownTableBodyCenter">7.5110759740000 </td></tr>
+<td class="markdownTableBodyCenter">500</td>
+<td class="markdownTableBodyCenter">0.4306938648000</td>
+<td class="markdownTableBodyCenter">0.4603209496000</td>
+<td class="markdownTableBodyCenter">6.6200611590000</td>
+<td class="markdownTableBodyCenter">7.5110759740000</td>
+</tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">1000 </td>
-<td class="markdownTableBodyCenter">0.8123619556000 </td>
-<td class="markdownTableBodyCenter">0.4800519943000 </td>
-<td class="markdownTableBodyCenter">16.142390010000 </td>
-<td class="markdownTableBodyCenter">17.434803960000 </td></tr>
+<td class="markdownTableBodyCenter">1000</td>
+<td class="markdownTableBodyCenter">0.8123619556000</td>
+<td class="markdownTableBodyCenter">0.4800519943000</td>
+<td class="markdownTableBodyCenter">16.142390010000</td>
+<td class="markdownTableBodyCenter">17.434803960000</td>
+</tr>
 </table>
 
 While, in the first table, the most significant step is to factorize the matrix, in the
