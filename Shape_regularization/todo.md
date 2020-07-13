@@ -1,4 +1,3 @@
-* Add benchmarks.
 * Remove all unnecessary functions.
 * Improve the contour base algorithm.
 * Install OSQP on all testing platforms.
@@ -10,7 +9,6 @@
 * Add a free function (and also in offsets) that merges all segments, which form a collinear group; I should first
   find collinear groups and then compute the central segment of each group. Let me call this function unique_segments().
   Add a figure for that function. Unique segments can later be converted into lines.
-* Spell check all files.
 * Add in docs: the contours must be counterclockwise oriented.
 * Add preserve_order parameter to np and also check if I correctly pass all the parameters to this class when I instatiate it
   and maybe the same for parallel/orthogonal/collinear groups.
