@@ -227,6 +227,117 @@ Note that none of these functions applies the regularization of the input segmen
 only return groups of indices of segments with similar orientations and/or positions.
 
 
+\subsection QP_Regularization_Segments_Performance Performance
+
+The shape regularization algorithm is quite efficient and its performance mostly depends
+on the used QP solver. When using the `CGAL::Shape_regularization::OSQP_quadratic_program`,
+we exploit and efficiently use the sparse nature of the related QP problem that leads
+to the quick performance in practice (see tables below).
+
+The first table includes some timings of running several representative examples from this manual.
+
+<table class="markdownTable" align="center">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadCenter">Example</th>
+<th class="markdownTableHeadCenter">Number of segments</th>
+<th class="markdownTableHeadCenter">Angles (in seconds)</th>
+<th class="markdownTableHeadCenter">Offsets (in seconds)</th>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">regularize_15_segments</td>
+<td class="markdownTableBodyCenter">15</td>
+<td class="markdownTableBodyCenter">0.000247</td>
+<td class="markdownTableBodyCenter">0.000140</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">regularize_100_segments_angles</td>
+<td class="markdownTableBodyCenter">100</td>
+<td class="markdownTableBodyCenter">0.002310</td>
+<td class="markdownTableBodyCenter">N/A</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">regularize_100_segments_offsets</td>
+<td class="markdownTableBodyCenter">100</td>
+<td class="markdownTableBodyCenter">N/A</td>
+<td class="markdownTableBodyCenter">0.001109</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">regularize_real_data_2</td>
+<td class="markdownTableBodyCenter">65</td>
+<td class="markdownTableBodyCenter">0.001873</td>
+<td class="markdownTableBodyCenter">0.000396</td>
+</tr>
+</table>
+
+The second table shows how the computation time depends on the number of input segments.
+We first observe that the most challenging step is angle regularization while the offset
+regularization is much faster. This happens due to the fact that angle regularization is
+performed for all input segments at once, while the offset regularization is performed for
+each group of parallel segments separately. Since each group of parallel segments is much
+smaller than the original set of input segments, the total computation time is smaller, too.
+The same idea can be applied to accelerate the angle regularization. Splitting input segments
+into groups with contextually similar properties from the very beginning will lead to better
+performance as indicated in the table. However, note that not each data set can be meaningfully
+split into such groups.
+
+<table class="markdownTable" align="center">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadCenter">Number of segments</th>
+<th class="markdownTableHeadCenter">Angles (in seconds)</th>
+<th class="markdownTableHeadCenter">Offsets (in seconds)</th>
+<th class="markdownTableHeadCenter">Angles Pre-Grouped (in seconds)</th>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">10</td>
+<td class="markdownTableBodyCenter">0.0002911090851</td>
+<td class="markdownTableBodyCenter">9.107589722e-05</td>
+<td class="markdownTableBodyCenter">0.0001430511475</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">50</td>
+<td class="markdownTableBodyCenter">0.0008149147034</td>
+<td class="markdownTableBodyCenter">0.0003280639648</td>
+<td class="markdownTableBodyCenter">0.0004301071167</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">100</td>
+<td class="markdownTableBodyCenter">0.0044438838960</td>
+<td class="markdownTableBodyCenter">0.0005369186401</td>
+<td class="markdownTableBodyCenter">0.0007929801941</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">500</td>
+<td class="markdownTableBodyCenter">0.0327970981600</td>
+<td class="markdownTableBodyCenter">0.0034871101380</td>
+<td class="markdownTableBodyCenter">0.0062501430510</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">1000</td>
+<td class="markdownTableBodyCenter">0.0833258628800</td>
+<td class="markdownTableBodyCenter">0.0097558498380</td>
+<td class="markdownTableBodyCenter">0.0186820030200</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">5000</td>
+<td class="markdownTableBodyCenter">1.5258009430000</td>
+<td class="markdownTableBodyCenter">0.2043519020000</td>
+<td class="markdownTableBodyCenter">0.4500861168000</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">10000</td>
+<td class="markdownTableBodyCenter">5.9477870460000</td>
+<td class="markdownTableBodyCenter">0.8000171185000</td>
+<td class="markdownTableBodyCenter">1.6417799000000</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">15000</td>
+<td class="markdownTableBodyCenter">14.800448890000</td>
+<td class="markdownTableBodyCenter">1.8037807940000</td>
+<td class="markdownTableBodyCenter">3.7889399530000</td>
+</tr>
+</table>
+
+
 \section Contour_Regularization Contours
 
 Given a set of ordered 2D points connected by segments, which form a contour, closed
@@ -304,6 +415,55 @@ An open contour before (red) and after (green) the contour regularization.
 \cgalFigureEnd
 
 \cgalExample{Shape_regularization/regularize_open_contour.cpp}
+
+
+\subsection Contour_Regularization_Performance Performance
+
+The contour regularization algorithms, both closed and open, are linear-time algorithms
+that is supported by the table below.
+
+<table class="markdownTable" align="center">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadCenter">Number of vertices</th>
+<th class="markdownTableHeadCenter">Closed (in seconds)</th>
+<th class="markdownTableHeadCenter">Open (in seconds)</th>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">10</td>
+<td class="markdownTableBodyCenter">4.696846008e-05</td>
+<td class="markdownTableBodyCenter">1.192092896e-05</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">100</td>
+<td class="markdownTableBodyCenter">4.887580872e-05</td>
+<td class="markdownTableBodyCenter">3.099441528e-05</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">1000</td>
+<td class="markdownTableBodyCenter">0.0003750324249</td>
+<td class="markdownTableBodyCenter">0.0001649856567</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">10000</td>
+<td class="markdownTableBodyCenter">0.0044209957120</td>
+<td class="markdownTableBodyCenter">0.0033471584320</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">100000</td>
+<td class="markdownTableBodyCenter">0.0439918041200</td>
+<td class="markdownTableBodyCenter">0.0259211063400</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">1000000</td>
+<td class="markdownTableBodyCenter">0.4141340256000</td>
+<td class="markdownTableBodyCenter">0.2720298767000</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">10000000</td>
+<td class="markdownTableBodyCenter">4.5778059960000</td>
+<td class="markdownTableBodyCenter">4.3467240330000</td>
+</tr>
+</table>
 
 
 \section Plane_Regularization Planes
@@ -469,57 +629,6 @@ An example below shows how to define your own type of the above concepts and how
 choose among available solvers.
 
 \cgalExample{Shape_regularization/regularize_framework.cpp}
-
-
-\subsection QP_Regularization_Performance Performance
-
-The shape regularization algorithm is very efficient and its performance depends
-on the two phases:
-- *the setup phase* that is user-based and has a linear level complexity in the
-number n + m (see above for notations) for currently implemented classes and
-- *the solve phase* that is very efficient when using the `CGAL::Shape_regularization::OSQP_quadratic_program`,
-in that case we exploit and efficiently use the sparse nature of the related QP problem
-that leads to the quick performance in practice (see below).
-
-This table includes some timings of running several representative examples from this manual.
-
-<table class="markdownTable" align="center">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadCenter">Example </th>
-<th class="markdownTableHeadCenter">Number of segments </th>
-<th class="markdownTableHeadCenter">Number of modified segments: Angle regularization </th>
-<th class="markdownTableHeadCenter">Number of modified segments: Offset regularization </th>
-<th class="markdownTableHeadCenter">Time (in seconds): Angle regularization </th>
-<th class="markdownTableHeadCenter">Time (in seconds): Offset regularization </th></tr>
-<tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_15_segments </td>
-<td class="markdownTableBodyCenter">15 </td>
-<td class="markdownTableBodyCenter">15 </td>
-<td class="markdownTableBodyCenter">11 </td>
-<td class="markdownTableBodyCenter">0.000247 </td>
-<td class="markdownTableBodyCenter">0.000140 </td></tr>
-<tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_100_segments_angles </td>
-<td class="markdownTableBodyCenter">100 </td>
-<td class="markdownTableBodyCenter">100 </td>
-<td class="markdownTableBodyCenter">N/A </td>
-<td class="markdownTableBodyCenter">0.002310 </td>
-<td class="markdownTableBodyCenter">N/A </td></tr>
-<tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_100_segments_offsets </td>
-<td class="markdownTableBodyCenter">100 </td>
-<td class="markdownTableBodyCenter">N/A </td>
-<td class="markdownTableBodyCenter">100 </td>
-<td class="markdownTableBodyCenter">N/A </td>
-<td class="markdownTableBodyCenter">0.001109 </td></tr>
-<tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_real_data_2 </td>
-<td class="markdownTableBodyCenter">65 </td>
-<td class="markdownTableBodyCenter">65 </td>
-<td class="markdownTableBodyCenter">64 </td>
-<td class="markdownTableBodyCenter">0.001873 </td>
-<td class="markdownTableBodyCenter">0.000396 </td></tr>
-</table>
 
 
 \section Shape_Regularization_History History

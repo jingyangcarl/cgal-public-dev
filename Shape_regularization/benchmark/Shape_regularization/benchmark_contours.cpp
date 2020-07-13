@@ -71,9 +71,7 @@ void benchmark_contours(
 
   std::cout.precision(10);
   std::cout << "benchmark_contours " << contour.size() << " (CPU time " <<
-  "closed/open): " <<
-    closed_time << "/" << open_time <<
-  " seconds" << std::endl;
+  "closed/open): " << closed_time << "/" << open_time << " seconds" << std::endl;
 }
 
 int main(int argc, char *argv[]) {

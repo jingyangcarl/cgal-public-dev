@@ -128,18 +128,22 @@ void benchmark_qp_segments(
   std::cout.precision(10);
   if (regroup)
     std::cout << "grouped: " ;
+
+  // std::cout << "benchmark_qp_segments " << segments.size() << " (CPU time " <<
+  // "delaunay/setup_angles/angles/setup_offsets/offsets): " <<
+  //   delaunay_time << "/" <<
+  //   setup_angle_time << "/" << angle_time << "/" <<
+  //   setup_offset_time << "/" << offset_time <<
+  // " seconds" << std::endl;
+
   std::cout << "benchmark_qp_segments " << segments.size() << " (CPU time " <<
-  "delaunay/setup_angles/angles/setup_offsets/offsets): " <<
-    delaunay_time << "/" <<
-    setup_angle_time << "/" << angle_time << "/" <<
-    setup_offset_time << "/" << offset_time <<
-  " seconds" << std::endl;
+  "angles/offsets): " << angle_time << "/" << offset_time << " seconds" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
 
   const std::vector<std::size_t> ns = {
-    10, 100, 500, 1000, 5000, 10000, 15000
+    10, 50, 100, 500, 1000, 5000, 10000, 15000
   };
   std::cout << std::endl;
   for (const std::size_t n : ns) {
