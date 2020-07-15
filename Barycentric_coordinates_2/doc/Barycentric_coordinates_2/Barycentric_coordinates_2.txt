@@ -470,8 +470,9 @@ The resulting timings for all closed-form coordinates can be found in the figure
 
 \cgalFigureBegin{analytic_timings, analytic_timings.png}
 Time in seconds to compute \f$n\f$ coordinate values for a polygon with \f$n\f$ vertices
-at 1 million points with the max speed \f$O(n)\f$ algorithms (dashed) and the max precision \f$0(n^2)\f$ algorithms (solid)
-for Wachspress (blue), discrete harmonic (red), and mean value (green) coordinates.
+at 1 million query points with the max speed \f$O(n)\f$ algorithms (dashed) and
+the max precision \f$0(n^2)\f$ algorithms (solid) for Wachspress (blue), discrete
+harmonic (red), and mean value (green) coordinates.
 \cgalFigureEnd
 
 From the figure above it is easy to see that the \f$O(n^2)\f$ algorithm is as fast
@@ -556,9 +557,17 @@ with respect to the four vertices of the unit square.
 </tr>
 </table>
 
+The same results can be seen in the figure.
+
+\cgalFigureBegin{hm_4_bench, hm_4_bench.svg}
+Time in seconds to setup (red), factorize (green), and solve (blue) for harmonic
+coordinate values with respect to a unit square.
+\cgalFigureEnd
+
 The second table shows how the time to compute the coordinates for 100k queries depends on the number of
 the polygon vertices. We show separately the time to setup the matrix, factorize it, and solve it
-with respect to the \f$n\f$ vertices of the polygon.
+with respect to the \f$n\f$ vertices of the polygon. It can be seen that, unlike in the
+first table, the time to factorize the matrix here stays constant.
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
@@ -618,6 +627,13 @@ with respect to the \f$n\f$ vertices of the polygon.
 <td class="markdownTableBodyCenter">17.434803960000</td>
 </tr>
 </table>
+
+The same results can be seen in the figure.
+
+\cgalFigureBegin{hm_n_bench, hm_n_bench.svg}
+Time in seconds to setup (red), factorize (green), and solve (blue) for harmonic
+coordinate values with respect to a polygon with \f$n\f$ vertices at 100k query points.
+\cgalFigureEnd
 
 While, in the first table, the most significant step is to factorize the matrix, in the
 second table, the slowest step is to solve for coordinates, as expected.

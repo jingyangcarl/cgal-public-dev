@@ -38,10 +38,6 @@
 // Harmonic coordinates for character articulation.
 // ACM Transactions on Graphics, 26(3):71:1-9, 2007.".
 
-// Todo:
-// * check the function get_edge_index_exact()
-// * refactor using new weights interface
-
 namespace CGAL {
 namespace Barycentric_coordinates {
 

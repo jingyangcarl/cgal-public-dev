@@ -13,7 +13,60 @@ using Vertices = std::vector<Point_2>;
 using Domain = CGAL::Barycentric_coordinates::Delaunay_domain_2<Vertices, Kernel>;
 using HMC2   = CGAL::Barycentric_coordinates::Harmonic_coordinates_2<Vertices, Domain, Kernel>;
 
+int save_raw_data() {
+
+  Timer timer;
+  std::cout.precision(10);
+
+  const std::vector<Point_2> vertices = {
+    Point_2(0, 0), Point_2(1, 0),
+    Point_2(1, 1), Point_2(0, 1)
+  };
+
+  const FT min_scale = 0.00158;
+  const FT max_scale = 0.17500;
+  FT step = (max_scale - min_scale) / FT(100);
+
+  std::list<Point_2> list_of_seeds;
+  list_of_seeds.push_back(Point_2(0.5, 0.5));
+
+  Domain domain(vertices);
+  HMC2 harmonic_coordinates_2(vertices, domain);
+
+  std::size_t count = 0;
+  for (FT scale = max_scale; scale >= min_scale; scale -= step) {
+    if (scale < min_scale) break;
+    if (count == 80) step /= FT(10);
+    ++count;
+
+    domain.clear();
+    domain.create(scale, list_of_seeds);
+    harmonic_coordinates_2.clear();
+
+    timer.reset(); timer.start();
+    harmonic_coordinates_2.setup();
+    timer.stop();
+    const double setup = timer.time();
+
+    timer.reset(); timer.start();
+    harmonic_coordinates_2.factorize();
+    timer.stop();
+    const double factorize = timer.time();
+
+    timer.reset(); timer.start();
+    harmonic_coordinates_2.solve();
+    timer.stop();
+    const double solve = timer.time();
+
+    std::cout << domain.number_of_vertices() << " " <<
+    setup << " " << factorize << " " << solve << std::endl;
+  }
+  return EXIT_SUCCESS;
+}
+
 int main() {
+
+  // return save_raw_data();
 
   Timer timer;
   std::cout.precision(10);

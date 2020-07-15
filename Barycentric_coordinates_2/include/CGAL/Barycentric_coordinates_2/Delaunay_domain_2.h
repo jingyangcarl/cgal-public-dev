@@ -146,20 +146,21 @@ namespace Barycentric_coordinates {
       the next m vertices are the vertices generated along the polygon boundary,
       the last k vertices are the vertices generated in the interior part of the polygon.
 
-      \param shape_size
-      A shape size bound. See `Delaunay_mesh_size_criteria_2` for more details.
+      \param max_edge_length
+      An upper bound on the length of the longest edge. See `Delaunay_mesh_size_criteria_2`
+      for more details.
 
       \param list_of_seeds
       Contains seed points indicating, which parts of the input polygon
       should be partitioned and subdivided.
     */
     void create(
-      const FT shape_size,
+      const FT max_edge_length,
       const std::list<Point_2>& list_of_seeds) {
 
       create_triangulation();
       refine_triangulation(
-        shape_size, list_of_seeds);
+        max_edge_length, list_of_seeds);
       check_boundaries();
       create_neighbors();
     }
@@ -422,12 +423,13 @@ namespace Barycentric_coordinates {
     }
 
     void refine_triangulation(
-      const FT shape_size,
+      const FT max_edge_length,
       const std::list<Point_2>& list_of_seeds) {
 
+      // 0.125 is the default shape bound that corresponds to a bound of 20.6 degrees.
       Mesher mesher(m_cdt);
       mesher.set_seeds(list_of_seeds.begin(), list_of_seeds.end(), true);
-      mesher.set_criteria(Criteria(shape_size, shape_size));
+      mesher.set_criteria(Criteria(0.125, max_edge_length));
       mesher.refine_mesh();
 
       m_vhs.clear();
