@@ -82,14 +82,22 @@ void test_1_segment() {
   offset_regularization.collinear_groups(
     std::back_inserter(collinear_groups));
 
+  std::vector<Segment_2> unique_segments;
+  offset_regularization.unique_segments(
+    std::back_inserter(unique_segments));
+
   const std::size_t num_segments_offsets =
     offset_regularization.number_of_modified_segments();
 
   // saver.export_segments(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/1_offsets", 100);
+  // saver.export_segments(unique_segments,
+  //   "/Users/monet/Documents/gsoc/ggr/logs/1_unique", 100);
 
   assert(segments.size() == 1);
   assert(collinear_groups.size() == 1);
+  assert(collinear_groups[0].size() == 1);
+  assert(unique_segments.size() == 1);
   assert(num_segments_offsets == 0);
 }
 

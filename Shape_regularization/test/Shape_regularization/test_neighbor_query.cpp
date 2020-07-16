@@ -38,6 +38,7 @@ void test_neighbor_query() {
   groups[0] = {0, 1, 2, 3}; // external square
   groups[1] = {4, 5, 6, 7}; // internal square
 
+  Indices neighbors;
   NQ neighbor_query(segments);
 
   // Check unique group.
@@ -47,6 +48,17 @@ void test_neighbor_query() {
   assert(edges.size() == 17);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
+
+  std::size_t total = 0;
+  neighbor_query(0, neighbors); assert(neighbors.size() == 5); total += neighbors.size();
+  neighbor_query(1, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(2, neighbors); assert(neighbors.size() == 4); total += neighbors.size();
+  neighbor_query(3, neighbors); assert(neighbors.size() == 4); total += neighbors.size();
+  neighbor_query(4, neighbors); assert(neighbors.size() == 4); total += neighbors.size();
+  neighbor_query(5, neighbors); assert(neighbors.size() == 5); total += neighbors.size();
+  neighbor_query(6, neighbors); assert(neighbors.size() == 5); total += neighbors.size();
+  neighbor_query(7, neighbors); assert(neighbors.size() == 4); total += neighbors.size();
+  assert(total == neighbor_query.number_of_neighbors());
 
   // Check clear.
   neighbor_query.clear();
@@ -65,6 +77,13 @@ void test_neighbor_query() {
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
 
+  total = 0;
+  neighbor_query(0, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(1, neighbors); assert(neighbors.size() == 2); total += neighbors.size();
+  neighbor_query(2, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(3, neighbors); assert(neighbors.size() == 2); total += neighbors.size();
+  assert(total == neighbor_query.number_of_neighbors());
+
   // Add second group.
   neighbor_query.clear();
   neighbor_query.add_group(groups[1]);
@@ -73,6 +92,13 @@ void test_neighbor_query() {
   assert(edges.size() == 5);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
+
+  total = 0;
+  neighbor_query(4, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(5, neighbors); assert(neighbors.size() == 2); total += neighbors.size();
+  neighbor_query(6, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(7, neighbors); assert(neighbors.size() == 2); total += neighbors.size();
+  assert(total == neighbor_query.number_of_neighbors());
 
   // Add groups consequently.
   neighbor_query.clear();
@@ -84,6 +110,17 @@ void test_neighbor_query() {
   assert(neighbor_query.number_of_groups() == 2);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
 
+  total = 0;
+  neighbor_query(0, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(1, neighbors); assert(neighbors.size() == 2); total += neighbors.size();
+  neighbor_query(2, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(3, neighbors); assert(neighbors.size() == 2); total += neighbors.size();
+  neighbor_query(4, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(5, neighbors); assert(neighbors.size() == 2); total += neighbors.size();
+  neighbor_query(6, neighbors); assert(neighbors.size() == 3); total += neighbors.size();
+  neighbor_query(7, neighbors); assert(neighbors.size() == 2); total += neighbors.size();
+  assert(total == neighbor_query.number_of_neighbors());
+
   // Check list with minimum 2 items.
   neighbor_query.clear();
   const std::list<std::size_t> mini = {0, 1};
@@ -93,6 +130,11 @@ void test_neighbor_query() {
   assert(edges.size() == 1);
   assert(neighbor_query.number_of_groups() == 1);
   assert(neighbor_query.number_of_neighbors() == edges.size() * 2);
+
+  total = 0;
+  neighbor_query(0, neighbors); assert(neighbors.size() == 1); total += neighbors.size();
+  neighbor_query(1, neighbors); assert(neighbors.size() == 1); total += neighbors.size();
+  assert(total == neighbor_query.number_of_neighbors());
 }
 
 int main() {

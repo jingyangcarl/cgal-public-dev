@@ -21,8 +21,8 @@ if(CGAL_FOUND)
     set(targets
     test_neighbor_query
     test_parallel_groups
-    test_collinear_groups
-    test_orthogonal_groups
+    # test_collinear_groups
+    # test_orthogonal_groups
     test_0_segments
     test_1_segment
     test_2_segments
@@ -32,14 +32,15 @@ if(CGAL_FOUND)
     test_100_segments_offsets
     test_cgal_solver
     test_plane_regularization
-    test_closed_contour_1
-    test_closed_contour_2
-    test_open_contour
-    test_equal_contours
-    test_longest_direction
-    test_multiple_directions_1
-    test_multiple_directions_2
-    test_user_defined_directions)
+    # test_closed_contour_1
+    # test_closed_contour_2
+    # test_open_contour
+    # test_equal_contours
+    # test_longest_direction
+    # test_multiple_directions_1
+    # test_multiple_directions_2
+    # test_user_defined_directions
+    )
 
     foreach(target ${targets})
       create_single_source_cgal_program("${target}.cpp")

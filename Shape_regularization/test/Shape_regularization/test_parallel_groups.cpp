@@ -39,10 +39,36 @@ void test_parallel_groups() {
 
   // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/pg_group0", 100);
   assert(groups[0].size() == 3);
+  assert(groups[0][0] == 0);
+  assert(groups[0][1] == 1);
+  assert(groups[0][2] == 2);
   // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/pg_group1", 100);
   assert(groups[1].size() == 2);
+  assert(groups[1][0] == 3);
+  assert(groups[1][1] == 4);
   // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/pg_group2", 100);
   assert(groups[2].size() == 2);
+  assert(groups[2][0] == 5);
+  assert(groups[2][1] == 6);
+
+  groups.clear();
+  SR::Segments::parallel_groups(
+    segments, std::back_inserter(groups), CGAL::parameters::preserve_order(true));
+  assert(groups.size() == 3);
+
+  // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/pg_group0_pr", 100);
+  assert(groups[0].size() == 3);
+  assert(groups[0][0] == 0);
+  assert(groups[0][1] == 1);
+  assert(groups[0][2] == 2);
+  // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/pg_group1_pr", 100);
+  assert(groups[1].size() == 2);
+  assert(groups[1][0] == 3);
+  assert(groups[1][1] == 4);
+  // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/pg_group2_pr", 100);
+  assert(groups[2].size() == 2);
+  assert(groups[2][0] == 5);
+  assert(groups[2][1] == 6);
 }
 
 int main() {
