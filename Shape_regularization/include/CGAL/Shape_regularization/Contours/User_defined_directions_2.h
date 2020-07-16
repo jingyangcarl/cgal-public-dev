@@ -86,7 +86,7 @@ namespace Contours {
       a const range with user-defined principal directions
 
       \param input_range
-      a const range of ordered 2D points, which form a contour
+      a const range of counterclockwise ordered 2D points, which form a contour
 
       \param is_closed
       indicates whether the contour is closed or open

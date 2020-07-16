@@ -89,7 +89,7 @@ namespace Contours {
       a sequence of \ref sr_namedparameters "Named Parameters".
 
       \param input_range
-      a const range of ordered 2D points, which form a contour
+      a const range of counterclockwise ordered 2D points, which form a contour
 
       \param np
       optional sequence of \ref sr_namedparameters "Named Parameters"

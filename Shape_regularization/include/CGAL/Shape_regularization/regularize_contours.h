@@ -45,7 +45,7 @@ namespace Contours {
 
     \brief regularizes closed contours.
 
-    Given a set of ordered 2D points connected by segments, which form a closed contour,
+    Given a set of counterclockwise ordered 2D points connected by segments, which form a closed contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
     - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -133,7 +133,7 @@ namespace Contours {
 
     \brief regularizes closed contours.
 
-    Given a set of ordered 2D points connected by segments, which form a closed contour,
+    Given a set of counterclockwise ordered 2D points connected by segments, which form a closed contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
     - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -141,7 +141,7 @@ namespace Contours {
 
     The principal directions of the contour are provided via the concept `ContourDirections`.
 
-    This function infers a traits class from the `InputRange` iterator's value type.
+    This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -216,7 +216,7 @@ namespace Contours {
 
     \brief regularizes open contours.
 
-    Given a set of ordered 2D points connected by segments, which form an open contour,
+    Given a set of counterclockwise ordered 2D points connected by segments, which form an open contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
     - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -304,7 +304,7 @@ namespace Contours {
 
     \brief regularizes open contours.
 
-    Given a set of ordered 2D points connected by segments, which form an open contour,
+    Given a set of counterclockwise ordered 2D points connected by segments, which form an open contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
     - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -312,7 +312,7 @@ namespace Contours {
 
     The principal directions of the contour are provided via the concept `ContourDirections`.
 
-    This function infers a traits class from the `InputRange` iterator's value type.
+    This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.

@@ -202,7 +202,7 @@ namespace Segments {
     Please address that class and these concepts for more information.
 
     This function provides the default solver for the quadratic program that is
-    solved during regularization. In addition, this function infers a traits class
+    solved during regularization. In addition, this function infers a traits class `GeomTraits`
     from the `InputRange` iterator's value type.
 
     \tparam InputRange
@@ -299,6 +299,9 @@ namespace Segments {
       \cgalParamBegin{max_angle}
         max angle deviation in degrees between two segments, the default is 5 degrees
       \cgalParamEnd
+      \cgalParamBegin{preserve_order}
+        indicates whether the order of input segments should be preserved or not
+      \cgalParamEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -341,7 +344,7 @@ namespace Segments {
 
     This function does not regularize input segments, but only groups them.
 
-    This function infers a traits class from the `InputRange` iterator's value type.
+    This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -373,6 +376,9 @@ namespace Segments {
     \cgalNamedParamsBegin
       \cgalParamBegin{max_angle}
         max angle deviation in degrees between two segments, the default is 5 degrees
+      \cgalParamEnd
+      \cgalParamBegin{preserve_order}
+        indicates whether the order of input segments should be preserved or not
       \cgalParamEnd
     \cgalNamedParamsEnd
 
@@ -452,6 +458,9 @@ namespace Segments {
       \cgalParamBegin{max_offset}
         max distance between two parallel segments, the default is 0.2 unit length
       \cgalParamEnd
+      \cgalParamBegin{preserve_order}
+        indicates whether the order of input segments should be preserved or not
+      \cgalParamEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -494,7 +503,7 @@ namespace Segments {
 
     This function does not regularize input segments, but only groups them.
 
-    This function infers a traits class from the `InputRange` iterator's value type.
+    This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -526,6 +535,9 @@ namespace Segments {
     \cgalNamedParamsBegin
       \cgalParamBegin{max_offset}
         max distance between two parallel segments, the default is 0.2 unit length
+      \cgalParamEnd
+      \cgalParamBegin{preserve_order}
+        indicates whether the order of input segments should be preserved or not
       \cgalParamEnd
     \cgalNamedParamsEnd
 
@@ -605,6 +617,9 @@ namespace Segments {
       \cgalParamBegin{max_angle}
         max angle deviation in degrees between two segments, the default is 5 degrees
       \cgalParamEnd
+      \cgalParamBegin{preserve_order}
+        indicates whether the order of input segments should be preserved or not
+      \cgalParamEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -647,7 +662,7 @@ namespace Segments {
 
     This function does not regularize input segments, but only groups them.
 
-    This function infers a traits class from the `InputRange` iterator's value type.
+    This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -680,6 +695,9 @@ namespace Segments {
       \cgalParamBegin{max_angle}
         max angle deviation in degrees between two segments, the default is 5 degrees
       \cgalParamEnd
+      \cgalParamBegin{preserve_order}
+        indicates whether the order of input segments should be preserved or not
+      \cgalParamEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -707,6 +725,161 @@ namespace Segments {
 
     return orthogonal_groups(
       input_range, groups, np, segment_map, traits);
+  }
+
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief substitutes groups of 2D collinear segments by average segments.
+
+    This function first calls `CGAL::Shape_regularization::Segments::collinear_groups()`
+    and then substitutes each group of collinear segments by an average segment.
+    The number of returned segments is the number of detected collinear groups.
+
+    This function does not regularize input segments, but only groups and then simplifies them.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    must be an output iterator whose value type is `GeomTraits::Segment_2`.
+
+    \tparam NamedParameters
+    a sequence of \ref sr_namedparameters "Named Parameters".
+
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`.
+
+    \tparam GeomTraits
+    must be a model of `Kernel`.
+
+    \param input_range
+    a const range of input segments
+
+    \param segments
+    an output iterator with the simplified segments
+
+    \param np
+    optional sequence of \ref sr_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \param segment_map
+    an instance of `SegmentMap`
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{max_offset}
+        max distance between two parallel segments, the default is 0.2 unit length
+      \cgalParamEnd
+      \cgalParamBegin{preserve_order}
+        indicates whether the order of input segments should be preserved or not
+      \cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \return an output iterator.
+
+    \pre `input_range.size() >= 1`
+    \pre `max_offset >= 0`
+  */
+  template<
+  typename InputRange,
+  typename OutputIterator,
+  typename NamedParameters,
+  typename SegmentMap,
+  typename GeomTraits>
+  OutputIterator unique_segments(
+    const InputRange& input_range,
+    OutputIterator segments,
+    const NamedParameters np,
+    const SegmentMap segment_map,
+    const GeomTraits traits) {
+
+    CGAL_precondition(input_range.size() >= 1);
+    using Unique_segments_2 = internal::Unique_segments_2<
+      GeomTraits, InputRange, SegmentMap>;
+
+    const Unique_segments_2 unique(
+      input_range, np, segment_map, traits);
+    return unique.segments(segments);
+  }
+
+  /*!
+    \ingroup PkgShapeRegularizationRefSegments
+
+    \brief substitutes groups of 2D collinear segments by average segments.
+
+    This function first calls `CGAL::Shape_regularization::Segments::collinear_groups()`
+    and then substitutes each group of collinear segments by an average segment.
+    The number of returned segments is the number of detected collinear groups.
+
+    This function does not regularize input segments, but only groups and then simplifies them.
+
+    This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
+
+    \tparam InputRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    must be an output iterator whose value type is `GeomTraits::Segment_2`.
+
+    \tparam NamedParameters
+    a sequence of \ref sr_namedparameters "Named Parameters".
+
+    \tparam SegmentMap
+    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    range and value type is `GeomTraits::Segment_2`. %Default is the
+    `CGAL::Identity_property_map`.
+
+    \param input_range
+    a const range of input segments
+
+    \param segments
+    an output iterator with the simplified segments
+
+    \param np
+    optional sequence of \ref sr_namedparameters "Named Parameters"
+    among the ones listed below
+
+    \param segment_map
+    an instance of `SegmentMap`, if not provided, the default is used
+
+    \cgalNamedParamsBegin
+      \cgalParamBegin{max_offset}
+        max distance between two parallel segments, the default is 0.2 unit length
+      \cgalParamEnd
+      \cgalParamBegin{preserve_order}
+        indicates whether the order of input segments should be preserved or not
+      \cgalParamEnd
+    \cgalNamedParamsEnd
+
+    \return an output iterator.
+
+    \pre `input_range.size() >= 1`
+    \pre `max_offset >= 0`
+  */
+  template<
+  typename InputRange,
+  typename OutputIterator,
+  typename NamedParameters,
+  typename SegmentMap = CGAL::Identity_property_map<
+  typename std::iterator_traits< typename InputRange::const_iterator >::value_type > >
+  OutputIterator unique_segments(
+    const InputRange& input_range,
+    OutputIterator segments,
+    const NamedParameters np,
+    const SegmentMap segment_map = SegmentMap()) {
+
+    CGAL_precondition(input_range.size() >= 1);
+    using Iterator_type = typename InputRange::const_iterator;
+    using Segment_2 = typename std::iterator_traits<Iterator_type>::value_type;
+    using GeomTraits = typename Kernel_traits<Segment_2>::Kernel;
+    GeomTraits traits;
+
+    return unique_segments(
+      input_range, segments, np, segment_map, traits);
   }
 
 } // namespace Segments

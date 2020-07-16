@@ -38,25 +38,25 @@ the index of a plane in the plane range (-1 if the point is not assigned to a pl
 \cgalNPEnd
 
 \cgalNPBegin{regularize_parallelism} \anchor SR_regularize_parallelism
-selects whether parallelism is regularized or not\n
+indicates whether parallelism should be regularized or not\n
 <b>Type:</b> `bool`\n
 <b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPBegin{regularize_orthogonality} \anchor SR_regularize_orthogonality
-selects whether orthogonality is regularized or not\n
+indicates whether orthogonality should be regularized or not\n
 <b>Type:</b> `bool`\n
 <b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPBegin{regularize_coplanarity} \anchor SR_regularize_coplanarity
-selects whether coplanarity is regularized or not\n
+indicates whether coplanarity should be regularized or not\n
 <b>Type:</b> `bool`\n
 <b>Default:</b> `true`
 \cgalNPEnd
 
 \cgalNPBegin{regularize_axis_symmetry} \anchor SR_regularize_axis_symmetry
-selects whether axis symmetry is regularized or not\n
+indicates whether axis symmetry should be regularized or not\n
 <b>Type:</b> `bool`\n
 <b>Default:</b> `true`
 \cgalNPEnd
@@ -65,6 +65,12 @@ selects whether axis symmetry is regularized or not\n
 an axis for symmetry regularization\n
 <b>Type:</b> `CGAL::Vector_3<Kernel>`\n
 <b>Default:</b> Z axis that is `CGAL::Vector_3<Kernel>(0, 0, 1)`
+\cgalNPEnd
+
+\cgalNPBegin{preserve_order} \anchor SR_preserve_order
+indicates whether the order of input items should be preserved or not\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> `false`
 \cgalNPEnd
 
 \cgalNPTableEnd

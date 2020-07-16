@@ -10,10 +10,11 @@ namespace SR = CGAL::Shape_regularization;
 template<class Traits>
 void test_longest_direction() {
 
-  using FT      = typename Traits::FT;
-  using Point_2 = typename Traits::Point_2;
-  using Contour = std::vector<Point_2>;
-  using Saver   = SR::Tests::Saver<Traits>;
+  using FT          = typename Traits::FT;
+  using Point_2     = typename Traits::Point_2;
+  using Direction_2 = typename Traits::Direction_2;
+  using Contour     = std::vector<Point_2>;
+  using Saver       = SR::Tests::Saver<Traits>;
 
   using Point_map = CGAL::Identity_property_map<Point_2>;
   using LD = SR::Contours::Longest_direction_2<Traits, Contour, Point_map>;
@@ -46,6 +47,7 @@ void test_longest_direction() {
   const auto& open_dirs = open_directions.get_directions();
 
   assert(closed_dirs[0] == open_dirs[0]);
+  assert(closed_dirs[0] == Direction_2(contour[1] - contour[0]));
 }
 
 int main() {

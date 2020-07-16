@@ -3,7 +3,7 @@
 \cgalConcept
 
 We assume that each contour has one or several principal directions. By implementing
-a model of this cocept, the user sets such directions and provides a way to orient
+a model of this concept, the user sets such directions and provides a way to orient
 contour edges towards these directions. All contour regularization functions
 in this package are parameterized by this concept.
 

@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   Saver saver;
 
   // Set parameters.
-  const FT max_offset_2 = FT(1);
+  const FT max_offset_2 = FT(2);
 
   // Initialize contour.
   Contour contour;

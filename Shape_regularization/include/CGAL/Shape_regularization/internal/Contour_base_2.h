@@ -29,9 +29,6 @@
 #include <CGAL/Shape_regularization/internal/Segment_wrapper_2.h>
 #include <CGAL/Shape_regularization/internal/Unique_segments_2.h>
 
-// TODO:
-// * Simplify this class if possible.
-
 namespace CGAL {
 namespace Shape_regularization {
 namespace internal {
@@ -412,8 +409,12 @@ namespace internal {
         const std::size_t direction_index = assigned[i];
         CGAL_assertion(direction_index != std::size_t(-1));
 
-        const auto& di = directions[direction_index];
-        const auto& dj = wrap.direction;
+        // Old code.
+        // const auto& di = directions[direction_index];
+        // const auto& dj = wrap.direction;
+
+        const auto& di = wrap.direction;
+        const auto& dj = directions[direction_index];
         const FT angle = internal::mod90_angle_2(di, dj);
 
         angles[direction_index] += angle;
@@ -458,15 +459,27 @@ namespace internal {
       const Direction_2& seg_direction,
       Segment_2& segment) const {
 
-      const FT angle_deg = internal::compute_angle_2(
+      // Old code.
+      // const FT angle_deg = internal::compute_angle_2(
+      //   ref_direction, seg_direction);
+      // const FT converted = CGAL::abs(convert_angle_2(angle_deg));
+      // if (converted <= bounds.first)
+      //   internal::rotate_segment_2(
+      //     angle_deg, FT(180), segment); // parallel case
+      // if (converted >= bounds.second)
+      //   internal::rotate_segment_2(
+      //     angle_deg, FT(90), segment); // orthogonal case
+
+      const FT angle_deg = internal::mod90_angle_2(
+        seg_direction, ref_direction);
+      const FT angle_2 = internal::angle_2(
         ref_direction, seg_direction);
-      const FT converted = CGAL::abs(convert_angle_2(angle_deg));
-      if (converted <= bounds.first)
+      if (angle_2 <= bounds.first)
         internal::rotate_segment_2(
-          angle_deg, FT(180), segment); // parallel case
-      if (converted >= bounds.second)
+          angle_deg, FT(0), segment); // parallel case
+      if (angle_2 >= bounds.second)
         internal::rotate_segment_2(
-          angle_deg, FT(90), segment); // orthogonal case
+          angle_deg, FT(0), segment); // orthogonal case
     }
 
     ///////////////

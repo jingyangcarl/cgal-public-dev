@@ -329,16 +329,16 @@ namespace Planes {
         they are considered coplanar, the default is 0.01
       \cgalParamEnd
       \cgalParamBegin{regularize_parallelism}
-        selects whether parallelism is regularized or not, the default is `true`
+        indicates whether parallelism should be regularized or not, the default is `true`
       \cgalParamEnd
       \cgalParamBegin{regularize_orthogonality}
-        selects whether orthogonality is regularized or not, the default is `true`
+        indicates whether orthogonality should be regularized or not, the default is `true`
       \cgalParamEnd
       \cgalParamBegin{regularize_coplanarity}
-        selects whether coplanarity is regularized or not, the default is `true`
+        indicates whether coplanarity should be regularized or not, the default is `true`
       \cgalParamEnd
       \cgalParamBegin{regularize_axis_symmetry}
-        selects whether axis symmetry is regularized or not, the default is `true`
+        indicates whether axis symmetry should be regularized or not, the default is `true`
       \cgalParamEnd
       \cgalParamBegin{symmetry_direction}
         an axis for symmetry regularization, the default is Z axis

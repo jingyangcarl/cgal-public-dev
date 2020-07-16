@@ -340,7 +340,7 @@ split into such groups.
 
 \section Contour_Regularization Contours
 
-Given a set of ordered 2D points connected by segments, which form a contour, closed
+Given a set of counterclockwise ordered 2D points connected by segments, which form a contour, closed
 or open, one can reinforce three types of regularities among consecutive edges of this contour:
 - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
 - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.

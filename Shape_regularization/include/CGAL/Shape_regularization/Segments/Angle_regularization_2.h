@@ -281,7 +281,7 @@ namespace Segments {
     /*!
       \brief returns indices of parallel segments organized into groups.
 
-      This function calls `CGAL::Shape_regularization::Segments::parallel_groups()`.
+      This method calls `CGAL::Shape_regularization::Segments::parallel_groups()`.
 
       \tparam OutputIterator
       must be a model of `OutputIterator`
@@ -303,7 +303,7 @@ namespace Segments {
     /*!
       \brief returns indices of orthogonal segments organized into groups.
 
-      This function calls `CGAL::Shape_regularization::Segments::orthogonal_groups()`.
+      This method calls `CGAL::Shape_regularization::Segments::orthogonal_groups()`.
 
       \tparam OutputIterator
       must be a model of `OutputIterator`

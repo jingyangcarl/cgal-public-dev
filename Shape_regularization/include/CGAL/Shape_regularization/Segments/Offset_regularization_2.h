@@ -283,7 +283,7 @@ namespace Segments {
     /*!
       \brief returns indices of collinear segments organized into groups.
 
-      This function calls `CGAL::Shape_regularization::Segments::collinear_groups()`.
+      This method calls `CGAL::Shape_regularization::Segments::collinear_groups()`.
 
       \tparam OutputIterator
       must be a model of `OutputIterator`
@@ -317,8 +317,8 @@ namespace Segments {
     /*!
       \brief returns segments, which best-fit collinear groups.
 
-      This function first calls `CGAL::Shape_regularization::Segments::collinear_groups()`
-      and then substitutes all segments from each collinear group by an average segment.
+      This method first calls `CGAL::Shape_regularization::Segments::collinear_groups()`
+      and then substitutes each group of collinear segments by an average segment.
       The number of returned segments is the number of detected collinear groups.
 
       \tparam OutputIterator

@@ -67,15 +67,28 @@ namespace internal {
     return FT(1000000000000);
   }
 
+  // Converts degrees to radians.
   template<typename FT>
   double radians_2(FT angle_deg) {
     return CGAL::to_double(
       angle_deg * static_cast<FT>(CGAL_PI) / FT(180));
   }
 
+  // Converts radians to degrees.
   template<typename FT>
   FT degrees_2(FT angle_rad) {
     return angle_rad * FT(180) / static_cast<FT>(CGAL_PI);
+  }
+
+  // Normalizes a vector.
+  template<typename Vector_d>
+  void normalize_vector(Vector_d& v) {
+
+    using Traits = typename Kernel_traits<Vector_d>::Kernel;
+    using FT = typename Traits::FT;
+
+    v /= static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(v.squared_length())));
   }
 
   //////////////////////
@@ -143,17 +156,6 @@ namespace internal {
 
     return static_cast<FT>(
       CGAL::sqrt(CGAL::to_double(segment.squared_length())));
-  }
-
-  // Normalizes a vector.
-  template<typename Vector_d>
-  void normalize_vector(Vector_d& v) {
-
-    using Traits = typename Kernel_traits<Vector_d>::Kernel;
-    using FT = typename Traits::FT;
-
-    v /= static_cast<FT>(
-      CGAL::sqrt(CGAL::to_double(v.squared_length())));
   }
 
   // Computes the counterclockwise perpendicular vector from a direction.
