@@ -223,8 +223,8 @@ namespace internal {
       std::vector<Segment_wrapper_2>& wraps,
       std::vector<std::size_t>& assigned) const {
 
-      CGAL_assertion(assigned.size() == wraps.size());
       const std::size_t n = wraps.size();
+      CGAL_assertion(assigned.size() == n);
       for (std::size_t i = 0; i < n; ++i) {
         auto& wrap = wraps[i];
         if (wrap.is_used) continue;
@@ -272,6 +272,7 @@ namespace internal {
       std::vector<std::size_t> clean;
       clean.reserve(n);
 
+      CGAL_assertion(assigned.size() == n);
       for (std::size_t i = 0; i < n; ++i) {
         const std::size_t im = (i + n - 1) % n;
         const std::size_t ip = (i + 1) % n;
@@ -293,6 +294,7 @@ namespace internal {
       std::vector<std::size_t>& assigned) const {
 
       const std::size_t n = wraps.size();
+      CGAL_assertion(assigned.size() == n);
       for (std::size_t i = 0; i < n; ++i) {
         auto& wrap = wraps[i];
         if (wrap.is_used) continue;
@@ -307,27 +309,32 @@ namespace internal {
         do {
 
           if (im != std::size_t(-1) && wraps[im].is_used) {
+            CGAL_assertion(i >= 0 && i < n);
+            CGAL_assertion(im >= 0 && im < n);
             assigned[i] = assigned[im];
             wrap.is_used = true;
             break;
           }
 
           if (ip != std::size_t(-1) && wraps[ip].is_used) {
+            CGAL_assertion(i >= 0 && i < n);
+            CGAL_assertion(ip >= 0 && ip < n);
             assigned[i] = assigned[ip];
             wrap.is_used = true;
             break;
           }
 
+          if (stop) break;
           if (im != std::size_t(-1) && im > 0)
             im = im - 1;
           if (ip != std::size_t(-1) && ip < n - 1)
             ip = ip + 1;
 
-          if (im == 0 || ip == n - 1) // fix this, I skip 0 and last
+          if (im == 0 || ip == n - 1)
             stop = true;
           ++max_count;
 
-        } while (!stop && max_count < n);
+        } while (max_count < n);
         if (stop || max_count >= n) {
           std::cerr <<
             "Warning: revert back to the first direction!" << std::endl;
@@ -344,19 +351,41 @@ namespace internal {
       std::vector<std::size_t> clean;
       clean.reserve(n);
 
+      CGAL_assertion(assigned.size() == n);
       for (std::size_t i = 0; i < n; ++i) {
 
-        std::size_t im = std::size_t(-1); // fix this, I skip 0 and last
-        if (i > 0) im = i - 1;
-        std::size_t ip = std::size_t(-1);
-        if (i < n - 1) ip = i + 1;
+        if (i == 0) {
+          const std::size_t ip = 1;
+          CGAL_assertion(ip >= 0 && ip < n);
+          const std::size_t di = assigned[i];
+          const std::size_t dp = assigned[ip];
+          if (di != dp)
+            clean.push_back(dp);
+          else
+            clean.push_back(di);
+          continue;
+        }
 
-        std::size_t dm = std::size_t(-1);
-        if (im != std::size_t(-1)) dm = assigned[im];
-        std::size_t di = std::size_t(-1);
-        if (i != std::size_t(-1)) di = assigned[i];
-        std::size_t dp = std::size_t(-1);
-        if (ip != std::size_t(-1)) dp = assigned[ip];
+        if (i == n - 1) {
+          const std::size_t im = n - 2;
+          CGAL_assertion(im >= 0 && im < n);
+          const std::size_t dm = assigned[im];
+          const std::size_t di = assigned[i];
+          if (di != dm)
+            clean.push_back(dm);
+          else
+            clean.push_back(di);
+          continue;
+        }
+
+        const std::size_t im = i - 1;
+        const std::size_t ip = i + 1;
+        CGAL_assertion(im >= 0 && im < n);
+        const std::size_t dm = assigned[im];
+        CGAL_assertion(i >= 0 && i < n);
+        const std::size_t di = assigned[i];
+        CGAL_assertion(ip >= 0 && ip < n);
+        const std::size_t dp = assigned[ip];
 
         if (dm != std::size_t(-1) && dm == dp && di != dm)
           clean.push_back(dm);
@@ -472,14 +501,8 @@ namespace internal {
 
       const FT angle_deg = internal::mod90_angle_2(
         seg_direction, ref_direction);
-      const FT angle_2 = internal::angle_2(
-        ref_direction, seg_direction);
-      if (angle_2 <= bounds.first)
-        internal::rotate_segment_2(
-          angle_deg, FT(0), segment); // parallel case
-      if (angle_2 >= bounds.second)
-        internal::rotate_segment_2(
-          angle_deg, FT(0), segment); // orthogonal case
+      internal::rotate_segment_2(
+        angle_deg, FT(0), segment);
     }
 
     ///////////////
@@ -739,21 +762,6 @@ namespace internal {
         }
       }
       return false;
-    }
-
-    // This one introduces a huge error.
-    // I should better use the one below.
-    void create_middle_orth(
-      const Segment_2& segmenti,
-      const Segment_2& segmentj,
-      Segment_2& orth) const {
-
-      const Line_2 line = Line_2(
-        segmentj.source(), segmentj.target());
-      const auto source = internal::middle_point_2(
-        segmenti.source(), segmenti.target());
-      const auto target = line.projection(source);
-      orth = Segment_2(source, target);
     }
 
     void create_average_orth(

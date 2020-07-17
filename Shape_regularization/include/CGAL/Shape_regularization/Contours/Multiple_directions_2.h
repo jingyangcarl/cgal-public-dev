@@ -111,6 +111,9 @@ namespace Contours {
           min length of a contour edge whose direction can be taken
           as a principal direction, the default is 3 unit lengths
         \cgalParamEnd
+        \cgalParamBegin{adjust_directions}
+          indicates wether the found directions should be better adjusted to the original shape
+        \cgalParamEnd
       \cgalNamedParamsEnd
 
       \pre `input_range.size() >= 3` for closed contours
@@ -130,6 +133,8 @@ namespace Contours {
         parameters::get_parameter(np, internal_np::max_angle), FT(10));
       m_min_length_2 = parameters::choose_parameter(
         parameters::get_parameter(np, internal_np::min_length), FT(3));
+      m_adjust_directions = parameters::choose_parameter(
+        parameters::get_parameter(np, internal_np::adjust_directions), true);
 
       CGAL_precondition(
         m_max_angle_2 >= FT(0) &&
@@ -206,6 +211,7 @@ namespace Contours {
 
     FT m_max_angle_2;
     FT m_min_length_2;
+    bool m_adjust_directions;
 
     std::vector<FT_pair> m_bounds;
     std::vector<Direction_2> m_directions;
@@ -223,6 +229,13 @@ namespace Contours {
       std::vector<Segment_wrapper_2> wraps;
       m_base.initialize_closed(
         m_input_range, m_point_map, wraps);
+
+      if (wraps.size() < 3) {
+        set_longest_direction(
+          wraps, bounds, directions, assigned);
+        return;
+      }
+
       set_valid_directions(wraps);
       estimate_initial_directions(
         wraps, bounds, directions, assigned);
@@ -233,7 +246,8 @@ namespace Contours {
       } else {
         m_base.unify_along_contours_closed(wraps, assigned);
         m_base.correct_directions_closed(wraps, assigned);
-        m_base.readjust_directions(wraps, assigned, directions);
+        if (m_adjust_directions)
+          m_base.readjust_directions(wraps, assigned, directions);
       }
     }
 
@@ -245,6 +259,13 @@ namespace Contours {
       std::vector<Segment_wrapper_2> wraps;
       m_base.initialize_open(
         m_input_range, m_point_map, wraps);
+
+      if (wraps.size() < 3) {
+        set_longest_direction(
+          wraps, bounds, directions, assigned);
+        return;
+      }
+
       set_valid_directions(wraps);
       estimate_initial_directions(
         wraps, bounds, directions, assigned);
@@ -255,7 +276,8 @@ namespace Contours {
       } else {
         m_base.unify_along_contours_open(wraps, assigned);
         m_base.correct_directions_open(wraps, assigned);
-        m_base.readjust_directions(wraps, assigned, directions);
+        if (m_adjust_directions)
+          m_base.readjust_directions(wraps, assigned, directions);
       }
     }
 

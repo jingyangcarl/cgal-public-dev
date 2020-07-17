@@ -161,16 +161,24 @@ namespace Shape_regularization {
 
       // Graph = edges connecting neighbor segments.
       build_graph_of_neighbors();
-      if (m_graph.size() == 0) return;
+      if (m_graph.size() == 0) {
+        clear(); return;
+      }
 
       // Bounds = number of input segments.
       obtain_bounds();
-      if (m_bounds.size() == 0) return;
-      if (m_bounds.size() != m_input_range.size()) return;
+      if (m_bounds.size() == 0) {
+        clear(); return;
+      }
+      if (m_bounds.size() != m_input_range.size()) {
+        clear(); return;
+      }
 
       // Targets = number of graph edges.
       obtain_targets();
-      if (m_targets.size() == 0) return;
+      if (m_targets.size() == 0) {
+        clear(); return;
+      }
 
       // QP data.
       set_qp_data(
@@ -180,8 +188,9 @@ namespace Shape_regularization {
       std::vector<FT> solution;
       solve_quadratic_program(
         m_quadratic_program, solution);
-      if (solution.size() != m_input_range.size() + m_targets.size())
-        return;
+      if (solution.size() != m_input_range.size() + m_targets.size()) {
+        clear(); return;
+      }
 
       // Update.
       m_regularization_type.update(solution);
@@ -263,7 +272,7 @@ namespace Shape_regularization {
     void obtain_targets() {
 
       m_targets.clear();
-      for(const auto& pair : m_graph) {
+      for (const auto& pair : m_graph) {
         const std::size_t i = pair.first;
         const std::size_t j = pair.second;
 

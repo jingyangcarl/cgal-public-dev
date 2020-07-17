@@ -73,5 +73,11 @@ indicates whether the order of input items should be preserved or not\n
 <b>Default:</b> `false`
 \cgalNPEnd
 
+\cgalNPBegin{adjust_directions} \anchor SR_adjust_directions
+indicates whether the found directions should be better adjusted to the original shape\n
+<b>Type:</b> `bool`\n
+<b>Default:</b> `true`
+\cgalNPEnd
+
 \cgalNPTableEnd
 */

@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_closed_contour_1() {
+void test_closed_contour_10_edges() {
 
   using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
@@ -19,13 +19,20 @@ void test_closed_contour_1() {
 
   Saver saver;
   const Contour contour = {
-    Point_2(0, 0), Point_2(  FT(5) / FT(10), -FT(1) / FT(20)),
-    Point_2(1, 0), Point_2(FT(105) / FT(100), FT(5) / FT(10)),
-    Point_2(1, 1), Point_2(0, 1)
+    Point_2(0.0, 0.0),
+    Point_2(4.0, 0.0),
+    Point_2(3.815571929821836, 1.503828619292098),
+    Point_2(4.518233645117484, 1.605529657032258),
+    Point_2(4.0, 2.5),
+    Point_2(4.305586020751696, 2.992361989852617),
+    Point_2(4.305586020751696, 3.990881269483276),
+    Point_2(2.0, 3.5),
+    Point_2(0.0, 4.0),
+    Point_2(0.182071217832495, 0.505309339661439),
   };
-  assert(contour.size() == 6);
+  assert(contour.size() == 10);
   // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_input", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/cl10_input", 100);
 
   const bool is_closed = true;
   CD directions(
@@ -40,16 +47,16 @@ void test_closed_contour_1() {
     directions.number_of_directions();
 
   // saver.export_closed_contour(regularized,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/cl_output", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/cl10_output", 100);
 
   assert(num_directions == 1);
-  assert(regularized.size() == 4);
+  assert(regularized.size() == 6);
 }
 
 int main() {
-  test_closed_contour_1< CGAL::Simple_cartesian<double> >();
-  test_closed_contour_1< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_closed_contour_1< CGAL::Exact_predicates_exact_constructions_kernel >();
-  std::cout << "test_closed_contour_1: SUCCESS" << std::endl;
+  test_closed_contour_10_edges< CGAL::Simple_cartesian<double> >();
+  test_closed_contour_10_edges< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_closed_contour_10_edges< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_closed_contour_10_edges: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

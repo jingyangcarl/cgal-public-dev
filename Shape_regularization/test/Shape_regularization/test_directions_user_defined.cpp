@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_user_defined_directions() {
+void test_directions_user_defined() {
 
   using FT          = typename Traits::FT;
   using Point_2     = typename Traits::Point_2;
@@ -29,7 +29,7 @@ void test_user_defined_directions() {
   };
   assert(contour.size() == 7);
   // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/ud_input", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/du_input", 100);
 
   const std::vector<Direction_2> dirs = {
     Direction_2(1, 0),
@@ -56,12 +56,14 @@ void test_user_defined_directions() {
 
   assert(closed_dirs[0] == open_dirs[0]);
   assert(closed_dirs[1] == open_dirs[1]);
+  assert(closed_dirs[0] == dirs[0]);
+  assert(closed_dirs[1] == dirs[1]);
 }
 
 int main() {
-  test_user_defined_directions< CGAL::Simple_cartesian<double> >();
-  test_user_defined_directions< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_user_defined_directions< CGAL::Exact_predicates_exact_constructions_kernel >();
-  std::cout << "test_user_defined_directions: SUCCESS" << std::endl;
+  test_directions_user_defined< CGAL::Simple_cartesian<double> >();
+  test_directions_user_defined< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_directions_user_defined< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_directions_user_defined: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

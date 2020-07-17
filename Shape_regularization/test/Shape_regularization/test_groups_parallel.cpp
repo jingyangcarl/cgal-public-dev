@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_parallel_groups() {
+void test_groups_parallel() {
 
   using FT        = typename Traits::FT;
   using Point_2   = typename Traits::Point_2;
@@ -30,23 +30,23 @@ void test_parallel_groups() {
     Segment_2(Point_2(7, 6), Point_2(4, 4))
   };
   // saver.export_eps_segments(segments,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/pg_input", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/gp_input", 100);
 
   std::vector<Indices> groups;
   SR::Segments::parallel_groups(
     segments, std::back_inserter(groups), CGAL::parameters::all_default());
   assert(groups.size() == 3);
 
-  // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/pg_group0", 100);
+  // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/gp_group0", 100);
   assert(groups[0].size() == 3);
   assert(groups[0][0] == 0);
   assert(groups[0][1] == 1);
   assert(groups[0][2] == 2);
-  // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/pg_group1", 100);
+  // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/gp_group1", 100);
   assert(groups[1].size() == 2);
   assert(groups[1][0] == 3);
   assert(groups[1][1] == 4);
-  // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/pg_group2", 100);
+  // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/gp_group2", 100);
   assert(groups[2].size() == 2);
   assert(groups[2][0] == 5);
   assert(groups[2][1] == 6);
@@ -56,25 +56,25 @@ void test_parallel_groups() {
     segments, std::back_inserter(groups), CGAL::parameters::preserve_order(true));
   assert(groups.size() == 3);
 
-  // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/pg_group0_pr", 100);
+  // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/gp_group0_pr", 100);
   assert(groups[0].size() == 3);
   assert(groups[0][0] == 0);
   assert(groups[0][1] == 1);
   assert(groups[0][2] == 2);
-  // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/pg_group1_pr", 100);
+  // saver.export_eps_group(segments, groups[1], "/Users/monet/Documents/gsoc/ggr/logs/gp_group1_pr", 100);
   assert(groups[1].size() == 2);
   assert(groups[1][0] == 3);
   assert(groups[1][1] == 4);
-  // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/pg_group2_pr", 100);
+  // saver.export_eps_group(segments, groups[2], "/Users/monet/Documents/gsoc/ggr/logs/gp_group2_pr", 100);
   assert(groups[2].size() == 2);
   assert(groups[2][0] == 5);
   assert(groups[2][1] == 6);
 }
 
 int main() {
-  test_parallel_groups< CGAL::Simple_cartesian<double> >();
-  test_parallel_groups< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_parallel_groups< CGAL::Exact_predicates_exact_constructions_kernel >();
-  std::cout << "test_parallel_groups: SUCCESS" << std::endl;
+  test_groups_parallel< CGAL::Simple_cartesian<double> >();
+  test_groups_parallel< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_groups_parallel< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_groups_parallel: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

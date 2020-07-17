@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_open_contour() {
+void test_open_contour_1_edge() {
 
   using FT      = typename Traits::FT;
   using Point_2 = typename Traits::Point_2;
@@ -19,13 +19,11 @@ void test_open_contour() {
 
   Saver saver;
   const Contour contour = {
-    Point_2(0, 0), Point_2(  FT(5) / FT(10), -FT(1) / FT(20)),
-    Point_2(1, 0), Point_2(FT(105) / FT(100), FT(5) / FT(10)),
-    Point_2(1, 1), Point_2(0, 1)
+    Point_2(0, 0), Point_2(1, 0)
   };
-  assert(contour.size() == 6);
+  assert(contour.size() == 2);
   // saver.export_open_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op_input", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/op1_input", 100);
 
   const bool is_closed = false;
   CD directions(
@@ -40,16 +38,16 @@ void test_open_contour() {
     directions.number_of_directions();
 
   // saver.export_open_contour(regularized,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/op_output", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/op1_output", 100);
 
   assert(num_directions == 1);
-  assert(regularized.size() == 4);
+  assert(regularized.size() == 0);
 }
 
 int main() {
-  test_open_contour< CGAL::Simple_cartesian<double> >();
-  test_open_contour< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_open_contour< CGAL::Exact_predicates_exact_constructions_kernel >();
-  std::cout << "test_open_contour: SUCCESS" << std::endl;
+  test_open_contour_1_edge< CGAL::Simple_cartesian<double> >();
+  test_open_contour_1_edge< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_open_contour_1_edge< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_open_contour_1_edge: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

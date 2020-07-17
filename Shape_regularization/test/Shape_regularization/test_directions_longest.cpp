@@ -8,7 +8,7 @@
 namespace SR = CGAL::Shape_regularization;
 
 template<class Traits>
-void test_longest_direction() {
+void test_directions_longest() {
 
   using FT          = typename Traits::FT;
   using Point_2     = typename Traits::Point_2;
@@ -27,7 +27,7 @@ void test_longest_direction() {
   };
   assert(contour.size() == 4);
   // saver.export_closed_contour(contour,
-  //   "/Users/monet/Documents/gsoc/ggr/logs/ld_input", 100);
+  //   "/Users/monet/Documents/gsoc/ggr/logs/dl_input", 100);
 
   const bool is_closed = true;
   LD closed_directions(
@@ -51,9 +51,9 @@ void test_longest_direction() {
 }
 
 int main() {
-  test_longest_direction< CGAL::Simple_cartesian<double> >();
-  test_longest_direction< CGAL::Exact_predicates_inexact_constructions_kernel >();
-  test_longest_direction< CGAL::Exact_predicates_exact_constructions_kernel >();
-  std::cout << "test_longest_direction: SUCCESS" << std::endl;
+  test_directions_longest< CGAL::Simple_cartesian<double> >();
+  test_directions_longest< CGAL::Exact_predicates_inexact_constructions_kernel >();
+  test_directions_longest< CGAL::Exact_predicates_exact_constructions_kernel >();
+  std::cout << "test_directions_longest: SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }
