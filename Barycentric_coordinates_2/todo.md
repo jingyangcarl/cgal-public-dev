@@ -5,3 +5,4 @@
 * Why the 2D mesher does not generate boundary points exactly on the polygon boundary but only with precision 10^-5?
 * What about adding a demo with visualization of the coordinate functions?
 * Add 3D coordinates.
+* Add a table that compares properties of all available coordinates.
