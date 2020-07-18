@@ -17,7 +17,8 @@ using OR = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel,
 
 void benchmark_qp_segments(
   const std::size_t n,
-  const bool regroup) {
+  const bool regroup,
+  const bool simple_output) {
 
   FT step = FT(1), d = FT(1) / FT(10);
   FT x1 = FT(0), y1 = FT(0), x2 = FT(0), y2 = FT(0);
@@ -126,7 +127,7 @@ void benchmark_qp_segments(
   timer.reset();
 
   std::cout.precision(10);
-  if (regroup)
+  if (regroup && !simple_output)
     std::cout << "grouped: " ;
 
   // std::cout << "benchmark_qp_segments " << segments.size() << " (CPU time " <<
@@ -136,8 +137,15 @@ void benchmark_qp_segments(
   //   setup_offset_time << "/" << offset_time <<
   // " seconds" << std::endl;
 
-  std::cout << "benchmark_qp_segments " << segments.size() << " (CPU time " <<
-  "angles/offsets): " << angle_time << "/" << offset_time << " seconds" << std::endl;
+  if (!simple_output)
+    std::cout << "benchmark_qp_segments " << segments.size() << " (CPU time " <<
+    "angles/offsets): " << angle_time << "/" << offset_time << " seconds" << std::endl;
+  else {
+    if (!regroup)
+      std::cout << segments.size() << " " << angle_time << " " << offset_time << " ";
+    else
+      std::cout << angle_time << " " << offset_time << std::endl;
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -147,9 +155,18 @@ int main(int argc, char *argv[]) {
   };
   std::cout << std::endl;
   for (const std::size_t n : ns) {
-    benchmark_qp_segments(n, false);
-    benchmark_qp_segments(n, true);
+    benchmark_qp_segments(n, false, false);
+    benchmark_qp_segments(n, true , false);
     std::cout << std::endl;
   }
+
+  // std::vector<std::size_t> ns;
+  // for (std::size_t i = 10; i <= 5000; i += 10)
+  //   ns.push_back(i);
+  // for (const std::size_t n : ns) {
+  //   benchmark_qp_segments(n, false, true);
+  //   benchmark_qp_segments(n, true , true);
+  // }
+
   return EXIT_SUCCESS;
 }

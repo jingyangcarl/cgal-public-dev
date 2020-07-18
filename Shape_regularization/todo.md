@@ -1,6 +1,5 @@
-* Regenerate contour figures.
 * Remove all unnecessary functions.
-* Add benchmark graphs to the user manual.
+* Regenerate contour figures. Add benchmark figures.
 * Add unique segments section in the user manual with the figure. Mention: Unique segments can later be converted into lines.
 
 * Install OSQP on all testing platforms.

@@ -12,7 +12,8 @@ using Timer   = CGAL::Real_timer;
 using CD = CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour>;
 
 void benchmark_contours(
-  const std::size_t n) {
+  const std::size_t n,
+  const bool simple_output) {
 
   FT step = FT(1), d = FT(1) / FT(10);
   FT x = FT(0), y = FT(0);
@@ -70,8 +71,11 @@ void benchmark_contours(
   timer.reset();
 
   std::cout.precision(10);
-  std::cout << "benchmark_contours " << contour.size() << " (CPU time " <<
-  "closed/open): " << closed_time << "/" << open_time << " seconds" << std::endl;
+  if (simple_output)
+    std::cout << contour.size() << " " << closed_time << " " << open_time << std::endl;
+  else
+    std::cout << "benchmark_contours " << contour.size() << " (CPU time " <<
+    "closed/open): " << closed_time << "/" << open_time << " seconds" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -80,6 +84,13 @@ int main(int argc, char *argv[]) {
     10, 100, 1000, 10000, 100000, 1000000, 10000000
   };
   for (const std::size_t n : ns)
-    benchmark_contours(n);
+    benchmark_contours(n, false);
+
+  // std::vector<std::size_t> ns;
+  // for (std::size_t i = 10; i <= 10000; i += 10)
+  //   ns.push_back(i);
+  // for (const std::size_t n : ns)
+  //   benchmark_contours(n, true);
+
   return EXIT_SUCCESS;
 }
