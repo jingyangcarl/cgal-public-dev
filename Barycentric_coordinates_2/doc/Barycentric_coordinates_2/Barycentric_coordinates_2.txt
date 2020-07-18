@@ -62,6 +62,67 @@ predicates, and constructions, which are required for the computation. All model
 can be used. A polygon is provided as a range of vertices with a
 \ref PkgPropertyMapRef "property map" that maps a vertex from the polygon to `CGAL::Point_2`.
 
+If you do not know which coordinate function best fits your application, you can address the
+table below for some advise.
+
+<table class="markdownTable" align="center">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadCenter">Coordinates</th>
+<th class="markdownTableHeadCenter">Properties</th>
+<th class="markdownTableHeadCenter">Polygon type</th>
+<th class="markdownTableHeadCenter">Closed form</th>
+<th class="markdownTableHeadCenter">Queries</th>
+<th class="markdownTableHeadCenter">Speed</th>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Segment</td>
+<td class="markdownTableBodyCenter">All</td>
+<td class="markdownTableBodyCenter">2D non-degenerate segments</td>
+<td class="markdownTableBodyCenter">Yes</td>
+<td class="markdownTableBodyCenter">Any on the supporting line</td>
+<td class="markdownTableBodyCenter">\f$O(2)\f$</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Triangle</td>
+<td class="markdownTableBodyCenter">All</td>
+<td class="markdownTableBodyCenter">2D non-degenerate triangles</td>
+<td class="markdownTableBodyCenter">Yes</td>
+<td class="markdownTableBodyCenter">Any on the plane</td>
+<td class="markdownTableBodyCenter">\f$O(3)\f$</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Discrete harmonic</td>
+<td class="markdownTableBodyCenter">May be negative</td>
+<td class="markdownTableBodyCenter">Strongly convex polygons</td>
+<td class="markdownTableBodyCenter">Yes</td>
+<td class="markdownTableBodyCenter">Any inside the polygon</td>
+<td class="markdownTableBodyCenter">\f$O(n)\f$ or \f$O(n^2)\f$</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Wachspress</td>
+<td class="markdownTableBodyCenter">All</td>
+<td class="markdownTableBodyCenter">Strongly convex polygons</td>
+<td class="markdownTableBodyCenter">Yes</td>
+<td class="markdownTableBodyCenter">Any inside the polygon</td>
+<td class="markdownTableBodyCenter">\f$O(n)\f$ or \f$O(n^2)\f$</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Mean value</td>
+<td class="markdownTableBodyCenter">May be negative</td>
+<td class="markdownTableBodyCenter">Simple polygons</td>
+<td class="markdownTableBodyCenter">Yes</td>
+<td class="markdownTableBodyCenter">Any on the plane</td>
+<td class="markdownTableBodyCenter">\f$O(n)\f$ or \f$O(n^2)\f$</td>
+</tr>
+<tr class="markdownTableBody">
+<td class="markdownTableBodyCenter">Harmonic</td>
+<td class="markdownTableBodyCenter">All</td>
+<td class="markdownTableBodyCenter">Simple polygons</td>
+<td class="markdownTableBodyCenter">No</td>
+<td class="markdownTableBodyCenter">Any inside the polygon</td>
+<td class="markdownTableBodyCenter">\f$\approx O(n^2)\f$ (implementation dependent)</td>
+</tr>
+</table>
 
 \section gbc_examples Examples
 
