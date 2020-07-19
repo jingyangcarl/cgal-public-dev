@@ -28,6 +28,19 @@ void test_unique_segments() {
     Segment_2(Point_2(-1, 1), Point_2(-1, 3)), // the left group
     Segment_2(Point_2(-FT(3) / FT(2), FT(5) / FT(2)), Point_2(-FT(3) / FT(2), FT(3) / FT(2))),
   };
+
+  // For the user manual:
+  // const Segments segments = {
+  //   Segment_2(Point_2(2.0, 1.0), Point_2(5.0, 1.0)),
+  //   Segment_2(Point_2(4.0, 1.2), Point_2(6.0, 1.2)),
+  //   Segment_2(Point_2(3.0, 2.0), Point_2(4.0, 3.0)),
+  //   Segment_2(Point_2(2.0, 3.0), Point_2(3.0, 4.0)),
+  //   Segment_2(Point_2(4.0, 4.0), Point_2(2.0, 5.0)),
+  //   Segment_2(Point_2(5.0, 4.0), Point_2(6.0, 5.0)),
+  //   Segment_2(Point_2(5.0, 2.0), Point_2(5.0, 3.4)),
+  //   Segment_2(Point_2(5.2, 2.4), Point_2(5.2, 3.0))
+  // };
+
   // saver.export_eps_segments(segments,
   //   "/Users/monet/Documents/gsoc/ggr/logs/us_input", 100);
 

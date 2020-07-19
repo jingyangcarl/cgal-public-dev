@@ -94,7 +94,18 @@ boundaries of three different buildings and you do not want to regularize these 
 but rather within each building boundary, in that case you should call the `add_group`
 method three times. An example of such groups can be seen in \ref Regularize_15_Segments_Figure "this figure",
 where one can see three groups of contextually similar segments: outer boundary, interior top rhombus
-and interior bottom rhombus.
+and interior bottom rhombus or in the figure below.
+
+In this figure, there are two squares, one external and one internal. On the left, the red segments show
+the connectivity among all input segments that is a Delaunay triangulation built upon all these segments,
+while on the right, the green segments show the connectivity only among external square segments and
+blue segments only among internal square segments.
+
+\cgalFigureBegin{delaunay_groups, delaunay_groups.svg}
+Delaunay triangulation (red) for all input segments (black, left) and two contextually
+different groups with green Delaunay for the external segments and blue Delaunay for
+the internal segments (right).
+\cgalFigureEnd
 
 
 \subsection QP_Regularization_Segments_Angles Angle Regularization
@@ -227,6 +238,22 @@ Note that none of these functions applies the regularization of the input segmen
 only return groups of indices of segments with similar orientations and/or positions.
 
 
+\subsection QP_Regularization_Segments_Simplification Simplification
+
+After regularizing angles and offsets, the often common task is to simplify segments with similar
+properties. This \cgal component provides an utility function
+- `CGAL::Shape_regularization::unique_segments()` that takes a set of input segments,
+groups them with respect to the collinearity property, and then returns for each group of
+collinear segments a segment that best fits this group (see the figure below).
+
+\cgalFigureBegin{unique_segments, unique_segments.svg}
+Input segments with multiple collinear segments (left) are simplified into unique segments (right).
+\cgalFigureEnd
+
+Later, if needed, these unique segments can be converted into lines, rays, or directions whatever the
+goal of the final application.
+
+
 \subsection QP_Regularization_Segments_Performance Performance
 
 The shape regularization algorithm is quite efficient and its performance mostly depends
@@ -337,6 +364,14 @@ split into such groups.
 </tr>
 </table>
 
+The same results can be seen in the figure.
+
+\cgalFigureBegin{qp_segments_bench, qp_segments_bench.svg}
+Time in seconds to regularize angles (solid red) and offsets (solid green) without
+grouping input segments contextually and with contextual grouping
+for angles (dashed red) and offsets (dashed green).
+\cgalFigureEnd
+
 
 \section Contour_Regularization Contours
 
@@ -419,7 +454,8 @@ An open contour before (red) and after (green) the contour regularization.
 
 \subsection Contour_Regularization_Performance Performance
 
-The contour regularization algorithms, both closed and open, are linear-time algorithms
+The contour regularization algorithms, both closed and open, are quite fast in practice
+and show approximately linear time behavior with respect to the number of input contour vertices
 that is supported by the table below.
 
 <table class="markdownTable" align="center">
@@ -464,6 +500,12 @@ that is supported by the table below.
 <td class="markdownTableBodyCenter">4.3467240330000</td>
 </tr>
 </table>
+
+The same results can be seen in the figure.
+
+\cgalFigureBegin{contours_bench, contours_bench.svg}
+Time in seconds to regularize closed (red) and open (green) contours.
+\cgalFigureEnd
 
 
 \section Plane_Regularization Planes
