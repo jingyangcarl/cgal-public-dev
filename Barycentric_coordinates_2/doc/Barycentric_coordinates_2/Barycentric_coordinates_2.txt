@@ -80,7 +80,7 @@ table below for some advise.
 <td class="markdownTableBodyCenter">2D non-degenerate segments</td>
 <td class="markdownTableBodyCenter">Yes</td>
 <td class="markdownTableBodyCenter">Any on the supporting line</td>
-<td class="markdownTableBodyCenter">\f$O(2)\f$</td>
+<td class="markdownTableBodyCenter">+++</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">Triangle</td>
@@ -88,7 +88,7 @@ table below for some advise.
 <td class="markdownTableBodyCenter">2D non-degenerate triangles</td>
 <td class="markdownTableBodyCenter">Yes</td>
 <td class="markdownTableBodyCenter">Any on the plane</td>
-<td class="markdownTableBodyCenter">\f$O(3)\f$</td>
+<td class="markdownTableBodyCenter">+++</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">Discrete harmonic</td>
@@ -96,7 +96,7 @@ table below for some advise.
 <td class="markdownTableBodyCenter">Strongly convex polygons</td>
 <td class="markdownTableBodyCenter">Yes</td>
 <td class="markdownTableBodyCenter">Any inside the polygon</td>
-<td class="markdownTableBodyCenter">\f$O(n)\f$ or \f$O(n^2)\f$</td>
+<td class="markdownTableBodyCenter">++</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">Wachspress</td>
@@ -104,7 +104,7 @@ table below for some advise.
 <td class="markdownTableBodyCenter">Strongly convex polygons</td>
 <td class="markdownTableBodyCenter">Yes</td>
 <td class="markdownTableBodyCenter">Any inside the polygon</td>
-<td class="markdownTableBodyCenter">\f$O(n)\f$ or \f$O(n^2)\f$</td>
+<td class="markdownTableBodyCenter">++</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">Mean value</td>
@@ -112,7 +112,7 @@ table below for some advise.
 <td class="markdownTableBodyCenter">Simple polygons</td>
 <td class="markdownTableBodyCenter">Yes</td>
 <td class="markdownTableBodyCenter">Any on the plane</td>
-<td class="markdownTableBodyCenter">\f$O(n)\f$ or \f$O(n^2)\f$</td>
+<td class="markdownTableBodyCenter">++</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">Harmonic</td>
@@ -120,7 +120,7 @@ table below for some advise.
 <td class="markdownTableBodyCenter">Simple polygons</td>
 <td class="markdownTableBodyCenter">No</td>
 <td class="markdownTableBodyCenter">Any inside the polygon</td>
-<td class="markdownTableBodyCenter">\f$\approx O(n^2)\f$ (implementation dependent)</td>
+<td class="markdownTableBodyCenter">+</td>
 </tr>
 </table>
 
