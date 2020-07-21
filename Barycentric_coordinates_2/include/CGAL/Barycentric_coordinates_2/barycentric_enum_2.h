@@ -71,12 +71,7 @@ enum class Computation_policy_2 {
     polygon vertices, but may suffer imprecisions near the polygon boundary.
     No extra checks are carried out.
   */
-  FAST = 3,
-
-  /*!
-    The default policy is `PRECISE_WITH_EDGE_CASES`.
-  */
-  DEFAULT = PRECISE_WITH_EDGE_CASES
+  FAST = 3
 };
 
 /// @}

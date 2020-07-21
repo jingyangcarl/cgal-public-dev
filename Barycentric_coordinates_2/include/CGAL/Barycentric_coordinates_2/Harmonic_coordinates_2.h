@@ -132,8 +132,8 @@ namespace Barycentric_coordinates {
       An instance of `VertexMap` that maps a vertex from `polygon`
       to `Point_2`. The default is the identity property map.
 
-      \pre `polygon.size() >= 3`
-      \pre `polygon is simple`
+      \pre polygon.size() >= 3
+      \pre polygon is simple
     */
     Harmonic_coordinates_2(
       const Polygon& polygon,
@@ -267,7 +267,7 @@ namespace Barycentric_coordinates {
       \return an output iterator to the element in the destination range,
       one past the last coordinate stored.
 
-      \pre `query >= 0 && query < domain.number_of_vertices()`
+      \pre query >= 0 && query < domain.number_of_vertices()
     */
     template<typename OutputIterator>
     OutputIterator operator()(
@@ -357,7 +357,7 @@ namespace Barycentric_coordinates {
     /*!
       \brief factorizes the matrix A.
 
-      \pre `setup() is called`
+      \pre setup() is called
     */
     void factorize() {
       if (m_factorize_is_called) return;
@@ -370,7 +370,7 @@ namespace Barycentric_coordinates {
     /*!
       \brief solves the linear system Ax = b.
 
-      \pre `factorize() is called`
+      \pre factorize() is called
     */
     void solve() {
       if (m_solve_is_called) return;

@@ -45,7 +45,7 @@ int main() {
   // query_point_location = CGAL::Barycentric_coordinates_depr::ON_BOUNDED_SIDE.
   const auto query_point_location = CGAL::Barycentric_coordinates_depr::ON_BOUNDED_SIDE;
 
-  // Create an std::vector to store coordinates.
+  // Create a vector `std::vector` to store coordinates.
   std::vector<FT> coordinates;
   coordinates.reserve(star_shaped.size());
 

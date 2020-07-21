@@ -28,7 +28,7 @@ int main() {
   // that all our points are strictly interior.
   const Policy policy = Policy::PRECISE;
 
-  // Create an std::vector to store coordinates.
+  // Create a vector `std::vector` to store coordinates.
   std::vector<FT> coordinates;
   coordinates.reserve(star_shaped.size());
 

@@ -121,8 +121,8 @@ namespace Barycentric_coordinates {
       An instance of `VertexMap` that maps a vertex from `polygon`
       to `Point_2`. The default is the identity property map.
 
-      \pre `polygon.size() >= 3`
-      \pre `polygon is simple`
+      \pre polygon.size() >= 3
+      \pre polygon is simple
     */
     Delaunay_domain_2(
       const Polygon& polygon,
@@ -223,7 +223,7 @@ namespace Barycentric_coordinates {
       \param query_index
       An index of the requested vertex.
 
-      \pre `query_index >= 0 && query_index < number_of_vertices()`
+      \pre query_index >= 0 && query_index < number_of_vertices()
     */
     const Point_2& vertex(
       const std::size_t query_index) const {
@@ -242,7 +242,7 @@ namespace Barycentric_coordinates {
       \param query_index
       An index of the query vertex.
 
-      \pre `query_index >= 0 && query_index < number_of_vertices()`
+      \pre query_index >= 0 && query_index < number_of_vertices()
     */
     const bool is_on_boundary(
       const std::size_t query_index) const {
@@ -265,7 +265,7 @@ namespace Barycentric_coordinates {
       Stores indices of the vertices, which from the one-ring neighborhood
       of the query vertex.
 
-      \pre `query_index >= 0 && query_index < number_of_vertices()`
+      \pre query_index >= 0 && query_index < number_of_vertices()
     */
     void operator()(
       const std::size_t query_index,

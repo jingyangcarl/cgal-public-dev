@@ -113,7 +113,7 @@ namespace Barycentric_coordinates {
 
       \param policy
       One of the `CGAL::Barycentric_coordinates::Computation_policy_2`.
-      The default is `CGAL::Barycentric_coordinates::Computation_policy_2::DEFAULT`.
+      The default is `CGAL::Barycentric_coordinates::Computation_policy_2::PRECISE_WITH_EDGE_CASES`.
 
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
@@ -122,13 +122,13 @@ namespace Barycentric_coordinates {
       An instance of `VertexMap` that maps a vertex from `polygon`
       to `Point_2`. The default is the identity property map.
 
-      \pre `polygon.size() >= 3`
-      \pre `polygon is simple`
+      \pre polygon.size() >= 3
+      \pre polygon is simple
     */
     Mean_value_coordinates_2(
       const Polygon& polygon,
       const Computation_policy_2 policy
-      = Computation_policy_2::DEFAULT,
+      = Computation_policy_2::PRECISE_WITH_EDGE_CASES,
       const GeomTraits traits = GeomTraits(),
       const VertexMap vertex_map = VertexMap()) :
     m_polygon(polygon),

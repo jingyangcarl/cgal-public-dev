@@ -150,7 +150,7 @@ Example's point pattern.
 In this example, we show how to use the global function `CGAL::Barycentric_coordinates::triangle_coordinates_2()`.
 We compute coordinates for three sets of points: interior (green), boundary (red), and exterior (blue).
 Note that some of the coordinate values for the exterior points are negative.
-The used `Kernel` is of floating precision.
+The used `Kernel` is inexact.
 
 \anchor tri_coord_example
 \cgalFigureBegin{tri_example, tri_coord_example.svg}
@@ -164,7 +164,7 @@ Example's point pattern.
 
 In the following example, we generate 100 random points, then we take the convex hull
 of this set of points as our polygon, and compute Wachspress coordinates at
-all the generated points. The used `Kernel` is of floating precision.
+all the generated points. The used `Kernel` is inexact.
 
 \cgalExample{Barycentric_coordinates_2/Wachspress_coordinates.cpp}
 
@@ -209,7 +209,7 @@ and compute harmonic coordinates at the vertices of the discretized domain, whic
 a Delaunay triangulation in our case. Once computed, harmonic coordinate functions can be
 evaluated at any point in the closure of the polygon. To show that, we compute the barycenter
 of each triangle and evaluate harmonic coordinates at this barycenter. Since harmonic
-coordinates can only be approximated, the used `Kernel` is of floating precision.
+coordinates can only be approximated, the used `Kernel` is inexact.
 
 \anchor hm_coord_example
 \cgalExample{Barycentric_coordinates_2/harmonic_coordinates.cpp}
@@ -253,7 +253,7 @@ This is another advanced example, where we show how a
 <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda expression</a>
 can be used to define a model of generalized barycentric coordinates. To make this example
 useful, we implement affine generalized coordinates for a set of scattered points.
-The used `Kernel` is of floating precision.
+The used `Kernel` is inexact.
 
 \anchor aff_coord_example
 \cgalFigureBegin{aff_example, aff_coord_example.svg}
@@ -426,7 +426,7 @@ an inevitable square root operation. Although, if an exact number type is used, 
 of the computation depends only on two \cgal functions: `CGAL::to_double()` and `CGAL::sqrt()`.
 It is worth saying that providing a number type that supports exact or nearly exact computation
 of the square root is possible, however since such types are usually impractical due to the
-large overhead, the conversion to a floating type above is always effective. On the other hand,
+large overhead, the conversion to a floating-point format above is always effective. On the other hand,
 mean value coordinates are well-defined everywhere in the plane for any simple polygon. In addition,
 if your traits class provides a more precise version of the square root function, the final precision
 of the computation with exact number types will depend only on the precision of that function.
