@@ -17,10 +17,9 @@ using Points_2  = std::vector<Point_2>;
 using Indices   = std::vector<std::size_t>;
 using Segments  = std::vector<Segment_2>;
 
-using NQ    = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using AR    = CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments>;
-using OR    = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
-using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
+using NQ = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
+using AR = CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments>;
+using OR = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
 
 int main(int argc, char *argv[]) {
 
@@ -31,11 +30,10 @@ int main(int argc, char *argv[]) {
   // an approximate line.
   std::string path = "data/real_data_2.xyzi";
   if (argc > 1) path = argv[1];
-  Saver saver;
+  Saver<Kernel> saver;
 
   // Initialize input groups = regions.
   std::vector<Points_2> regions;
-  CGAL::Shape_regularization::Examples::
   initialize_regions(path, regions);
 
   // Fit a line to each region.
@@ -54,7 +52,7 @@ int main(int argc, char *argv[]) {
   segments.reserve(lines.size());
   Point_2 source, target;
   for (std::size_t i = 0; i < lines.size(); ++i) {
-    CGAL::Shape_regularization::Examples::boundary_points_on_line_2(
+    boundary_points_on_line_2(
       regions[i], lines[i], source, target);
     segments.push_back(Segment_2(source, target));
   }

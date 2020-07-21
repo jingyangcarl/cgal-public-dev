@@ -18,18 +18,16 @@ using QP = CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
 
 using QP_AR = CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, AR, QP>;
 using QP_OR = CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, OR, QP>;
-using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
 
 int main(int argc, char *argv[]) {
 
   // If we want to save the result in a file, we save it in a path.
   std::string path = "";
   if (argc > 1) path = argv[1];
-  Saver saver;
+  Saver<Kernel> saver;
 
   // Initialize 15 segments.
   Segments segments;
-  CGAL::Shape_regularization::Examples::
   create_example_15(segments);
 
   // We create three groups of segments:

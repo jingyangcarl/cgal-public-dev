@@ -22,16 +22,12 @@
 #include <CGAL/Random.h>
 #include <CGAL/IO/io.h>
 
-namespace CGAL {
-namespace Shape_regularization {
-namespace Examples {
-
 template<typename Point_2>
 void initialize_contour(
   const std::string path,
   std::vector<Point_2>& contour) {
 
-  using Traits = typename Kernel_traits<Point_2>::Kernel;
+  using Traits = typename CGAL::Kernel_traits<Point_2>::Kernel;
   using FT = typename Traits::FT;
 
   contour.clear();
@@ -96,7 +92,7 @@ template<typename Segment_2>
 void create_example_offsets(
   std::vector<Segment_2>& segments) {
 
-  using Traits = typename Kernel_traits<Segment_2>::Kernel;
+  using Traits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
   using Point_2 = typename Traits::Point_2;
 
   segments.clear();
@@ -126,7 +122,7 @@ template<typename Segment_2>
 void create_example_angles(
   std::vector<Segment_2>& segments) {
 
-  using Traits = typename Kernel_traits<Segment_2>::Kernel;
+  using Traits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
   using Point_2 = typename Traits::Point_2;
 
   using PG = CGAL::Points_on_segment_2<Point_2>;
@@ -160,7 +156,7 @@ template<typename Segment_2>
 void create_example_15(
   std::vector<Segment_2>& segments) {
 
-  using Traits = typename Kernel_traits<Segment_2>::Kernel;
+  using Traits = typename CGAL::Kernel_traits<Segment_2>::Kernel;
   using Point_2 = typename Traits::Point_2;
 
   const std::vector<Point_2> points = {
@@ -209,7 +205,7 @@ void boundary_points_on_line_2(
   const Line_2& line,
   Point_2& p, Point_2& q) {
 
-  using Traits = typename Kernel_traits<Point_2>::Kernel;
+  using Traits = typename CGAL::Kernel_traits<Point_2>::Kernel;
   using FT = typename Traits::FT;
   using Vector_2 = typename Traits::Vector_2;
 
@@ -265,9 +261,5 @@ void initialize_regions(
   for (const auto& pair : data_map)
     regions.push_back(pair.second);
 }
-
-} // namespace Examples
-} // namespace Shape_regularization
-} // namespace CGAL
 
 #endif // CGAL_SHAPE_REGULARIZATION_EXAMPLES_UTILS_H

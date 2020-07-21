@@ -10,20 +10,18 @@ using Segment_2 = typename Kernel::Segment_2;
 using Segments  = std::vector<Segment_2>;
 using Indices   = std::vector<std::size_t>;
 
-using NQ    = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using OR    = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
-using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
+using NQ = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
+using OR = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
 
 int main(int argc, char *argv[]) {
 
   // If we want to save the result in a file, we save it in a path.
   std::string path = "";
   if (argc > 1) path = argv[1];
-  Saver saver;
+  Saver<Kernel> saver;
 
   // Initialize 100 segments in a fuzzy circle.
   Segments segments;
-  CGAL::Shape_regularization::Examples::
   create_example_offsets(segments);
 
   // Save input segments.

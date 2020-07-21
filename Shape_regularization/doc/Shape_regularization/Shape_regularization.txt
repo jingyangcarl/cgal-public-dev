@@ -8,7 +8,7 @@ namespace CGAL {
 \authors Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge
 
 \cgalFigureBegin{regularize_2_overview, overview.svg}
-A set of 2D segments and contours before (red) and after (green) regularization.
+A closed contour before (red) and after (green) regularization.
 \cgalFigureEnd
 
 
@@ -339,25 +339,25 @@ split into such groups.
 <td class="markdownTableBodyCenter">0.006250</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">1000</td>
+<td class="markdownTableBodyCenter">1,000</td>
 <td class="markdownTableBodyCenter">0.083326</td>
 <td class="markdownTableBodyCenter">0.009756</td>
 <td class="markdownTableBodyCenter">0.018682</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">5000</td>
+<td class="markdownTableBodyCenter">5,000</td>
 <td class="markdownTableBodyCenter">1.525801</td>
 <td class="markdownTableBodyCenter">0.204352</td>
 <td class="markdownTableBodyCenter">0.450086</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">10000</td>
+<td class="markdownTableBodyCenter">10,000</td>
 <td class="markdownTableBodyCenter">5.947787</td>
 <td class="markdownTableBodyCenter">0.800017</td>
 <td class="markdownTableBodyCenter">1.641780</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">15000</td>
+<td class="markdownTableBodyCenter">15,000</td>
 <td class="markdownTableBodyCenter">14.80045</td>
 <td class="markdownTableBodyCenter">1.803781</td>
 <td class="markdownTableBodyCenter">3.788940</td>
@@ -475,27 +475,27 @@ that is supported by the table below.
 <td class="markdownTableBodyCenter">0.000031</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">1000</td>
+<td class="markdownTableBodyCenter">1,000</td>
 <td class="markdownTableBodyCenter">0.000375</td>
 <td class="markdownTableBodyCenter">0.000165</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">10000</td>
+<td class="markdownTableBodyCenter">10,000</td>
 <td class="markdownTableBodyCenter">0.004421</td>
 <td class="markdownTableBodyCenter">0.003347</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">100000</td>
+<td class="markdownTableBodyCenter">100,000</td>
 <td class="markdownTableBodyCenter">0.043992</td>
 <td class="markdownTableBodyCenter">0.025921</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">1000000</td>
+<td class="markdownTableBodyCenter">1,000,000</td>
 <td class="markdownTableBodyCenter">0.414134</td>
 <td class="markdownTableBodyCenter">0.272030</td>
 </tr>
 <tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">10000000</td>
+<td class="markdownTableBodyCenter">10,000,000</td>
 <td class="markdownTableBodyCenter">4.577806</td>
 <td class="markdownTableBodyCenter">4.346724</td>
 </tr>

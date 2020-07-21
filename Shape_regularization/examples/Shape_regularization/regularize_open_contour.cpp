@@ -9,23 +9,20 @@ using FT        = typename Kernel::FT;
 using Point_2   = typename Kernel::Point_2;
 using Contour   = std::vector<Point_2>;
 using Point_map = CGAL::Identity_property_map<Point_2>;
-
-using CD    = CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour, Point_map>;
-using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
+using CD        = CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour, Point_map>;
 
 int main(int argc, char *argv[]) {
 
   // If we want to load a different file, we load it from a path.
   std::string path = "data/contour.polylines";
   if (argc > 1) path = argv[1];
-  Saver saver;
+  Saver<Kernel> saver;
 
   // Set parameters.
   const FT max_offset_2 = FT(2);
 
   // Initialize contour.
   Contour contour;
-  CGAL::Shape_regularization::Examples::
   initialize_contour(path, contour);
 
   // Save input contour.

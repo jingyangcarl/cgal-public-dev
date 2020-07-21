@@ -8,16 +8,14 @@ using Kernel  = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Contour = std::vector<Point_2>;
-
-using CD    = CGAL::Shape_regularization::Contours::Multiple_directions_2<Kernel, Contour>;
-using Saver = CGAL::Shape_regularization::Examples::Saver<Kernel>;
+using CD      = CGAL::Shape_regularization::Contours::Multiple_directions_2<Kernel, Contour>;
 
 int main(int argc, char *argv[]) {
 
   // If we want to load a different file, we load it from a path.
   std::string path = "data/contour.polylines";
   if (argc > 1) path = argv[1];
-  Saver saver;
+  Saver<Kernel> saver;
 
   // Set parameters.
   const FT min_length_2 = FT(2);
@@ -26,7 +24,6 @@ int main(int argc, char *argv[]) {
 
   // Initialize contour.
   Contour contour;
-  CGAL::Shape_regularization::Examples::
   initialize_contour(path, contour);
 
   // Save input contour.
