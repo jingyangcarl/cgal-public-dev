@@ -725,11 +725,34 @@ While, in the first table, the most significant step is to factorize the matrix,
 second table, the slowest step is to solve for coordinates, as expected.
 
 
+\section gbc_history History
+The package was first released in 2015 and included segment, triangle, Wachspress,
+discrete harmonic, and mean value coordinates. The API of that version is now deprecated
+but can still be used. An example of the old API can be found \ref depr_example "here".
+The docs of that API are also preserved and maintained \ref PkgBarycentricCoordinates2RefDeprecated "here".
+
+In 2018, this package was modified and improved by Keyu Chen and Dmitry Anisimov
+during the Google Summer of Code. The API was changed to the current version. In 2020, the new version
+was cleaned up and documented that includes:
+- the classes `Segment_coordinates_2` and `Triangle_coordinates_2` have been removed, only the free
+functions are preserved;
+- the entry class `Generalized_barycentric_coordinates_2` was removed since it is not
+flexible enough to accommodate all types of 2D barycentric coordinates;
+- the classes `Wachspress_2`, `Discrete harmonic_2`, and `Mean_value_2` have been renamed
+and modified so that they can be used now on their own without the class `Generalized_barycentric_coordinates_2`;
+- harmonic coordinates have been added;
+- the free functions for segment and triangle coordinates have been modified and improved;
+- the free functions for Wachspress, discrete harmonic, and mean value weights and coordinates have been added;
+- the free functions to compute barycentric coordinates for points on the polygon boundary have been added;
+- all functions and classes are now using ranges and property maps;
+- examples, tests, and benchmarks are modified/extended/improved;
+- the docs are refactored and simplified.
+
+
 \section gbc_acknowledgments Acknowledgments
 The authors wish to thank <a href="https://cs.nyu.edu/~teseo/">Teseo Schneider</a>
 and Randolf Schaerfig for helpful comments and discussions. We also appreciate the
 great effort invested in this package by our reviewers Andreas Fabri, Sébastien Loriot,
-and Efi Fogel. In 2018, this package was modified and improved by Keyu Chen and Dmitry Anisimov
-during the Google Summer of Code.
+and Efi Fogel.
 */
 }
