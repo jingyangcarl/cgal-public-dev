@@ -316,51 +316,51 @@ split into such groups.
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">10</td>
-<td class="markdownTableBodyCenter">0.0002911090851</td>
-<td class="markdownTableBodyCenter">9.107589722e-05</td>
-<td class="markdownTableBodyCenter">0.0001430511475</td>
+<td class="markdownTableBodyCenter">0.000291</td>
+<td class="markdownTableBodyCenter">0.000091</td>
+<td class="markdownTableBodyCenter">0.000143</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">50</td>
-<td class="markdownTableBodyCenter">0.0008149147034</td>
-<td class="markdownTableBodyCenter">0.0003280639648</td>
-<td class="markdownTableBodyCenter">0.0004301071167</td>
+<td class="markdownTableBodyCenter">0.000815</td>
+<td class="markdownTableBodyCenter">0.000328</td>
+<td class="markdownTableBodyCenter">0.000430</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">100</td>
-<td class="markdownTableBodyCenter">0.0044438838960</td>
-<td class="markdownTableBodyCenter">0.0005369186401</td>
-<td class="markdownTableBodyCenter">0.0007929801941</td>
+<td class="markdownTableBodyCenter">0.004444</td>
+<td class="markdownTableBodyCenter">0.000537</td>
+<td class="markdownTableBodyCenter">0.000793</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">500</td>
-<td class="markdownTableBodyCenter">0.0327970981600</td>
-<td class="markdownTableBodyCenter">0.0034871101380</td>
-<td class="markdownTableBodyCenter">0.0062501430510</td>
+<td class="markdownTableBodyCenter">0.032797</td>
+<td class="markdownTableBodyCenter">0.003487</td>
+<td class="markdownTableBodyCenter">0.006250</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">1000</td>
-<td class="markdownTableBodyCenter">0.0833258628800</td>
-<td class="markdownTableBodyCenter">0.0097558498380</td>
-<td class="markdownTableBodyCenter">0.0186820030200</td>
+<td class="markdownTableBodyCenter">0.083326</td>
+<td class="markdownTableBodyCenter">0.009756</td>
+<td class="markdownTableBodyCenter">0.018682</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">5000</td>
-<td class="markdownTableBodyCenter">1.5258009430000</td>
-<td class="markdownTableBodyCenter">0.2043519020000</td>
-<td class="markdownTableBodyCenter">0.4500861168000</td>
+<td class="markdownTableBodyCenter">1.525801</td>
+<td class="markdownTableBodyCenter">0.204352</td>
+<td class="markdownTableBodyCenter">0.450086</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">10000</td>
-<td class="markdownTableBodyCenter">5.9477870460000</td>
-<td class="markdownTableBodyCenter">0.8000171185000</td>
-<td class="markdownTableBodyCenter">1.6417799000000</td>
+<td class="markdownTableBodyCenter">5.947787</td>
+<td class="markdownTableBodyCenter">0.800017</td>
+<td class="markdownTableBodyCenter">1.641780</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">15000</td>
-<td class="markdownTableBodyCenter">14.800448890000</td>
-<td class="markdownTableBodyCenter">1.8037807940000</td>
-<td class="markdownTableBodyCenter">3.7889399530000</td>
+<td class="markdownTableBodyCenter">14.80045</td>
+<td class="markdownTableBodyCenter">1.803781</td>
+<td class="markdownTableBodyCenter">3.788940</td>
 </tr>
 </table>
 
@@ -466,38 +466,38 @@ that is supported by the table below.
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">10</td>
-<td class="markdownTableBodyCenter">4.696846008e-05</td>
-<td class="markdownTableBodyCenter">1.192092896e-05</td>
+<td class="markdownTableBodyCenter">0.000047</td>
+<td class="markdownTableBodyCenter">0.000012</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">100</td>
-<td class="markdownTableBodyCenter">4.887580872e-05</td>
-<td class="markdownTableBodyCenter">3.099441528e-05</td>
+<td class="markdownTableBodyCenter">0.000049</td>
+<td class="markdownTableBodyCenter">0.000031</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">1000</td>
-<td class="markdownTableBodyCenter">0.0003750324249</td>
-<td class="markdownTableBodyCenter">0.0001649856567</td>
+<td class="markdownTableBodyCenter">0.000375</td>
+<td class="markdownTableBodyCenter">0.000165</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">10000</td>
-<td class="markdownTableBodyCenter">0.0044209957120</td>
-<td class="markdownTableBodyCenter">0.0033471584320</td>
+<td class="markdownTableBodyCenter">0.004421</td>
+<td class="markdownTableBodyCenter">0.003347</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">100000</td>
-<td class="markdownTableBodyCenter">0.0439918041200</td>
-<td class="markdownTableBodyCenter">0.0259211063400</td>
+<td class="markdownTableBodyCenter">0.043992</td>
+<td class="markdownTableBodyCenter">0.025921</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">1000000</td>
-<td class="markdownTableBodyCenter">0.4141340256000</td>
-<td class="markdownTableBodyCenter">0.2720298767000</td>
+<td class="markdownTableBodyCenter">0.414134</td>
+<td class="markdownTableBodyCenter">0.272030</td>
 </tr>
 <tr class="markdownTableBody">
 <td class="markdownTableBodyCenter">10000000</td>
-<td class="markdownTableBodyCenter">4.5778059960000</td>
-<td class="markdownTableBodyCenter">4.3467240330000</td>
+<td class="markdownTableBodyCenter">4.577806</td>
+<td class="markdownTableBodyCenter">4.346724</td>
 </tr>
 </table>
 
