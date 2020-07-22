@@ -88,8 +88,8 @@ namespace Contours {
       an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`,
       if not provided, the default is used
 
-      \pre `input_range.size() >= 3` for closed contours
-      \pre `input_range.size() >= 2` for open contours
+      \pre input_range.size() >= 3 for closed contours
+      \pre input_range.size() >= 2 for open contours
     */
     Longest_direction_2(
       const InputRange& input_range,
@@ -127,8 +127,8 @@ namespace Contours {
 
       \param segment a segment to be rotated
 
-      \pre `query_index >= 0 && query_index < input_range.size()` for closed contours
-      \pre `query_index >= 0 && query_index < input_range.size() - 1` for open contours
+      \pre query_index >= 0 && query_index < input_range.size() for closed contours
+      \pre query_index >= 0 && query_index < input_range.size() - 1 for open contours
     */
     void orient(
       const std::size_t query_index,

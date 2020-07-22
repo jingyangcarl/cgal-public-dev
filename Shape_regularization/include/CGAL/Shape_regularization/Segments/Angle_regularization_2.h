@@ -116,8 +116,8 @@ namespace Segments {
         \cgalParamEnd
       \cgalNamedParamsEnd
 
-      \pre `input_range.size() >= 2`
-      \pre `max_angle >= 0 && max_angle <= 90`
+      \pre input_range.size() >= 2
+      \pre max_angle >= 0 && max_angle <= 90
     */
     template<typename NamedParameters>
     Angle_regularization_2(
@@ -160,7 +160,7 @@ namespace Segments {
       \param index_range
       a const range of segment indices
 
-      \pre `index_range.size() >= 2`
+      \pre index_range.size() >= 2
     */
     template<typename IndexRange>
   	void add_group(
@@ -194,8 +194,8 @@ namespace Segments {
       \param j
       index of the second segment
 
-      \pre `i >= 0 && i < input_range.size()`
-      \pre `j >= 0 && j < input_range.size()`
+      \pre i >= 0 && i < input_range.size()
+      \pre j >= 0 && j < input_range.size()
     */
     FT target(
       const std::size_t i,
@@ -234,7 +234,7 @@ namespace Segments {
       \param solution
       a vector with angles in degrees
 
-      \pre `solution.size() >= 1`
+      \pre solution.size() >= 1
     */
     void update(
       const std::vector<FT>& solution) {

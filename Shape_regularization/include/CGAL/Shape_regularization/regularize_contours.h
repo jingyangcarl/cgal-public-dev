@@ -100,7 +100,7 @@ namespace Contours {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 3`
+    \pre input_range.size() >= 3
   */
   template<
   typename InputRange,
@@ -185,7 +185,7 @@ namespace Contours {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 3`
+    \pre input_range.size() >= 3
   */
   template<
   typename InputRange,
@@ -271,7 +271,7 @@ namespace Contours {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 2`
+    \pre input_range.size() >= 2
   */
   template<
   typename InputRange,
@@ -356,7 +356,7 @@ namespace Contours {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 2`
+    \pre input_range.size() >= 2
   */
   template<
   typename InputRange,

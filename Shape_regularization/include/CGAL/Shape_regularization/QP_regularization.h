@@ -129,7 +129,7 @@ namespace Shape_regularization {
       \param traits
       an instance of `GeomTraits`, if not provided, the default is used
 
-      \pre `input_range.size() >= 2`
+      \pre input_range.size() >= 2
     */
     QP_regularization(
       const InputRange& input_range,

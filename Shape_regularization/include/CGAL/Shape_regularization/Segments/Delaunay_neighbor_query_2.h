@@ -99,7 +99,7 @@ namespace Segments {
       an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`,
       if not provided, the default is used
 
-      \pre `input_range.size() >= 2`
+      \pre input_range.size() >= 2
     */
     Delaunay_neighbor_query_2(
       const InputRange& input_range,
@@ -131,7 +131,7 @@ namespace Segments {
       \param index_range
       a const range of segment indices
 
-      \pre `index_range.size() >= 2`
+      \pre index_range.size() >= 2
     */
     template<typename IndexRange>
   	void add_group(
@@ -163,7 +163,7 @@ namespace Segments {
       \param neighbors
       indices of segments, which are direct neighbors of the query segment
 
-      \pre `query_index >= 0 && query_index < input_range.size()`
+      \pre query_index >= 0 && query_index < input_range.size()
     */
     void operator()(
       const std::size_t query_index,

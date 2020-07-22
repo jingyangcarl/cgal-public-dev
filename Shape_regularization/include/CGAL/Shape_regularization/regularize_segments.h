@@ -93,7 +93,7 @@ namespace Segments {
     \param traits
     an instance of `GeomTraits`
 
-    \pre `input_range.size() >= 2`
+    \pre input_range.size() >= 2
   */
   template<
   typename InputRange,
@@ -163,7 +163,7 @@ namespace Segments {
     \param traits
     an instance of `GeomTraits`
 
-    \pre `input_range.size() >= 2`
+    \pre input_range.size() >= 2
   */
   template<
   typename InputRange,
@@ -225,7 +225,7 @@ namespace Segments {
     an instance of `RegularizationType` that is used internally to
     obtain bounds and target values required by the regularization
 
-    \pre `input_range.size() >= 2`
+    \pre input_range.size() >= 2
   */
   template<
   typename InputRange,
@@ -306,8 +306,8 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 1`
-    \pre `max_angle >= 0 && max_angle <= 90`
+    \pre input_range.size() >= 1
+    \pre max_angle >= 0 && max_angle <= 90
   */
   template<
   typename InputRange,
@@ -384,8 +384,8 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 1`
-    \pre `max_angle >= 0 && max_angle <= 90`
+    \pre input_range.size() >= 1
+    \pre max_angle >= 0 && max_angle <= 90
   */
   template<
   typename InputRange,
@@ -465,8 +465,8 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 1`
-    \pre `max_offset >= 0`
+    \pre input_range.size() >= 1
+    \pre max_offset >= 0
   */
   template<
   typename InputRange,
@@ -543,8 +543,8 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 1`
-    \pre `max_offset >= 0`
+    \pre input_range.size() >= 1
+    \pre max_offset >= 0
   */
   template<
   typename InputRange,
@@ -624,8 +624,8 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 1`
-    \pre `max_angle >= 0 && max_angle <= 90`
+    \pre input_range.size() >= 1
+    \pre max_angle >= 0 && max_angle <= 90
   */
   template<
   typename InputRange,
@@ -702,8 +702,8 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 1`
-    \pre `max_angle >= 0 && max_angle <= 90`
+    \pre input_range.size() >= 1
+    \pre max_angle >= 0 && max_angle <= 90
   */
   template<
   typename InputRange,
@@ -781,8 +781,8 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 1`
-    \pre `max_offset >= 0`
+    \pre input_range.size() >= 1
+    \pre max_offset >= 0
   */
   template<
   typename InputRange,
@@ -857,8 +857,8 @@ namespace Segments {
 
     \return an output iterator.
 
-    \pre `input_range.size() >= 1`
-    \pre `max_offset >= 0`
+    \pre input_range.size() >= 1
+    \pre max_offset >= 0
   */
   template<
   typename InputRange,

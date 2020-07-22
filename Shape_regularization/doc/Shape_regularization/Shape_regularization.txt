@@ -680,6 +680,7 @@ under the supervision of Florent Lafarge and then generalized by Gennadii Sytov 
 of Code 2019 under the supervision of Dmitry Anisimov. The contour regularization algorithm was
 developed and implemented by Dmitry Anisimov and Simon Giraudot. Plane regularization
 was added by Simon Giraudot based on the prototype version developed by Florent Lafarge.
+In 2020, the package was cleaned up and documented.
 
 
 \section Shape_Regularization_Acknowledgements Acknowledgments
