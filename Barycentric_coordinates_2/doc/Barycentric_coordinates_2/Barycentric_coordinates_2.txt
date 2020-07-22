@@ -16,7 +16,7 @@ scattered points instead of a polygon are required, please refer to natural neig
 coordinates from the package \ref chapinterpolation "2D and Surface Function Interpolation".
 
 In particular, this package includes an implementation of \ref wp_example "Wachspress",
-\ref mv_example "mean value", \ref dh_example "discrete harmonic", and \ref hm_example "harmonic"
+\ref dh_example "discrete harmonic", \ref mv_example "mean value", and \ref hm_example "harmonic"
 coordinates, and provides some extra functions to compute barycentric coordinates with respect
 to \ref seg_example "segments" and \ref tri_example "triangles".
 
@@ -291,7 +291,7 @@ mean value coordinates. The result is identical to the one from
 Not all presented coordinates are general enough to handle any query point in the plane, that is
 why we highly recommend addressing this section in order to learn what can be expected from
 each coordinate function. If you want to get more mathematical details about each coordinate
-function as well as complete history and theory behind barycentric coordinates, you should
+function as well as the complete history and theory behind barycentric coordinates, you should
 read \cgalCite{cgal:bc:hs-gbcicg-17}. You can also read an overview
 <a href="https://www.anisimovdmitry.com/assets/files/phd_thesis_anisimov.pdf">here</a>
 (chapters 1 and 2).
@@ -321,36 +321,55 @@ The orthogonal projection \f$p'\f$ of the vector \f$p\f$ (green) onto the vector
 
 Suppose that some query point \f$v\f$ does not lie exactly on the line \f$L\f$,
 but is some distance \f$d\f$ away as shown in the figure above. If we want to compute
-the segment barycentric coordinate \f$b_1(v)\f$ with respect to the vertex \f$v_1\f$,
-we first find the orthogonal projection \f$p'\f$ of the vector \f$p\f$ onto the vector \f$q\f$ and
-then normalize it by the length of \f$q\f$. This gives the segment barycentric
-coordinate \f$b_1(v') = b_1(v)\f$ if \f$v\f$ lies exactly on the line.
+the segment coordinate \f$b_1(v)\f$ with respect to the vertex \f$v_1\f$, we first find the
+orthogonal projection \f$p'\f$ of the vector \f$p\f$ onto the vector \f$q\f$ and
+then normalize it by the length of \f$q\f$. This gives the segment coordinate \f$b_1(v') = b_1(v)\f$
+if \f$v\f$ lies exactly on the line. The other segment coordinate \f$b_0(v')\f$ that is equal
+to \f$b_0(v)\f$ when \f$v\f$ is on the line \f$L\f$ is computed the same way but with the
+projection of the vector \f$\vec{vv_1}\f$.
 
 \b Warning: do not abuse the feature described above, because it does not give correct
-segment barycentric coordinates for the point \f$v\f$ but rather those for \f$v'\f$.
-Moreover, segment barycentric coordinates for a point \f$v\f$, which does not lie exactly on the line \f$L\f$,
-do not exist. But if the non-zero distance \f$d\f$ is due to some numerical instability
-when computing the location of the point \f$v\f$ or any other problem,
-which causes the point to be not exactly on the line, the final segment coordinates will be,
-at least approximately, correct.
+segment coordinates for the point \f$v\f$ but rather those for \f$v'\f$. Moreover, segment
+coordinates for a point \f$v\f$, which does not lie exactly on the line \f$L\f$, do not exist.
+But if the non-zero distance \f$d\f$ is due to some numerical instability when computing the
+location of the point \f$v\f$ or any other problem, which causes the point to be not exactly on
+the line, the final segment coordinates will be, at least approximately, correct.
 
 With inexact number types, the resulting coordinate values are correct up to the precision of the chosen type.
 
 
+\anchor compute_tri_coord
 \subsection gbc_deg_triangular_coordinates Triangle Coordinates
 
-Since the triangle coordinate function with respect to a given triangle vertex is a linear function
-that grows from zero along the opposite edge to one at the chosen vertex (see the figure below), these
-coordinates can be computed exactly if an exact number type is chosen, for any query point in the plane
-and with respect to any non-degenerate triangle. No special cases are handled. The computation always
-gives the correct result. The notion of correctness depends on the precision of the used number type.
-Note that for exterior points some coordinate values will be negative.
+The triangle coordinate function with respect to a given triangle vertex is a linear function
+that grows from zero along the opposite edge to one at the chosen vertex (see the figure below).
 
 \cgalFigureBegin{tri_coord, tri_coord.svg}
 The triangle coordinate function with respect to the vertex \f$v_0\f$.
 \cgalFigureEnd
 
+To compute the triangle coordinates of the query point \f$v\f$, we adopt the standard simple formula
 
+<center>
+\f$b_i = \frac{A_i}{A}\f$ with \f$i = 0\dots 2\f$
+</center>
+
+where \f$A_i\f$ is the signed area of the sub-triangle opposite to the
+vertex \f$i\f$ and \f$A\f$ is the total area of the triangle that is \f$A = A_0 + A_1 + A_2\f$
+(see the figure below).
+
+\anchor tri_notations
+\cgalFigureBegin{tri_notations, tri_notations.svg}
+Notation for triangle coordinates.
+\cgalFigureEnd
+
+These coordinates can be computed exactly if an exact number type is chosen, for any query point in the plane
+and with respect to any non-degenerate triangle. No special cases are handled. The computation always
+gives the correct result. The notion of correctness depends on the precision of the used number type.
+Note that for exterior points some coordinate values will be negative.
+
+
+\anchor compute_wp_coord
 \subsection gbc_deg_wachspress_coordinates Wachspress Coordinates
 
 Wachspress coordinates are well-defined in the closure of any <em>strictly convex polygon</em>.
@@ -369,17 +388,23 @@ Notation for Wachspress coordinates.
 
 To compute Wachspress weights, we follow \cgalCite{cgal:bc:fhk-gcbcocp-06} and use the formula
 
-<center>\f$w_i = \frac{C_i}{A_{i-1}A_i}\f$</center>
+<center>
+\f$w_i = \frac{C_i}{A_{i-1}A_i}\f$
+</center>
 
 with \f$i = 1\dots n\f$ where \f$n\f$ is the number of polygon vertices.
 In order to compute the coordinates, we normalize these weights,
 
-<center>\f$b_i = \frac{w_i}{W^{wp}}\qquad\f$ with \f$\qquad W^{wp} = \sum_{j=1}^n w_j.\f$</center>
+<center>
+\f$b_i = \frac{w_i}{W^{wp}}\qquad\f$ with \f$\qquad W^{wp} = \sum_{j=1}^n w_j.\f$
+</center>
 
 This formula becomes unstable when approaching the boundary of the polygon (\f$\approx 1.0e-10\f$ and closer).
 To fix the problem, we modify the weights \f$w_i\f$ as
 
-<center>\f$\bar{w}_i = C_i\prod_{j\not=i-1,i} A_j\f$.</center>
+<center>
+\f$\bar{w}_i = C_i\prod_{j\not=i-1,i} A_j\f$.
+</center>
 
 After the normalization as above, this gives us the precise algorithm to compute Wachspress coordinates
 but with \f$O(n^2)\f$ performance only. The max speed \f$O(n)\f$ algorithm uses the standard
@@ -400,6 +425,7 @@ Zero set (red) of the Wachspress coordinates' denominator \f$W^{wp}\f$ for a non
 \b Warning: we do not recommend using Wachspress coordinates for exterior points!
 
 
+\anchor compute_dh_coord
 \subsection gbc_deg_discrete_harmonic_coordinates Discrete Harmonic Coordinates
 
 Discrete harmonic coordinates have the same requirements as Wachspress coordinates.
@@ -418,17 +444,23 @@ Notation for discrete harmonic coordinates.
 
 To compute discrete harmonic weights, we follow \cgalCite{cgal:bc:fhk-gcbcocp-06} and use the formula
 
-<center>\f$w_i = \frac{r_{i+1}^2A_{i-1}-r_i^2B_i+r_{i-1}^2A_i}{A_{i-1}A_i}\f$</center>
+<center>
+\f$w_i = \frac{r_{i+1}^2A_{i-1}-r_i^2B_i+r_{i-1}^2A_i}{A_{i-1}A_i}\f$
+</center>
 
 with \f$i = 1\dots n\f$ where \f$n\f$ is the number of polygon vertices.
 In order to compute the coordinates, we normalize these weights,
 
-<center>\f$b_i = \frac{w_i}{W^{dh}}\qquad\f$ with \f$\qquad W^{dh} = \sum_{j=1}^n w_j.\f$</center>
+<center>
+\f$b_i = \frac{w_i}{W^{dh}}\qquad\f$ with \f$\qquad W^{dh} = \sum_{j=1}^n w_j.\f$
+</center>
 
 This formula becomes unstable when approaching the boundary of the polygon (\f$\approx 1.0e-10\f$ and closer).
 To fix the problem, similarly to the previous subsection, we modify the weights \f$w_i\f$ as
 
-<center>\f$\bar{w}_i = (r_{i+1}^2A_{i-1}-r_i^2B_i+r_{i-1}^2A_i)\prod_{j\not=i-1,i} A_j\f$.</center>
+<center>
+\f$\bar{w}_i = (r_{i+1}^2A_{i-1}-r_i^2B_i+r_{i-1}^2A_i)\prod_{j\not=i-1,i} A_j\f$.
+</center>
 
 After the normalization as above, this gives the precise algorithm to compute discrete harmonic coordinates
 but with \f$O(n^2)\f$ performance only. The max speed \f$O(n)\f$ algorithm uses the standard
@@ -443,6 +475,7 @@ the query point does not belong to this curve, you can compute the coordinates
 as shown in \ref dh_example " this example".
 
 
+\anchor compute_mv_coord
 \subsection gbc_deg_mean_value_coordinates Mean Value Coordinates
 
 Unlike the previous coordinates, mean value coordinates cannot be computed exactly due to
@@ -465,8 +498,10 @@ The first one works everywhere in the plane, and the precision of the computatio
 on the chosen number type, including the remarks above. This algorithm is based on the following weight
 formula from \cgalCite{cgal:bc:f-wmvc-14}
 
-<center>\f$w_i = \sigma_i\bar{w}_i\qquad\f$ with \f$\qquad\bar{w}_i = (r_{i-1}r_{i+1}-d_{i-1}d_{i+1})^{1/2}\prod_{j\not= i-1,i}(r_jr_{j+1} + d_jd_{j+1})^{1/2}\qquad\f$
-where \f$\qquad r_i = \|d_i\|.\f$</center>
+<center>
+\f$w_i = \sigma_i\bar{w}_i\qquad\f$ with \f$\qquad\bar{w}_i = (r_{i-1}r_{i+1}-d_{i-1}d_{i+1})^{1/2}\prod_{j\not= i-1,i}(r_jr_{j+1} + d_jd_{j+1})^{1/2}\qquad\f$
+where \f$\qquad r_i = \|d_i\|.\f$
+</center>
 
 Since \f$\bar{w}_i\f$ is always positive, we have to append to it the proper sign \f$\sigma_i\f$
 of the signed mean value weight, which can be found efficiently (see the figures below).
@@ -480,14 +515,18 @@ convex polygon \f$P\f$ and a concave polygon \f$P'\f$.
 
 After the normalization of these weights as before
 
-<center>\f$b_i = \frac{w_i}{W^{mv}}\qquad\f$ with \f$\qquad W^{mv} = \sum_{j=1}^n w_j\f$</center>
+<center>
+\f$b_i = \frac{w_i}{W^{mv}}\qquad\f$ with \f$\qquad W^{mv} = \sum_{j=1}^n w_j\f$
+</center>
 
 we obtain the max precision \f$O(n^2)\f$ algorithm. The max speed O(n) algorithm computes the
 weights \f$w_i\f$ using the pseudocode from <a href="http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf">here</a>.
 These weights
 
-<center>\f$w_i = \frac{t_{i-1} + t_i}{r_i}\qquad\f$
-with \f$\qquad t_i = \frac{\text{det}(d_i, d_{i+1})}{r_ir_{i+1} + d_id_{i+1}}\f$</center>
+<center>
+\f$w_i = \frac{t_{i-1} + t_i}{r_i}\qquad\f$
+with \f$\qquad t_i = \frac{\text{det}(d_i, d_{i+1})}{r_ir_{i+1} + d_id_{i+1}}\f$
+</center>
 
 are also normalized. Note that they are unstable if a query point is closer than \f$\approx 1.0e-10\f$
 to the polygon boundary, similarly to Wachspress and discrete harmonic coordinates and
@@ -495,13 +534,20 @@ you should be cautious when using the unnormalized mean value weights. In that c
 \f$O(n)\f$ type.
 
 
+\anchor compute_hm_coord
 \subsection gbc_deg_harmonic_coordinates Harmonic Coordinates
 
-Harmonic coordinates are the only coordinates in this package, which are guaranteed to be
-non-negative in the closure of any simple polygon and satisfy all properties of barycentric
-coordinates, however the nice properties come with the fact that these coordinates are
-well-defined only inside a polygon. If an exterior query point is provided, its coordinates
-are set to zero.
+The harmonic coordinates are computed by solving the Laplace equation
+
+<center>
+\f$\Delta \textbf{b} = \textbf{0}\f$
+</center>
+
+subject to suitable Dirichlet boundary conditions. Harmonic coordinates are the only coordinates
+in this package, which are guaranteed to be non-negative in the closure of any simple polygon and
+satisfy all properties of barycentric coordinates, however the nice properties come with the fact
+that these coordinates are well-defined only inside a polygon. If an exterior query point is provided,
+its coordinates are set to zero.
 
 Another disadvantage of these coordinates is that they cannot be computed
 exactly, because harmonic coordinates do not have a simple closed-form expression and
@@ -525,7 +571,16 @@ to compute analytic harmonic weights. However, once the coordinates computed at 
 vertices of the triangulation, they can be evaluated analytically at any interior
 query point. To do that, we first locate a triangle that contains the query point
 and then linearly interpolate harmonic coordinates defined at the vertices of this
-triangle to the query point with the help of \ref gbc_deg_triangular_coordinates "triangle coordinates".
+triangle to the query point with the help of \ref gbc_deg_triangular_coordinates "triangle coordinates" as
+
+<center>
+\f$b_i = b_0^{tr} b_i^0 + b_1^{tr} b_i^1 + b_2^{tr} b_i^2\f$
+</center>
+
+with \f$i = 1\dots n\f$, where \f$n\f$ is the number of polygon vertices, \f$b_{0}^{tr}\f$,
+\f$b_{1}^{tr}\f$, and \f$b_{2}^{tr}\f$ are the triangle coordinates of the query point with
+respect the three vertices of the located triangle, and \f$b_i^{0}\f$, \f$b_i^{1}\f$, and \f$b_i^{2}\f$
+are the harmonic coordinates pre-computed at the triangle vertices.
 
 
 \section gbc_performance Performance

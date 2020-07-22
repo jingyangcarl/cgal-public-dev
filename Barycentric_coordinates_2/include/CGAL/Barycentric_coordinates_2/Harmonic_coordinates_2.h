@@ -58,7 +58,8 @@ namespace Barycentric_coordinates {
 
     Once computed at the vertices of the discretized domain, the coordinate functions
     can be evaluated at any point inside a polygon by locating the finite element that
-    contains a query point and linearly interpolating within this element.
+    contains a query point and linearly interpolating within this element. See more details
+    in the user manual \ref compute_hm_coord "here".
 
     \tparam Polygon
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -170,6 +171,10 @@ namespace Barycentric_coordinates {
 
       The number of returned coordinates equals to the number of polygon vertices.
 
+      After the coordinates \f$b_i\f$ with \f$i = 1\dots n\f$ are computed, where
+      \f$n\f$ is the number of polygon vertices, the query point \f$q\f$ can be obtained
+      as \f$q = \sum_{i = 1}^{n}b_ip_i\f$, where \f$p_i\f$ are the polygon vertices.
+
       \tparam OutputIterator
       the dereferenced output iterator type must be convertible to `FT`.
 
@@ -254,6 +259,11 @@ namespace Barycentric_coordinates {
       vertex of the input domain with the index `query_index`.
 
       The number of returned coordinates equals to the number of polygon vertices.
+
+      After the coordinates \f$b_i\f$ with \f$i = 1\dots n\f$ are computed, where
+      \f$n\f$ is the number of polygon vertices, the partition vertex \f$q\f$ with
+      the index `query_index` can be obtained as \f$q = \sum_{i = 1}^{n}b_ip_i\f$,
+      where \f$p_i\f$ are the polygon vertices.
 
       \tparam OutputIterator
       the dereferenced output iterator type must be convertible to `FT`.

@@ -47,6 +47,7 @@ namespace Barycentric_coordinates {
 
     Wachspress coordinates are well-defined and non-negative in the closure
     of a strictly convex polygon. The coordinates are computed analytically.
+    See more details in the user manual \ref compute_wp_coord "here".
 
     \tparam Polygon
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -181,6 +182,10 @@ namespace Barycentric_coordinates {
       point with respect to the vertices of the input polygon.
 
       The number of returned coordinates equals to the number of polygon vertices.
+
+      After the coordinates \f$b_i\f$ with \f$i = 1\dots n\f$ are computed, where
+      \f$n\f$ is the number of polygon vertices, the query point \f$q\f$ can be obtained
+      as \f$q = \sum_{i = 1}^{n}b_ip_i\f$, where \f$p_i\f$ are the polygon vertices.
 
       \tparam OutputIterator
       the dereferenced output iterator type must be convertible to `FT`.

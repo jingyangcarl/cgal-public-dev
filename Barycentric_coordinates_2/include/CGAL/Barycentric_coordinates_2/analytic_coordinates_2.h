@@ -45,8 +45,10 @@ namespace Barycentric_coordinates {
     coordinate per end point. The coordinates are stored in a destination range
     beginning at `c_begin`.
 
-    If `query` does not belong to the line through `p0` and `p1`, it is
-    projected onto this line, and only then the coordinates are computed.
+    After the coordinates \f$b_0\f$ and \f$b_1\f$ are computed, the query point \f$q\f$ can be
+    obtained as \f$q = b_0p_0 + b_1p_1\f$. If \f$q\f$ does not belong to the line through \f$p_0\f$
+    and \f$p_1\f$, it is projected onto this line, and only then the coordinates are
+    computed. See more details in the user manual \ref compute_seg_coord "here".
 
     \tparam OutputIterator
     the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
@@ -98,8 +100,10 @@ namespace Barycentric_coordinates {
     coordinate per end point. The coordinates are stored in a destination range
     beginning at `c_begin`.
 
-    If `query` does not belong to the line through `p0` and `p1`, it is
-    projected onto this line, and only then the coordinates are computed.
+    After the coordinates \f$b_0\f$ and \f$b_1\f$ are computed, the query point \f$q\f$ can be
+    obtained as \f$q = b_0p_0 + b_1p_1\f$. If \f$q\f$ does not belong to the line through \f$p_0\f$
+    and \f$p_1\f$, it is projected onto this line, and only then the coordinates are
+    computed. See more details in the user manual \ref compute_seg_coord "here".
 
     This function infers a traits class from the `Point_2` class.
 
@@ -149,8 +153,10 @@ namespace Barycentric_coordinates {
     with respect to the end points `p0` and `p1` of a segment that is one
     coordinate per end point. The coordinates are returned in a pair.
 
-    If `query` does not belong to the line through `p0` and `p1`, it is
-    projected onto this line, and only then the coordinates are computed.
+    After the coordinates \f$b_0\f$ and \f$b_1\f$ are computed, the query point \f$q\f$ can be
+    obtained as \f$q = b_0p_0 + b_1p_1\f$. If \f$q\f$ does not belong to the line through \f$p_0\f$
+    and \f$p_1\f$, it is projected onto this line, and only then the coordinates are
+    computed. See more details in the user manual \ref compute_seg_coord "here".
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -200,8 +206,10 @@ namespace Barycentric_coordinates {
     with respect to the end points `p0` and `p1` of a segment that is one
     coordinate per end point. The coordinates are returned in a pair.
 
-    If `query` does not belong to the line through `p0` and `p1`, it is
-    projected onto this line, and only then the coordinates are computed.
+    After the coordinates \f$b_0\f$ and \f$b_1\f$ are computed, the query point \f$q\f$ can be
+    obtained as \f$q = b_0p_0 + b_1p_1\f$. If \f$q\f$ does not belong to the line through \f$p_0\f$
+    and \f$p_1\f$, it is projected onto this line, and only then the coordinates are
+    computed. See more details in the user manual \ref compute_seg_coord "here".
 
     This function infers a traits class from the `Point_2` class.
 
@@ -245,6 +253,10 @@ namespace Barycentric_coordinates {
     with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
     coordinate per point. The coordinates are stored in a destination range
     beginning at `c_begin`.
+
+    After the coordinates \f$b_0\f$, \f$b_1\f$, and \f$b_2\f$ are computed, the query
+    point \f$q\f$ can be obtained as \f$q = b_0p_0 + b_1p_1 + b_2p_2\f$. See more details
+    in the user manual \ref compute_tri_coord "here".
 
     \tparam OutputIterator
     the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
@@ -300,6 +312,10 @@ namespace Barycentric_coordinates {
     coordinate per point. The coordinates are stored in a destination range
     beginning at `c_begin`.
 
+    After the coordinates \f$b_0\f$, \f$b_1\f$, and \f$b_2\f$ are computed, the query
+    point \f$q\f$ can be obtained as \f$q = b_0p_0 + b_1p_1 + b_2p_2\f$. See more details
+    in the user manual \ref compute_tri_coord "here".
+
     This function infers a traits class from the `Point_2` class.
 
     \tparam Point_2
@@ -351,6 +367,10 @@ namespace Barycentric_coordinates {
     This function computes barycentric coordinates at a given `query` point
     with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
     coordinate per point. The coordinates are returned in a tuple.
+
+    After the coordinates \f$b_0\f$, \f$b_1\f$, and \f$b_2\f$ are computed, the query
+    point \f$q\f$ can be obtained as \f$q = b_0p_0 + b_1p_1 + b_2p_2\f$. See more details
+    in the user manual \ref compute_tri_coord "here".
 
     \tparam GeomTraits
     must be a model of `BarycentricTraits_2`.
@@ -404,6 +424,10 @@ namespace Barycentric_coordinates {
     This function computes barycentric coordinates at a given `query` point
     with respect to the points `p0`, `p1`, and `p2`, which form a triangle, that is one
     coordinate per point. The coordinates are returned in a tuple.
+
+    After the coordinates \f$b_0\f$, \f$b_1\f$, and \f$b_2\f$ are computed, the query
+    point \f$q\f$ can be obtained as \f$q = b_0p_0 + b_1p_1 + b_2p_2\f$. See more details
+    in the user manual \ref compute_tri_coord "here".
 
     This function infers a traits class from the `Point_2` class.
 
