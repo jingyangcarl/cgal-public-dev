@@ -27,6 +27,15 @@
 
 namespace CGAL {
 
+  namespace internal {
+    // Max value for the type FT. It cannot be removed since we cannot use std
+    // numeric limits for exact number types.
+    template<typename FT>
+    static FT max_value_osqp() {
+      return FT(1000000000000);
+    }
+  }
+
   /*!
     \ingroup PkgSolverInterfaceNLP
 
@@ -111,7 +120,7 @@ namespace CGAL {
     void set_b(
       const std::size_t,
       const FT val) {
-      l_vec.push_back(-internal::max_value<FT>());
+      l_vec.push_back(-internal::max_value_osqp<FT>());
       u_vec.push_back(val);
     }
 

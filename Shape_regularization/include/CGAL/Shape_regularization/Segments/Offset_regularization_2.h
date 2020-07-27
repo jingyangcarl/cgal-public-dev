@@ -230,7 +230,7 @@ namespace Segments {
     }
 
     /*!
-      \brief applies new positions computed by the `QPSolver`
+      \brief applies new positions computed by the `QuadraticProgramTraits`
       to the initial segments.
 
       Number of values in `solution` equals to the number n of segments being

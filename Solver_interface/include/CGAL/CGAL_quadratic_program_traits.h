@@ -28,6 +28,15 @@
 
 namespace CGAL {
 
+  namespace internal {
+    // Max value for the type FT. It cannot be removed since we cannot use std
+    // numeric limits for exact number types.
+    template<typename FT>
+    static FT max_value_cgal() {
+      return FT(1000000000000);
+    }
+  }
+
   /*!
     \ingroup PkgSolverInterfaceNLP
 
@@ -57,9 +66,9 @@ namespace CGAL {
       m_quadratic_program(
         CGAL::SMALLER,
         true,
-        -internal::max_value<FT>(),
+        -internal::max_value_cgal<FT>(),
         true,
-        +internal::max_value<FT>())
+        +internal::max_value_cgal<FT>())
     { }
 
     /// @}

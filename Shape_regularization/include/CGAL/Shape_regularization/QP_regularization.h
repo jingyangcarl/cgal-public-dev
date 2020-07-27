@@ -36,7 +36,7 @@ namespace Shape_regularization {
     \brief Shape regularization algorithm based on the quadratic programming
     global optimization.
 
-    Given a quadratic programming solver via the class `QPSolver`, this version of the
+    Given a quadratic programming solver via the class `QuadraticProgramTraits`, this version of the
     shape regularization algorithm enables to regularize a set of user-defined
     geometric objects provided a way
     - to access neighbors of each object via the `NeighborQuery` class;
@@ -63,15 +63,15 @@ namespace Shape_regularization {
     \tparam RegularizationType
     must be a model of `RegularizationType`.
 
-    \tparam QPSolver
-    must be a model of `QPSolver`.
+    \tparam QuadraticProgramTraits
+    must be a model of `QuadraticProgramTraits`.
   */
   template<
   typename GeomTraits,
   typename InputRange,
   typename NeighborQuery,
   typename RegularizationType,
-  typename QPSolver>
+  typename QuadraticProgramTraits>
   class QP_regularization {
 
   private:
@@ -99,7 +99,7 @@ namespace Shape_regularization {
     using Input_range = InputRange;
     using Neighbor_query = NeighborQuery;
     using Regularization_type = RegularizationType;
-    using Quadratic_program = QPSolver;
+    using Quadratic_program = QuadraticProgramTraits;
 
     using FT = typename Traits::FT;
     using Indices = std::vector<std::size_t>;
@@ -124,7 +124,7 @@ namespace Shape_regularization {
       obtain object bounds and target values
 
       \param quadratic_program
-      an instance of `QPSolver` to solve the quadratic programming problem
+      an instance of `QuadraticProgramTraits` to solve the quadratic programming problem
 
       \param traits
       an instance of `GeomTraits`, if not provided, the default is used
@@ -135,7 +135,7 @@ namespace Shape_regularization {
       const InputRange& input_range,
       NeighborQuery& neighbor_query,
       RegularizationType& regularization_type,
-      QPSolver& quadratic_program,
+      QuadraticProgramTraits& quadratic_program,
       const GeomTraits traits = GeomTraits()) :
     m_input_range(input_range),
     m_neighbor_query(neighbor_query),

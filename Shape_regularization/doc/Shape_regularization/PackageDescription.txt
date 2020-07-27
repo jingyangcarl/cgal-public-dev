@@ -41,7 +41,7 @@ to the user-defined conditions.}
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{5.2}
-\cgalPkgDependsOn{\ref PkgQPSolver}
+\cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:asgbl-sr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
@@ -52,7 +52,6 @@ to the user-defined conditions.}
 ## Shape Regularization ##
 
 ### Concepts ###
-- `QPSolver`
 - `NeighborQuery`
 - `RegularizationType`
 - `ContourDirections`
@@ -81,9 +80,6 @@ to the user-defined conditions.}
 - `CGAL::Shape_regularization::Planes::regularize_planes()`
 
 ### QP Regularization ###
-- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>`
-#### Solvers ####
-- `CGAL::Shape_regularization::CGAL_quadratic_program<FT>`
-- `CGAL::Shape_regularization::OSQP_quadratic_program<FT>`
+- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QuadraticProgramTraits>`
 
 */

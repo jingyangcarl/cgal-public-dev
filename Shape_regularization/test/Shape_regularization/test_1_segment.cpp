@@ -22,7 +22,7 @@ void test_1_segment() {
   using NQ = SR::Segments::Delaunay_neighbor_query_2<Traits, Segments, Segment_map>;
   using AR = SR::Segments::Angle_regularization_2<Traits, Segments, Segment_map>;
   using OR = SR::Segments::Offset_regularization_2<Traits, Segments, Segment_map>;
-  using QP = SR::OSQP_quadratic_program<FT>;
+  using QP = CGAL::OSQP_quadratic_program_traits<FT>;
 
   using QP_AR = SR::QP_regularization<Traits, Segments, NQ, AR, QP>;
   using QP_OR = SR::QP_regularization<Traits, Segments, NQ, OR, QP>;

@@ -27,9 +27,6 @@
 #include <CGAL/Shape_regularization/regularize_planes.h>
 #include <CGAL/Shape_regularization/regularize_segments.h>
 #include <CGAL/Shape_regularization/regularize_contours.h>
-
 #include <CGAL/Shape_regularization/QP_regularization.h>
-#include <CGAL/Shape_regularization/Solvers/CGAL_quadratic_program.h>
-#include <CGAL/Shape_regularization/Solvers/OSQP_quadratic_program.h>
 
 #endif // CGAL_SHAPE_REGULARIZATION_HEADERS_H

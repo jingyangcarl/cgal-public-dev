@@ -593,7 +593,7 @@ that could be a difference of segment orientations with respect to \f$90\f$ or \
 an angle between two segments is \f$85\f$ degrees then we return \f$90 - 85 = 5\f$ degrees
 since this is what we should minimize in order to make the two segments orthogonal to each other.
 
-Then we set up the quadratic programming problem that is solved via the `QPSolver` concept. The
+Then we set up the quadratic programming problem that is solved via the `QuadraticProgramTraits` concept. The
 returned result is stored as a vector of the length \f$(n + m)\f$ with the updated perturbation values,
 where the first \f$n\f$ values are the values that should be added to the original orientations
 of the input segments in order to update them and the last \f$m\f$ values are minimized to zeros. The
@@ -602,7 +602,7 @@ update is achieved via the method `RegularizationType::update()`.
 Overall, the class `CGAL::Shape_regularization::QP_regularization` is parameterized by:
 - `NeighborQuery` that provides the means for accessing local neighbors of an item,
 - `RegularizationType` that determines a regularization type to be applied, and
-- `QPSolver` that is used to solve the corresponding QP problem.
+- `QuadraticProgramTraits` that is used to solve the corresponding QP problem.
 
 Within this generic framework, users can regularize any set of input items provided
 their own neighbor search, regularization type, and QP solver.
@@ -641,13 +641,13 @@ See above and \ref QP_Regularization_Segments_Angles "this section" for more det
 
 In order to solve the associated QP problem of the algorithm above, \cgal provides
 two particular models of the corresponding QP solver:
-- `CGAL::Shape_regularization::CGAL_quadratic_program` that is a \cgal QP solver, and
-- `CGAL::Shape_regularization::OSQP_quadratic_program` that is a wrapper of the external \ref thirdpartyOSQP "OSQP solver".
+- `CGAL::CGAL_quadratic_program_traits` that is a \cgal QP solver, and
+- `CGAL::OSQP_quadratic_program_traits` that is a wrapper of the external \ref thirdpartyOSQP "OSQP solver".
 
 Since the internal quadratic program that has to be solved is sparse, we recommend using the second
 solver, because the \cgal version will internally convert this problem into a dense one that takes
 considerable effort to solve, while the OSQP version is sparse and very efficient. Both solvers
-follow the `QPSolver` concept and thus users are free to provide their own version of the solver.
+follow the `QuadraticProgramTraits` concept and thus users are free to provide their own version of the solver.
 
 
 \subsection QP_Regularization_Implementation Implementation
@@ -660,12 +660,12 @@ These concepts are used to parameterize the main `CGAL::Shape_regularization::QP
 1. Use `NeighborQuery` to find local neighbors of each input item;
 2. Use `RegularizationType` to estimate current regularities among these neighbors;
 3. Use `RegularizationType` to set max bounds on the allowed regularity changes;
-4. Use `QPSolver` to solve the quadratic programming problem;
+4. Use `QuadraticProgramTraits` to solve the quadratic programming problem;
 5. Use `RegularizationType` to update input items with respect to the modified regularities.
 
 In addition, the user may also want to change a \ref QP_Regularization_Solvers "QP solver"
 if one knows how to optimize it for a specific type of input data. To do that, one
-has to implement a model of the `QPSolver` concept.
+has to implement a model of the `QuadraticProgramTraits` concept.
 
 An example below shows how to define your own type of the above concepts and how to
 choose among available solvers.

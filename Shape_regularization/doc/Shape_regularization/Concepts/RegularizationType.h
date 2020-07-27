@@ -46,7 +46,7 @@ public:
     of the geometric objects being regularized using values from `solution`, one
     value per one regularized object. These values depend on what is being regularized,
     they could be angle or offset differences for example. The solution vector is
-    computed by the `QPSolver`.
+    computed by the `QuadraticProgramTraits`.
 
     Number of values in `solution` equals to the number n of geometric objects being
     regularized + the number m of neighbor pairs between these objects. The first

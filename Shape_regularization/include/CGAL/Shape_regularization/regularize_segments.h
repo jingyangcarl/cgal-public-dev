@@ -34,9 +34,10 @@
 #include <CGAL/Shape_regularization/internal/Orthogonal_groups_2.h>
 #include <CGAL/Shape_regularization/internal/Collinear_groups_2.h>
 
-#include <CGAL/Shape_regularization/QP_regularization.h>
-#include <CGAL/Shape_regularization/Solvers/OSQP_quadratic_program.h>
+#include <CGAL/CGAL_quadratic_program_traits.h>
+#include <CGAL/OSQP_quadratic_program_traits.h>
 
+#include <CGAL/Shape_regularization/QP_regularization.h>
 #include <CGAL/Shape_regularization/Segments/Angle_regularization_2.h>
 #include <CGAL/Shape_regularization/Segments/Offset_regularization_2.h>
 #include <CGAL/Shape_regularization/Segments/Delaunay_neighbor_query_2.h>
@@ -70,8 +71,8 @@ namespace Segments {
     \tparam RegularizationType
     must be a model of `RegularizationType`.
 
-    \tparam QPSolver
-    must be a model of `QPSolver`.
+    \tparam QuadraticProgramTraits
+    must be a model of `QuadraticProgramTraits`.
 
     \tparam GeomTraits
     must be a model of `Kernel`.
@@ -88,7 +89,7 @@ namespace Segments {
     obtain bounds and target values required by the regularization
 
     \param quadratic_program
-    an instance of `QPSolver` to solve the quadratic programming problem
+    an instance of `QuadraticProgramTraits` to solve the quadratic programming problem
 
     \param traits
     an instance of `GeomTraits`
@@ -99,19 +100,19 @@ namespace Segments {
   typename InputRange,
   typename NeighborQuery,
   typename RegularizationType,
-  typename QPSolver,
+  typename QuadraticProgramTraits,
   typename GeomTraits>
   void regularize_segments(
     const InputRange& input_range,
     NeighborQuery& neighbor_query,
     RegularizationType& regularization_type,
-    QPSolver& quadratic_program,
+    QuadraticProgramTraits& quadratic_program,
     GeomTraits traits) {
 
     CGAL_precondition(input_range.size() >= 2);
     using Regularizer =
       CGAL::Shape_regularization::QP_regularization<
-      GeomTraits, InputRange, NeighborQuery, RegularizationType, QPSolver>;
+      GeomTraits, InputRange, NeighborQuery, RegularizationType, QuadraticProgramTraits>;
 
     Regularizer regularizer(
       input_range, neighbor_query, regularization_type, quadratic_program, traits);
@@ -178,7 +179,7 @@ namespace Segments {
 
     CGAL_precondition(input_range.size() >= 2);
     using FT = typename GeomTraits::FT;
-    using QP = CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
+    using QP = CGAL::OSQP_quadratic_program_traits<FT>;
     QP quadratic_program;
 
     regularize_segments(
@@ -243,7 +244,7 @@ namespace Segments {
     GeomTraits traits;
 
     using FT = typename GeomTraits::FT;
-    using QP = CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
+    using QP = CGAL::OSQP_quadratic_program_traits<FT>;
     QP quadratic_program;
 
     regularize_segments(

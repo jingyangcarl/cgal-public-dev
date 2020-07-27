@@ -14,7 +14,7 @@ using Segment_map = CGAL::Identity_property_map<Segment_2>;
 using NQ = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments, Segment_map>;
 using AR = CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments, Segment_map>;
 using OR = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments, Segment_map>;
-using QP = CGAL::Shape_regularization::OSQP_quadratic_program<FT>;
+using QP = CGAL::OSQP_quadratic_program_traits<FT>;
 
 using QP_AR = CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, AR, QP>;
 using QP_OR = CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, OR, QP>;
