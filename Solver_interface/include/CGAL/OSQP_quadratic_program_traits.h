@@ -127,7 +127,7 @@ namespace CGAL {
     }
 
     /*
-      \brief solves an OSQP quadratic program.
+      \brief solves a quadratic program.
 
       \param solution
       a vector with the solution

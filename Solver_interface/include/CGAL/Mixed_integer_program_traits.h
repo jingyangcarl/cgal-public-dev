@@ -26,8 +26,8 @@ namespace CGAL {
 	template <typename FT>
 	class Mixed_integer_program_traits;
 
-	/// The base class of solver element(e.g., Variable, Linear_constraint, and Linear_objective) in
-	/// a mixed integer program
+	/// The base class of solver element (e.g., Variable, Linear_constraint, and Linear_objective) in
+	/// a mixed integer program.
 
 	template <typename FT>
 	class Solver_entry
@@ -210,7 +210,7 @@ namespace CGAL {
                 typedef	CGAL::Mixed_integer_program_traits<FT>	Solver;
 
 	private:
-                /// A constraint cannot belong to several solvers.
+    /// A constraint cannot belong to several solvers.
 		/// The "solver" owns this constraint.
 		Linear_constraint(
 			Solver* solver,

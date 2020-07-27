@@ -43,6 +43,7 @@ public:
   /// The internal matrix type from \ref thirdpartyEigen "Eigen".
   typedef Eigen::SparseMatrix<T>      EigenType;
 
+  /// Number type.
   typedef T                           NT;
   /// @}
 
@@ -56,7 +57,7 @@ public:
       m_is_already_built(false)
   {}
 
-  /// Create a square matrix initialized with zeros.
+  /// Creates a square matrix initialized with zeros.
   Eigen_sparse_matrix(std::size_t  dim,           ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
     :
@@ -69,7 +70,7 @@ public:
     m_triplets.reserve(dim); // reserve memory for a regular 3D grid
   }
 
-  /// Create a square matrix initialized with zeros.
+  /// Creates a square matrix initialized with zeros.
   Eigen_sparse_matrix(int dim,                    ///< Matrix dimension.
                       bool is_symmetric = false)  ///< Symmetric/hermitian?
     : m_is_already_built(false),
@@ -82,7 +83,7 @@ public:
     m_triplets.reserve(dim);
   }
 
-  /// Create a rectangular matrix initialized with zeros.
+  /// Creates a rectangular matrix initialized with zeros.
   ///
   /// \pre rows == columns if `is_symmetric` is true.
   Eigen_sparse_matrix(std::size_t rows,          ///< Number of rows.
@@ -112,10 +113,10 @@ public:
   }
 
 
-  /// Delete this object and the wrapped matrix.
+  /// Deletes this object and the wrapped matrix.
   ~Eigen_sparse_matrix() { }
 
-  /// Create a rectangular matrix initialized with zeros.
+  /// Creates a rectangular matrix initialized with zeros.
   ///
   /// \pre rows == columns if `is_symmetric` is true.
   Eigen_sparse_matrix(int rows,                  ///< Number of rows.
@@ -136,9 +137,9 @@ public:
     m_triplets.reserve(rows);
   }
 
-  /// Return the matrix number of rows
+  /// Returns the matrix number of rows
   int row_dimension() const { return static_cast<int>(m_matrix.rows()); }
-  /// Return the matrix number of columns
+  /// Returns the matrix number of columns
   int column_dimension() const { return static_cast<int>(m_matrix.cols()); }
 
   /// Write access to a matrix coefficient: a_ij <- val.
@@ -245,7 +246,7 @@ public:
   }
   /// \endcond
 
-  /// Return the internal matrix, with type `EigenType`.
+  /// Returns the internal matrix, with type `EigenType`.
   const EigenType& eigen_object() const
   {
     if(!m_is_already_built)
@@ -258,7 +259,7 @@ public:
     return m_matrix;
   }
 
-  /// Return the internal matrix, with type `EigenType`.
+  /// Returns the internal matrix, with type `EigenType`.
   EigenType& eigen_object()
   {
     if(!m_is_already_built)
@@ -303,7 +304,6 @@ private:
   bool m_is_symmetric;
 }; // Eigen_sparse_matrix
 
-
 /*!
 \ingroup PkgSolverInterfaceLS
 
@@ -319,18 +319,17 @@ Since the matrix is symmetric, only the lower triangle part is stored.
 \sa `CGAL::Eigen_vector<T>`
 \sa `CGAL::Eigen_sparse_matrix<T>`
 */
-
 template<class T>
 struct Eigen_sparse_symmetric_matrix
   : public Eigen_sparse_matrix<T>
 {
-  /// Create a square *symmetric* matrix initialized with zeros.
+  /// Creates a square *symmetric* matrix initialized with zeros.
   Eigen_sparse_symmetric_matrix(int dim)                  ///< Matrix dimension.
     : Eigen_sparse_matrix<T>(dim, true /* symmetric */)
   {
   }
 
-  /// Create a square *symmetric* matrix initialized with zeros.
+  /// Creates a square *symmetric* matrix initialized with zeros.
   ///
   /// \pre rows == columns.
   Eigen_sparse_symmetric_matrix(int rows,                 ///< Number of rows.
@@ -361,21 +360,21 @@ struct Eigen_matrix
   /// The internal matrix type from \ref thirdpartyEigen "Eigen".
   typedef ::Eigen::Matrix<FT, ::Eigen::Dynamic, ::Eigen::Dynamic> EigenType;
 
-  /// Construct a matrix with `nr` rows and `nc` columns.
+  /// Constructs a matrix with `nr` rows and `nc` columns.
   Eigen_matrix(std::size_t nr, std::size_t nc) : EigenType(nr, nc) { }
 
-  /// Return the matrix number of rows.
+  /// Returns the matrix number of rows.
   std::size_t number_of_rows() const { return this->rows(); }
-  /// Return the matrix number of columns.
+  /// Returns the matrix number of columns.
   std::size_t number_of_columns() const { return this->cols(); }
 
-  /// Return the value of the matrix at position (i,j).
+  /// Returns the value of the matrix at position (i,j).
   FT operator()( std::size_t i , std::size_t j ) const { return EigenType::operator()(i,j); }
 
   /// Write access to a matrix coefficient: `a_ij` <- `val`.
   void set(std::size_t i, std::size_t j, FT value) { this->coeffRef(i,j) = value; }
 
-  /// Return the internal matrix, with type `EigenType`.
+  /// Returns the internal matrix, with type `EigenType`.
   const EigenType& eigen_object() const { return static_cast<const EigenType&>(*this); }
 };
 

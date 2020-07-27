@@ -2,7 +2,7 @@
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-Concept that is used to solve sparse linear systems <I>\f$A \times X = B\f$</I>.
+A concept that is used to solve sparse linear systems <I>\f$A \times X = B\f$</I>.
 
 \cgalHasModel
 - `CGAL::Eigen_solver_traits<T>`
@@ -14,17 +14,17 @@ public:
 /// @{
 
 /*!
-
+  Matrix type.
 */
 typedef unspecified_type Matrix;
 
 /*!
-
+  Vector type.
 */
 typedef unspecified_type Vector;
 
 /*!
-
+  Number type.
 */
 typedef unspecified_type NT;
 
@@ -34,7 +34,7 @@ typedef unspecified_type NT;
 /// @{
 
 /*!
-Default constructor.
+  Default constructor.
 */
 SparseLinearAlgebraTraits_d();
 
@@ -44,11 +44,11 @@ SparseLinearAlgebraTraits_d();
 /// @{
 
 /*!
-Solve the sparse linear system \f$A \times X = B\f$. Return `true` on success.
-The solution is then \f$(1/D) \times X \f$.
+  Solves the sparse linear system \f$A \times X = B\f$. Returns `true` on success.
+  The solution is then \f$(1/D) \times X \f$.
 
-\pre `A.row_dimension()` == `B.dimension()`
-\pre `A.column_dimension()` == `X.dimension()`
+  \pre `A.row_dimension()` == `B.dimension()`
+  \pre `A.column_dimension()` == `X.dimension()`
 */
 bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);
 
@@ -76,12 +76,12 @@ public:
 /// @{
 
 /*!
-
+  Number type.
 */
 typedef unspecified_type NT;
 
 /*!
-Index type
+  Index type.
 */
 typedef unspecified_type Index;
 
@@ -91,12 +91,12 @@ typedef unspecified_type Index;
 /// @{
 
 /*!
-Create a vector initialized with zeros.
+  Creates a vector initialized with zeros.
 */
 Vector(Index rows);
 
 /*!
-Copy constructor.
+  Copy constructor.
 */
 Vector(const Vector& toCopy);
 /// @}
@@ -105,13 +105,13 @@ Vector(const Vector& toCopy);
 /// @{
 
 /*!
-Return the vector's number of coefficients.
+  Returns the vector's number of coefficients.
 */
 Index dimension() const;
 
 /*!
-Read/write access to a vector coefficient.
-\pre `0 <= row < dimension()`.
+  Read/write access to a vector coefficient.
+  \pre `0 <= row < dimension()`.
 */
 NT operator[](Index row) const;
 
@@ -145,12 +145,12 @@ public:
 /// @{
 
 /*!
-Index type
+  Index type.
 */
 typedef unspecified_type Index;
 
 /*!
-
+  Number type.
 */
 typedef unspecified_type NT;
 
@@ -160,12 +160,12 @@ typedef unspecified_type NT;
 /// @{
 
 /*!
-Create a square matrix initialized with zeros.
+  Creates a square matrix initialized with zeros.
 */
 Matrix(Index dimension);
 
 /*!
-Create a rectangular matrix initialized with zeros.
+  Creates a rectangular matrix initialized with zeros.
 */
 Matrix(Index rows, Index columns);
 
@@ -175,44 +175,44 @@ Matrix(Index rows, Index columns);
 /// @{
 
 /*!
-Return the matrix number of rows.
+  Returns the matrix number of rows.
 */
 Index row_dimension() const;
 
 /*!
-Return the matrix number of columns.
+  Returns the matrix number of columns.
 */
 Index column_dimension() const;
 
 /*!
-Read access to a matrix coefficient.
+  Read access to a matrix coefficient.
 
-\pre `0 <= row < row_dimension()`
-\pre `0 <= column < column_dimension()`
+  \pre `0 <= row < row_dimension()`
+  \pre `0 <= column < column_dimension()`
 */
 NT get_coef(Index row, Index column) const;
 
 /*!
-Write access to a matrix coefficient: `a_ij = a_ij + val`.
+  Write access to a matrix coefficient: `a_ij = a_ij + val`.
 
-\pre `0 <= row < row_dimension()`
-\pre `0 <= column < column_dimension()`
+  \pre `0 <= row < row_dimension()`
+  \pre `0 <= column < column_dimension()`
 */
 void add_coef(Index row, Index column, NT value);
 
 /*!
-Write access to a matrix coefficient: `a_ij = val`.
+  Write access to a matrix coefficient: `a_ij = val`.
 
-Optimization: Users can indicate that the coefficient does not already exist
-in the matrix by setting `new_coef` to `true`.
+  Optimization: Users can indicate that the coefficient does not already exist
+  in the matrix by setting `new_coef` to `true`.
 
-\pre `0 <= i < row_dimension()`
-\pre `0 <= j < column_dimension()`
+  \pre `0 <= i < row_dimension()`
+  \pre `0 <= j < column_dimension()`
 */
 void set_coef(Index row, Index column, NT value, bool new_coef = false);
 
 /*!
-Swaps the content of `*this` and `m`.
+  Swaps the content of `*this` and `m`.
 */
 void swap(Matrix& m);
 

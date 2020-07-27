@@ -33,7 +33,7 @@ namespace CGAL {
 
     \brief wraps the \cgal QP solver.
 
-    This class wraps the \ref PkgQPSolver "CGAL solver"
+    This class wraps the internal \ref PkgQPSolver "CGAL solver"
     and sets all its parameters to default.
 
     \tparam FT
@@ -117,7 +117,7 @@ namespace CGAL {
     }
 
     /*
-      \brief solves an OSQP quadratic program.
+      \brief solves a quadratic program.
 
       \param solution
       a vector with the solution

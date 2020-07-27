@@ -31,7 +31,6 @@ which is a simple array of numbers.
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 */
-
 template<class T>
 class Eigen_vector
   : public Eigen::Matrix<T, Eigen::Dynamic, 1>
@@ -40,6 +39,8 @@ class Eigen_vector
 public:
   /// \name Types
   /// @{
+
+  /// Number type.
   typedef T                                      NT;
 
   /// The internal vector type from \ref thirdpartyEigen "Eigen".
@@ -61,7 +62,7 @@ public:
     : EigenType()
   {}
 
-  /// Create a vector initialized with zeros.
+  /// Creates a vector initialized with zeros.
   Eigen_vector(std::size_t dimension)
     : EigenType(static_cast<int>(dimension))
   {
@@ -73,13 +74,13 @@ public:
 
   ~Eigen_vector() { }
 
-  /// Return the vector's number of coefficients.
+  /// Returns the vector's number of coefficients.
   int dimension() const { return static_cast<int>(this->size()); }
 
-  /// Return the internal vector wrapped by this object.
+  /// Returns the internal vector wrapped by this object.
   const EigenType& eigen_object() const { return *this; }
 
-  /// Return the internal vector wrapped by this object.
+  /// Returns the internal vector wrapped by this object.
   EigenType& eigen_object() { return *this; }
 
   /// Write access to a vector coefficient: `a_i` <- `value`.
@@ -88,7 +89,7 @@ public:
     this->operator[](static_cast<int>(i)) = value;
   }
 
-  /// Return a pointer to the data array of this vector.
+  /// Returns a pointer to the data array of this vector.
   NT* vector() { return this->data(); }
 };
 

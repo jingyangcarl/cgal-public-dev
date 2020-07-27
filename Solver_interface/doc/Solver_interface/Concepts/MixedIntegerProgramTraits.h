@@ -4,12 +4,12 @@ class MixedIntegerProgramTraits
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-Concept of a variable in a Mixed Integer Programming (MIP) problem.
+A concept of a variable in a Mixed Integer Programming (MIP) problem.
 
 \cgalHasModel
 - `CGAL::Variable<FT>`
 */
-template <typename FT>
+template<typename FT>
 class MixedIntegerProgramVariable
 {
 public:
@@ -17,12 +17,12 @@ public:
 	/// @{
 
 	/*!
-
+		Number type.
 	*/
 	typedef unspecified_type FT;
 
 	/*!
-	A variable can be continuous, integer, or binary.
+		A variable can be continuous, integer, or binary.
 	*/
 	enum Variable_type { CONTINUOUS, INTEGER, BINARY };
 
@@ -32,10 +32,16 @@ public:
 	/// @{
 
 	/*!
-	Constructs a variable initialized with the pointer of the solver it belongs to,
-	the variable type, lower bound, upper bound, name, and index.
+		Constructs a variable initialized with the pointer of the solver it belongs to,
+		the variable type, lower bound, upper bound, name, and index.
 	*/
-	MixedIntegerProgramVariable(MixedIntegerProgramTraits* solver, Variable_type type, FT lb =, FT ub, const std::string& name, int idx);
+	MixedIntegerProgramVariable(
+		MixedIntegerProgramTraits* solver,
+		Variable_type type,
+		FT lb,
+		FT ub,
+		const std::string& name,
+		int idx);
 
 	/// \name Operations
 	/// @{
@@ -47,22 +53,22 @@ public:
 	void set_variable_type(Variable_type t);
 
 	/*!
-	Returns the name of the variable.
+		Returns the name of the variable.
 	*/
 	const std::string& name() const;
 
 	/*!
-	Sets the name of the variable.
+		Sets the name of the variable.
 	*/
 	void set_name(const std::string& n);
 
 	/*!
-	Returns the index of the variable.
+		Returns the index of the variable.
 	*/
 	int  index() const;
 
 	/*!
-	Sets the index of the variable.
+		Sets the index of the variable.
 	*/
 	void set_index(int idx);
 
@@ -109,12 +115,12 @@ public:
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-Concept of a linear constraint in a Mixed Integer Programming (MIP) problem.
+A concept of a linear constraint in a Mixed Integer Programming (MIP) problem.
 
 \cgalHasModel
 - `CGAL::Linear_constraint<FT>`
 */
-template <typename FT>
+template<typename FT>
 class MixedIntegerProgramLinearConstraint
 {
 public:
@@ -122,31 +128,36 @@ public:
 	/// @{
 
 	/*!
-	Constructs a linear constraint, initialized with the solver it belongs to,
-	the lower bound, upper bound, name, and index.
+		Constructs a linear constraint, initialized with the solver it belongs to,
+		the lower bound, upper bound, name, and index.
 	*/
-	MixedIntegerProgramLinearConstraint(MixedIntegerProgramTraits* solver, FT lb, FT ub, const std::string& name, int idx);
+	MixedIntegerProgramLinearConstraint(
+		MixedIntegerProgramTraits* solver,
+		FT lb,
+		FT ub,
+		const std::string& name,
+		int idx);
 
 	/// \name Operations
 	/// @{
 
 	/*!
-	Returns the name of the constraint.
+		Returns the name of the constraint.
 	*/
 	const std::string& name() const;
 
 	/*!
-	Sets the name of the constraint.
+		Sets the name of the constraint.
 	*/
 	void set_name(const std::string& n);
 
 	/*!
-	Returns the index of the constraint.
+		Returns the index of the constraint.
 	*/
 	int  index() const;
 
 	/*!
-	Sets the index of the constraint.
+		Sets the index of the constraint.
 	*/
 	void set_index(int idx);
 
@@ -206,12 +217,12 @@ public:
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-Concept of a linear objective function in a Mixed Integer Programming (MIP) problem.
+A concept of a linear objective function in a Mixed Integer Programming (MIP) problem.
 
 \cgalHasModel
 - `CGAL::Linear_objective<FT>`
 */
-template <typename FT>
+template<typename FT>
 class MixedIntegerProgramLinearObjective
 {
 public:
@@ -227,10 +238,12 @@ public:
 	/// @{
 
 	/*!
-	Constructs a linear objective, initialized with the solver it belongs to
-	and the objective sense.
+		Constructs a linear objective, initialized with the solver it belongs to
+		and the objective sense.
 	*/
-	MixedIntegerProgramLinearObjective(MixedIntegerProgramTraits* solver, Sense sense);
+	MixedIntegerProgramLinearObjective(
+		MixedIntegerProgramTraits* solver,
+		Sense sense);
 
 	/// \name Operations
 	/// @{
@@ -272,7 +285,7 @@ public:
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-@brief Concept describing the set of requirements for (constrained or unconstrained)
+A concept that describes the set of requirements for (constrained or unconstrained)
 Mixed Integer Programming (MIP) problems. A model of this concept stores the integer
 variables, linear objective, and linear constraints (if any) and provides a method
 to solve the problem.
@@ -290,7 +303,7 @@ public:
 	/// @{
 
 	/*!
-	Default constructor.
+		Default constructor.
 	*/
 	MixedIntegerProgramTraits();
 
@@ -301,7 +314,11 @@ public:
 
 	/// Creates a single variable, adds it to the solver, and returns its pointer.
 	/// \note Memory is managed by the solver and will be automatically released.
-	MixedIntegerProgramVariable* create_variable(Variable_type type, FT lb, FT ub, const std::string& name);
+	MixedIntegerProgramVariable* create_variable(
+		Variable_type type,
+		FT lb,
+		FT ub,
+		const std::string& name);
 
 	/// Creates a set of variables, adds them to the solver, and returns their pointers.
 	/// \note (1) Variables will be given default names, e.g., x0, x1...;
@@ -312,7 +329,10 @@ public:
 	/// Creates a single linear constraint, adds it to the solver, and returns the pointer.
 	/// \note Memory is managed by the solver and will be automatically released when the
 	///		    solver is destroyed.
-	MixedIntegerProgramLinearConstraint* create_constraint(FT lb, FT ub, const std::string& name);
+	MixedIntegerProgramLinearConstraint* create_constraint(
+		FT lb,
+		FT ub,
+		const std::string& name);
 
 	/// Creates a set of linear constraints, adds them to the solver, and returns their pointers.
 	/// \note (1) Constraints will be given default names, e.g., c0, c1...

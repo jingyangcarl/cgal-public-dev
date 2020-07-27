@@ -47,11 +47,14 @@ template <typename FT, unsigned int dim = 3>
 class Diagonalize_traits
 {
 public:
+  /// Vector type.
   typedef std::array<FT, dim>                         Vector;
+  /// Matrix type.
   typedef std::array<FT, dim*dim>                     Matrix;
+  /// Covariance matrix type.
   typedef std::array<FT, (dim * (dim+1) / 2)>         Covariance_matrix;
 
-  /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
+  /// Fills `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
   CGAL_WARNING_DIAGONALIZE_TRAITS
@@ -62,7 +65,7 @@ public:
     return diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues, eigenvectors);
   }
 
-  /// Extract the eigenvector associated to the largest eigenvalue
+  /// Extracts the eigenvector associated to the largest eigenvalue
   /// of the covariance matrix represented by `cov`.
   /// \return `true` if the operation was successful and `false` otherwise.
   CGAL_WARNING_DIAGONALIZE_TRAITS
@@ -80,7 +83,7 @@ public:
     return true;
   }
 
-  /// Fill `eigenvalues` with the eigenvalues and `eigenvectors` with
+  /// Fills `eigenvalues` with the eigenvalues and `eigenvectors` with
   /// the eigenvectors of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
