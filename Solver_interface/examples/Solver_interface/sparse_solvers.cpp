@@ -15,7 +15,7 @@ int main(void) {
   Eigen_vector B(degree); // zero vector
   Eigen_matrix A(degree);
 
-  // Randomly make some coefficients of the matrix non-zero.
+  // Randomly make some coefficients of the matrix non-zeros.
   for (std::size_t i = 0; i < nb_nonzero_coef; ++i) {
     int x = rand() % degree;
     int y = rand() % degree;

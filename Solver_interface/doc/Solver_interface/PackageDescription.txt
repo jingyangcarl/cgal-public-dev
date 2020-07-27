@@ -10,7 +10,7 @@
 \defgroup PkgSolverInterfaceMIP Mixed Integer Programming
 \ingroup PkgSolverInterfaceRef
 
-\defgroup PkgSolverInterfaceLQP Linear and Quadratic Programming
+\defgroup PkgSolverInterfaceNLP Non Linear Programming
 \ingroup PkgSolverInterfaceRef
 
 \addtogroup PkgSolverInterfaceRef
@@ -60,8 +60,7 @@ and nonlinear programming problems with or without constraints.}
 - `CGAL::GLPK_mixed_integer_program_traits`
 - `CGAL::SCIP_mixed_integer_program_traits`
 
-### Linear and Quadratic Programming ###
-- `CGAL::Linear_program_traits`
-- `CGAL::Quadratic_program_traits`
-
+### Non Linear Programming ###
+- `CGAL::CGAL_quadratic_program_traits`
+- `CGAL::OSQP_quadratic_program_traits`
 */

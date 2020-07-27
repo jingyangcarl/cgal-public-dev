@@ -10,3 +10,4 @@ Jet_fitting_3
 Poisson_surface_reconstruction_3
 Polygonal_surface_reconstruction
 Shape_regularization
+QP_solver

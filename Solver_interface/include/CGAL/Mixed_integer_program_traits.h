@@ -273,8 +273,8 @@ namespace CGAL {
 	///       classes, i.e., `CGAL::GLPK_mixed_integer_program_traits` or
 	///		  `CGAL::SCIP_mixed_integer_program_traits`. Alternatively, use
 	///       `CGAL::Mixed_integer_program_traits` as a base to derive a new model
-	///       (using e.g., <a href = "https://projects.coin-or.org/Cbc"> CBC </a>,
-	///       <a href = "http://www.gurobi.com/"> Gurobi </a> for better
+	///       (using e.g., <a href = "https://projects.coin-or.org/Cbc">CBC</a>,
+	///       <a href = "http://www.gurobi.com/">Gurobi</a> for better
 	///       performance).
 	///
 	/// \cond SKIP_IN_MANUAL

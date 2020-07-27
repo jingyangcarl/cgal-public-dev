@@ -5,7 +5,8 @@
   Concept describing the linear algebra types and algorithms needed to solve in
   the least square sense a linear system with a singular value decomposition.
 
-  \cgalHasModel `CGAL::Eigen_svd`
+  \cgalHasModel
+  - `CGAL::Eigen_svd`
 */
 class SvdTraits
 {
@@ -51,7 +52,8 @@ public:
 \cgalConcept
 Concept of vector type used by the concept `SvdTraits`.
 
-\cgalHasModel `CGAL::Eigen_vector<T>`
+\cgalHasModel
+- `CGAL::Eigen_vector<T>`
 */
 class SvdTraits::Vector
 {
@@ -86,7 +88,8 @@ public:
 \cgalConcept
 Concept of matrix type used by the concept `SvdTraits`.
 
-\cgalHasModel `CGAL::Eigen_matrix<T>`
+\cgalHasModel
+- `CGAL::Eigen_matrix<T>`
 */
 class SvdTraits::Matrix
 {
