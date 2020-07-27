@@ -128,7 +128,7 @@ namespace CGAL {
 
 		/// Returns the value of the variable in the current solution.
 		/// \note (1) Valid only if the program was successfully solved.
-		///       (2) If the variable is integer and rounded == true, then the 
+		///       (2) If the variable is integer and rounded == true, then the
 		///           value will be rounded to the nearest integer.
 		FT solution_value(bool rounded = false) const;
 
@@ -163,7 +163,7 @@ namespace CGAL {
 		);
 
 	public:
-		/// Adds a coefficient to a variable. 
+		/// Adds a coefficient to a variable.
 		void  add_coefficient(const Variable* var, FT coeff);
 
 		const std::unordered_map<const Variable*, FT>& coefficients() const { return coefficients_; }
@@ -177,7 +177,7 @@ namespace CGAL {
 
 		/// Evaluates the value of this expression at the solution found.
 		/// \note (1) valid only if the problem was successfully solved.
-		///       (2) if a variable is integer and rounded == true, then the 
+		///       (2) if a variable is integer and rounded == true, then the
 		///           variable value will be rounded to the nearest integer.
 		FT solution_value(bool rounded = false) const;
 
@@ -258,16 +258,16 @@ namespace CGAL {
 
 	/// \ingroup PkgSolver
 	///
-	/// The class `Mixed_integer_program_traits` provides an interface for 
-	/// formulating and solving (constrained or unconstrained) mixed integer 
+	/// The class `Mixed_integer_program_traits` provides an interface for
+	/// formulating and solving (constrained or unconstrained) mixed integer
 	/// programs. It can also be used for general linear programs.
 	/// \note The solve() function is virtual and thus this class cannot be
-	///		  instantiated directly. Client code should use the inherited 
+	///		  instantiated directly. Client code should use the inherited
 	///       classes, i.e., `GLPK_mixed_integer_program_traits` or
 	///		  `SCIP_mixed_integer_program_traits`. Alternatively, use
 	///       `Mixed_integer_program_traits` as a base to derive a new model
-	///       (using e.g., <a href = "https://projects.coin-or.org/Cbc"> CBC </a>, 
-	///       <a href = "http://www.gurobi.com/"> Gurobi </a> for better 
+	///       (using e.g., <a href = "https://projects.coin-or.org/Cbc"> CBC </a>,
+	///       <a href = "http://www.gurobi.com/"> Gurobi </a> for better
 	///       performance).
 	///
 	/// \cond SKIP_IN_MANUAL
@@ -292,9 +292,9 @@ namespace CGAL {
 		~Mixed_integer_program_traits();
 
 		/// Creates a single variable, add it to the solver, and returns its pointer.
-		/// \note (1) If name is empty or not provided, a default name (e.g., x0, x1...) 
+		/// \note (1) If name is empty or not provided, a default name (e.g., x0, x1...)
 		///		  will be given.
-		///		  (2) Memory is managed by the solver and will be automatically released 
+		///		  (2) Memory is managed by the solver and will be automatically released
 		///		  when the solver is destroyed.
 		Variable* create_variable(
 			Variable_type type = Variable::CONTINUOUS,
@@ -305,7 +305,7 @@ namespace CGAL {
 
 		/// Creates a set of variables and add them to the solver.
 		/// \note (1) Variables will be given default names, e.g., x0, x1...
-		///		  (2) Memory is managed by the solver and will be automatically released 
+		///		  (2) Memory is managed by the solver and will be automatically released
 		///		  when the solver is destroyed.
 		std::vector<Variable*> create_variables(std::size_t n);
 
@@ -319,14 +319,14 @@ namespace CGAL {
 			const std::string& name = ""
 		);
 
-		/// Creates a set of linear constraints and add them to the solver.	
+		/// Creates a set of linear constraints and add them to the solver.
 		/// \note (1) Constraints with be given default names, e.g., c0, c1...
-		///		  (2) Memory is managed by the solver and will be automatically released 
+		///		  (2) Memory is managed by the solver and will be automatically released
 		///		  when the solver is destroyed.
 		std::vector<Linear_constraint*> create_constraints(std::size_t n);
 
 		/// Creates the objective function and returns the pointer.
-		/// \note Memory is managed by the solver and will be automatically released 
+		/// \note Memory is managed by the solver and will be automatically released
 		///		  when the solver is destroyed.
 		Linear_objective* create_objective(Sense sense = Linear_objective::MINIMIZE);
 
@@ -356,7 +356,7 @@ namespace CGAL {
 		/// Solves the program. Returns false if fails.
 		virtual bool solve() = 0;
 
-		/// Returns the result. 
+		/// Returns the result.
 		/// The result can also be retrieved using Variable::solution_value().
 		/// \note (1) Result is valid only if the solver succeeded.
 		///       (2) Each entry in the result corresponds to the variable with the
