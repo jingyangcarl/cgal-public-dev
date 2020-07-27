@@ -1,7 +1,4 @@
-
-
 class MixedIntegerProgramTraits
-
 
 /*!
 \ingroup PkgSolverInterfaceConcepts
@@ -31,7 +28,7 @@ public:
 
 	/// @}
 
-	/// \name Creation 
+	/// \name Creation
 	/// @{
 
 	/*!
@@ -40,7 +37,7 @@ public:
 	*/
 	MixedIntegerProgramVariable(MixedIntegerProgramTraits* solver, Variable_type type, FT lb =, FT ub, const std::string& name, int idx);
 
-	/// \name Operations 
+	/// \name Operations
 	/// @{
 
 	/// Returns the variable type.
@@ -91,13 +88,13 @@ public:
 	/// Gets both lower and upper bounds.
 	void get_bounds(FT& lb, FT& ub) const;
 
-	/// Gets the infinity threshold (e.g., 1e20). 
+	/// Gets the infinity threshold (e.g., 1e20).
 	/// Values greater than this value are considered as infinity.
 	static FT infinity();
 
 	/// Returns the value of the variable in the current solution.
 	/// \note (1) Valid only if the program was successfully solved.
-	///       (2) If the variable is integer and rounded == true, then the 
+	///       (2) If the variable is integer and rounded == true, then the
 	///           value will be rounded to the nearest integer.
 	FT solution_value(bool rounded = false) const;
 
@@ -107,7 +104,6 @@ public:
 	/// @}
 
 }; /* end MixedIntegerProgramVariable */
-
 
 
 /*!
@@ -123,7 +119,7 @@ template <typename FT>
 class MixedIntegerProgramLinearConstraint
 {
 public:
-	/// \name Creation 
+	/// \name Creation
 	/// @{
 
 	/*!
@@ -132,7 +128,7 @@ public:
 	*/
 	MixedIntegerProgramLinearConstraint(MixedIntegerProgramTraits* solver, FT lb, FT ub, const std::string& name, int idx);
 
-	/// \name Operations 
+	/// \name Operations
 	/// @{
 
 	/*!
@@ -177,20 +173,20 @@ public:
 	/// Gets both lower and upper bounds.
 	void get_bounds(FT& lb, FT& ub) const;
 
-	/// Gets the infinity threshold (e.g., 1e20). 
+	/// Gets the infinity threshold (e.g., 1e20).
 	/// Values greater than this value are considered as infinity.
 	static FT infinity();
 
-	/// Sets the coefficients of the constraint. 
+	/// Sets the coefficients of the constraint.
 	void  set_coefficients(const std::unordered_map<const MixedIntegerProgramVariable*, FT>& coeffs);
 
-	/// Adds a coefficient to a variable of the constraint. 
+	/// Adds a coefficient to a variable of the constraint.
 	void  add_coefficient(const MixedIntegerProgramVariable* var, FT coeff);
 
-	/// Returns the coefficients of the constraint. 
+	/// Returns the coefficients of the constraint.
 	const std::unordered_map<const MixedIntegerProgramVariable*, FT>& coefficients() const;
 
-	/// Gets the coefficient of the variable in this constraint. 
+	/// Gets the coefficient of the variable in this constraint.
 	FT get_coefficient(const MixedIntegerProgramVariable* var) const;
 
 	/// Sets the constant term.
@@ -206,7 +202,6 @@ public:
 	/// @}
 
 }; /* end MixedIntegerProgramLinearConstraint */
-
 
 
 /*!
@@ -230,7 +225,7 @@ public:
 
 	/// @}
 
-	/// \name Creation 
+	/// \name Creation
 	/// @{
 
 	/*!
@@ -239,7 +234,7 @@ public:
 	*/
 	MixedIntegerProgramLinearObjective(MixedIntegerProgramTraits* solver, Sense sense);
 
-	/// \name Operations 
+	/// \name Operations
 	/// @{
 
 	/// Sets the objective sense.
@@ -248,16 +243,16 @@ public:
 	/// Gets the objective sense.
 	Sense sense() const;
 
-	/// Sets the coefficients of the constraint. 
+	/// Sets the coefficients of the constraint.
 	void  set_coefficients(const std::unordered_map<const MixedIntegerProgramVariable*, FT>& coeffs);
 
-	/// Adds a coefficient to a variable of the constraint. 
+	/// Adds a coefficient to a variable of the constraint.
 	void  add_coefficient(const MixedIntegerProgramVariable* var, FT coeff);
 
-	/// Returns the coefficients of the constraint. 
+	/// Returns the coefficients of the constraint.
 	const std::unordered_map<const MixedIntegerProgramVariable*, FT>& coefficients() const;
 
-	/// Gets the coefficient of the variable in this constraint. 
+	/// Gets the coefficient of the variable in this constraint.
 	FT get_coefficient(const MixedIntegerProgramVariable* var) const;
 
 	/// Sets the constant term.
@@ -266,15 +261,14 @@ public:
 	/// Gets the constant term.
 	FT offset() const;
 
-	/// Clears the objective (i.e., removes all variables, resets the 
-	/// objective sense to UNDEFINED). Useful to reuse the object 
+	/// Clears the objective (i.e., removes all variables, resets the
+	/// objective sense to UNDEFINED). Useful to reuse the object
 	/// to define a new linear objective.
 	void clear();
 
 	/// @}
 
 }; /* end MixedIntegerProgramLinearObjective */
-
 
 
 /*!
@@ -313,7 +307,7 @@ public:
 	MixedIntegerProgramVariable* create_variable(Variable_type type, FT lb, FT ub, const std::string& name);
 
 	/// Creates a set of variables, adds them to the solver, and returns their pointers.
-	/// \note (1) Variables will be given default names, e.g., x0, x1...; 	
+	/// \note (1) Variables will be given default names, e.g., x0, x1...;
 	///		    (2) Memory is managed by the solver and will be automatically released when the
 	///		        solver is destroyed.
 	std::vector<MixedIntegerProgramVariable*> create_variables(std::size_t n);
@@ -323,7 +317,7 @@ public:
 	///		    solver is destroyed.
 	MixedIntegerProgramLinearConstraint* create_constraint(FT lb, FT ub, const std::string& name);
 
-	/// Creates a set of linear constraints, adds them to the solver, and returns their pointers.	
+	/// Creates a set of linear constraints, adds them to the solver, and returns their pointers.
 	/// \note (1) Constraints will be given default names, e.g., c0, c1...
 	///		    (2) Memory is managed by the solver and will be automatically released when the
 	///		        solver is destroyed.
@@ -376,7 +370,7 @@ public:
 	/// Solves the program. Returns false if failed.
 	bool solve();
 
-	/// Returns the result. 
+	/// Returns the result.
 	/// \note (1) Result is valid only if the solver succeeded.
 	///       (2) Each entry in the result corresponds to the variable with the
 	///			      same index in the program.

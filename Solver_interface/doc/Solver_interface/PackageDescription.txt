@@ -6,12 +6,15 @@
 
 /*!
 \addtogroup PkgSolverInterfaceRef
-\cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverInterface}
+\cgalPkgDescriptionBegin{CGAL and Solvers, PkgSolverInterface}
 \cgalPkgPicture{solver.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan}
-\cgalPkgDesc{This package provides concepts and models for solving linear systems with dense or sparse matrices, Mixed Integer Programming (MIP) problems with or without constraints.}
-\cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolverInterfaceRef}
+\cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud,
+Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan}
+\cgalPkgDesc{This package provides concepts and models for solving linear systems with
+dense or sparse matrices, Mixed Integer Programming (MIP) problems with or without constraints,
+and NonLinear Programming (NLP) problems with or without constraints.}
+\cgalPkgManuals{Chapter_CGAL_and_Solvers, PkgSolverInterfaceRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.8}

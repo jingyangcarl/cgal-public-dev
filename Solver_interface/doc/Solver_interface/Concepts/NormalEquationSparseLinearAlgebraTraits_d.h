@@ -70,4 +70,3 @@ bool normal_equation_solver(const Matrix& A, const Vector& B, Vector& X);
 /// @}
 
 }; /* end NormalEquationSparseLinearAlgebraTraits_d */
-

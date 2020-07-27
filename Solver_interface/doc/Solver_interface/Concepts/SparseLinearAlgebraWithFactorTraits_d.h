@@ -1,4 +1,3 @@
-
 /*!
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
@@ -48,4 +47,3 @@ bool linear_solver(const Matrix& B, Vector& X);
 /// @}
 
 }; /* end SparseLinearAlgebraWithFactorTraits_d */
-
