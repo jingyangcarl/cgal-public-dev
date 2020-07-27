@@ -2,8 +2,8 @@
   \ingroup PkgSolverInterfaceConcepts
   \cgalConcept
 
-  The concept `SvdTraits` describes the linear algebra types and algorithms needed
-  to solve in the least square sense a linear system with a singular value decomposition
+  Concept describing the linear algebra types and algorithms needed to solve in
+  the least square sense a linear system with a singular value decomposition.
 
   \cgalHasModel `CGAL::Eigen_svd`
 */
@@ -98,12 +98,12 @@ public:
 
   /*!
     Return the number of rows of the matrix.
-   */
+  */
   size_t number_of_rows();
 
   /*!
     Return the number of columns of the matrix.
-   */
+  */
   size_t number_of_columns();
 
   /*!

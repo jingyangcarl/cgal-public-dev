@@ -1,10 +1,18 @@
-/// \defgroup PkgSolverInterfaceRef CGAL and Solvers Reference
-
-/// \defgroup PkgSolverInterfaceConcepts Concepts
-/// \ingroup PkgSolverInterfaceRef
-///
-
 /*!
+\defgroup PkgSolverInterfaceRef CGAL and Solvers Reference
+
+\defgroup PkgSolverInterfaceConcepts Concepts
+\ingroup PkgSolverInterfaceRef
+
+\defgroup PkgSolverInterfaceLS Linear Systems
+\ingroup PkgSolverInterfaceRef
+
+\defgroup PkgSolverInterfaceMIP Mixed Integer Programming
+\ingroup PkgSolverInterfaceRef
+
+\defgroup PkgSolverInterfaceLQP Linear and Quadratic Programming
+\ingroup PkgSolverInterfaceRef
+
 \addtogroup PkgSolverInterfaceRef
 \cgalPkgDescriptionBegin{CGAL and Solvers, PkgSolverInterface}
 \cgalPkgPicture{solver.png}
@@ -12,8 +20,8 @@
 \cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud,
 Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan}
 \cgalPkgDesc{This package provides concepts and models for solving linear systems with
-dense or sparse matrices, Mixed Integer Programming (MIP) problems with or without constraints,
-and NonLinear Programming (NLP) problems with or without constraints.}
+dense or sparse matrices, mixed integer programming problems with or without constraints,
+and nonlinear programming problems with or without constraints.}
 \cgalPkgManuals{Chapter_CGAL_and_Solvers, PkgSolverInterfaceRef}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
@@ -25,17 +33,17 @@ and NonLinear Programming (NLP) problems with or without constraints.}
 
 \cgalClassifedRefPages
 
-\cgalCRPSection{Concepts}
-
+### Concepts ###
 - `DiagonalizeTraits`
 - `NormalEquationSparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraWithFactorTraits_d`
 - `SvdTraits`
 - `MixedIntegerProgramTraits`
+- `LinearProgramTraits`
+- `QuadraticProgramTraits`
 
-\cgalCRPSection{Classes}
-
+### Linear Systems ###
 - `CGAL::Eigen_solver_traits`
 - `CGAL::Eigen_diagonalize_traits`
 - `CGAL::Eigen_vector`
@@ -43,10 +51,17 @@ and NonLinear Programming (NLP) problems with or without constraints.}
 - `CGAL::Eigen_sparse_matrix`
 - `CGAL::Eigen_sparse_symmetric_matrix`
 - `CGAL::Eigen_svd`
-- `CGAL::Mixed_integer_program_traits`
-- `CGAL::GLPK_mixed_integer_program_traits`
-- `CGAL::SCIP_mixed_integer_program_traits`
+
+### Mixed Integer Programming ###
 - `CGAL::Variable`
 - `CGAL::Linear_constraint`
 - `CGAL::Linear_objective`
+- `CGAL::Mixed_integer_program_traits`
+- `CGAL::GLPK_mixed_integer_program_traits`
+- `CGAL::SCIP_mixed_integer_program_traits`
+
+### Linear and Quadratic Programming ###
+- `CGAL::Linear_program_traits`
+- `CGAL::Quadratic_program_traits`
+
 */

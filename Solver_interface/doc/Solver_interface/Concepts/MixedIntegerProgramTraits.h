@@ -4,8 +4,7 @@ class MixedIntegerProgramTraits
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-`MixedIntegerProgramVariable` is a concept of a variable in
-a Mixed Integer Programming (MIP) problem.
+Concept of a variable in a Mixed Integer Programming (MIP) problem.
 
 \cgalHasModel `CGAL::Variable<FT>`
 */
@@ -105,13 +104,11 @@ public:
 
 }; /* end MixedIntegerProgramVariable */
 
-
 /*!
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-`MixedIntegerProgramLinearConstraint` is a concept of a linear
-constraint in a Mixed Integer Programming (MIP) problem.
+Concept of a linear constraint in a Mixed Integer Programming (MIP) problem.
 
 \cgalHasModel `CGAL::Linear_constraint<FT>`
 */
@@ -203,13 +200,11 @@ public:
 
 }; /* end MixedIntegerProgramLinearConstraint */
 
-
 /*!
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-`MixedIntegerProgramLinearObjective` is a concept of the linear
-objective function in a Mixed Integer Programming (MIP) problem.
+Concept of a linear objective function in a Mixed Integer Programming (MIP) problem.
 
 \cgalHasModel `CGAL::Linear_objective<FT>`
 */
@@ -270,7 +265,6 @@ public:
 
 }; /* end MixedIntegerProgramLinearObjective */
 
-
 /*!
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
@@ -288,7 +282,6 @@ template <typename FT>
 class MixedIntegerProgramTraits
 {
 public:
-
 	/// \name Creation
 	/// @{
 
@@ -384,4 +377,5 @@ public:
 	void clear();
 
 	/// @}
+
 }; /* end MixedIntegerProgramTraits */

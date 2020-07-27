@@ -1,16 +1,14 @@
 /*!
 \ingroup PkgSolverInterfaceConcepts
-
 \cgalConcept
 
 Concept describing the set of requirements for solving the normal equation \f$ A^t A X = A^t B \f$,
-\f$ A \f$ being a matrix, \f$ At \f$ its transpose matrix, \f$ B \f$ and \f$ X \f$ being two vectors.
+\f$ A \f$ being a matrix, \f$ A^t \f$ its transpose matrix, \f$ B \f$ and \f$ X \f$ being two vectors.
 
 \sa `SparseLinearAlgebraTraits_d`
 
 \cgalHasModel `CGAL::Eigen_solver_traits<T>`
 */
-
 class NormalEquationSparseLinearAlgebraTraits_d
 {
 public:

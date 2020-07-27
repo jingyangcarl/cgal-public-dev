@@ -98,11 +98,11 @@ formulating and solving (constrained or unconstrained) mixed integer
 programs. It can also be used for general linear programs.
 
 The field type is `double`. We provide two models of this concept:
-`GLPK_mixed_integer_program_traits` using \ref thirdpartyGLPK and
-`SCIP_mixed_integer_program_traits` using \ref thirdpartySCIP.
+`CGAL::GLPK_mixed_integer_program_traits` using \ref thirdpartyGLPK and
+`CGAL::SCIP_mixed_integer_program_traits` using \ref thirdpartySCIP.
 
 Here is an example that shows how to formulate and solve a simple
-mixed integer programs using this solver.
+mixed integer program using this solver.
 
 \cgalExample{Solver_interface/mixed_integer_program.cpp}
 

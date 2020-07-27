@@ -10,7 +10,6 @@ method to solve the system for different right-hand vectors.
 
 \cgalHasModel `CGAL::Eigen_solver_traits<T>`
 */
-
 class SparseLinearAlgebraWithFactorTraits_d {
 public:
 
