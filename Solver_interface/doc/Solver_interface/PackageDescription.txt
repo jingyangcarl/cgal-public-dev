@@ -4,12 +4,12 @@
 \defgroup PkgSolverInterfaceConcepts Concepts
 \ingroup PkgSolverInterfaceRef
 
-Concepts that describe different solvers.
+Concepts that describe various solvers.
 
 \defgroup PkgSolverInterfaceLS Linear Systems
 \ingroup PkgSolverInterfaceRef
 
-Classes to define and solve various linear systems.
+Classes to define and solve linear systems.
 
 \defgroup PkgSolverInterfaceMIP Mixed Integer Programming
 \ingroup PkgSolverInterfaceRef
@@ -69,6 +69,5 @@ and nonlinear programming problems with or without constraints.}
 - `CGAL::SCIP_mixed_integer_program_traits`
 
 ### Nonlinear Programming ###
-- `CGAL::CGAL_quadratic_program_traits`
 - `CGAL::OSQP_quadratic_program_traits`
 */

@@ -19,7 +19,7 @@ For example, a matrix of dimension 3 is defined as:
 \tparam dim Dimension of the matrices and vectors
 
 \cgalHasModel
-- `CGAL::Eigen_diagonalize_traits`
+`CGAL::Eigen_diagonalize_traits`
 */
 template <typename FT, unsigned int dim = 3>
 class DiagonalizeTraits

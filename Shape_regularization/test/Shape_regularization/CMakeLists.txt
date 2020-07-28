@@ -32,7 +32,6 @@ if(CGAL_FOUND)
     test_4_segments
     test_100_segments_angles
     test_100_segments_offsets
-    test_cgal_solver
     test_plane_regularization
     test_closed_contour_3_edges
     test_closed_contour_4_edges

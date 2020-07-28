@@ -115,10 +115,8 @@ mixed integer program using this solver:
 
 The concept `QuadraticProgramTraits` defines an interface for quadratic programs (QP)
 whereas a similar concept `LinearProgramTraits` gives an interface for linear programs (LP).
-When using the model `CGAL::CGAL_quadratic_program_traits`, only the quadratic programs with the
-dense interface can be solved (see more in \ref PkgQPSolver), while the model
-`CGAL::OSQP_quadratic_program_traits` provides a way to solve convex quadratic programs
-with the sparse interface.
+The model `CGAL::OSQP_quadratic_program_traits` provides a way to solve convex quadratic programs
+with the dense or sparse interface.
 
 Here is an example that shows how to formulate and solve a simple convex quadratic
 program using the latter solver:

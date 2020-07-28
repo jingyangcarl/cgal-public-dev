@@ -6,7 +6,7 @@
   the least square sense a linear system with a singular value decomposition.
 
   \cgalHasModel
-  - `CGAL::Eigen_svd`
+  `CGAL::Eigen_svd`
 */
 class SvdTraits
 {
@@ -53,7 +53,7 @@ public:
 A concept of vector type used by the concept `SvdTraits`.
 
 \cgalHasModel
-- `CGAL::Eigen_vector<T>`
+`CGAL::Eigen_vector<T>`
 */
 class SvdTraits::Vector
 {
@@ -89,7 +89,7 @@ public:
 A concept of matrix type used by the concept `SvdTraits`.
 
 \cgalHasModel
-- `CGAL::Eigen_matrix<T>`
+`CGAL::Eigen_matrix<T>`
 */
 class SvdTraits::Matrix
 {

@@ -18,6 +18,24 @@ if(CGAL_FOUND)
   create_single_source_cgal_program("diagonalize_matrix.cpp")
   create_single_source_cgal_program("mixed_integer_program.cpp")
 
+  # Find OSQP library and headers.
+  find_package(OSQP REQUIRED)
+  if(OSQP_FOUND)
+    message(STATUS "Found OSQP")
+
+    set(targets
+    osqp_quadratic_program)
+
+    foreach(target ${targets})
+      create_single_source_cgal_program("${target}.cpp")
+      if(TARGET ${target})
+        target_link_libraries(${target} PUBLIC ${OSQP_LIBRARIES})
+      endif()
+    endforeach()
+  else()
+    message(STATUS "NOTICE: OSQP was not found. OSQP examples won't be available.")
+  endif()
+
   find_package(SCIP QUIET)
   if(SCIP_FOUND)
     include_directories(BEFORE ${SCIP_INCLUDE_DIRS})

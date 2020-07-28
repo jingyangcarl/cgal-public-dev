@@ -34,9 +34,7 @@
 #include <CGAL/Shape_regularization/internal/Orthogonal_groups_2.h>
 #include <CGAL/Shape_regularization/internal/Collinear_groups_2.h>
 
-#include <CGAL/CGAL_quadratic_program_traits.h>
 #include <CGAL/OSQP_quadratic_program_traits.h>
-
 #include <CGAL/Shape_regularization/QP_regularization.h>
 #include <CGAL/Shape_regularization/Segments/Angle_regularization_2.h>
 #include <CGAL/Shape_regularization/Segments/Offset_regularization_2.h>

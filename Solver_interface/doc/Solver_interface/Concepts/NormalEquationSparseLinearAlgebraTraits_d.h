@@ -8,7 +8,7 @@ A concept that describes the set of requirements for solving the normal equation
 \sa `SparseLinearAlgebraTraits_d`
 
 \cgalHasModel
-- `CGAL::Eigen_solver_traits<T>`
+`CGAL::Eigen_solver_traits<T>`
 */
 class NormalEquationSparseLinearAlgebraTraits_d
 {

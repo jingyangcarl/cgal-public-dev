@@ -5,7 +5,7 @@
 A concept that is used to solve sparse linear systems <I>\f$A \times X = B\f$</I>.
 
 \cgalHasModel
-- `CGAL::Eigen_solver_traits<T>`
+`CGAL::Eigen_solver_traits<T>`
 */
 class SparseLinearAlgebraTraits_d
 {
@@ -64,7 +64,7 @@ by a sparse matrix.
 \cgalRefines DefaultConstructible
 
 \cgalHasModel
-- `CGAL::Eigen_vector<T>`
+`CGAL::Eigen_vector<T>`
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Matrix`
@@ -132,8 +132,8 @@ NT& operator[](Index row);
 \cgalRefines DefaultConstructible
 
 \cgalHasModel
-- `CGAL::Eigen_sparse_matrix<T>`,
-- `CGAL::Eigen_sparse_symmetric_matrix<T>`
+`CGAL::Eigen_sparse_matrix<T>` and
+`CGAL::Eigen_sparse_symmetric_matrix<T>`
 
 \sa `SparseLinearAlgebraTraits_d`
 \sa `SparseLinearAlgebraTraits_d::Vector`

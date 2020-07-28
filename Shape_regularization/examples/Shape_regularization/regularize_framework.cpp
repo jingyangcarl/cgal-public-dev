@@ -39,24 +39,25 @@ struct Custom_regularization_2 {
 template<typename NT>
 class USER_quadratic_program  {
 public:
-  void reserve_d(const std::size_t) { }
-  void reserve_c(const std::size_t) { }
-  void reserve_a(const std::size_t) { }
-  void reserve_b(const std::size_t) { }
+  void reserve_P(const std::size_t) { }
+  void reserve_q(const std::size_t) { }
+  void reserve_A(const std::size_t) { }
   void reserve_l(const std::size_t) { }
   void reserve_u(const std::size_t) { }
 
-  void  set_d(const std::size_t, const std::size_t, const FT) { }
-  void  set_c(const std::size_t, const FT) { }
-  void set_c0(const FT) { }
-  void  set_a(const std::size_t, const std::size_t, const FT) { }
-  void  set_b(const std::size_t, const FT) { }
-  void  set_l(const std::size_t, const bool, const FT) { }
-  void  set_u(const std::size_t, const bool, const FT) { }
+  void  set_P(const std::size_t, const std::size_t, const FT) { }
+  void  set_q(const std::size_t, const FT) { }
+  void  set_r(const FT) { }
+  void  set_A(const std::size_t, const std::size_t, const FT) { }
+  void  set_l(const std::size_t, const FT) { }
+  void  set_u(const std::size_t, const FT) { }
 
-  bool solve(std::vector<NT>& solution) {
-    solution.clear();
-    solution.resize(3, NT(0)); // 3 = 2 segments + 1 edge between them
+  template<typename OutputIterator>
+  bool solve(OutputIterator solution) {
+
+    // 3 = 2 segments + 1 edge between them
+    for (std::size_t i = 0; i < 3; ++i)
+      *(++solution) = NT(0);
     return true;
   }
 };
@@ -66,16 +67,11 @@ public:
 
 // Choose a type of a solver.
 // #define OSQP_SOLVER
-// #define CGAL_SOLVER
 #define USER_SOLVER
 
 #if defined(OSQP_SOLVER)
 using Quadratic_program =
   CGAL::Shape_regularization::OSQP_quadratic_program<FT>; // OSQP sparse solver
-#endif
-#if defined(CGAL_SOLVER)
-using Quadratic_program =
-  CGAL::Shape_regularization::CGAL_quadratic_program<FT>; // CGAL dense solver
 #endif
 #if defined(USER_SOLVER)
 using Quadratic_program =

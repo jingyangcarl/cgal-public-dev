@@ -27,6 +27,9 @@
 // Internal includes.
 #include <CGAL/Shape_regularization/internal/utils.h>
 
+// Reference papers:
+// [1] J. P. Bauchet and F. Lafarge, KIPPI: KInetic Polygonal Partitioning of Images, Section 3, 2018.
+
 namespace CGAL {
 namespace Shape_regularization {
 
@@ -162,21 +165,27 @@ namespace Shape_regularization {
       // Graph = edges connecting neighbor segments.
       build_graph_of_neighbors();
       if (m_graph.size() == 0) {
+        std::cerr << "Error: the number of edges in the graph is zero!" << std::endl;
         clear(); return;
       }
 
       // Bounds = number of input segments.
       obtain_bounds();
       if (m_bounds.size() == 0) {
+        std::cerr << "Error: the number of bound values is zero!" << std::endl;
         clear(); return;
       }
+
       if (m_bounds.size() != m_input_range.size()) {
+        std::cerr << "Error: the number of bounds is not equal to the number " <<
+        "of input segments!" << std::endl;
         clear(); return;
       }
 
       // Targets = number of graph edges.
       obtain_targets();
       if (m_targets.size() == 0) {
+        std::cerr << "Error: the number of target values is zero!" << std::endl;
         clear(); return;
       }
 
@@ -189,6 +198,8 @@ namespace Shape_regularization {
       solve_quadratic_program(
         m_quadratic_program, solution);
       if (solution.size() != m_input_range.size() + m_targets.size()) {
+        std::cerr << "Error: the number of solution values is not equal to the " <<
+        "number of input segments + the number of edges in the graph!" << std::endl;
         clear(); return;
       }
 
@@ -305,15 +316,16 @@ namespace Shape_regularization {
       const std::size_t k,
       Quadratic_program& qp) const {
 
-      qp.reserve_d(n);
+      qp.reserve_P(n);
       for (std::size_t i = 0; i < n; ++i) {
-        FT val = FT(0);
+        FT value = FT(0);
         if (i < k) {
-          val = FT(2) * m_parameters.weight * (FT(1) - m_parameters.lambda) /
+          value = FT(2) * m_parameters.weight * (FT(1) - m_parameters.lambda) /
             (m_bounds[i] * m_bounds[i] * FT(k));
         }
-        qp.set_d(i, i, val);
+        qp.set_P(i, i, value);
       }
+      // CGAL_assertion(qp.P_size() == n);
     }
 
     void set_linear_term(
@@ -321,22 +333,23 @@ namespace Shape_regularization {
       const std::size_t k,
       Quadratic_program& qp) const {
 
-      qp.reserve_c(n);
+      qp.reserve_q(n);
       for (std::size_t i = 0; i < n; ++i) {
-        FT val = FT(0);
+        FT value = FT(0);
         if (i >= k) {
-          val = m_parameters.lambda * m_parameters.weight /
+          value = m_parameters.lambda * m_parameters.weight /
             (FT(4) * m_max_bound * FT(n - k));
         }
-        qp.set_c(i, val);
+        qp.set_q(i, value);
       }
+      // CGAL_assertion(qp.q_size() == n);
     }
 
     void set_constant_term(
       Quadratic_program& qp) const {
 
-      const FT val = FT(0);
-      qp.set_c0(val);
+      const FT value = FT(0);
+      qp.set_r(value);
     }
 
     void set_constraint_matrix(
@@ -344,25 +357,33 @@ namespace Shape_regularization {
       const std::size_t k,
       Quadratic_program& qp) const {
 
-      if (n < k) return;
+      CGAL_assertion(n >= k);
       std::size_t it = 0;
       std::size_t ij = k;
 
-      qp.reserve_a(m_targets.size() * 6);
+      const std::size_t A_nnz = m_targets.size() * 6 + n;
+      qp.reserve_A(A_nnz);
       for (const auto& target : m_targets) {
         const std::size_t i = target.first.first;
         const std::size_t j = target.first.second;
 
-        qp.set_a(i, it, m_parameters.val_neg);
-        qp.set_a(j, it, m_parameters.val_pos);
-        qp.set_a(ij, it, -FT(1));
+        qp.set_A(it, i, m_parameters.val_neg);
+        qp.set_A(it, j, m_parameters.val_pos);
+        qp.set_A(it, ij, -FT(1));
         ++it;
 
-        qp.set_a(i, it, m_parameters.val_pos);
-        qp.set_a(j, it, m_parameters.val_neg);
-        qp.set_a(ij, it, -FT(1));
+        qp.set_A(it, i, m_parameters.val_pos);
+        qp.set_A(it, j, m_parameters.val_neg);
+        qp.set_A(it, ij, -FT(1));
         ++it; ++ij;
       }
+
+      // Used to set bounds for each variable li <= xi <= ui.
+      const std::size_t s = m_targets.size() * 2;
+      for (std::size_t i = 0; i < n; ++i)
+        qp.set_A(s + i, i, FT(1));
+
+      // CGAL_assertion(qp.A_size() == A_nnz);
     }
 
     void set_constraint_bounds(
@@ -371,42 +392,45 @@ namespace Shape_regularization {
       const std::size_t e,
       Quadratic_program& qp) const {
 
-      qp.reserve_b(2 * e);
-      qp.reserve_l(k);
-      qp.reserve_u(k);
+      qp.reserve_l(m);
+      qp.reserve_u(m);
 
       auto tit = m_targets.begin();
-      for(std::size_t i = 0; i < m; ++i) {
-        if (i < 2 * e) {
-          const FT val = tit->second;
+      for (std::size_t i = 0; i < m; ++i) {
+        if (i < 2 * e) { // first 2 * e constraints
+          const FT value = tit->second;
           if (i % 2 == 0) {
-            qp.set_b(i, m_parameters.val_neg * val);
+            qp.set_l(i, m_parameters.neg_inf);
+            qp.set_u(i, m_parameters.val_neg * value);
           } else {
-            qp.set_b(i, m_parameters.val_pos * val); ++tit;
+            qp.set_l(i, m_parameters.neg_inf);
+            qp.set_u(i, m_parameters.val_pos * value); ++tit;
           }
-        }
-        else if (i < 2 * e + k) {
-          const std::size_t idx = i - 2 * e;
-          qp.set_l(idx, true, -FT(1) * m_max_bound);
-          qp.set_u(idx, true, +FT(1) * m_max_bound);
-        } else {
-          const std::size_t idx = i - 2 * e;
-          qp.set_l(idx, false, m_parameters.neg_inf);
-          qp.set_u(idx, false, m_parameters.pos_inf);
+        } else if (i < 2 * e + k) { // next k constraints
+          qp.set_l(i, -FT(1) * m_max_bound);
+          qp.set_u(i, +FT(1) * m_max_bound);
+        } else { // last e constraints
+          qp.set_l(i, m_parameters.neg_inf);
+          qp.set_u(i, m_parameters.pos_inf);
         }
       }
+
+      // CGAL_assertion(qp.l_size() == m); // all together m constraints
+      // CGAL_assertion(qp.u_size() == m);
     }
 
     void solve_quadratic_program(
       Quadratic_program& qp,
       std::vector<FT>& solution) {
 
-      std::size_t n = m_input_range.size() + m_targets.size();
+      const std::size_t n =
+        m_input_range.size() + m_targets.size();
 
       solution.clear();
       solution.reserve(n);
 
-      const auto success = qp.solve(solution);
+      const auto success = qp.solve(
+        std::back_inserter(solution));
       if (!success)
         std::cerr << "WARNING: The solver has not converged!" << std::endl;
       CGAL_assertion(solution.size() == n);

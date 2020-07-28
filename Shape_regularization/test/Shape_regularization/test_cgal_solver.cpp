@@ -7,6 +7,9 @@
 
 namespace SR = CGAL::Shape_regularization;
 
+// This test is still here in case we will add a CGAL solver later, but for now
+// it is removed and we do not aim adding it in the near future.
+
 template<class Traits>
 void test_cgal_solver() {
 

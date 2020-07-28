@@ -640,8 +640,7 @@ See above and \ref QP_Regularization_Segments_Angles "this section" for more det
 \subsection QP_Regularization_Solvers Solvers
 
 In order to solve the associated QP problem of the algorithm above, \cgal provides
-two particular models of the corresponding QP solver:
-- `CGAL::CGAL_quadratic_program_traits` that is a \cgal QP solver, and
+the following models of the corresponding QP solver:
 - `CGAL::OSQP_quadratic_program_traits` that is a wrapper of the external \ref thirdpartyOSQP "OSQP solver".
 
 Since the internal quadratic program that has to be solved is sparse, we recommend using the second
