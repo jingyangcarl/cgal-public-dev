@@ -23,6 +23,9 @@ where \f$ l_i \in \mathbb{R} \cup \{-\infty\} \f$ for all \f$ i \f$,
 <LI>\f$ \mathbf{u} \f$ is an \f$ m \f$-dimensional vector of upper constraint bounds,
 where \f$ u_i \in \mathbb{R} \cup \{+\infty\} \f$ for all \f$ i \f$.
 </UL>
+
+\cgalHasModel
+`CGAL::OSQP_quadratic_program_traits<T>`
 */
 class QuadraticProgramTraits {
 
