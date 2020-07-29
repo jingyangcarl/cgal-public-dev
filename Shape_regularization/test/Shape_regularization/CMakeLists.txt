@@ -18,12 +18,7 @@ if(CGAL_FOUND)
   if(OSQP_FOUND)
     message(STATUS "Found OSQP")
 
-    set(targets
-    test_neighbor_query
-    test_groups_parallel
-    test_groups_collinear
-    test_groups_orthogonal
-    test_unique_segments
+    set(osqp_targets
     test_segments
     test_0_segments
     test_1_segment
@@ -31,34 +26,47 @@ if(CGAL_FOUND)
     test_3_segments
     test_4_segments
     test_100_segments_angles
-    test_100_segments_offsets
-    test_plane_regularization
-    test_closed_contour_3_edges
-    test_closed_contour_4_edges
-    test_closed_contour_6_edges
-    test_closed_contour_10_edges
-    test_open_contour_1_edge
-    test_open_contour_2_edges
-    test_open_contour_3_edges
-    test_open_contour_5_edges
-    test_open_contour_9_edges
-    test_equal_contours
-    test_directions_longest
-    test_directions_multiple_1
-    test_directions_multiple_2
-    test_directions_multiple_3
-    test_directions_user_defined)
+    test_100_segments_offsets)
 
-    foreach(target ${targets})
-      create_single_source_cgal_program("${target}.cpp")
-      if(TARGET ${target})
-        target_link_libraries(${target} PUBLIC ${OSQP_LIBRARIES})
+    foreach(osqp_target ${osqp_targets})
+      create_single_source_cgal_program("${osqp_target}.cpp")
+      if(TARGET ${osqp_target})
+        target_link_libraries(${osqp_target} PUBLIC ${OSQP_LIBRARIES})
+        target_compile_definitions(${osqp_target} PUBLIC -DCGAL_USE_OSQP)
       endif()
     endforeach()
 
   else()
     message(STATUS "NOTICE: OSQP was not found. OSQP tests won't be available.")
   endif()
+
+  set(targets
+  test_neighbor_query
+  test_groups_parallel
+  test_groups_collinear
+  test_groups_orthogonal
+  test_unique_segments
+  test_plane_regularization
+  test_closed_contour_3_edges
+  test_closed_contour_4_edges
+  test_closed_contour_6_edges
+  test_closed_contour_10_edges
+  test_open_contour_1_edge
+  test_open_contour_2_edges
+  test_open_contour_3_edges
+  test_open_contour_5_edges
+  test_open_contour_9_edges
+  test_equal_contours
+  test_directions_longest
+  test_directions_multiple_1
+  test_directions_multiple_2
+  test_directions_multiple_3
+  test_directions_user_defined)
+
+  foreach(target ${targets})
+    create_single_source_cgal_program("${target}.cpp")
+  endforeach()
+
 else()
   message(WARNING
   "This program requires the CGAL library, and will not be compiled.")

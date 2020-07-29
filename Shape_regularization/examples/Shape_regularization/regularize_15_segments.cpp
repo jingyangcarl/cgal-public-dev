@@ -3,6 +3,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_regularization.h>
 
+#if defined(CGAL_USE_OSQP)
+
 // Typedefs.
 using Kernel      = CGAL::Exact_predicates_inexact_constructions_kernel;
 using FT          = typename Kernel::FT;
@@ -100,3 +102,10 @@ int main(int argc, char *argv[]) {
     saver.export_eps_segments(segments, full_path, FT(100));
   }
 }
+
+#else
+int main(void) {
+  std::cout << "This example requires the OSQP library." << std::endl;
+  return EXIT_SUCCESS;
+}
+#endif // defined(CGAL_USE_OSQP)

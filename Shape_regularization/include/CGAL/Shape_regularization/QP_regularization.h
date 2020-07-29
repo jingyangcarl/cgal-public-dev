@@ -185,7 +185,7 @@ namespace Shape_regularization {
       // Targets = number of graph edges.
       obtain_targets();
       if (m_targets.size() == 0) {
-        std::cerr << "Error: the number of target values is zero!" << std::endl;
+        // std::cerr << "Warning: the number of target values is zero!" << std::endl;
         clear(); return;
       }
 
@@ -271,12 +271,12 @@ namespace Shape_regularization {
 
       for (std::size_t i = 0; i < m_input_range.size(); ++i) {
         const FT bound = m_regularization_type.bound(i);
-        CGAL_assertion(bound >= 0);
+        CGAL_assertion(bound >= FT(0));
         m_bounds.push_back(bound);
         m_max_bound = (CGAL::max)(bound, m_max_bound);
       }
 
-      CGAL_assertion(m_max_bound >= 0);
+      CGAL_assertion(m_max_bound >= FT(0));
       CGAL_assertion(m_bounds.size() == m_input_range.size());
     }
 
@@ -293,7 +293,7 @@ namespace Shape_regularization {
           m_targets[pair] = target;
         }
       }
-      CGAL_assertion(m_targets.size() > 0);
+      CGAL_assertion(m_targets.size() >= 0);
     }
 
     void set_qp_data(

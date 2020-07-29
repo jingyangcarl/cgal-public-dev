@@ -33,7 +33,7 @@ Models and functions that can be used when regularizing planes.
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge}
-\cgalPkgDesc{This CGAL package enables to regularize a set of segments and open or closed contours in 2D
+\cgalPkgDesc{This \cgal package enables to regularize a set of segments and open or closed contours in 2D
 and a set of planes in 3D such that all input objects are rotated and aligned with respect
 to the user-defined conditions.}
 \cgalPkgManuals{Chapter_Shape_Regularization, PkgShapeRegularizationRef}

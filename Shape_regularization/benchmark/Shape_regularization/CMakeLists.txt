@@ -18,14 +18,15 @@ if(CGAL_FOUND)
   if(OSQP_FOUND)
     message(STATUS "Found OSQP")
 
-    set(targets
+    set(osqp_targets
     benchmark_contours
     benchmark_qp_segments)
 
-    foreach(target ${targets})
-      create_single_source_cgal_program("${target}.cpp")
-      if(TARGET ${target})
-      target_link_libraries(${target} PUBLIC ${OSQP_LIBRARIES})
+    foreach(osqp_target ${osqp_targets})
+      create_single_source_cgal_program("${osqp_target}.cpp")
+      if(TARGET ${osqp_target})
+        target_link_libraries(${osqp_target} PUBLIC ${OSQP_LIBRARIES})
+        target_compile_definitions(${osqp_target} PUBLIC -DCGAL_USE_OSQP)
       endif()
     endforeach()
 

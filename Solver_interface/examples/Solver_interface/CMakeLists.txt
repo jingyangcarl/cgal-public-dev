@@ -17,42 +17,37 @@ if(CGAL_FOUND)
 
   create_single_source_cgal_program("diagonalize_matrix.cpp")
   create_single_source_cgal_program("mixed_integer_program.cpp")
+  create_single_source_cgal_program("osqp_quadratic_program.cpp")
 
   # Find OSQP library and headers.
-  find_package(OSQP REQUIRED)
+  find_package(OSQP QUIET)
   if(OSQP_FOUND)
-    message(STATUS "Found OSQP")
-
-    set(targets
-    osqp_quadratic_program)
-
-    foreach(target ${targets})
-      create_single_source_cgal_program("${target}.cpp")
-      if(TARGET ${target})
-        target_link_libraries(${target} PUBLIC ${OSQP_LIBRARIES})
-      endif()
-    endforeach()
+    target_link_libraries(osqp_quadratic_program PUBLIC ${OSQP_LIBRARIES})
+    target_compile_definitions(osqp_quadratic_program PUBLIC -DCGAL_USE_OSQP)
+    message(STATUS "OSQP found and used")
   else()
-    message(STATUS "NOTICE: OSQP was not found. OSQP examples won't be available.")
+    message(STATUS "NOTICE: OSQP was not found. Complete OSQP examples won't be available.")
   endif()
 
+  # Find SCIP library and headers.
   find_package(SCIP QUIET)
   if(SCIP_FOUND)
     include_directories(BEFORE ${SCIP_INCLUDE_DIRS})
     target_link_libraries(mixed_integer_program PRIVATE ${SCIP_LIBRARIES})
     target_compile_definitions(mixed_integer_program PRIVATE -DCGAL_USE_SCIP)
-    message("SCIP found and used.")
+    message(STATUS "SCIP found and used")
   else()
 
+    # Find GLPK library and headers.
     find_package(GLPK QUIET)
     if(GLPK_FOUND)
       include_directories(BEFORE ${GLPK_INCLUDE_DIR})
       target_link_libraries(mixed_integer_program PRIVATE ${GLPK_LIBRARIES})
       target_compile_definitions(mixed_integer_program PRIVATE -DCGAL_USE_GLPK)
-      message("GLPK found and used.")
+      message(STATUS "GLPK found and used")
     else()
       message(STATUS
-        "NOTICE : This project requires either SCIP or GLPK, and will not be compiled. "
+        "NOTICE : This project requires either SCIP or GLPK. "
         "Please provide either 'SCIP_DIR' or 'GLPK_INCLUDE_DIR' and 'GLPK_LIBRARIES'")
     endif()
   endif()

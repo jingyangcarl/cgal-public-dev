@@ -201,9 +201,8 @@ namespace Contours {
       std::vector<Direction_2>& directions,
       std::vector<std::size_t>& assigned) const {
 
+      CGAL_precondition(direction_range.size() >= 1);
       if (direction_range.size() == 0) return;
-      CGAL_precondition(
-        direction_range.size() == m_input_range.size());
 
       std::vector<Segment_wrapper_2> wraps;
       m_base.initialize_closed(
@@ -228,9 +227,8 @@ namespace Contours {
       std::vector<Direction_2>& directions,
       std::vector<std::size_t>& assigned) const {
 
+      CGAL_precondition(direction_range.size() >= 1);
       if (direction_range.size() == 0) return;
-      CGAL_precondition(
-        direction_range.size() == m_input_range.size() - 1);
 
       std::vector<Segment_wrapper_2> wraps;
       m_base.initialize_open(

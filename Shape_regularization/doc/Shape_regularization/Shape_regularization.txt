@@ -257,7 +257,7 @@ goal of the final application.
 \subsection QP_Regularization_Segments_Performance Performance
 
 The shape regularization algorithm is quite efficient and its performance mostly depends
-on the used QP solver. When using the `CGAL::Shape_regularization::OSQP_quadratic_program`,
+on the used QP solver. When using the `CGAL::OSQP_quadratic_program_traits`,
 we exploit and efficiently use the sparse nature of the related QP problem that leads
 to the quick performance in practice (see tables below).
 
@@ -640,13 +640,16 @@ See above and \ref QP_Regularization_Segments_Angles "this section" for more det
 \subsection QP_Regularization_Solvers Solvers
 
 In order to solve the associated QP problem of the algorithm above, \cgal provides
-the following models of the corresponding QP solver:
-- `CGAL::OSQP_quadratic_program_traits` that is a wrapper of the external \ref thirdpartyOSQP "OSQP solver".
+a wrapper `CGAL::OSQP_quadratic_program_traits` of the external \ref thirdpartyOSQP "OSQP solver"
+that is a model of the concept `QuadraticProgramTraits`.
 
-Since the internal quadratic program that has to be solved is sparse, we recommend using the second
-solver, because the \cgal version will internally convert this problem into a dense one that takes
-considerable effort to solve, while the OSQP version is sparse and very efficient. Both solvers
-follow the `QuadraticProgramTraits` concept and thus users are free to provide their own version of the solver.
+Alternatively, the internal CGAL solver from the package \ref PkgQPSolver "Linear and Quadratic Programming Solver"
+can be used, however we do not recomment applying it. The internal quadratic program that has to be solved
+for shape regularization is sparse. The \cgal version will internally convert this problem
+into a dense one that takes considerable effort to solve, while the OSQP version takes a special care
+of the sparse nature of the problem that leads to better performance. Since the class `CGAL::Shape_regularization::QP_regularization`
+is parameterized by the general concept `QuadraticProgramTraits`, the users are also welcome to provide
+their own version of the solver.
 
 
 \subsection QP_Regularization_Implementation Implementation

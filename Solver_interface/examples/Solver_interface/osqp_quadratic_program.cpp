@@ -21,10 +21,15 @@
 #include <vector>
 #include <iostream>
 #include <CGAL/Simple_cartesian.h>
+
+#if defined(CGAL_USE_OSQP)
 #include <CGAL/OSQP_quadratic_program_traits.h>
+#endif
 
 using Kernel = CGAL::Simple_cartesian<double>;
 using FT = typename Kernel::FT;
+
+#if defined(CGAL_USE_OSQP)
 
 int main(void) {
 
@@ -65,3 +70,10 @@ int main(void) {
     std::cout << value << "; ";
   std::cout << std::endl;
 }
+
+#else
+int main(void) {
+  std::cout << "This example requires the OSQP library." << std::endl;
+  return EXIT_SUCCESS;
+}
+#endif // defined(CGAL_USE_OSQP)

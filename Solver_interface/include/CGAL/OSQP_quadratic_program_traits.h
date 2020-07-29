@@ -22,6 +22,16 @@
 #ifndef CGAL_OSQP_QUADRATIC_PROGRAM_TRAITS_H
 #define CGAL_OSQP_QUADRATIC_PROGRAM_TRAITS_H
 
+#if defined(CGAL_USE_OSQP) || defined(DOXYGEN_RUNNING)
+
+// STL includes.
+#include <tuple>
+#include <vector>
+#include <utility>
+
+// CGAL includes.
+#include <CGAL/assertions.h>
+
 // OSQP includes.
 #include <osqp/osqp.h>
 
@@ -291,5 +301,7 @@ namespace CGAL {
   };
 
 } // namespace CGAL
+
+#endif // CGAL_USE_OSQP or DOXYGEN_RUNNING
 
 #endif // CGAL_OSQP_QUADRATIC_PROGRAM_TRAITS_H

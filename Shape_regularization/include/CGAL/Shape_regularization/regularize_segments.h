@@ -34,7 +34,10 @@
 #include <CGAL/Shape_regularization/internal/Orthogonal_groups_2.h>
 #include <CGAL/Shape_regularization/internal/Collinear_groups_2.h>
 
+#if defined(CGAL_USE_OSQP)
 #include <CGAL/OSQP_quadratic_program_traits.h>
+#endif // CGAL_USE_OSQP
+
 #include <CGAL/Shape_regularization/QP_regularization.h>
 #include <CGAL/Shape_regularization/Segments/Angle_regularization_2.h>
 #include <CGAL/Shape_regularization/Segments/Offset_regularization_2.h>
@@ -117,6 +120,8 @@ namespace Segments {
     regularizer.regularize();
   }
 
+  #if defined(CGAL_USE_OSQP) || defined(DOXYGEN_RUNNING)
+
   /*!
     \ingroup PkgShapeRegularizationRefSegments
 
@@ -133,8 +138,10 @@ namespace Segments {
     that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
     Please address that class and these concepts for more information.
 
-    This function provides the default solver for the quadratic program that is
-    solved during regularization.
+    This function provides the default solver `CGAL::OSQP_quadratic_program_traits`
+    for the quadratic program that is solved during regularization.
+
+    This function is available only when the \ref thirdpartyOSQP "OSQP" solver is available on the system.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -200,9 +207,11 @@ namespace Segments {
     that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
     Please address that class and these concepts for more information.
 
-    This function provides the default solver for the quadratic program that is
-    solved during regularization. In addition, this function infers a traits class `GeomTraits`
-    from the `InputRange` iterator's value type.
+    This function provides the default solver `CGAL::OSQP_quadratic_program_traits`
+    for the quadratic program that is solved during regularization. In addition, this
+    function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
+
+    This function is available only when the \ref thirdpartyOSQP "OSQP" solver is available on the system.
 
     \tparam InputRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -248,6 +257,8 @@ namespace Segments {
     regularize_segments(
       input_range, neighbor_query, regularization_type, quadratic_program, traits);
   }
+
+  #endif // CGAL_USE_OSQP or DOXYGEN_RUNNING
 
   /*!
     \ingroup PkgShapeRegularizationRefSegments

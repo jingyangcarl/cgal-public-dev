@@ -1,6 +1,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization/regularize_segments.h>
 
+#if defined(CGAL_USE_OSQP)
+
 using Kernel    = CGAL::Simple_cartesian<double>;
 using Point_2   = typename Kernel::Point_2;
 using Segment_2 = typename Kernel::Segment_2;
@@ -27,3 +29,10 @@ int main() {
   std::cout << "* number of modified segments = " <<
     angle_regularization.number_of_modified_segments() << std::endl;
 }
+
+#else
+int main(void) {
+  std::cout << "This example requires the OSQP library." << std::endl;
+  return EXIT_SUCCESS;
+}
+#endif // defined(CGAL_USE_OSQP)

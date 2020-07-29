@@ -25,8 +25,7 @@ Classes to define and solve nonlinear programs.
 \cgalPkgDescriptionBegin{CGAL and Solvers, PkgSolverInterface}
 \cgalPkgPicture{solver.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud,
-Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan}
+\cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, Laurent Saboret, and Liangliang Nan}
 \cgalPkgDesc{This package provides concepts and models for solving linear systems with
 dense or sparse matrices, mixed integer programming problems with or without constraints,
 and nonlinear programming problems with or without constraints.}

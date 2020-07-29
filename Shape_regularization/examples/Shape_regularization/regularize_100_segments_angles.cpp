@@ -3,6 +3,8 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization/regularize_segments.h>
 
+#if defined(CGAL_USE_OSQP)
+
 // Typedefs.
 using Kernel    = CGAL::Simple_cartesian<double>;
 using FT        = typename Kernel::FT;
@@ -50,3 +52,10 @@ int main(int argc, char *argv[]) {
     saver.export_eps_segments(segments, full_path, FT(1));
   }
 }
+
+#else
+int main(void) {
+  std::cout << "This example requires the OSQP library." << std::endl;
+  return EXIT_SUCCESS;
+}
+#endif // defined(CGAL_USE_OSQP)

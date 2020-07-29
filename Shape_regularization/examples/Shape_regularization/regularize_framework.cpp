@@ -8,7 +8,6 @@ using Segment_2 = typename Kernel::Segment_2;
 using Segments  = std::vector<Segment_2>;
 
 namespace CGAL {
-namespace Shape_regularization {
 
 struct Custom_neighbor_query_2 {
   void operator()(
@@ -37,7 +36,7 @@ struct Custom_regularization_2 {
 };
 
 template<typename NT>
-class USER_quadratic_program  {
+class USER_quadratic_program_traits  {
 public:
   void reserve_P(const std::size_t) { }
   void reserve_q(const std::size_t) { }
@@ -62,24 +61,23 @@ public:
   }
 };
 
-} // namespace Shape_regularization
 } // namespace CGAL
 
 // Choose a type of a solver.
-// #define OSQP_SOLVER
+// #define OSQP_SOLVER - be sure that OSQP is installed on your system!
 #define USER_SOLVER
 
 #if defined(OSQP_SOLVER)
 using Quadratic_program =
-  CGAL::Shape_regularization::OSQP_quadratic_program<FT>; // OSQP sparse solver
+  CGAL::OSQP_quadratic_program_traits<FT>; // OSQP sparse solver
 #endif
 #if defined(USER_SOLVER)
 using Quadratic_program =
-  CGAL::Shape_regularization::USER_quadratic_program<FT>; // USER custom solver
+  CGAL::USER_quadratic_program_traits<FT>; // USER custom solver
 #endif
 
-using NQ = CGAL::Shape_regularization::Custom_neighbor_query_2;
-using RT = CGAL::Shape_regularization::Custom_regularization_2;
+using NQ = CGAL::Custom_neighbor_query_2;
+using RT = CGAL::Custom_regularization_2;
 using QP = Quadratic_program;
 using Regularizer =
   CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, RT, QP>;
