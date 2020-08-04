@@ -40,7 +40,7 @@ to the user-defined conditions.}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.2}
+\cgalPkgSince{5.3}
 \cgalPkgDependsOn{\ref PkgSolverInterface}
 \cgalPkgBib{cgal:asgbl-sr}
 \cgalPkgLicense{\ref licensesGPL "GPL"}

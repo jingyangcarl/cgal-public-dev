@@ -214,6 +214,9 @@ namespace Shape_regularization {
 
     /*!
       \brief clears all internal data structures.
+
+      This method does not release the allocated memory
+      but only removes the class internal data.
     */
     void clear() {
       m_graph.clear();
@@ -224,6 +227,9 @@ namespace Shape_regularization {
 
     /*!
       \brief releases all memory that is used internally.
+
+      This method first calls the `clear()` method and
+      then releases the allocated memory.
     */
     void release_memory() {
       clear();
