@@ -41,7 +41,7 @@ namespace Generalized_weights {
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
-    \cgalModels `AnalyticWeight_2`
+    \cgalModels `AnalyticWeight_2` and `HalfWeight_2`
   */
   template<typename GeomTraits>
   class Uniform_weight_2 {
@@ -102,6 +102,28 @@ namespace Generalized_weights {
     */
     const FT operator()(
       const Point_3&,
+      const Point_3&,
+      const Point_3&,
+      const Point_3&) const {
+
+      return weight();
+    }
+
+    /*!
+      \brief computes 2D uniform half weight.
+    */
+    const FT operator()(
+      const Point_2&,
+      const Point_2&,
+      const Point_2&) const {
+
+      return weight();
+    }
+
+    /*!
+      \brief computes 2D uniform half weight.
+    */
+    const FT operator()(
       const Point_3&,
       const Point_3&,
       const Point_3&) const {

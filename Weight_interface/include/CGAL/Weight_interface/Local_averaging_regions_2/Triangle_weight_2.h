@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_BARYCENTRIC_CELL_WEIGHT_2_H
-#define CGAL_GENERALIZED_BARYCENTRIC_CELL_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_TRIANGLE_WEIGHT_2_H
+#define CGAL_GENERALIZED_TRIANGLE_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,14 +34,12 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DAverage
 
-    \brief 2D barycentric cell weight.
+    \brief 2D triangle weight.
 
-    This weight is the area of the shaded region in the figure below. The region
-    is formed by two midpoints of the edges incident to `q` and the barycenter of
-    the triangle `[vj, vp, q]`.
+    This weight is the area of the shaded triangle in the figure below.
 
-    \cgalFigureBegin{barycentric_cell_weight, barycentric_cell.svg}
-      Notation used for the barycentric cell weight.
+    \cgalFigureBegin{triangle_weight, triangle_cell.svg}
+      Notation used for the triangle weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
@@ -50,7 +48,7 @@ namespace Generalized_weights {
     \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
-  class Barycentric_cell_weight_2 {
+  class Triangle_weight_2 {
 
   public:
 
@@ -81,7 +79,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Barycentric_cell_weight_2(
+    Triangle_weight_2(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -92,7 +90,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D barycentric cell weight.
+      \brief computes 2D triangle weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -103,7 +101,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D barycentric cell weight.
+      \brief computes 2D triangle weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -123,18 +121,10 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      const Point_2 center =
-        internal::barycenter_2(m_traits, vj, vp, query);
-      const Point_2 m1 =
-        internal::barycenter_2(m_traits, query, vj);
-      const Point_2 m2 =
-        internal::barycenter_2(m_traits, query, vp);
-
       const auto area_2 =
         m_traits.compute_area_2_object();
-      const FT A1 = area_2(m1, center, query);
-      const FT A2 = area_2(center, m2, query);
-      return weight(A1, A2);
+      const FT Aj = area_2(vj, vp, query);
+      return weight(Aj);
     }
 
     const FT weight_3(
@@ -142,22 +132,15 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
-      const Point_3 center =
-        internal::barycenter_3(m_traits, vj, vp, query);
-      const Point_3 m1 =
-        internal::barycenter_3(m_traits, query, vj);
-      const Point_3 m2 =
-        internal::barycenter_3(m_traits, query, vp);
-
-      const FT A1 = internal::area_3(m_traits, m1, center, query);
-      const FT A2 = internal::area_3(m_traits, center, m2, query);
-      return weight(A1, A2);
+      const FT Aj =
+        internal::area_3(m_traits, vj, vp, query);
+      return weight(Aj);
     }
 
     const FT weight(
-      const FT A1, const FT A2) const {
+      const FT Aj) const {
 
-      const FT w = A1 + A2;
+      const FT w = Aj;
       return w;
     }
   };
@@ -165,4 +148,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_BARYCENTRIC_CELL_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_TRIANGLE_WEIGHT_2_H

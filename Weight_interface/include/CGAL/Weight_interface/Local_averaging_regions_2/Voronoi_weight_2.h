@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_VORONOI_CELL_WEIGHT_2_H
-#define CGAL_GENERALIZED_VORONOI_CELL_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_VORONOI_WEIGHT_2_H
+#define CGAL_GENERALIZED_VORONOI_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,14 +34,14 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DAverage
 
-    \brief 2D Voronoi cell weight.
+    \brief 2D Voronoi weight.
 
     This weight is the area of the shaded region in the figure below. The region
     is formed by two midpoints of the edges incident to `q` and the circumcenter of
     the triangle `[vj, vp, q]`.
 
-    \cgalFigureBegin{voronoi_cell_weight, voronoi_cell.svg}
-      Notation used for the Voronoi cell weight.
+    \cgalFigureBegin{voronoi_weight, voronoi_cell.svg}
+      Notation used for the Voronoi weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
@@ -50,7 +50,7 @@ namespace Generalized_weights {
     \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
-  class Voronoi_cell_weight_2 {
+  class Voronoi_weight_2 {
 
   public:
 
@@ -81,7 +81,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Voronoi_cell_weight_2(
+    Voronoi_weight_2(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -92,7 +92,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Voronoi cell weight.
+      \brief computes 2D Voronoi weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -103,7 +103,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D Voronoi cell weight.
+      \brief computes 2D Voronoi weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -169,4 +169,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_VORONOI_CELL_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_VORONOI_WEIGHT_2_H

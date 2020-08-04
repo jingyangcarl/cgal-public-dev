@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_MIXED_VORONOI_CELL_WEIGHT_2_H
-#define CGAL_GENERALIZED_MIXED_VORONOI_CELL_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_MIXED_VORONOI_WEIGHT_2_H
+#define CGAL_GENERALIZED_MIXED_VORONOI_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,22 +34,22 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DAverage
 
-    \brief 2D mixed Voronoi cell weight.
+    \brief 2D mixed Voronoi weight.
 
     This weight is the area of the shaded region in the figure below. The region
     is formed by two midpoints of the edges incident to `q` and the circumcenter of
     the triangle `[vj, vp, q]`.
 
-    \cgalFigureBegin{mixed_voronoi_cell_weight, mixed_voronoi_cell.svg}
-      Notation used for the mixed Voronoi cell weight.
+    \cgalFigureBegin{mixed_voronoi_weight, mixed_voronoi_cell.svg}
+      Notation used for the mixed Voronoi weight.
     \cgalFigureEnd
 
-    However, unlike the original `CGAL::Generalized_weights::Voronoi_cell_weight_2`,
+    However, unlike the original `CGAL::Generalized_weights::Voronoi_weight_2`,
     if one of the angles in the triangle `[vj, vp, q]` is obtuse and the circumcenter
     vertex of the region is outside this triangle, this vertex is moved to the mid
     point of the edge `[vj, vp]`.
 
-    \cgalFigureBegin{mixed_voronoi_cell_obtuse_weight, mixed_voronoi_cell_obtuse.svg}
+    \cgalFigureBegin{mixed_voronoi_obtuse_weight, mixed_voronoi_cell_obtuse.svg}
       The case with the obtuse angle.
     \cgalFigureEnd
 
@@ -59,7 +59,7 @@ namespace Generalized_weights {
     \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
-  class Mixed_voronoi_cell_weight_2 {
+  class Mixed_voronoi_weight_2 {
 
   public:
 
@@ -90,7 +90,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Mixed_voronoi_cell_weight_2(
+    Mixed_voronoi_weight_2(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -101,7 +101,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D mixed Voronoi cell weight.
+      \brief computes 2D mixed Voronoi weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -112,7 +112,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D mixed Voronoi cell weight.
+      \brief computes 2D mixed Voronoi weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -200,4 +200,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_MIXED_VORONOI_CELL_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_MIXED_VORONOI_WEIGHT_2_H

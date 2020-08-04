@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Local_averaging_regions_2/Voronoi_cell_weight_2.h>
+#include <CGAL/Weight_interface/Local_averaging_regions_2/Voronoi_weight_2.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -7,7 +7,7 @@ using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Point_3 = typename Kernel::Point_3;
 
-using VC2 = CGAL::Generalized_weights::Voronoi_cell_weight_2<Kernel>;
+using VC2 = CGAL::Generalized_weights::Voronoi_weight_2<Kernel>;
 
 int main() {
 
@@ -23,8 +23,8 @@ int main() {
 
   // Compute weights.
   VC2 voronoi;
-  std::cout << "2D voronoi cell: " << voronoi(query2, vj2, vp2) << std::endl;
-  std::cout << "3D voronoi cell: " << voronoi(query3, vj3, vp3) << std::endl;
+  std::cout << "2D voronoi: " << voronoi(query2, vj2, vp2) << std::endl;
+  std::cout << "3D voronoi: " << voronoi(query3, vj3, vp3) << std::endl;
 
   return EXIT_SUCCESS;
 }

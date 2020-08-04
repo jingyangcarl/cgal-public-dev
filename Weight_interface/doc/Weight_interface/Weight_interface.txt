@@ -73,29 +73,24 @@ Here, you can find a few examples on how to compute various 2D generalized weigh
 Here, you can find a few examples on how to compute various 2D local averaging regions.
 
 
-\subsection Weight_Interface_Examples_UC2 Uniform Cell Weight 2
+\subsection Weight_Interface_Examples_TC2 Triangle Weight 2
 
-\cgalExample{Weight_interface/uniform_cell_weight_2.cpp}
-
-
-\subsection Weight_Interface_Examples_TC2 Triangle Cell Weight 2
-
-\cgalExample{Weight_interface/triangle_cell_weight_2.cpp}
+\cgalExample{Weight_interface/triangle_weight_2.cpp}
 
 
-\subsection Weight_Interface_Examples_BC2 Barycentric Cell Weight 2
+\subsection Weight_Interface_Examples_BC2 Barycentric Weight 2
 
-\cgalExample{Weight_interface/barycentric_cell_weight_2.cpp}
-
-
-\subsection Weight_Interface_Examples_VC2 Voronoi Cell Weight 2
-
-\cgalExample{Weight_interface/voronoi_cell_weight_2.cpp}
+\cgalExample{Weight_interface/barycentric_weight_2.cpp}
 
 
-\subsection Weight_Interface_Examples_MVC2 Mixed Voronoi Cell Weight 2
+\subsection Weight_Interface_Examples_VC2 Voronoi Weight 2
 
-\cgalExample{Weight_interface/mixed_voronoi_cell_weight_2.cpp}
+\cgalExample{Weight_interface/voronoi_weight_2.cpp}
+
+
+\subsection Weight_Interface_Examples_MVC2 Mixed Voronoi Weight 2
+
+\cgalExample{Weight_interface/mixed_voronoi_weight_2.cpp}
 
 */
 } /* namespace CGAL */

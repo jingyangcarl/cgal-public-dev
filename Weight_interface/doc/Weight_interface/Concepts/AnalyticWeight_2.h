@@ -26,7 +26,7 @@ class AnalyticWeight_2 {
 public:
 
   /*!
-    computes a chosen weight at the `query` point given its three 2D neighbors
+    computes a weight at the `query` point given its three 2D neighbors
     `vm` - previous neighbor (m stands for minus), `vj` - jth neighbor, and
     `vp` - next neighbor (p stands for plus).
 
@@ -46,7 +46,7 @@ public:
   { }
 
   /*!
-    computes a chosen weight at the `query` point given its three 3D neighbors
+    computes a weight at the `query` point given its three 3D neighbors
     `vm` - previous neighbor (m stands for minus), `vj` - jth neighbor, and
     `vp` - next neighbor (p stands for plus).
 

@@ -35,3 +35,4 @@
     }
     /// \endcond
   ```
+* Should I rename Triangle_weight to Triangle_area_weight?

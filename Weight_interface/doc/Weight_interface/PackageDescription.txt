@@ -62,11 +62,10 @@ Free functions to compute 2D generalized weights.
 - `CGAL::Generalized_weights::Cotangent_weight_2`
 
 ### 2D Local Averaging Regions ###
-- `CGAL::Generalized_weights::Uniform_cell_weight_2`
-- `CGAL::Generalized_weights::Triangle_cell_weight_2`
-- `CGAL::Generalized_weights::Barycentric_cell_weight_2`
-- `CGAL::Generalized_weights::Voronoi_cell_weight_2`
-- `CGAL::Generalized_weights::Mixed_voronoi_cell_weight_2`
+- `CGAL::Generalized_weights::Triangle_weight_2`
+- `CGAL::Generalized_weights::Barycentric_weight_2`
+- `CGAL::Generalized_weights::Voronoi_weight_2`
+- `CGAL::Generalized_weights::Mixed_voronoi_weight_2`
 
 ## 2D Free Functions ##
 

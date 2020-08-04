@@ -38,15 +38,13 @@ if(CGAL_FOUND)
     "cotangent_weight_2.cpp")
 
   create_single_source_cgal_program(
-    "uniform_cell_weight_2.cpp")
+    "triangle_weight_2.cpp")
   create_single_source_cgal_program(
-    "triangle_cell_weight_2.cpp")
+    "barycentric_weight_2.cpp")
   create_single_source_cgal_program(
-    "barycentric_cell_weight_2.cpp")
+    "voronoi_weight_2.cpp")
   create_single_source_cgal_program(
-    "voronoi_cell_weight_2.cpp")
-  create_single_source_cgal_program(
-    "mixed_voronoi_cell_weight_2.cpp")
+    "mixed_voronoi_weight_2.cpp")
 
 else()
   message(WARNING

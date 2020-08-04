@@ -10,6 +10,10 @@ while the full value is obtained as a sum of half values computed per two adjace
 - `CGAL::Generalized_weights::Authalic_weight_2`
 - `CGAL::Generalized_weights::Tangent_weight_2`
 - `CGAL::Generalized_weights::Cotangent_weight_2`
+- `CGAL::Generalized_weights::Triangle_weight_2`
+- `CGAL::Generalized_weights::Barycentric_weight_2`
+- `CGAL::Generalized_weights::Voronoi_weight_2`
+- `CGAL::Generalized_weights::Mixed_voronoi_weight_2`
 */
 class HalfWeight_2 {
 

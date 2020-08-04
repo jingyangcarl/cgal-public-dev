@@ -28,5 +28,19 @@ int main() {
   std::cout << "2D uniform: " << uniform(query2, vm2, vj2, vp2) << std::endl;
   std::cout << "3D uniform: " << uniform(query3, vm3, vj3, vp3) << std::endl;
 
+  // 2D half configuration.
+  const Point_2 queryh2 = Point_2( 0, 0);
+  const Point_2 vjh2    = Point_2( 0, 1);
+  const Point_2 vph2    = Point_2(-1, 0);
+
+  // 3D half configuration.
+  const Point_3 queryh3 = Point_3( 0, 0, 1);
+  const Point_3 vjh3    = Point_3( 0, 1, 1);
+  const Point_3 vph3    = Point_3(-1, 0, 1);
+
+  // Compute half weights.
+  std::cout << "2D uniform half: " << uniform(queryh2, vjh2, vph2) << std::endl;
+  std::cout << "3D uniform half: " << uniform(queryh3, vjh3, vph3) << std::endl;
+
   return EXIT_SUCCESS;
 }
