@@ -21,7 +21,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSolverInterfaceRef
+/// \ingroup PkgSolverInterfaceLS
 ///
 /// The class `Default_diagonalize_traits` is a wrapper designed to automatically
 /// use `Eigen_diagonalize_traits` if Eigen is available and otherwise use
@@ -45,7 +45,7 @@ public:
   typedef std::array<FT, dim*dim>                     Matrix;
   typedef std::array<FT, (dim * (dim+1) / 2)>         Covariance_matrix;
 
-  /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
+  /// Fills `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& cov,
@@ -54,7 +54,7 @@ public:
     return Base::diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues);
   }
 
-  /// Fill `eigenvalues` with the eigenvalues and `eigenvectors` with
+  /// Fills `eigenvalues` with the eigenvalues and `eigenvectors` with
   /// the eigenvectors of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
@@ -65,7 +65,7 @@ public:
     return Base::diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues, eigenvectors);
   }
 
-  /// Extract the eigenvector associated to the largest eigenvalue
+  /// Extracts the eigenvector associated to the largest eigenvalue
   /// of the covariance matrix represented by `cov`.
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool extract_largest_eigenvector_of_covariance_matrix(const Covariance_matrix& cov,

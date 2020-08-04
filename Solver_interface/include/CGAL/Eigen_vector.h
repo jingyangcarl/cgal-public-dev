@@ -17,14 +17,13 @@
 
 namespace CGAL {
 /*!
-\ingroup PkgSolverInterfaceRef
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_vector` is a wrapper around `Eigen`
 <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">vector type</a>,
 which is a simple array of numbers.
 
-\cgalModels `SvdTraits::Vector`
-\cgalModels `SparseLinearAlgebraTraits_d::Vector`.
+\cgalModels `SvdTraits::Vector` and `SparseLinearAlgebraTraits_d::Vector`
 
 \tparam T Number type.
 
@@ -32,37 +31,38 @@ which is a simple array of numbers.
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 */
-
-template<class T, int D = ::Eigen::Dynamic>
+template<class T>
 class Eigen_vector
-  : public ::Eigen::Matrix<T, D, 1>
+  : public Eigen::Matrix<T, Eigen::Dynamic, 1>
 {
 // Public types
 public:
   /// \name Types
   /// @{
+
+  /// Number type.
   typedef T                                      NT;
 
   /// The internal vector type from \ref thirdpartyEigen "Eigen".
-  typedef ::Eigen::Matrix<T, D, 1>               EigenType;
+  typedef Eigen::Matrix<T, Eigen::Dynamic, 1>    EigenType;
   /// @}
 
 // Public operations
 public:
-  Eigen_vector& operator=(const Eigen_vector& other)
+  Eigen_vector<T>& operator=(const Eigen_vector<T>& other)
   {
     return static_cast<EigenType&>(*this) = other.eigen_object();
   }
 
-  Eigen_vector& operator=(const EigenType& other)
+  Eigen_vector<T>& operator=(const EigenType& other)
   {
-    return static_cast<Eigen_vector&>(static_cast<EigenType&>(*this) = other);
+    return static_cast<Eigen_vector<T>&>(static_cast<EigenType&>(*this) = other);
   }
+  Eigen_vector()
+    : EigenType()
+  {}
 
-  /// Constructs a null vector.
-  Eigen_vector() : EigenType() {}
-
-  /// Create a vector initialized with zeros.
+  /// Creates a vector initialized with zeros.
   Eigen_vector(std::size_t dimension)
     : EigenType(static_cast<int>(dimension))
   {
@@ -74,13 +74,13 @@ public:
 
   ~Eigen_vector() { }
 
-  /// Return the vector's number of coefficients.
+  /// Returns the vector's number of coefficients.
   int dimension() const { return static_cast<int>(this->size()); }
 
-  /// Return the internal vector wrapped by this object.
+  /// Returns the internal vector wrapped by this object.
   const EigenType& eigen_object() const { return *this; }
 
-  /// Return the internal vector wrapped by this object.
+  /// Returns the internal vector wrapped by this object.
   EigenType& eigen_object() { return *this; }
 
   /// Write access to a vector coefficient: `a_i` <- `value`.
@@ -89,7 +89,7 @@ public:
     this->operator[](static_cast<int>(i)) = value;
   }
 
-  /// Return a pointer to the data array of this vector.
+  /// Returns a pointer to the data array of this vector.
   NT* vector() { return this->data(); }
 };
 

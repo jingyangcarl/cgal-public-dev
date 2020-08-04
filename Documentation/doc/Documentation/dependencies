@@ -71,7 +71,8 @@ Triangulation
 Ridges_3
 Point_set_3
 Point_set_processing_3
-Point_set_shape_detection_3
+Shape_detection
+Shape_regularization
 Polyline_simplification_2
 Property_map
 Periodic_2_triangulation_2

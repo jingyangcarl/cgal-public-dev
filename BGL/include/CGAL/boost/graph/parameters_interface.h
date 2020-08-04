@@ -160,6 +160,18 @@ CGAL_add_named_parameter(number_of_relaxations_t, number_of_relaxations, number_
 // List of named parameters used in Optimal_bounding_box package
 CGAL_add_named_parameter(use_convex_hull_t, use_convex_hull, use_convex_hull)
 
+// List of named parameters used in Shape_regularization package
+CGAL_add_named_parameter(min_length_t, min_length, min_length)
+CGAL_add_named_parameter(max_angle_t, max_angle, max_angle)
+CGAL_add_named_parameter(max_offset_t, max_offset, max_offset)
+CGAL_add_named_parameter(regularize_parallelism_t, regularize_parallelism, regularize_parallelism)
+CGAL_add_named_parameter(regularize_orthogonality_t, regularize_orthogonality, regularize_orthogonality)
+CGAL_add_named_parameter(regularize_coplanarity_t, regularize_coplanarity, regularize_coplanarity)
+CGAL_add_named_parameter(regularize_axis_symmetry_t, regularize_axis_symmetry, regularize_axis_symmetry)
+CGAL_add_named_parameter(symmetry_direction_t, symmetry_direction, symmetry_direction)
+CGAL_add_named_parameter(preserve_order_t, preserve_order, preserve_order)
+CGAL_add_named_parameter(adjust_directions_t, adjust_directions, adjust_directions)
+
 // meshing parameters
 CGAL_add_named_parameter(subdivision_ratio_t, subdivision_ratio, subdivision_ratio)
 CGAL_add_named_parameter(relative_to_chord_t, relative_to_chord, relative_to_chord)

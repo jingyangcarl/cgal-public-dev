@@ -6,18 +6,17 @@ typedef Eigen_solver::NT            FT;
 typedef Eigen_solver::Matrix        Eigen_matrix;
 typedef Eigen_solver::Vector        Eigen_vector;
 
-int main(void)
-{
+int main(void) {
+
   srand(static_cast<unsigned int>(time (NULL)));
   std::size_t degree = 3000;
   std::size_t nb_nonzero_coef = 100;
 
-  Eigen_vector B(degree); // Zero vector
+  Eigen_vector B(degree); // zero vector
   Eigen_matrix A(degree);
 
-  // Randomly make some coefficients of the matrix non-zero
-  for(std::size_t i=0; i<nb_nonzero_coef; ++i)
-  {
+  // Randomly make some coefficients of the matrix non-zeros.
+  for (std::size_t i = 0; i < nb_nonzero_coef; ++i) {
     int x = rand() % degree;
     int y = rand() % degree;
 
@@ -31,12 +30,11 @@ int main(void)
   FT d;
 
   Eigen_solver solver;
-  if(!(solver.linear_solver(A, B, X, d)))
-  {
-    std::cerr << "Error: linear solver failed" << std::endl;
-    return -1;
+  if (!(solver.linear_solver(A, B, X, d))) {
+    std::cerr << "Error: linear solver failed!" << std::endl;
+    return EXIT_FAILURE;
   }
 
-  std::cerr << "Linear solve succeeded" << std::endl;
-  return 0;
+  std::cout << "Linear solver succeeded!" << std::endl;
+  return EXIT_SUCCESS;
 }

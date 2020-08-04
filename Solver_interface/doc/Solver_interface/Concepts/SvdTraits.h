@@ -2,10 +2,11 @@
   \ingroup PkgSolverInterfaceConcepts
   \cgalConcept
 
-  The concept `SvdTraits` describes the linear algebra types and algorithms needed
-  to solve in the least square sense a linear system with a singular value decomposition
+  A concept that describes the linear algebra types and algorithms needed to solve in
+  the least square sense a linear system with a singular value decomposition.
 
-  \cgalHasModel `CGAL::Eigen_svd`
+  \cgalHasModel
+  `CGAL::Eigen_svd`
 */
 class SvdTraits
 {
@@ -49,74 +50,73 @@ public:
 
 /*!
 \cgalConcept
-Concept of vector type used by the concept `SvdTraits`.
+A concept of vector type used by the concept `SvdTraits`.
 
-\cgalHasModel `CGAL::Eigen_vector<T>`
+\cgalHasModel
+`CGAL::Eigen_vector<T>`
 */
 class SvdTraits::Vector
 {
 public:
   /*!
-    Initialize all the elements of the vector to zero.
+    Initializes all the elements of the vector to zero.
   */
   Vector(size_t n);
 
   /*!
-    Return the size of the vector.
-   */
+    Returns the size of the vector.
+  */
   size_t size();
 
   /*!
-    Return the `i`th entry, `i` from `0` to `size()-1`.
+    Returns the `i`th entry, `i` from `0` to `size()-1`.
   */
   FT operator()(size_t i);
 
   /*!
-    Set the `i`'th entry to `value`.
+    Sets the `i`'th entry to `value`.
   */
   void set(size_t i, const FT value);
 
   /*!
-    Return the vector as an array.
+    Returns the vector as an array.
   */
   FT* vector();
 };
 
 /*!
 \cgalConcept
-Concept of matrix type used by the concept `SvdTraits`.
+A concept of matrix type used by the concept `SvdTraits`.
 
-\cgalRefines `DefaultConstructible`
-\cgalRefines `Assignable`
-
-\cgalHasModel `CGAL::Eigen_matrix<T>`
+\cgalHasModel
+`CGAL::Eigen_matrix<T>`
 */
 class SvdTraits::Matrix
 {
 public:
   /*!
-    Initialize all the entries of the matrix to zero.
+    Initializes all the entries of the matrix to zero.
   */
   Matrix(size_t n1, size_t n2);
 
   /*!
-    Return the number of rows of the matrix.
+    Returns the number of rows of the matrix.
   */
   size_t number_of_rows();
 
   /*!
-    Return the number of columns of the matrix.
+    Returns the number of columns of the matrix.
   */
   size_t number_of_columns();
 
   /*!
-    Return the entry at row `i` and column `j`, `i` from `0` to `number_of_rows - 1`,
+    Returns the entry at row `i` and column `j`, `i` from `0` to `number_of_rows - 1`,
     `j` from `0` to `number_of_columns - 1`.
   */
   FT operator()(size_t i, size_t j);
 
   /*!
-    Set the entry at row `i` and column `j` to `value`.
+    Sets the entry at row `i` and column `j` to `value`.
   */
   void set(size_t i, size_t j, const FT value);
 };

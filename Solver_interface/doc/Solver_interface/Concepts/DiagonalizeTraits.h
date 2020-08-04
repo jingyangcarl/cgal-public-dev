@@ -2,14 +2,13 @@
 \ingroup PkgSolverInterfaceConcepts
 \cgalConcept
 
-Concept providing functions to extract eigenvectors and eigenvalues
+A concept that provides functions to extract eigenvectors and eigenvalues
 from covariance matrices represented by an array `a`, using symmetric
 diagonalization.
 
-For example, a matrix of dimension 3 is defined as
-follows:
+For example, a matrix of dimension 3 is defined as:
 <center>
-\f$ \begin{bmatrix}
+\f$\begin{bmatrix}
   a[0] & a[1] & a[2] \\
   a[1] & a[3] & a[4] \\
   a[2] & a[4] & a[5] \\
@@ -19,7 +18,8 @@ follows:
 \tparam FT Number type
 \tparam dim Dimension of the matrices and vectors
 
-\cgalHasModel `CGAL::Eigen_diagonalize_traits`
+\cgalHasModel
+`CGAL::Eigen_diagonalize_traits`
 */
 template <typename FT, unsigned int dim = 3>
 class DiagonalizeTraits
@@ -29,13 +29,13 @@ public:
   typedef std::array<FT, dim*dim>             Matrix;
   typedef std::array<FT, (dim * (dim+1) / 2)> Covariance_matrix;
 
-  /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
+  /// Fills `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& cov,
                                                         Vector& eigenvalues);
 
-  /// Fill `eigenvalues` with the eigenvalues and `eigenvectors` with
+  /// Fills `eigenvalues` with the eigenvalues and `eigenvectors` with
   /// the eigenvectors of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
@@ -43,7 +43,7 @@ public:
                                                         Vector& eigenvalues,
                                                         Matrix& eigenvectors);
 
-  /// Extract the eigenvector associated to the largest eigenvalue
+  /// Extracts the eigenvector associated to the largest eigenvalue
   /// of the covariance matrix represented by `cov`.
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool extract_largest_eigenvector_of_covariance_matrix(const Covariance_matrix& cov,

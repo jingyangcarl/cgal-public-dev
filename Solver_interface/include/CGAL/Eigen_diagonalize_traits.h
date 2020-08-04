@@ -30,7 +30,7 @@
 
 namespace CGAL {
 
-/// \ingroup PkgSolverInterfaceRef
+/// \ingroup PkgSolverInterfaceLS
 ///
 /// The class `Eigen_diagonalize_traits` provides an interface to the
 /// diagonalization of covariance matrices of \ref thirdpartyEigen
@@ -48,8 +48,11 @@ template <typename FT, unsigned int dim = 3>
 class Eigen_diagonalize_traits
 {
 public:
+  /// Vector type.
   typedef std::array<FT, dim>                  Vector;
+  /// Matrix type.
   typedef std::array<FT, dim*dim>              Matrix;
+  /// Covariance matrix type.
   typedef std::array<FT, (dim * (dim+1) / 2)>  Covariance_matrix;
 
 private:
@@ -75,7 +78,7 @@ private:
     return m;
   }
 
-  /// Fill `eigenvalues` with the eigenvalues and `eigenvectors` with
+  /// Fills `eigenvalues` with the eigenvalues and `eigenvectors` with
   /// the eigenvectors of the selfadjoint matrix represented by `m`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
@@ -102,7 +105,7 @@ private:
   }
 
 public:
-  /// Fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
+  /// Fills `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool diagonalize_selfadjoint_covariance_matrix(const Covariance_matrix& cov,
@@ -124,7 +127,7 @@ public:
     return res;
   }
 
-  /// Fill `eigenvalues` with the eigenvalues and `eigenvectors` with
+  /// Fills `eigenvalues` with the eigenvalues and `eigenvectors` with
   /// the eigenvectors of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
@@ -162,7 +165,7 @@ public:
     return res;
   }
 
-  /// Extract the eigenvector associated to the largest eigenvalue
+  /// Extracts the eigenvector associated to the largest eigenvalue
   /// of the covariance matrix represented by `cov`.
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool extract_largest_eigenvector_of_covariance_matrix(const Covariance_matrix& cov,

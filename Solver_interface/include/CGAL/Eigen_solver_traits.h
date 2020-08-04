@@ -63,7 +63,7 @@ struct Get_eigen_matrix< ::Eigen::SparseLU<EigenMatrix, EigenOrdering >, FT>
 } //internal
 
 /*!
-\ingroup PkgSolverInterfaceRef
+\ingroup PkgSolverInterfaceLS
 
 The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
 \ref thirdpartyEigen "Eigen" version 3.1 (or later) must be available on the system.
@@ -85,13 +85,13 @@ The instantiation of this class assumes an \ref thirdpartyEigen "Eigen" sparse s
 
 typedef CGAL::Eigen_sparse_matrix<double>::EigenType EigenMatrix;
 
-//iterative general solver
+// iterative general solver
 typedef CGAL::Eigen_solver_traits< Eigen::BiCGSTAB<EigenMatrix> > Iterative_general_solver;
 
-//iterative symmetric solver
+// iterative symmetric solver
 typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Iterative_symmetric_solver;
 
-//direct symmetric solver
+// direct symmetric solver
 typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver;
 
 \endcode
@@ -106,9 +106,13 @@ public:
   /// \name Types
   /// @{
 
+  /// Solver type.
   typedef EigenSolverT                                                Solver;
+  /// Number type.
   typedef Scalar                                                      NT;
+  /// Vector type.
   typedef CGAL::Eigen_vector<NT>                                      Vector;
+  /// Index type.
 #if EIGEN_VERSION_AT_LEAST(3, 3, 0)
   typedef Eigen::Index                                                Index;
 #else
@@ -137,7 +141,7 @@ public:
 
   /// @}
 
-  /// Solve the sparse linear system \f$ A \times X = B \f$.
+  /// Solves the sparse linear system \f$ A \times X = B \f$.
   /// Return `true` on success. The solution is then \f$ (1/D) \times X \f$.
   ///
   /// \pre A.row_dimension() == B.dimension().
@@ -156,7 +160,7 @@ public:
     return m_solver_sptr->info() == Eigen::Success;
   }
 
-  /// Factorize the sparse matrix \f$ A \f$.
+  /// Factorizes the sparse matrix \f$ A \f$.
   /// This factorization is used in `linear_solver()`
   /// to solve the system for different right-hand side vectors.
   /// See `linear_solver()` for the description of \f$ D \f$.
@@ -170,7 +174,7 @@ public:
     return solver().info() == Eigen::Success;
   }
 
-  /// Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
+  /// Solves the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
   /// provided in `factor()`.
   /// \return `true` if the solver is successful and `false` otherwise.
   bool linear_solver(const Vector& B, Vector& X)
@@ -180,7 +184,7 @@ public:
     return solver().info() == Eigen::Success;
   }
 
-  /// Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
+  /// Solves the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix
   /// provided in `factor()`.
   /// \return `true` if the solver is successful and `false` otherwise.
   bool linear_solver(const Matrix& B, Vector& X)
@@ -190,7 +194,7 @@ public:
     return solver().info() == Eigen::Success;
   }
 
-  /// Factorize the sparse matrix \f$ A^t \times A\f$, where \f$ A^t \f$ is the
+  /// Factorizes the sparse matrix \f$ A^t \times A\f$, where \f$ A^t \f$ is the
   /// transpose matrix of \f$ A \f$.
   /// This factorization is used in `normal_equation_solver()` to solve the system
   /// for different right-hand side vectors.
@@ -203,7 +207,7 @@ public:
     return solver().info() == Eigen::Success;
   }
 
-  /// Solve the sparse linear system \f$ A^t \times A \times X = A^t \times B \f$,
+  /// Solves the sparse linear system \f$ A^t \times A \times X = A^t \times B \f$,
   /// with \f$ A \f$ being the matrix provided in `#normal_equation_factor()`,
   /// and \f$ A^t \f$ its transpose matrix.
   /// \return `true` if the solver is successful and `false` otherwise.
@@ -240,9 +244,13 @@ class Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType
 
   // Public types
 public:
+  /// Solver type.
   typedef EigenSolverT                                                  Solver;
+  /// Number type.
   typedef Scalar                                                        NT;
+  /// Matrix type.
   typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type             Matrix;
+  // Vector type.
   typedef Eigen_vector<Scalar>                                          Vector;
 
   // Public operations
@@ -254,7 +262,7 @@ public:
   /// This function can be used for example to set specific parameters of the solver.
   EigenSolverT& solver() { return *m_solver_sptr; }
 
-  /// Solve the sparse linear system \f$ A \times X = B \f$.
+  /// Solves the sparse linear system \f$ A \times X = B \f$.
   /// Return `true` on success. The solution is then \f$ (1/D) \times X \f$.
   ///
   /// \pre A.row_dimension() == B.dimension().
