@@ -86,13 +86,13 @@ namespace Contours {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      a sequence of \ref sr_namedparameters "Named Parameters".
+      must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
       \param input_range
       a const range of counterclockwise ordered 2D points, which form a contour
 
       \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters"
+      an optional sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
       \param is_closed
@@ -103,17 +103,24 @@ namespace Contours {
       if not provided, the default is used
 
       \cgalNamedParamsBegin
-        \cgalParamBegin{max_angle}
-          max angle deviation in degrees between a contour edge and a principal direction,
-          the default is 10 degrees
-        \cgalParamEnd
-        \cgalParamBegin{min_length}
-          min length of a contour edge whose direction can be taken
-          as a principal direction, the default is 3 unit lengths
-        \cgalParamEnd
-        \cgalParamBegin{adjust_directions}
-          indicates wether the found directions should be better adjusted to the original shape
-        \cgalParamEnd
+        \cgalParamNBegin{max_angle}
+          \cgalParamDescription{max allowed angle deviation in degrees between a contour edge
+            and a principal direction such that they are considered to be parallel or orthogonal}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{10 degrees}
+        \cgalParamNEnd
+        \cgalParamNBegin{min_length}
+          \cgalParamDescription{min acceptable length of a contour edge whose direction can be taken
+            as a principal direction}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{3 unit lengths}
+        \cgalParamNEnd
+        \cgalParamNBegin{adjust_directions}
+          \cgalParamDescription{indicates wether the found directions should be better
+            adjusted to the original shape or not}
+          \cgalParamType{boolean}
+          \cgalParamDefault{true}
+        \cgalParamNEnd
       \cgalNamedParamsEnd
 
       \pre input_range.size() >= 3 for closed contours

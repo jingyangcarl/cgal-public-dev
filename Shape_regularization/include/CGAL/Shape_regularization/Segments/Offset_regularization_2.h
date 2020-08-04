@@ -100,13 +100,13 @@ namespace Segments {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      a sequence of \ref sr_namedparameters "Named Parameters".
+      must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
       \param input_range
       a range of 2D segments to be regularized
 
       \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters"
+      an optional sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
       \param segment_map
@@ -114,9 +114,12 @@ namespace Segments {
       if not provided, the default is used
 
       \cgalNamedParamsBegin
-        \cgalParamBegin{max_offset}
-          max distance between two parallel segments, the default is 0.5 unit length
-        \cgalParamEnd
+        \cgalParamNBegin{max_offset}
+          \cgalParamDescription{max allowed orthogonal distance between two parallel segments
+            such that they are considered to be collinear}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{0.5 unit length}
+        \cgalParamNEnd
       \cgalNamedParamsEnd
 
       \pre input_range.size() >= 2

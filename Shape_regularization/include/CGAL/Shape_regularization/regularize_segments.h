@@ -280,7 +280,7 @@ namespace Segments {
     must be an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -296,7 +296,7 @@ namespace Segments {
     an output iterator with groups of segment indices
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param segment_map
@@ -306,12 +306,18 @@ namespace Segments {
     an instance of `GeomTraits`
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_angle}
-        max angle deviation in degrees between two segments, the default is 5 degrees
-      \cgalParamEnd
-      \cgalParamBegin{preserve_order}
-        indicates whether the order of input segments should be preserved or not
-      \cgalParamEnd
+      \cgalParamNBegin{max_angle}
+        \cgalParamDescription{max allowed angle deviation in degrees between two segments
+          such that they are considered to be parallel}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{5 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{preserve_order}
+        \cgalParamDescription{indicates whether the order of input segments should be
+          preserved or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -363,7 +369,7 @@ namespace Segments {
     must be an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -377,19 +383,25 @@ namespace Segments {
     an output iterator with groups of segment indices
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param segment_map
     an instance of `SegmentMap`, if not provided, the default is used
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_angle}
-        max angle deviation in degrees between two segments, the default is 5 degrees
-      \cgalParamEnd
-      \cgalParamBegin{preserve_order}
-        indicates whether the order of input segments should be preserved or not
-      \cgalParamEnd
+      \cgalParamNBegin{max_angle}
+        \cgalParamDescription{max allowed angle deviation in degrees between two segments
+          such that they are considered to be parallel}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{5 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{preserve_order}
+        \cgalParamDescription{indicates whether the order of input segments should be
+          preserved or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -439,7 +451,7 @@ namespace Segments {
     must be an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -455,7 +467,7 @@ namespace Segments {
     an output iterator with groups of segment indices
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param segment_map
@@ -465,12 +477,18 @@ namespace Segments {
     an instance of `GeomTraits`
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_offset}
-        max distance between two parallel segments, the default is 0.2 unit length
-      \cgalParamEnd
-      \cgalParamBegin{preserve_order}
-        indicates whether the order of input segments should be preserved or not
-      \cgalParamEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel segments
+          such that they are considered to be collinear}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.2 unit length}
+      \cgalParamNEnd
+      \cgalParamNBegin{preserve_order}
+        \cgalParamDescription{indicates whether the order of input segments should be
+          preserved or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -522,7 +540,7 @@ namespace Segments {
     must be an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -536,19 +554,25 @@ namespace Segments {
     an output iterator with groups of segment indices
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param segment_map
     an instance of `SegmentMap`, if not provided, the default is used
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_offset}
-        max distance between two parallel segments, the default is 0.2 unit length
-      \cgalParamEnd
-      \cgalParamBegin{preserve_order}
-        indicates whether the order of input segments should be preserved or not
-      \cgalParamEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel segments
+          such that they are considered to be collinear}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.2 unit length}
+      \cgalParamNEnd
+      \cgalParamNBegin{preserve_order}
+        \cgalParamDescription{indicates whether the order of input segments should be
+          preserved or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -598,7 +622,7 @@ namespace Segments {
     must be an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -614,7 +638,7 @@ namespace Segments {
     an output iterator with groups of segment indices
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param segment_map
@@ -624,12 +648,18 @@ namespace Segments {
     an instance of `GeomTraits`
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_angle}
-        max angle deviation in degrees between two segments, the default is 5 degrees
-      \cgalParamEnd
-      \cgalParamBegin{preserve_order}
-        indicates whether the order of input segments should be preserved or not
-      \cgalParamEnd
+      \cgalParamNBegin{max_angle}
+        \cgalParamDescription{max allowed angle deviation in degrees between two segments
+          such that they are considered to be parallel or orthogonal}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{5 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{preserve_order}
+        \cgalParamDescription{indicates whether the order of input segments should be
+          preserved or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -681,7 +711,7 @@ namespace Segments {
     must be an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -695,19 +725,25 @@ namespace Segments {
     an output iterator with groups of segment indices
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param segment_map
     an instance of `SegmentMap`, if not provided, the default is used
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_angle}
-        max angle deviation in degrees between two segments, the default is 5 degrees
-      \cgalParamEnd
-      \cgalParamBegin{preserve_order}
-        indicates whether the order of input segments should be preserved or not
-      \cgalParamEnd
+      \cgalParamNBegin{max_angle}
+        \cgalParamDescription{max allowed angle deviation in degrees between two segments
+          such that they are considered to be parallel or orthogonal}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{5 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{preserve_order}
+        \cgalParamDescription{indicates whether the order of input segments should be
+          preserved or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -755,7 +791,7 @@ namespace Segments {
     must be an output iterator whose value type is `GeomTraits::Segment_2`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -771,7 +807,7 @@ namespace Segments {
     an output iterator with the simplified segments
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param segment_map
@@ -781,12 +817,18 @@ namespace Segments {
     an instance of `GeomTraits`
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_offset}
-        max distance between two parallel segments, the default is 0.2 unit length
-      \cgalParamEnd
-      \cgalParamBegin{preserve_order}
-        indicates whether the order of input segments should be preserved or not
-      \cgalParamEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel segments
+          such that they are considered to be collinear}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.2 unit length}
+      \cgalParamNEnd
+      \cgalParamNBegin{preserve_order}
+        \cgalParamDescription{indicates whether the order of input segments should be
+          preserved or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -836,7 +878,7 @@ namespace Segments {
     must be an output iterator whose value type is `GeomTraits::Segment_2`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -850,19 +892,25 @@ namespace Segments {
     an output iterator with the simplified segments
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param segment_map
     an instance of `SegmentMap`, if not provided, the default is used
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_offset}
-        max distance between two parallel segments, the default is 0.2 unit length
-      \cgalParamEnd
-      \cgalParamBegin{preserve_order}
-        indicates whether the order of input segments should be preserved or not
-      \cgalParamEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel segments
+          such that they are considered to be collinear}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.2 unit length}
+      \cgalParamNEnd
+      \cgalParamNBegin{preserve_order}
+        \cgalParamDescription{indicates whether the order of input segments should be
+          preserved or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{false}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.

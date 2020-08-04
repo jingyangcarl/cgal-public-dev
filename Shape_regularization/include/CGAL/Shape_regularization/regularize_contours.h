@@ -63,7 +63,7 @@ namespace Contours {
     must be an output iterator whose value type is `GeomTraits::Point_2`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam PointMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -82,7 +82,7 @@ namespace Contours {
     an output iterator with points of the regularized contour
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param point_map
@@ -92,10 +92,12 @@ namespace Contours {
     an instance of `GeomTraits`
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_offset}
-        max distance between two parallel and consecutive contour edges,
-        the default is 0.5 unit length
-      \cgalParamEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel
+          and consecutive contour edges such that they are considered to be collinear}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.5 unit length}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -153,7 +155,7 @@ namespace Contours {
     must be an output iterator whose value type is `GeomTraits::Point_2`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam PointMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -170,17 +172,19 @@ namespace Contours {
     an output iterator with points of the regularized contour
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param point_map
     an instance of `PointMap`, if not provided, the default is used
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_offset}
-        max distance between two parallel and consecutive contour edges,
-        the default is 0.5 unit length
-      \cgalParamEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel
+          and consecutive contour edges such that they are considered to be collinear}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.5 unit length}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -234,7 +238,7 @@ namespace Contours {
     must be an output iterator whose value type is `GeomTraits::Point_2`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam PointMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -253,7 +257,7 @@ namespace Contours {
     an output iterator with points of the regularized contour
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param point_map
@@ -263,10 +267,12 @@ namespace Contours {
     an instance of `GeomTraits`
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_offset}
-        max distance between two parallel and consecutive contour edges,
-        the default is 0.5 unit length
-      \cgalParamEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel
+          and consecutive contour edges such that they are considered to be collinear}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.5 unit length}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.
@@ -324,7 +330,7 @@ namespace Contours {
     must be an output iterator whose value type is `GeomTraits::Point_2`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam PointMap
     must be a model of `ReadablePropertyMap` whose key type is the value type of the input
@@ -341,17 +347,19 @@ namespace Contours {
     an output iterator with points of the regularized contour
 
     \param np
-    optional sequence of \ref sr_namedparameters "Named Parameters"
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
     among the ones listed below
 
     \param point_map
     an instance of `PointMap`, if not provided, the default is used
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{max_offset}
-        max distance between two parallel and consecutive contour edges,
-        the default is 0.5 unit length
-      \cgalParamEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel
+          and consecutive contour edges such that they are considered to be collinear}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.5 unit length}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
 
     \return an output iterator.

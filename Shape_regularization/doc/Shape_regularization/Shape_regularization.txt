@@ -535,7 +535,7 @@ The used kernel is `Exact_predicates_inexact_constructions_kernel`.
 
 \remark Please note that this function was earlier used in the \ref PkgShapeDetection package. You can
 still use the old API of that function, however to avoid parameters ambiguity, we strongly
-suggest to use the new API with the \ref sr_namedparameters "Named Parameters" mechanism.
+suggest to use the new API with the \ref BGLNamedParameters "Named Parameters" mechanism.
 
 
 \section QP_Regularization QP Regularization

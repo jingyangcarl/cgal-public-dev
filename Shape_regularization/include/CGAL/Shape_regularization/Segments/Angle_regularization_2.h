@@ -96,13 +96,13 @@ namespace Segments {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      a sequence of \ref sr_namedparameters "Named Parameters".
+      must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
       \param input_range
       a range of 2D segments to be regularized
 
       \param np
-      optional sequence of \ref sr_namedparameters "Named Parameters"
+      an optional sequence of \ref bgl_namedparameters "Named Parameters"
       among the ones listed below
 
       \param segment_map
@@ -110,10 +110,12 @@ namespace Segments {
       if not provided, the default is used
 
       \cgalNamedParamsBegin
-        \cgalParamBegin{max_angle}
-          max angle deviation in degrees of a segment from its initial orientation,
-          the default is 25 degrees
-        \cgalParamEnd
+        \cgalParamNBegin{max_angle}
+          \cgalParamDescription{max allowed angle deviation in degrees of a segment
+            from its initial orientation}
+          \cgalParamType{`GeomTraits::FT`}
+          \cgalParamDefault{25 degrees}
+        \cgalParamNEnd
       \cgalNamedParamsEnd
 
       \pre input_range.size() >= 2

@@ -281,22 +281,24 @@ namespace Planes {
     %Planes are directly modified. Points are left unaltered, as well as their
     relationship to the planes (no transfer of a point from a primitive plane to another).
 
+    This function infers a traits class `GeomTraits` from the `PointMap` value type.
+
     The implementation follows \cgalCite{cgal:vla-lod-15}.
 
     \tparam PlaneRange
     must be a model of `Range` whose iterator type is `RandomAccessIterator`.
 
     \tparam PlaneMap
-    must be a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<Kernel>`.
+    must be a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<GeomTraits>`.
 
     \tparam PointRange
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<Kernel>`.
+    must be a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<GeomTraits>`.
 
     \tparam NamedParameters
-    a sequence of \ref sr_namedparameters "Named Parameters".
+    must be a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \param planes
     a range of planes to be regularized
@@ -311,38 +313,56 @@ namespace Planes {
     \param point_map
     an instance of `PointMap` that maps an item from point range to `GeomTraits::Point_3`
 
-    \param np optional sequence of \ref sr_namedparameters "Named Parameters"
-    among the ones listed below:
+    \param np
+    an optional sequence of \ref bgl_namedparameters "Named Parameters"
+    among the ones listed below
 
     \cgalNamedParamsBegin
-      \cgalParamBegin{plane_index_map}
-        a property map that associates the index of a point in the `points` range
-        to the index of a plane in the `planes` range (-1 if point is not assigned
-        to a plane), no default value
-      \cgalParamEnd
-      \cgalParamBegin{max_angle}
-        max angle in degrees between plane normals used for parallelism,
-        orthogonality, and axis symmetry, the default is 25 degrees
-      \cgalParamEnd
-      \cgalParamBegin{max_offset}
-        max distance between two parallel planes such that
-        they are considered coplanar, the default is 0.01
-      \cgalParamEnd
-      \cgalParamBegin{regularize_parallelism}
-        indicates whether parallelism should be regularized or not, the default is `true`
-      \cgalParamEnd
-      \cgalParamBegin{regularize_orthogonality}
-        indicates whether orthogonality should be regularized or not, the default is `true`
-      \cgalParamEnd
-      \cgalParamBegin{regularize_coplanarity}
-        indicates whether coplanarity should be regularized or not, the default is `true`
-      \cgalParamEnd
-      \cgalParamBegin{regularize_axis_symmetry}
-        indicates whether axis symmetry should be regularized or not, the default is `true`
-      \cgalParamEnd
-      \cgalParamBegin{symmetry_direction}
-        an axis for symmetry regularization, the default is Z axis
-      \cgalParamEnd
+      \cgalParamNBegin{plane_index_map}
+        \cgalParamDescription{a property map that associates the index of a point
+          in the `points` range to the index of a plane in the `planes` range (-1 if
+          point is not assigned to a plane)}
+        \cgalParamType{a model of `ReadablePropertyMap` with `std::size_t` as key type
+          and `int` as value type}
+        \cgalParamDefault{no default value}
+      \cgalParamNEnd
+      \cgalParamNBegin{max_angle}
+        \cgalParamDescription{max allowed angle in degrees between plane normals used
+          for parallelism, orthogonality, and axis symmetry}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{25 degrees}
+      \cgalParamNEnd
+      \cgalParamNBegin{max_offset}
+        \cgalParamDescription{max allowed orthogonal distance between two parallel planes
+          such that they are considered to be coplanar}
+        \cgalParamType{`GeomTraits::FT`}
+        \cgalParamDefault{0.01 unit length}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_parallelism}
+        \cgalParamDescription{indicates whether parallelism should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_orthogonality}
+        \cgalParamDescription{indicates whether orthogonality should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_coplanarity}
+        \cgalParamDescription{indicates whether coplanarity should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{regularize_axis_symmetry}
+        \cgalParamDescription{indicates whether axis symmetry should be regularized or not}
+        \cgalParamType{boolean}
+        \cgalParamDefault{true}
+      \cgalParamNEnd
+      \cgalParamNBegin{symmetry_direction}
+        \cgalParamDescription{an axis for symmetry regularization}
+        \cgalParamType{`GeomTraits::Vector_3`}
+        \cgalParamDefault{Z axis that is `GeomTraits::Vector_3(0, 0, 1)`}
+      \cgalParamNEnd
     \cgalNamedParamsEnd
   */
   template<
