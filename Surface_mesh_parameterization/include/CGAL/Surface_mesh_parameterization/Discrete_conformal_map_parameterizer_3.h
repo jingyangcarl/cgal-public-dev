@@ -21,6 +21,7 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+#include <CGAL/Weight_interface/Generalized_weights_2/Cotangent_weight_2.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -76,9 +77,9 @@ namespace Surface_mesh_parameterization {
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
-template < typename TriangleMesh_,
-           typename BorderParameterizer_ = Default,
-           typename SolverTraits_ = Default >
+template <typename TriangleMesh_,
+          typename BorderParameterizer_ = Default,
+          typename SolverTraits_ = Default>
 class Discrete_conformal_map_parameterizer_3
   : public Fixed_border_parameterizer_3<
       TriangleMesh_,
@@ -92,14 +93,14 @@ class Discrete_conformal_map_parameterizer_3
           Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
                           Eigen::IncompleteLUT<double> > > >::type >
   #else
-         SolverTraits_>::type > // no parameter provided, and Eigen is not enabled: so don't compile!
+        SolverTraits_>::type > // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
 {
 public:
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
     BorderParameterizer_,
-    Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
+    Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type Border_parameterizer;
 
   typedef typename Default::Get<
     SolverTraits_,
@@ -123,7 +124,7 @@ private:
     // Superclass
   typedef Fixed_border_parameterizer_3<TriangleMesh,
                                        Border_parameterizer,
-                                       Solver_traits>    Base;
+                                       Solver_traits>         Base;
 
 // Private types
 private:
@@ -141,6 +142,9 @@ private:
   typedef typename Solver_traits::Vector    Vector;
   typedef typename Solver_traits::Matrix    Matrix;
 
+  // Get weight from the weight interface.
+  typedef CGAL::Generalized_weights::Cotangent_weight_2<Kernel> Cotangent_weight;
+
 // Public operations
 public:
   /// Constructor
@@ -148,16 +152,16 @@ public:
                                          ///< %Object that maps the surface's border to 2D space.
                                          Solver_traits sparse_la = Solver_traits())
                                          ///< Traits object to access a sparse linear system.
-  :   Fixed_border_parameterizer_3<TriangleMesh,
-                                   Border_parameterizer,
-                                   Solver_traits>(border_param, sparse_la)
+  : Fixed_border_parameterizer_3<TriangleMesh,
+                                 Border_parameterizer,
+                                 Solver_traits>(border_param, sparse_la)
   { }
 
   // Default copy constructor and operator =() are fine
 
 // Protected operations
 protected:
-  /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
+  /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
   ///
   /// \param mesh a triangulated surface.
   /// \param main_vertex_v_i the vertex of `mesh` with index `i`
@@ -166,27 +170,22 @@ protected:
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j) const // its target is main_vertex_v_i
   {
+    const Cotangent_weight cotangent_weight;
     const PPM ppmap = get(vertex_point, mesh);
 
     const Point_3& position_v_i = get(ppmap, main_vertex_v_i);
     const Point_3& position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    // Compute cotangent of (v_i,v_k,v_j) corner (i.e. cotan of v_k corner)
-    // if v_k is the vertex before v_j when circulating around v_i
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     previous_vertex_v_k--;
     const Point_3& position_v_k = get(ppmap, *previous_vertex_v_k);
-    NT cotg_beta_ij = internal::cotangent<Kernel>(position_v_i, position_v_k, position_v_j);
 
-    // Compute cotangent of (v_j,v_l,v_i) corner (i.e. cotan of v_l corner)
-    // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     next_vertex_v_l++;
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
-    NT cotg_alpha_ij = internal::cotangent<Kernel>(position_v_j, position_v_l, position_v_i);
 
-    NT weight = cotg_beta_ij + cotg_alpha_ij;
-    return weight;
+    return cotangent_weight(
+      position_v_i, position_v_k, position_v_j, position_v_l);
   }
 };
 

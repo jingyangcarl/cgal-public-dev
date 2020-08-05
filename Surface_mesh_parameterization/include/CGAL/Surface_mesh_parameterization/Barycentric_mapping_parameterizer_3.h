@@ -19,6 +19,7 @@
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+#include <CGAL/Weight_interface/Generalized_weights_2/Uniform_weight_2.h>
 
 #include <CGAL/Default.h>
 
@@ -43,7 +44,7 @@ namespace Surface_mesh_parameterization {
 /// This class is a strategy called by the main
 /// parameterization algorithm `Fixed_border_parameterizer_3::parameterize()` and it:
 /// - provides the template parameters `BorderParameterizer_` and `SolverTraits_`.
-/// - implements compute_w_ij() to compute `w_ij = (i,j)`, coefficient of
+/// - implements compute_w_ij() to compute `w_ij = (i, j)`, coefficient of
 ///   the matrix A for `j` neighbor vertex of `i`, based on Tutte Barycentric
 ///   Mapping method.
 ///
@@ -72,9 +73,9 @@ namespace Surface_mesh_parameterization {
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
-template < typename TriangleMesh_,
-           typename BorderParameterizer_ = Default,
-           typename SolverTraits_ = Default >
+template <typename TriangleMesh_,
+          typename BorderParameterizer_ = Default,
+          typename SolverTraits_ = Default>
 class Barycentric_mapping_parameterizer_3
   : public Fixed_border_parameterizer_3<
       TriangleMesh_,
@@ -95,7 +96,7 @@ public:
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
     BorderParameterizer_,
-    Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
+    Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type Border_parameterizer;
 
   typedef typename Default::Get<
     SolverTraits_,
@@ -118,7 +119,7 @@ private:
   // Superclass
   typedef Fixed_border_parameterizer_3<TriangleMesh_,
                                        Border_parameterizer,
-                                       Solver_traits>  Base;
+                                       Solver_traits>         Base;
 
 // Private types
 private:
@@ -126,11 +127,16 @@ private:
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor  halfedge_descriptor;
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh>              vertex_around_target_circulator;
 
+  typedef typename Base::Kernel                   Kernel;
   typedef typename Base::NT                       NT;
+  typedef typename Base::Point_3                  Point_3;
 
   // Solver traits subtypes:
   typedef typename Solver_traits::Vector          Vector;
   typedef typename Solver_traits::Matrix          Matrix;
+
+  // Get weight from the weight interface.
+  typedef CGAL::Generalized_weights::Uniform_weight_2<Kernel> Uniform_weight;
 
 // Public operations
 public:
@@ -165,14 +171,17 @@ public:
 
 // Protected operations
 protected:
-  /// Compute w_ij = (i,j), coefficient of matrix A for j neighbor vertex of i.
+  /// Compute w_ij = (i, j), coefficient of matrix A for j neighbor vertex of i.
   virtual NT compute_w_ij(const TriangleMesh& /* mesh */,
       vertex_descriptor /* main_vertex_v_i */,
       vertex_around_target_circulator /* neighbor_vertex_v_j */ ) const
   {
     /// In the Tutte Barycentric Mapping algorithm, we have w_ij = 1,
     /// for j neighbor vertex of i.
-    return 1.;
+    const Point_3 stub;
+    const Uniform_weight uniform_weight;
+    return uniform_weight(
+      stub, stub, stub, stub);
   }
 };
 

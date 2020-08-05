@@ -86,10 +86,9 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D uniform weight.
+      \brief computes 2D uniform half weight.
     */
     const FT operator()(
-      const Point_2&,
       const Point_2&,
       const Point_2&,
       const Point_2&) const {
@@ -98,10 +97,9 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D uniform weight.
+      \brief computes 2D uniform half weight.
     */
     const FT operator()(
-      const Point_3&,
       const Point_3&,
       const Point_3&,
       const Point_3&) const {
@@ -110,9 +108,10 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D uniform half weight.
+      \brief computes 2D uniform weight.
     */
     const FT operator()(
+      const Point_2&,
       const Point_2&,
       const Point_2&,
       const Point_2&) const {
@@ -121,9 +120,10 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D uniform half weight.
+      \brief computes 2D uniform weight.
     */
     const FT operator()(
+      const Point_3&,
       const Point_3&,
       const Point_3&,
       const Point_3&) const {

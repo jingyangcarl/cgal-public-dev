@@ -18,6 +18,7 @@
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
+#include <CGAL/Weight_interface/Generalized_weights_2/Tangent_weight_2.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
 #include <CGAL/Constrained_triangulation_2.h>
@@ -76,8 +77,8 @@ namespace Surface_mesh_parameterization {
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::ARAP_parameterizer_3<TriangleMesh, BorderParameterizer_, Solver_traits>`
 ///
-template < class TriangleMesh_,
-           class SolverTraits_ = Default>
+template <class TriangleMesh_,
+          class SolverTraits_ = Default>
 class MVC_post_processor_3
 {
 public:
@@ -125,18 +126,21 @@ private:
   typedef typename Solver_traits::Vector                            Vector;
   typedef typename Solver_traits::Matrix                            Matrix;
 
+  // Get weight from the weight interface.
+  typedef CGAL::Generalized_weights::Tangent_weight_2<Kernel> Tangent_weight;
+
   // Types used for the convexification of the mesh
-    // Each triangulation vertex is associated its corresponding vertex_descriptor
+  // Each triangulation vertex is associated its corresponding vertex_descriptor
   typedef CGAL::Triangulation_vertex_base_with_info_2<vertex_descriptor, Kernel>  Vb;
-    // Each triangulation face is associated a color (inside/outside information)
+  // Each triangulation face is associated a color (inside/outside information)
   typedef CGAL::Triangulation_face_base_with_info_2<int, Kernel>                  Fb;
   typedef CGAL::Constrained_triangulation_face_base_2<Kernel, Fb>                 Cfb;
   typedef CGAL::Triangulation_data_structure_2<Vb, Cfb>                           TDS;
   typedef CGAL::No_constraint_intersection_requiring_constructions_tag            Itag;
 
-    // Can choose either a triangulation or a Delaunay triangulation
+  // Can choose either a triangulation or a Delaunay triangulation
   typedef CGAL::Constrained_triangulation_2<Kernel, TDS, Itag>                    CT;
-//  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>           CT;
+  // typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag>        CT;
 
 // Private fields
 private:
@@ -148,7 +152,7 @@ private:
   // Get the sparse linear algebra (traits object to access the linear system).
   Solver_traits& get_linear_algebra_traits() { return m_linearAlgebra; }
 
-// Private utility
+  // Private utility
   // Print the exterior faces of the constrained triangulation.
   template <typename CT>
   void output_ct_exterior_faces(const CT& ct) const
@@ -349,22 +353,6 @@ private:
     return OK;
   }
 
-  //                                                      -> ->
-  // Return angle (in radians) of of (P,Q,R) corner (i.e. QP,QR angle).
-  double compute_angle_rad(const Point_2& P,
-                           const Point_2& Q,
-                           const Point_2& R) const
-  {
-    Vector_2 u = P - Q;
-    Vector_2 v = R - Q;
-
-    double angle = std::atan2(v.y(), v.x()) - std::atan2(u.y(), u.x());
-    if(angle < 0)
-      angle += 2 * CGAL_PI;
-
-    return angle;
-  }
-
   // Fix vertices that are on the convex hull.
   template <typename CT,
             typename VertexParameterizedMap>
@@ -378,23 +366,6 @@ private:
       vertex_descriptor vd = vc->info();
       put(vpmap, vd, true);
     } while (++vc != vend);
-  }
-
-  NT compute_w_ij_mvc(const Point_2& pi, const Point_2& pj, const Point_2& pk) const
-  {
-    //                                                               ->     ->
-    // Compute the angle (pj, pi, pk), the angle between the vectors ij and ik
-    NT angle = compute_angle_rad(pj, pi, pk);
-
-    // For flipped triangles, the connectivity is inversed and thus the angle
-    // computed by the previous function is not the one we need. Instead,
-    // we need the explementary angle.
-    if(angle > CGAL_PI) { // flipped triangle
-      angle = 2 * CGAL_PI - angle;
-    }
-    NT weight = std::tan(0.5 * angle);
-
-    return weight;
   }
 
   void fill_linear_system_matrix_mvc_from_points(const Point_2& pi, int i,
@@ -413,27 +384,28 @@ private:
     // The other parts of A(i,j) and A(i,k) will be added when this function
     // is called from the neighboring faces of F_ijk that share the vertex i
 
-    // Compute: - tan(alpha / 2)
-    NT w_i_base = -1.0 * compute_w_ij_mvc(pi, pj, pk);
-
     // @fixme unefficient: lengths are computed (and inversed!) twice per edge
 
     // Set w_ij in matrix
-    Vector_2 edge_ij = pi - pj;
-    double len_ij = std::sqrt(edge_ij * edge_ij);
-    CGAL_assertion(len_ij != 0.0); // two points are identical!
-    NT w_ij = w_i_base / len_ij;
+    const Tangent_weight tangent_weight;
+    const NT w_ij = -tangent_weight(pi, pj, pk);
     A.add_coef(i, j, w_ij);
 
+    // Set w_i_base: - tan(alpha / 2)
+    const Vector_2 edge_ij = pi - pj;
+    const double len_ij = CGAL::sqrt(edge_ij * edge_ij);
+    CGAL_assertion(len_ij != 0.0); // two points are identical!
+    const NT w_i_base = w_ij * len_ij;
+
     // Set w_ik in matrix
-    Vector_2 edge_ik = pi - pk;
-    double len_ik = std::sqrt(edge_ik * edge_ik);
+    const Vector_2 edge_ik = pi - pk;
+    const double len_ik = CGAL::sqrt(edge_ik * edge_ik);
     CGAL_assertion(len_ik != 0.0); // two points are identical!
-    NT w_ik = w_i_base / len_ik;
+    const NT w_ik = w_i_base / len_ik;
     A.add_coef(i, k, w_ik);
 
     // Add to w_ii (w_ii = - sum w_ij)
-    NT w_ii = - w_ij - w_ik;
+    const NT w_ii = - w_ij - w_ik;
     A.add_coef(i, i, w_ii);
   }
 

@@ -20,6 +20,7 @@
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+#include <CGAL/Weight_interface/Generalized_weights_2/Tangent_weight_2.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
@@ -43,8 +44,7 @@ namespace Surface_mesh_parameterization {
 ///
 /// This class is used by the main parameterization algorithm
 /// `Fixed_border_parameterizer_3::parameterize()`.
-/// - It provides default `BorderParameterizer_` and `SolverTraits_` template
-///   parameters.
+/// - It provides default `BorderParameterizer_` and `SolverTraits_` template parameters.
 /// - It implements `compute_w_ij()` to compute w_ij = (i, j) coefficient of matrix A
 ///   for j neighbor vertex of i based on Floater Mean Value Coordinates parameterization.
 /// - It implements an optimized version of `is_one_to_one_mapping()`.
@@ -74,9 +74,9 @@ namespace Surface_mesh_parameterization {
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
-template < class TriangleMesh_,
-           class BorderParameterizer_ = Default,
-           class SolverTraits_ = Default>
+template <class TriangleMesh_,
+          class BorderParameterizer_ = Default,
+          class SolverTraits_ = Default>
 class Mean_value_coordinates_parameterizer_3
     : public Fixed_border_parameterizer_3<
         TriangleMesh_,
@@ -90,14 +90,14 @@ class Mean_value_coordinates_parameterizer_3
             Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType,
                             Eigen::IncompleteLUT<double> > > >::type >
   #else
-         SolverTraits_>::type > // no parameter provided, and Eigen is not enabled: so don't compile!
+        SolverTraits_>::type > // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
 {
 public:
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
     BorderParameterizer_,
-    Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type  Border_parameterizer;
+    Circular_border_arc_length_parameterizer_3<TriangleMesh_> >::type Border_parameterizer;
 
   typedef typename Default::Get<
     SolverTraits_,
@@ -131,6 +131,7 @@ private:
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator     vertex_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator       face_iterator;
+
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
 
   // Mesh_TriangleMesh_3 subtypes:
@@ -144,6 +145,9 @@ private:
   typedef typename Solver_traits::Vector      Vector;
   typedef typename Solver_traits::Matrix      Matrix;
 
+  // Get weight from the weight interface.
+  typedef CGAL::Generalized_weights::Tangent_weight_2<Kernel> Tangent_weight;
+
 // Public operations
 public:
   /// Constructor
@@ -156,7 +160,7 @@ public:
                                  Solver_traits>(border_param, sparse_la)
   { }
 
-    // Default copy constructor and operator =() are fine
+  // Default copy constructor and operator =() are fine
 
   /// Check if the 3D -> 2D mapping is one-to-one.
   template <typename VertexUVMap>
@@ -185,36 +189,22 @@ protected:
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j) const
   {
+    const Tangent_weight tangent_weight;
     const PPM ppmap = get(vertex_point, mesh);
 
     const Point_3& position_v_i = get(ppmap, main_vertex_v_i);
     const Point_3& position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
-    // Compute the norm of v_j -> v_i vector
-    Vector_3 edge = position_v_i - position_v_j;
-    NT len = std::sqrt(edge * edge);
-
-    // Compute angle of (v_j,v_i,v_k) corner (i.e. angle of v_i corner)
-    // if v_k is the vertex before v_j when circulating around v_i
     vertex_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
     previous_vertex_v_k--;
     const Point_3& position_v_k = get(ppmap, *previous_vertex_v_k);
-    NT gamma_ij = internal::compute_angle_rad<Kernel>(position_v_j, position_v_i, position_v_k);
 
-    // Compute angle of (v_l,v_i,v_j) corner (i.e. angle of v_i corner)
-    // if v_l is the vertex after v_j when circulating around v_i
     vertex_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
     next_vertex_v_l++;
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
-    NT delta_ij = internal::compute_angle_rad<Kernel>(position_v_l, position_v_i, position_v_j);
 
-    NT weight = 0.0;
-    CGAL_assertion(len != 0.0); // two points are identical!
-    if(len != 0.0)
-      weight = (std::tan(0.5*gamma_ij) + std::tan(0.5*delta_ij)) / len;
-    CGAL_assertion(weight > 0);
-
-    return weight;
+    return tangent_weight(
+      position_v_i, position_v_k, position_v_j, position_v_l);
   }
 };
 

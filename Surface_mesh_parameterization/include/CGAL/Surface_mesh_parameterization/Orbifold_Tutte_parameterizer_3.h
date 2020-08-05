@@ -25,8 +25,8 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/orbifold_shortest_path.h>
 
-#include <CGAL/assertions.h>
-#include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/Weight_interface/Generalized_weights_2/Tangent_weight_2.h>
+#include <CGAL/Weight_interface/Generalized_weights_2/Cotangent_weight_2.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
@@ -68,7 +68,7 @@ namespace Surface_mesh_parameterization {
 /// \ingroup PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
 /// Read a serie of cones from an input stream. Cones are passed as an
-/// integer value that is the index of a vertex handle in the mesh tm`, using
+/// integer value that is the index of a vertex handle in the mesh `tm`, using
 /// the vertex index property map `vpmap` for correspondency.
 ///
 /// \attention The mesh is here `tm`, it is the base mesh of the `CGAL::Seam_mesh`
@@ -379,8 +379,8 @@ bool locate_unordered_cones(const SeamMesh& mesh,
 ///
 /// \sa \ref PkgSurfaceMeshParameterizationOrbifoldHelperFunctions
 ///
-template < typename SeamMesh,
-           typename SolverTraits_ = Default>
+template <typename SeamMesh,
+          typename SolverTraits_ = Default>
 class Orbifold_Tutte_parameterizer_3
 {
 public:
@@ -428,6 +428,10 @@ private:
   typedef typename Kernel::Vector_3                                 Vector_3;
   typedef typename Kernel::Point_2                                  Point_2;
   typedef typename Kernel::Point_3                                  Point_3;
+
+  // Get weight from the weight interface.
+  typedef CGAL::Generalized_weights::Tangent_weight_2<Kernel>   Tangent_weight;
+  typedef CGAL::Generalized_weights::Cotangent_weight_2<Kernel> Cotangent_weight;
 
   const Orbifold_type orb_type;
   const Weight_type weight_type;
@@ -698,17 +702,6 @@ private:
     CGAL_postcondition(current_line_id_in_M - initial_line_id == number_of_linear_constraints(mesh));
   }
 
-  // MVC computations
-  NT compute_w_ij_mvc(const Point_3& pi, const Point_3& pj, const Point_3& pk) const
-  {
-    //                                                               ->     ->
-    // Compute the angle (pj, pi, pk), the angle between the vectors ij and ik
-    const NT angle = internal::compute_angle_rad<Kernel>(pj, pi, pk);
-    const NT weight = std::tan(0.5 * angle);
-
-    return weight;
-  }
-
   // Computes the coefficients of the mean value Laplacian matrix for the edge.
   // `ij` in the face `ijk`
   void fill_mvc_matrix(const Point_3& pi, int i,
@@ -726,31 +719,35 @@ private:
     // The other parts of M(i,j) and M(i,k) will be added when this function
     // is called from the neighboring faces of F_ijk that share the vertex i
 
-    // Compute: - tan(alpha / 2)
-    const NT w_i_base = 1.0 * compute_w_ij_mvc(pi, pj, pk);
-
     // @fixme unefficient: lengths are computed (and inversed!) twice per edge
 
     // Set w_ij in matrix
+    const Tangent_weight tangent_weight;
+    const NT w_ij = tangent_weight(pi, pj, pk);
+
+    M.add_coef(2 * i, 2 * j, w_ij);
+    M.add_coef(2 * i + 1, 2 * j + 1, w_ij);
+
+    // Set w_i_base: - tan(alpha / 2)
     const Vector_3 edge_ij = pi - pj;
     const NT len_ij = CGAL::sqrt(edge_ij * edge_ij);
     CGAL_assertion(len_ij != 0.0); // two points are identical!
-    const NT w_ij = w_i_base / len_ij;
-    M.add_coef(2*i, 2*j, w_ij);
-    M.add_coef(2*i +1, 2*j + 1, w_ij);
+    const NT w_i_base = w_ij * len_ij;
 
     // Set w_ik in matrix
-    Vector_3 edge_ik = pi - pk;
+    const Vector_3 edge_ik = pi - pk;
     const NT len_ik = CGAL::sqrt(edge_ik * edge_ik);
     CGAL_assertion(len_ik != 0.0); // two points are identical!
     const NT w_ik = w_i_base / len_ik;
-    M.add_coef(2*i, 2*k, w_ik);
-    M.add_coef(2*i + 1, 2*k + 1, w_ik);
+
+    M.add_coef(2 * i, 2 * k, w_ik);
+    M.add_coef(2 * i + 1, 2 * k + 1, w_ik);
 
     // Add to w_ii (w_ii = - sum w_ij)
     const NT w_ii = - w_ij - w_ik;
-    M.add_coef(2*i, 2*i, w_ii);
-    M.add_coef(2*i + 1, 2*i + 1, w_ii);
+
+    M.add_coef(2 * i, 2 * i, w_ii);
+    M.add_coef(2 * i + 1, 2 * i + 1, w_ii);
   }
 
   // Compute the mean value Laplacian matrix.
@@ -787,42 +784,69 @@ private:
                            Matrix& M) const
   {
     const PPM ppmap = get(vertex_point, mesh);
+    for (const halfedge_descriptor hd : halfedges(mesh)) {
 
-    // not exactly sure which cotan weights should be used:
-    // 0.5 (cot a + cot b) ? 1/T1 cot a + 1/T2 cot b ? 1/Vor(i) (cot a + cot b?)
-    // Comparing to the matlab code, the basic Cotangent_weight gives the same results.
-    typedef CGAL::internal::Cotangent_weight<SeamMesh>                      Cotan_weights;
-//    typedef CGAL::internal::Cotangent_weight_with_triangle_area<SeamMesh>   Cotan_weights;
-
-    Cotan_weights cotan_weight_calculator(mesh, ppmap);
-
-    for(halfedge_descriptor hd : halfedges(mesh)) {
       const vertex_descriptor vi = source(hd, mesh);
       const vertex_descriptor vj = target(hd, mesh);
       const int i = get(vimap, vi);
       const int j = get(vimap, vj);
 
-      if(i > j)
+      if (i > j)
         continue;
 
-      // times 2 because Cotangent_weight returns 1/2 (cot alpha + cot beta)...
-      const NT w_ij = 2 * cotan_weight_calculator(hd);
+      const Cotangent_weight cotangent_weight;
+      NT cotw = NT(0);
+
+      const vertex_descriptor v0 = vj;
+      const vertex_descriptor v1 = vi;
+      const Point_3& p0 = get(ppmap, v0);
+      const Point_3& p1 = get(ppmap, v1);
+
+      if (is_border_edge(hd, mesh)) {
+        const halfedge_descriptor hd_cw = opposite(next(hd, mesh), mesh);
+        vertex_descriptor v2 = source(hd_cw, mesh);
+
+        if (is_border_edge(hd_cw, mesh)) {
+          const halfedge_descriptor hd_ccw = prev(opposite(hd, mesh), mesh);
+          v2 = source(hd_ccw, mesh);
+
+          const Point_3& p2 = get(ppmap, v2);
+          cotw = cotangent_weight(p1, p0, p2);
+        } else {
+          const Point_3& p2 = get(ppmap, v2);
+          cotw = cotangent_weight(p0, p1, p2);
+        }
+
+      } else {
+        const halfedge_descriptor hd_cw = opposite(next(hd, mesh), mesh);
+        const vertex_descriptor v2 = source(hd_cw, mesh);
+        const halfedge_descriptor hd_ccw = prev(opposite(hd, mesh), mesh);
+        const vertex_descriptor v3 = source(hd_ccw, mesh);
+
+        const Point_3& p0 = get(ppmap, v0);
+        const Point_3& p1 = get(ppmap, v1);
+        const Point_3& p2 = get(ppmap, v2);
+        const Point_3& p3 = get(ppmap, v3);
+        cotw = cotangent_weight(p1, p3, p0, p2);
+      }
+
+      const NT w_ij = (CGAL::max)(NT(0), cotw); // do I need that?
 
       // ij
-      M.set_coef(2*i, 2*j, w_ij, true /* new coef */);
-      M.set_coef(2*i +1, 2*j + 1, w_ij, true /* new coef */);
+      M.set_coef(2 * i, 2 * j, w_ij, true /* new coef */);
+      M.set_coef(2 * i + 1, 2 * j + 1, w_ij, true /* new coef */);
 
       // ji
-      M.set_coef(2*j, 2*i, w_ij, true /* new coef */);
-      M.set_coef(2*j +1, 2*i + 1, w_ij, true /* new coef */);
+      M.set_coef(2 * j, 2 * i, w_ij, true /* new coef */);
+      M.set_coef(2 * j + 1, 2 * i + 1, w_ij, true /* new coef */);
 
       // ii
-      M.add_coef(2*i, 2*i, - w_ij);
-      M.add_coef(2*i + 1, 2*i + 1, - w_ij);
+      M.add_coef(2 * i, 2 * i, - w_ij);
+      M.add_coef(2 * i + 1, 2 * i + 1, - w_ij);
 
       // jj
-      M.add_coef(2*j, 2*j, - w_ij);
-      M.add_coef(2*j + 1, 2*j + 1, - w_ij);
+      M.add_coef(2 * j, 2 * j, - w_ij);
+      M.add_coef(2 * j + 1, 2 * j + 1, - w_ij);
     }
   }
 
