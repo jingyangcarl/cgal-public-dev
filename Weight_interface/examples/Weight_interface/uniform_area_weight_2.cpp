@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Local_averaging_regions_2/Triangle_weight_2.h>
+#include <CGAL/Weight_interface/Local_averaging_regions_2/Uniform_area_weight_2.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -7,7 +7,7 @@ using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Point_3 = typename Kernel::Point_3;
 
-using TC2 = CGAL::Generalized_weights::Triangle_weight_2<Kernel>;
+using UA2 = CGAL::Generalized_weights::Uniform_area_weight_2<Kernel>;
 
 int main() {
 
@@ -22,9 +22,9 @@ int main() {
   const Point_3 vp3    = Point_3(-1, 0, 1);
 
   // Compute weights.
-  TC2 triangle;
-  std::cout << "2D triangle: " << triangle(query2, vj2, vp2) << std::endl;
-  std::cout << "3D triangle: " << triangle(query3, vj3, vp3) << std::endl;
+  UA2 uniform;
+  std::cout << "2D uniform: " << uniform(query2, vj2, vp2) << std::endl;
+  std::cout << "3D uniform: " << uniform(query3, vj3, vp3) << std::endl;
 
   return EXIT_SUCCESS;
 }

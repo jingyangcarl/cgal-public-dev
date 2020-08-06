@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_VORONOI_WEIGHT_2_H
-#define CGAL_GENERALIZED_VORONOI_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_MIXED_VORONOI_AREA_WEIGHT_2_H
+#define CGAL_GENERALIZED_MIXED_VORONOI_AREA_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,14 +34,23 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DAverage
 
-    \brief 2D Voronoi weight.
+    \brief 2D mixed Voronoi area weight.
 
     This weight is the area of the shaded region in the figure below. The region
     is formed by two midpoints of the edges incident to `q` and the circumcenter of
     the triangle `[vj, vp, q]`.
 
-    \cgalFigureBegin{voronoi_weight, voronoi_cell.svg}
-      Notation used for the Voronoi weight.
+    \cgalFigureBegin{mixed_voronoi_area_weight, mixed_voronoi_cell.svg}
+      Notation used for the mixed Voronoi area weight.
+    \cgalFigureEnd
+
+    However, unlike the original `CGAL::Generalized_weights::Voronoi_area_weight_2`,
+    if one of the angles in the triangle `[vj, vp, q]` is obtuse and the circumcenter
+    vertex of the region is outside this triangle, this vertex is moved to the mid
+    point of the edge `[vj, vp]`.
+
+    \cgalFigureBegin{mixed_voronoi_area_obtuse_weight, mixed_voronoi_cell_obtuse.svg}
+      The case with the obtuse angle.
     \cgalFigureEnd
 
     \tparam GeomTraits
@@ -50,7 +59,7 @@ namespace Generalized_weights {
     \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
-  class Voronoi_weight_2 {
+  class Mixed_voronoi_area_weight_2 {
 
   public:
 
@@ -81,7 +90,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Voronoi_weight_2(
+    Mixed_voronoi_area_weight_2(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -92,7 +101,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Voronoi weight.
+      \brief computes 2D mixed Voronoi area weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -103,7 +112,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D Voronoi weight.
+      \brief computes 2D mixed Voronoi area weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -123,10 +132,21 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      const auto circumcenter_2 =
-        m_traits.construct_circumcenter_2_object();
-      const Point_2 center =
-        circumcenter_2(vj, vp, query);
+      const auto angle_2 =
+        m_traits.angle_2_object();
+      const auto a1 = angle_2(vj, vp, query);
+      const auto a2 = angle_2(vp, query, vj);
+      const auto a3 = angle_2(query, vj, vp);
+
+      Point_2 center;
+      if (a1 != CGAL::OBTUSE && a2 != CGAL::OBTUSE && a3 != CGAL::OBTUSE) {
+        const auto circumcenter_2 =
+          m_traits.construct_circumcenter_2_object();
+        center = circumcenter_2(vj, vp, query);
+      } else {
+        center = internal::barycenter_2(m_traits, vj, vp);
+      }
+
       const Point_2 m1 =
         internal::barycenter_2(m_traits, query, vj);
       const Point_2 m2 =
@@ -144,10 +164,21 @@ namespace Generalized_weights {
       const Point_3& vj,
       const Point_3& vp) const {
 
-      const auto circumcenter_3 =
-        m_traits.construct_circumcenter_3_object();
-      const Point_3 center =
-        circumcenter_3(vj, vp, query);
+      const auto angle_3 =
+        m_traits.angle_3_object();
+      const auto a1 = angle_3(vj, vp, query);
+      const auto a2 = angle_3(vp, query, vj);
+      const auto a3 = angle_3(query, vj, vp);
+
+      Point_3 center;
+      if (a1 != CGAL::OBTUSE && a2 != CGAL::OBTUSE && a3 != CGAL::OBTUSE) {
+        const auto circumcenter_3 =
+          m_traits.construct_circumcenter_3_object();
+        center = circumcenter_3(vj, vp, query);
+      } else {
+        center = internal::barycenter_3(m_traits, vj, vp);
+      }
+
       const Point_3 m1 =
         internal::barycenter_3(m_traits, query, vj);
       const Point_3 m2 =
@@ -169,4 +200,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_VORONOI_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_MIXED_VORONOI_AREA_WEIGHT_2_H

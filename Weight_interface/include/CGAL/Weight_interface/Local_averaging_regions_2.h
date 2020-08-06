@@ -20,22 +20,15 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_ANALYTIC_WEIGHTS_2_H
-#define CGAL_GENERALIZED_ANALYTIC_WEIGHTS_2_H
+#ifndef CGAL_LOCAL_AVERAGING_REGIONS_2_H
+#define CGAL_LOCAL_AVERAGING_REGIONS_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
-// Internal includes.
-#include <CGAL/Weight_interface/Generalized_weights_2/Uniform_weight_2.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Wachspress_weight_2.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Discrete_harmonic_weight_2.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Mean_value_weight_2.h>
+#include <CGAL/Weight_interface/Local_averaging_regions_2/Uniform_area_weight_2>
+#include <CGAL/Weight_interface/Local_averaging_regions_2/Triangle_area_weight_2>
+#include <CGAL/Weight_interface/Local_averaging_regions_2/Barycentric_area_weight_2>
+#include <CGAL/Weight_interface/Local_averaging_regions_2/Voronoi_area_weight_2>
+#include <CGAL/Weight_interface/Local_averaging_regions_2/Mixed_voronoi_area_weight_2>
 
-namespace CGAL {
-namespace Generalized_weights {
-
-
-} // namespace Generalized_weights
-} // namespace CGAL
-
-#endif // CGAL_GENERALIZED_ANALYTIC_WEIGHTS_2_H
+#endif // CGAL_LOCAL_AVERAGING_REGIONS_2_H

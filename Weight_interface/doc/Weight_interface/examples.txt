@@ -9,8 +9,9 @@
 \example Weight_interface/tangent_weight_2.cpp
 \example Weight_interface/discrete_harmonic_weight_2.cpp
 \example Weight_interface/cotangent_weight_2.cpp
-\example Weight_interface/triangle_weight_2.cpp
-\example Weight_interface/barycentric_weight_2.cpp
-\example Weight_interface/voronoi_weight_2.cpp
-\example Weight_interface/mixed_voronoi_weight_2.cpp
+\example Weight_interface/uniform_area_weight_2.cpp
+\example Weight_interface/triangle_area_weight_2.cpp
+\example Weight_interface/barycentric_area_weight_2.cpp
+\example Weight_interface/voronoi_area_weight_2.cpp
+\example Weight_interface/mixed_voronoi_area_weight_2.cpp
 */

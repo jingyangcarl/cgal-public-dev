@@ -35,7 +35,6 @@
     }
     /// \endcond
   ```
-* Should I rename Triangle_weight to Triangle_area_weight?
 * I should change interface of the half weights and make it such that query is always in the middle +
   rename query, vj, and vp to p, q, r.
 * I should try to combine mvc and dhc in the orbifold parameterization.
