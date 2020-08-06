@@ -12,15 +12,10 @@ from `CGAL::Generalized_weights`.
 
 Models and functions that can be used to compute 2D generalized weights.
 
-\defgroup PkgWeightInterfaceRef2DAverage 2D Local Averaging Regions
+\defgroup PkgWeightInterfaceRef2DAverage Weighting Regions
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute 2D local averaging regions.
-
-\defgroup PkgWeightInterfaceRef2DFunctions 2D Free Functions
-\ingroup PkgWeightInterfaceRef
-
-Free functions to compute 2D generalized weights.
+Models and functions that can be used to compute weighting regions.
 
 \addtogroup PkgWeightInterfaceRef
 
@@ -61,13 +56,11 @@ Free functions to compute 2D generalized weights.
 - `CGAL::Generalized_weights::Discrete_harmonic_weight_2`
 - `CGAL::Generalized_weights::Cotangent_weight_2`
 
-### 2D Local Averaging Regions ###
-- `CGAL::Generalized_weights::Uniform_area_weight_2`
-- `CGAL::Generalized_weights::Triangle_area_weight_2`
-- `CGAL::Generalized_weights::Barycentric_area_weight_2`
-- `CGAL::Generalized_weights::Voronoi_area_weight_2`
-- `CGAL::Generalized_weights::Mixed_voronoi_area_weight_2`
-
-## 2D Free Functions ##
+### Weighting Regions ###
+- `CGAL::Generalized_weights::Uniform_region_weight`
+- `CGAL::Generalized_weights::Triangular_region_weight`
+- `CGAL::Generalized_weights::Barycentric_region_weight`
+- `CGAL::Generalized_weights::Voronoi_region_weight`
+- `CGAL::Generalized_weights::Mixed_voronoi_region_weight`
 
 */

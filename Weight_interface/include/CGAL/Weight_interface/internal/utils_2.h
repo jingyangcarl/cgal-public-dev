@@ -153,6 +153,21 @@ const typename GeomTraits::FT tangent_2(
   else return FT(0); // undefined
 }
 
+// Computes area of a 2D triangle.
+template<typename GeomTraits>
+const typename GeomTraits::FT area_2(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_2& p,
+  const typename GeomTraits::Point_2& q,
+  const typename GeomTraits::Point_2& r) {
+
+  using FT = typename GeomTraits::FT;
+  const auto area_2 =
+    traits.compute_area_2_object();
+  const FT area = CGAL::abs(area_2(p, q, r));
+  return area;
+}
+
 // Computes distance between two 3D points.
 template<typename GeomTraits>
 const typename GeomTraits::FT distance_3(

@@ -20,15 +20,15 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_LOCAL_AVERAGING_REGIONS_2_H
-#define CGAL_LOCAL_AVERAGING_REGIONS_2_H
+#ifndef CGAL_WEIGHTING_REGIONS_H
+#define CGAL_WEIGHTING_REGIONS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
-#include <CGAL/Weight_interface/Local_averaging_regions_2/Uniform_area_weight_2>
-#include <CGAL/Weight_interface/Local_averaging_regions_2/Triangle_area_weight_2>
-#include <CGAL/Weight_interface/Local_averaging_regions_2/Barycentric_area_weight_2>
-#include <CGAL/Weight_interface/Local_averaging_regions_2/Voronoi_area_weight_2>
-#include <CGAL/Weight_interface/Local_averaging_regions_2/Mixed_voronoi_area_weight_2>
+#include <CGAL/Weight_interface/Weighting_regions/Uniform_region_weight>
+#include <CGAL/Weight_interface/Weighting_regions/Triangular_region_weight>
+#include <CGAL/Weight_interface/Weighting_regions/Barycentric_region_weight>
+#include <CGAL/Weight_interface/Weighting_regions/Voronoi_region_weight>
+#include <CGAL/Weight_interface/Weighting_regions/Mixed_voronoi_region_weight>
 
-#endif // CGAL_LOCAL_AVERAGING_REGIONS_2_H
+#endif // CGAL_WEIGHTING_REGIONS_H

@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_MIXED_VORONOI_AREA_WEIGHT_2_H
-#define CGAL_GENERALIZED_MIXED_VORONOI_AREA_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHT_H
+#define CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,22 +34,22 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DAverage
 
-    \brief 2D mixed Voronoi area weight.
+    \brief Mixed Voronoi region weight.
 
     This weight is the area of the shaded region in the figure below. The region
     is formed by two midpoints of the edges incident to `q` and the circumcenter of
-    the triangle `[vj, vp, q]`.
+    the triangle `[p, q, r]`.
 
-    \cgalFigureBegin{mixed_voronoi_area_weight, mixed_voronoi_cell.svg}
-      Notation used for the mixed Voronoi area weight.
+    \cgalFigureBegin{mixed_voronoi_region_weight, mixed_voronoi_cell.svg}
+      Notation used for the mixed Voronoi region weight.
     \cgalFigureEnd
 
-    However, unlike the original `CGAL::Generalized_weights::Voronoi_area_weight_2`,
-    if one of the angles in the triangle `[vj, vp, q]` is obtuse and the circumcenter
+    However, unlike the original `CGAL::Generalized_weights::Voronoi_region_weight`,
+    if one of the angles in the triangle `[p, q, r]` is obtuse and the circumcenter
     vertex of the region is outside this triangle, this vertex is moved to the mid
-    point of the edge `[vj, vp]`.
+    point of the edge `[r, p]`.
 
-    \cgalFigureBegin{mixed_voronoi_area_obtuse_weight, mixed_voronoi_cell_obtuse.svg}
+    \cgalFigureBegin{mixed_voronoi_region_weight_obtuse, mixed_voronoi_cell_obtuse.svg}
       The case with the obtuse angle.
     \cgalFigureEnd
 
@@ -59,7 +59,7 @@ namespace Generalized_weights {
     \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
-  class Mixed_voronoi_area_weight_2 {
+  class Mixed_voronoi_region_weight {
 
   public:
 
@@ -90,7 +90,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Mixed_voronoi_area_weight_2(
+    Mixed_voronoi_region_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -104,22 +104,22 @@ namespace Generalized_weights {
       \brief computes 2D mixed Voronoi area weight.
     */
     const FT operator()(
-      const Point_2& query,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
-      return weight_2(query, vj, vp);
+      return weight_2(p, q, r);
     }
 
     /*!
       \brief computes 2D mixed Voronoi area weight.
     */
     const FT operator()(
-      const Point_3& query,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
-      return weight_3(query, vj, vp);
+      return weight_3(p, q, r);
     }
 
     /// @}
@@ -128,76 +128,91 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT weight_2(
-      const Point_2& query,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
       const auto angle_2 =
         m_traits.angle_2_object();
-      const auto a1 = angle_2(vj, vp, query);
-      const auto a2 = angle_2(vp, query, vj);
-      const auto a3 = angle_2(query, vj, vp);
+      const auto a1 = angle_2(p, q, r);
+      const auto a2 = angle_2(q, r, p);
+      const auto a3 = angle_2(r, p, q);
 
       Point_2 center;
       if (a1 != CGAL::OBTUSE && a2 != CGAL::OBTUSE && a3 != CGAL::OBTUSE) {
         const auto circumcenter_2 =
           m_traits.construct_circumcenter_2_object();
-        center = circumcenter_2(vj, vp, query);
+        center = circumcenter_2(p, q, r);
       } else {
-        center = internal::barycenter_2(m_traits, vj, vp);
+        center = internal::barycenter_2(m_traits, r, p);
       }
 
       const Point_2 m1 =
-        internal::barycenter_2(m_traits, query, vj);
+        internal::barycenter_2(m_traits, p, q);
       const Point_2 m2 =
-        internal::barycenter_2(m_traits, query, vp);
+        internal::barycenter_2(m_traits, q, r);
 
-      const auto area_2 =
-        m_traits.compute_area_2_object();
-      const FT A1 = area_2(m1, center, query);
-      const FT A2 = area_2(center, m2, query);
+      const FT A1 = internal::area_2(m_traits, q, center, m1);
+      const FT A2 = internal::area_2(m_traits, q, m2, center);
       return weight(A1, A2);
     }
 
     const FT weight_3(
-      const Point_3& query,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
       const auto angle_3 =
         m_traits.angle_3_object();
-      const auto a1 = angle_3(vj, vp, query);
-      const auto a2 = angle_3(vp, query, vj);
-      const auto a3 = angle_3(query, vj, vp);
+      const auto a1 = angle_3(p, q, r);
+      const auto a2 = angle_3(q, r, p);
+      const auto a3 = angle_3(r, p, q);
 
       Point_3 center;
       if (a1 != CGAL::OBTUSE && a2 != CGAL::OBTUSE && a3 != CGAL::OBTUSE) {
         const auto circumcenter_3 =
           m_traits.construct_circumcenter_3_object();
-        center = circumcenter_3(vj, vp, query);
+        center = circumcenter_3(p, q, r);
       } else {
-        center = internal::barycenter_3(m_traits, vj, vp);
+        center = internal::barycenter_3(m_traits, r, p);
       }
 
       const Point_3 m1 =
-        internal::barycenter_3(m_traits, query, vj);
+        internal::barycenter_3(m_traits, p, q);
       const Point_3 m2 =
-        internal::barycenter_3(m_traits, query, vp);
+        internal::barycenter_3(m_traits, q, r);
 
-      const FT A1 = internal::area_3(m_traits, m1, center, query);
-      const FT A2 = internal::area_3(m_traits, center, m2, query);
+      const FT A1 = internal::area_3(m_traits, q, center, m1);
+      const FT A2 = internal::area_3(m_traits, q, m2, center);
       return weight(A1, A2);
     }
 
     const FT weight(
       const FT A1, const FT A2) const {
 
-      const FT w = A1 + A2;
-      return w;
+      return A1 + A2;
     }
   };
+
+  template<typename Point_2>
+  decltype(auto) mixed_voronoi_area_2(
+    const Point_2& p, const Point_2& q, const Point_2& r) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Mixed_voronoi_region_weight<Traits> mixed_voronoi_area;
+    return mixed_voronoi_area(p, q, r);
+  }
+
+  template<typename Point_3>
+  decltype(auto) mixed_voronoi_area_3(
+    const Point_3& p, const Point_3& q, const Point_3& r) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Mixed_voronoi_region_weight<Traits> mixed_voronoi_area;
+    return mixed_voronoi_area(p, q, r);
+  }
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_MIXED_VORONOI_AREA_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHT_H

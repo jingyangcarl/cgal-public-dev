@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_VORONOI_AREA_WEIGHT_2_H
-#define CGAL_GENERALIZED_VORONOI_AREA_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHT_H
+#define CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,14 +34,14 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DAverage
 
-    \brief 2D Voronoi area weight.
+    \brief Barycentric region weight.
 
     This weight is the area of the shaded region in the figure below. The region
-    is formed by two midpoints of the edges incident to `q` and the circumcenter of
-    the triangle `[vj, vp, q]`.
+    is formed by two midpoints of the edges incident to `q` and the barycenter of
+    the triangle `[p, q, r]`.
 
-    \cgalFigureBegin{voronoi_area_weight, voronoi_cell.svg}
-      Notation used for the Voronoi area weight.
+    \cgalFigureBegin{barycentric_region_weight, barycentric_cell.svg}
+      Notation used for the barycentric region weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
@@ -50,7 +50,7 @@ namespace Generalized_weights {
     \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
-  class Voronoi_area_weight_2 {
+  class Barycentric_region_weight {
 
   public:
 
@@ -81,7 +81,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Voronoi_area_weight_2(
+    Barycentric_region_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -92,25 +92,25 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Voronoi area weight.
+      \brief computes 2D barycentric area weight.
     */
     const FT operator()(
-      const Point_2& query,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
-      return weight_2(query, vj, vp);
+      return weight_2(p, q, r);
     }
 
     /*!
-      \brief computes 2D Voronoi area weight.
+      \brief computes 2D barycentric area weight.
     */
     const FT operator()(
-      const Point_3& query,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
-      return weight_3(query, vj, vp);
+      return weight_3(p, q, r);
     }
 
     /// @}
@@ -119,54 +119,65 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT weight_2(
-      const Point_2& query,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
-      const auto circumcenter_2 =
-        m_traits.construct_circumcenter_2_object();
       const Point_2 center =
-        circumcenter_2(vj, vp, query);
+        internal::barycenter_2(m_traits, p, q, r);
       const Point_2 m1 =
-        internal::barycenter_2(m_traits, query, vj);
+        internal::barycenter_2(m_traits, p, q);
       const Point_2 m2 =
-        internal::barycenter_2(m_traits, query, vp);
+        internal::barycenter_2(m_traits, q, r);
 
-      const auto area_2 =
-        m_traits.compute_area_2_object();
-      const FT A1 = area_2(m1, center, query);
-      const FT A2 = area_2(center, m2, query);
+      const FT A1 = internal::area_2(m_traits, q, center, m1);
+      const FT A2 = internal::area_2(m_traits, q, m2, center);
       return weight(A1, A2);
     }
 
     const FT weight_3(
-      const Point_3& query,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
-      const auto circumcenter_3 =
-        m_traits.construct_circumcenter_3_object();
       const Point_3 center =
-        circumcenter_3(vj, vp, query);
+        internal::barycenter_3(m_traits, p, q, r);
       const Point_3 m1 =
-        internal::barycenter_3(m_traits, query, vj);
+        internal::barycenter_3(m_traits, p, q);
       const Point_3 m2 =
-        internal::barycenter_3(m_traits, query, vp);
+        internal::barycenter_3(m_traits, q, r);
 
-      const FT A1 = internal::area_3(m_traits, m1, center, query);
-      const FT A2 = internal::area_3(m_traits, center, m2, query);
+      const FT A1 = internal::area_3(m_traits, q, center, m1);
+      const FT A2 = internal::area_3(m_traits, q, m2, center);
       return weight(A1, A2);
     }
 
     const FT weight(
       const FT A1, const FT A2) const {
 
-      const FT w = A1 + A2;
-      return w;
+      return A1 + A2;
     }
   };
+
+  template<typename Point_2>
+  decltype(auto) barycentric_area_2(
+    const Point_2& p, const Point_2& q, const Point_2& r) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Barycentric_region_weight<Traits> barycentric_area;
+    return barycentric_area(p, q, r);
+  }
+
+  template<typename Point_3>
+  decltype(auto) barycentric_area_3(
+    const Point_3& p, const Point_3& q, const Point_3& r) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Barycentric_region_weight<Traits> barycentric_area;
+    return barycentric_area(p, q, r);
+  }
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_VORONOI_AREA_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHT_H

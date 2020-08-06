@@ -68,34 +68,34 @@ Here, you can find a few examples on how to compute various 2D generalized weigh
 \cgalExample{Weight_interface/cotangent_weight_2.cpp}
 
 
-\section Weight_Interface_Examples2DAverage 2D Local Averaging Regions
+\section Weight_Interface_Examples2DAverage Weighting Regions
 
-Here, you can find a few examples on how to compute various 2D local averaging regions.
-
-
-\subsection Weight_Interface_Examples_UA2 Uniform Area Weight 2
-
-\cgalExample{Weight_interface/uniform_area_weight_2.cpp}
+Here, you can find a few examples on how to compute various weighting regions.
 
 
-\subsection Weight_Interface_Examples_TA2 Triangle Area Weight 2
+\subsection Weight_Interface_Examples_URW Uniform Region Weight
 
-\cgalExample{Weight_interface/triangle_area_weight_2.cpp}
-
-
-\subsection Weight_Interface_Examples_BA2 Barycentric Area Weight 2
-
-\cgalExample{Weight_interface/barycentric_area_weight_2.cpp}
+\cgalExample{Weight_interface/uniform_region_weight.cpp}
 
 
-\subsection Weight_Interface_Examples_VA2 Voronoi Area Weight 2
+\subsection Weight_Interface_Examples_TRW Triangular Region Weight
 
-\cgalExample{Weight_interface/voronoi_area_weight_2.cpp}
+\cgalExample{Weight_interface/triangular_region_weight.cpp}
 
 
-\subsection Weight_Interface_Examples_MVA2 Mixed Voronoi Area Weight 2
+\subsection Weight_Interface_Examples_BRW Barycentric Region Weight
 
-\cgalExample{Weight_interface/mixed_voronoi_area_weight_2.cpp}
+\cgalExample{Weight_interface/barycentric_region_weight.cpp}
+
+
+\subsection Weight_Interface_Examples_VRW Voronoi Region Weight
+
+\cgalExample{Weight_interface/voronoi_region_weight.cpp}
+
+
+\subsection Weight_Interface_Examples_MVR Mixed Voronoi Region Weight
+
+\cgalExample{Weight_interface/mixed_voronoi_region_weight.cpp}
 
 */
 } /* namespace CGAL */

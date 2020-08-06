@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_UNIFORM_AREA_WEIGHT_2_H
-#define CGAL_GENERALIZED_UNIFORM_AREA_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHT_H
+#define CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,9 +34,13 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DAverage
 
-    \brief 2D uniform area weight.
+    \brief Triangular region weight.
 
-    This weight always returns 1.
+    This weight is the area of the shaded triangle in the figure below.
+
+    \cgalFigureBegin{triangular_region_weight, triangle_cell.svg}
+      Notation used for the triangular region weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -44,7 +48,7 @@ namespace Generalized_weights {
     \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
-  class Uniform_area_weight_2 {
+  class Triangular_region_weight {
 
   public:
 
@@ -75,7 +79,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Uniform_area_weight_2(
+    Triangular_region_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -86,25 +90,25 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D uniform area weight.
+      \brief computes 2D triangle area weight.
     */
     const FT operator()(
-      const Point_2&,
-      const Point_2&,
-      const Point_2&) const {
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
-      return weight();
+      return weight_2(p, q, r);
     }
 
     /*!
-      \brief computes 2D uniform area weight.
+      \brief computes 2D triangle area weight.
     */
     const FT operator()(
-      const Point_3&,
-      const Point_3&,
-      const Point_3&) const {
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
-      return weight();
+      return weight_3(p, q, r);
     }
 
     /// @}
@@ -112,12 +116,52 @@ namespace Generalized_weights {
   private:
     const GeomTraits m_traits;
 
-    const FT weight() const {
-      return FT(1);
+    const FT weight_2(
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
+
+      const FT A =
+        internal::area_2(m_traits, p, q, r);
+      return weight(A);
+    }
+
+    const FT weight_3(
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
+
+      const FT A =
+        internal::area_3(m_traits, p, q, r);
+      return weight(A);
+    }
+
+    const FT weight(
+      const FT A) const {
+
+      return A;
     }
   };
+
+  template<typename Point_2>
+  decltype(auto) triangle_area_2(
+    const Point_2& p, const Point_2& q, const Point_2& r) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Triangular_region_weight<Traits> triangle_area;
+    return triangle_area(p, q, r);
+  }
+
+  template<typename Point_3>
+  decltype(auto) triangle_area_3(
+    const Point_3& p, const Point_3& q, const Point_3& r) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Triangular_region_weight<Traits> triangle_area;
+    return triangle_area(p, q, r);
+  }
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_UNIFORM_AREA_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHT_H
