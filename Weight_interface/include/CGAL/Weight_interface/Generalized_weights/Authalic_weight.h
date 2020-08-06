@@ -103,22 +103,22 @@ namespace Generalized_weights {
       \brief computes the half value of 2D authalic weight.
     */
     const FT operator()(
-      const Point_2& query,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
-      return half_weight_2(query, vj, vp);
+      return half_weight_2(p, q, r);
     }
 
     /*!
       \brief computes the half value of 2D authalic weight.
     */
     const FT operator()(
-      const Point_3& query,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
-      return half_weight_3(query, vj, vp);
+      return half_weight_3(p, q, r);
     }
 
     /*!
@@ -151,38 +151,38 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT half_weight_2(
-      const Point_2& query,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
       const FT cot_angle =
-        internal::cotangent_2(m_traits, query, vj, vp);
+        internal::cotangent_2(m_traits, p, q, r);
       const auto squared_distance_2 =
         m_traits.compute_squared_distance_2_object();
-      const FT rj2 = squared_distance_2(query, vj);
-      return half_weight(cot_angle, rj2);
+      const FT r2 = squared_distance_2(r, p);
+      return half_weight(cot_angle, r2);
     }
 
     const FT half_weight_3(
-      const Point_3& query,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
       const FT cot_angle =
-        internal::cotangent_3(m_traits, query, vj, vp);
+        internal::cotangent_3(m_traits, p, q, r);
       const auto squared_distance_3 =
         m_traits.compute_squared_distance_3_object();
-      const FT rj2 = squared_distance_3(query, vj);
-      return half_weight(cot_angle, rj2);
+      const FT r2 = squared_distance_3(r, p);
+      return half_weight(cot_angle, r2);
     }
 
     const FT half_weight(
-      const FT cot_angle, const FT rj2) const {
+      const FT cot_angle, const FT r2) const {
 
       FT w = FT(0);
-      CGAL_assertion(rj2 != FT(0));
-      if (rj2 != FT(0)) {
-        const FT inv = FT(2) / rj2;
+      CGAL_assertion(r2 != FT(0));
+      if (r2 != FT(0)) {
+        const FT inv = FT(2) / r2;
         w = cot_angle * inv;
       }
       return w;
