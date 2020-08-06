@@ -43,9 +43,9 @@ Here, you can find a few examples on how to compute various 2D generalized weigh
 \cgalExample{Weight_interface/wachspress_weight_2.cpp}
 
 
-\subsection Weight_Interface_Examples_AW2 Authalic Weight 2
+\subsection Weight_Interface_Examples_AW Authalic Weight
 
-\cgalExample{Weight_interface/authalic_weight_2.cpp}
+\cgalExample{Weight_interface/authalic_weight.cpp}
 
 
 \subsection Weight_Interface_Examples_MV2 Mean Value Weight 2
@@ -63,9 +63,9 @@ Here, you can find a few examples on how to compute various 2D generalized weigh
 \cgalExample{Weight_interface/discrete_harmonic_weight_2.cpp}
 
 
-\subsection Weight_Interface_Examples_CW2 Cotangent Weight 2
+\subsection Weight_Interface_Examples_CW Cotangent Weight
 
-\cgalExample{Weight_interface/cotangent_weight_2.cpp}
+\cgalExample{Weight_interface/cotangent_weight.cpp}
 
 
 \section Weight_Interface_Examples2DAverage Weighting Regions

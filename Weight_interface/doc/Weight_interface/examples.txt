@@ -4,11 +4,11 @@
 \example Weight_interface/inverse_distance_weight_2.cpp
 \example Weight_interface/shepard_weight_2.cpp
 \example Weight_interface/wachspress_weight_2.cpp
-\example Weight_interface/authalic_weight_2.cpp
+\example Weight_interface/authalic_weight.cpp
 \example Weight_interface/mean_value_weight_2.cpp
 \example Weight_interface/tangent_weight_2.cpp
 \example Weight_interface/discrete_harmonic_weight_2.cpp
-\example Weight_interface/cotangent_weight_2.cpp
+\example Weight_interface/cotangent_weight.cpp
 \example Weight_interface/uniform_region_weight.cpp
 \example Weight_interface/triangular_region_weight.cpp
 \example Weight_interface/barycentric_region_weight.cpp
