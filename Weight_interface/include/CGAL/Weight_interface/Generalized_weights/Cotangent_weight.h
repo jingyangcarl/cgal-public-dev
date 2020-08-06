@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_COTANGENT_WEIGHT_2_H
-#define CGAL_GENERALIZED_COTANGENT_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_COTANGENT_WEIGHT_H
+#define CGAL_GENERALIZED_COTANGENT_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,7 +34,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DWeights
 
-    \brief 2D cotangent weight.
+    \brief Cotangent weight.
 
     The full weight is computed as
 
@@ -45,8 +45,8 @@ namespace Generalized_weights {
     \f$h = 2 \cot\gamma\f$
 
     with notations shown in the figure below. This weight is equal to the
-    `CGAL::Generalized_weights::Discrete_harmonic_weight_2`. This weight is a special
-    case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
+    `CGAL::Generalized_weights::Discrete_harmonic_weight`. This weight is a special
+    case of the `CGAL::Generalized_weights::Three_point_family_weight`.
 
     \cgalFigureBegin{cotangent_weight, cotangent.svg}
       Notation used for the cotangent weight.
@@ -55,10 +55,10 @@ namespace Generalized_weights {
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
-    \cgalModels `AnalyticWeight_2`, `HalfWeight_2`
+    \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Cotangent_weight_2 {
+  class Cotangent_weight {
 
   public:
 
@@ -89,7 +89,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Cotangent_weight_2(
+    Cotangent_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -100,49 +100,58 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes the half value of 2D cotangent weight.
+      \brief to be added
     */
-    const FT operator()(
-      const Point_2& query,
-      const Point_2& vj,
-      const Point_2& vp) const {
+    const FT cotangent(
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
-      return half_weight_2(query, vj, vp);
+      return cotangent_2(p, q, r);
     }
 
     /*!
-      \brief computes the half value of 2D cotangent weight.
+      \brief to be added
     */
-    const FT operator()(
-      const Point_3& query,
-      const Point_3& vj,
-      const Point_3& vp) const {
+    const FT cotangent(
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
-      return half_weight_3(query, vj, vp);
+      return cotangent_3(p, q, r);
     }
 
     /*!
-      \brief computes 2D cotangent weight.
+      \brief computes the half of the cotangent weight.
     */
     const FT operator()(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const FT cot) const {
 
-      return weight_2(query, vm, vj, vp);
+      return half_weight(cot);
     }
 
     /*!
-      \brief computes 2D cotangent weight.
+      \brief computes the cotangent weight.
     */
     const FT operator()(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      return weight_3(query, vm, vj, vp);
+      return weight_2(q, t, r, p);
+    }
+
+    /*!
+      \brief computes the cotangent weight.
+    */
+    const FT operator()(
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
+
+      return weight_3(q, t, r, p);
     }
 
     /// @}
@@ -150,53 +159,47 @@ namespace Generalized_weights {
   private:
     const GeomTraits m_traits;
 
-    const FT half_weight_2(
-      const Point_2& query,
-      const Point_2& vj,
-      const Point_2& vp) const {
+    const FT cotangent_2(
+      const Point_2& p,
+      const Point_2& q,
+      const Point_2& r) const {
 
-      const FT cot_angle =
-        internal::cotangent_2(m_traits, vj, vp, query);
-      return half_weight(cot_angle);
+      return internal::cotangent_2(m_traits, p, q, r);
     }
 
-    const FT half_weight_3(
-      const Point_3& query,
-      const Point_3& vj,
-      const Point_3& vp) const {
+    const FT cotangent_3(
+      const Point_3& p,
+      const Point_3& q,
+      const Point_3& r) const {
 
-      const FT cot_angle =
-        internal::cotangent_3(m_traits, vj, vp, query);
-      return half_weight(cot_angle);
+      return internal::cotangent_3(m_traits, p, q, r);
     }
 
     const FT half_weight(
-      const FT cot_angle) const {
+      const FT cot) const {
 
-      const FT w =
-        FT(2) * cot_angle;
-      return w;
+      return FT(2) * cot;
     }
 
     const FT weight_2(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      const FT cot_beta  = internal::cotangent_2(m_traits, query, vm, vj);
-      const FT cot_gamma = internal::cotangent_2(m_traits, vj, vp, query);
+      const FT cot_beta  = internal::cotangent_2(m_traits, q, t, r);
+      const FT cot_gamma = internal::cotangent_2(m_traits, r, p, q);
       return weight(cot_beta, cot_gamma);
     }
 
     const FT weight_3(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      const FT cot_beta  = internal::cotangent_3(m_traits, query, vm, vj);
-      const FT cot_gamma = internal::cotangent_3(m_traits, vj, vp, query);
+      const FT cot_beta  = internal::cotangent_3(m_traits, q, t, r);
+      const FT cot_gamma = internal::cotangent_3(m_traits, r, p, q);
       return weight(cot_beta, cot_gamma);
     }
 
@@ -204,11 +207,27 @@ namespace Generalized_weights {
       const FT cot_beta,
       const FT cot_gamma) const {
 
-      const FT w =
-        FT(2) * (cot_beta + cot_gamma);
-      return w;
+      return FT(2) * (cot_beta + cot_gamma);
     }
   };
+
+  template<typename Point_2>
+  decltype(auto) cotangent_weight_2(
+    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Cotangent_weight<Traits> cotangent;
+    return cotangent(q, t, r, p);
+  }
+
+  template<typename Point_3>
+  decltype(auto) cotangent_weight_3(
+    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Cotangent_weight<Traits> cotangent;
+    return cotangent(q, t, r, p);
+  }
 
 } // namespace Generalized_weights
 } // namespace CGAL

@@ -42,7 +42,6 @@ Models and functions that can be used to compute weighting regions.
 ### Concepts ###
 - `AnalyticTraits_2`
 - `AnalyticWeight_2`
-- `HalfWeight_2`
 
 ### 2D Generalized Weights ###
 - `CGAL::Generalized_weights::Uniform_weight_2`

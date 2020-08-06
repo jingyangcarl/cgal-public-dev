@@ -25,7 +25,9 @@ int main() {
   URW uniform;
   std::cout << "2D uniform: " << uniform(p2, q2, r2) << std::endl;
   std::cout << "3D uniform: " << uniform(p3, q3, r3) << std::endl;
-  std::cout << "---------" << std::endl;
+  std::cout << "----------" << std::endl;
+
+  // Using free functions.
   std::cout << "2D uniform: " <<
     CGAL::Generalized_weights::uniform_area_2(p2, q2, r2) << std::endl;
   std::cout << "3D uniform: " <<

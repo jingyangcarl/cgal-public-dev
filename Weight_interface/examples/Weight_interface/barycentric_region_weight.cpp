@@ -25,7 +25,9 @@ int main() {
   BRW barycentric;
   std::cout << "2D barycentric: " << barycentric(p2, q2, r2) << std::endl;
   std::cout << "3D barycentric: " << barycentric(p3, q3, r3) << std::endl;
-  std::cout << "---------" << std::endl;
+  std::cout << "--------------" << std::endl;
+
+  // Using free functions.
   std::cout << "2D barycentric: " <<
     CGAL::Generalized_weights::barycentric_area_2(p2, q2, r2) << std::endl;
   std::cout << "3D barycentric: " <<

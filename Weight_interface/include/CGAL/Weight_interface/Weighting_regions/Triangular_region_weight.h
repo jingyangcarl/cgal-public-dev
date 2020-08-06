@@ -44,8 +44,6 @@ namespace Generalized_weights {
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
-
-    \cgalModels `HalfWeight_2`
   */
   template<typename GeomTraits>
   class Triangular_region_weight {

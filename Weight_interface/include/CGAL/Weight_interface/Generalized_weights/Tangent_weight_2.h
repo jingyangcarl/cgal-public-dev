@@ -60,7 +60,7 @@ namespace Generalized_weights {
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
-    \cgalModels `AnalyticWeight_2`, `HalfWeight_2`
+    \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
   class Tangent_weight_2 {
