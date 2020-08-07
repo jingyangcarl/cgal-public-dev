@@ -164,6 +164,30 @@ namespace Generalized_weights {
     }
   };
 
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the Wachspress weight for 2D points.
+
+    This function infers a traits class `GeomTraits` from the `Point_2` type.
+
+    \tparam Point_2
+    must be `CGAL::Point_2<GeomTraits>`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \return the computed weight.
+  */
   template<typename Point_2>
   decltype(auto) wachspress_weight_2(
     const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
@@ -173,6 +197,30 @@ namespace Generalized_weights {
     return wachspress(q, t, r, p);
   }
 
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the Wachspress weight for 3D points.
+
+    This function infers a traits class `GeomTraits` from the `Point_3` type.
+
+    \tparam Point_3
+    must be `CGAL::Point_3<GeomTraits>`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \return the computed weight.
+  */
   template<typename Point_3>
   decltype(auto) wachspress_weight_3(
     const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {

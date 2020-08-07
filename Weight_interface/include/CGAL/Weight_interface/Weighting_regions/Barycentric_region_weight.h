@@ -157,6 +157,27 @@ namespace Generalized_weights {
     }
   };
 
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the barycentric area on a 2D triangle [p, q, r].
+
+    This function infers a traits class `GeomTraits` from the `Point_2` type.
+
+    \tparam Point_2
+    must be `CGAL::Point_2<GeomTraits>`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param r
+    the third point
+
+    \return the computed area.
+  */
   template<typename Point_2>
   decltype(auto) barycentric_area_2(
     const Point_2& p, const Point_2& q, const Point_2& r) {
@@ -166,6 +187,27 @@ namespace Generalized_weights {
     return barycentric_area(p, q, r);
   }
 
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the barycentric area on a 3D triangle [p, q, r].
+
+    This function infers a traits class `GeomTraits` from the `Point_3` type.
+
+    \tparam Point_3
+    must be `CGAL::Point_3<GeomTraits>`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param r
+    the third point
+
+    \return the computed area.
+  */
   template<typename Point_3>
   decltype(auto) barycentric_area_3(
     const Point_3& p, const Point_3& q, const Point_3& r) {
