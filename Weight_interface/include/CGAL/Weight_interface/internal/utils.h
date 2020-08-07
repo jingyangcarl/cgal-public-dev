@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_UTILS_2_H
-#define CGAL_GENERALIZED_WEIGHTS_UTILS_2_H
+#ifndef CGAL_GENERALIZED_WEIGHTS_UTILS_H
+#define CGAL_GENERALIZED_WEIGHTS_UTILS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -153,21 +153,6 @@ const typename GeomTraits::FT tangent_2(
   else return FT(0); // undefined
 }
 
-// Computes area of a 2D triangle.
-template<typename GeomTraits>
-const typename GeomTraits::FT area_2(
-  const GeomTraits& traits,
-  const typename GeomTraits::Point_2& p,
-  const typename GeomTraits::Point_2& q,
-  const typename GeomTraits::Point_2& r) {
-
-  using FT = typename GeomTraits::FT;
-  const auto area_2 =
-    traits.compute_area_2_object();
-  const FT area = CGAL::abs(area_2(p, q, r));
-  return area;
-}
-
 // Computes distance between two 3D points.
 template<typename GeomTraits>
 const typename GeomTraits::FT distance_3(
@@ -262,28 +247,6 @@ const typename GeomTraits::FT tangent_3(
   CGAL_assertion(dot != FT(0));
   if (dot != FT(0)) return length / dot;
   else return FT(0); // undefined
-}
-
-// Computes area of a 3D triangle.
-template<typename GeomTraits>
-const typename GeomTraits::FT area_3(
-  const GeomTraits& traits,
-  const typename GeomTraits::Point_3& p,
-  const typename GeomTraits::Point_3& q,
-  const typename GeomTraits::Point_3& r) {
-
-  using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
-
-  const Vector_3 v = Vector_3(q, r);
-  const Vector_3 w = Vector_3(q, p);
-
-  const auto cross_product_3 =
-    traits.construct_cross_product_vector_3_object();
-  const Vector_3 cross = cross_product_3(v, w);
-  const FT half = FT(1) / FT(2);
-  const FT area = half * length_3(traits, cross);
-  return area;
 }
 
 // Computes 2D barycenter of the points a and b.
@@ -578,15 +541,111 @@ void flatten(
   // std::cout << "vj: " << pj << std::endl;
   // std::cout << "vp: " << pp << std::endl;
 
-  // const auto area_2 = traits.compute_area_2_object();
-  // std::cout << "Am: " << area_2(pq, pm, pj) << std::endl;
-  // std::cout << "Aj: " << area_2(pq, pj, pp) << std::endl;
-  // std::cout << "C: "  << area_2(pm, pj, pp) << std::endl;
-  // std::cout << "B: "  << area_2(pq, pm, pp) << std::endl;
+  // std::cout << "Am: " << area_2(traits, pq, pm, pj) << std::endl;
+  // std::cout << "Aj: " << area_2(traits, pq, pj, pp) << std::endl;
+  // std::cout << "C: "  << area_2(traits, pm, pj, pp) << std::endl;
+  // std::cout << "B: "  << area_2(traits, pq, pm, pp) << std::endl;
+}
+
+// Computes area of a 2D triangle.
+template<typename GeomTraits>
+const typename GeomTraits::FT area_2(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_2& p,
+  const typename GeomTraits::Point_2& q,
+  const typename GeomTraits::Point_2& r) {
+
+  using FT = typename GeomTraits::FT;
+  const auto area_2 =
+    traits.compute_area_2_object();
+  return area_2(p, q, r);
+}
+
+// Computes positive area of a 2D triangle.
+template<typename GeomTraits>
+const typename GeomTraits::FT positive_area_2(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_2& p,
+  const typename GeomTraits::Point_2& q,
+  const typename GeomTraits::Point_2& r) {
+
+  return CGAL::abs(area_2(traits, p, q, r));
+}
+
+// Computes area of a 3D triangle.
+template<typename GeomTraits>
+const typename GeomTraits::FT area_3(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_3& p,
+  const typename GeomTraits::Point_3& q,
+  const typename GeomTraits::Point_3& r) {
+
+  using FT = typename GeomTraits::FT;
+  using Point_3 = typename GeomTraits::Point_3;
+  using Vector_3 = typename GeomTraits::Vector_3;
+  using Plane_3 = typename GeomTraits::Plane_3;
+
+  // Compute barycenter.
+  const Point_3 center =
+    barycenter_3(traits, p, q, r);
+
+  // Translate.
+  const Point_3 a = Point_3(
+    p.x() - center.x(), p.y() - center.y(), p.z() - center.z());
+  const Point_3 b = Point_3(
+    q.x() - center.x(), q.y() - center.y(), q.z() - center.z());
+  const Point_3 c = Point_3(
+    r.x() - center.x(), r.y() - center.y(), r.z() - center.z());
+
+  // Prev and next vectors.
+  Vector_3 v1 = Vector_3(b, a);
+  Vector_3 v2 = Vector_3(b, c);
+  normalize_3(traits, v1);
+  normalize_3(traits, v2);
+
+  const auto cross_product_3 =
+    traits.construct_cross_product_vector_3_object();
+  Vector_3 normal = cross_product_3(v1, v2);
+  normalize_3(traits, normal);
+
+  // Compute orthogonal base vectors.
+  Vector_3 b1, b2;
+  orthogonal_bases_3(traits, normal, b1, b2);
+
+  // Compute area.
+  const auto& origin = b;
+  const auto pf = to_2d(traits, b1, b2, origin, a);
+  const auto qf = to_2d(traits, b1, b2, origin, b);
+  const auto rf = to_2d(traits, b1, b2, origin, c);
+
+  const FT area_3 = area_2(traits, pf, qf, rf);
+  return area_3;
+}
+
+// Computes positive area of a 3D triangle.
+template<typename GeomTraits>
+const typename GeomTraits::FT positive_area_3(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_3& p,
+  const typename GeomTraits::Point_3& q,
+  const typename GeomTraits::Point_3& r) {
+
+  using FT = typename GeomTraits::FT;
+  using Vector_3 = typename GeomTraits::Vector_3;
+
+  const Vector_3 v = Vector_3(q, r);
+  const Vector_3 w = Vector_3(q, p);
+
+  const auto cross_product_3 =
+    traits.construct_cross_product_vector_3_object();
+  const Vector_3 cross = cross_product_3(v, w);
+  const FT half = FT(1) / FT(2);
+  const FT area_3 = half * length_3(traits, cross);
+  return area_3;
 }
 
 } // namespace internal
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_UTILS_2_H
+#endif // CGAL_GENERALIZED_WEIGHTS_UTILS_H

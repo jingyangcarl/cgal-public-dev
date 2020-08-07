@@ -26,7 +26,7 @@
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/internal/utils_2.h>
+#include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -145,10 +145,9 @@ namespace Generalized_weights {
       \brief computes the half of the authalic weight.
     */
     const FT operator()(
-      const FT cot,
-      const FT sqd) const {
+      const FT cot, const FT d2) const {
 
-      return half_weight(cot, sqd);
+      return half_weight(cot, d2);
     }
 
     /*!
@@ -215,12 +214,12 @@ namespace Generalized_weights {
     }
 
     const FT half_weight(
-      const FT cot, const FT sqd) const {
+      const FT cot, const FT r2) const {
 
       FT w = FT(0);
-      CGAL_assertion(sqd != FT(0));
-      if (sqd != FT(0)) {
-        const FT inv = FT(2) / sqd;
+      CGAL_assertion(r2 != FT(0));
+      if (r2 != FT(0)) {
+        const FT inv = FT(2) / r2;
         w = cot * inv;
       }
       return w;
@@ -263,12 +262,12 @@ namespace Generalized_weights {
     const FT weight(
       const FT cot_gamma,
       const FT cot_beta,
-      const FT d2) const {
+      const FT r2) const {
 
       FT w = FT(0);
-      CGAL_assertion(d2 != FT(0));
-      if (d2 != FT(0)) {
-        const FT inv = FT(2) / d2;
+      CGAL_assertion(r2 != FT(0));
+      if (r2 != FT(0)) {
+        const FT inv = FT(2) / r2;
         w = (cot_gamma + cot_beta) * inv;
       }
       return w;

@@ -39,3 +39,4 @@
   rename query, vj, and vp to p, q, r.
 * I should try to combine mvc and dhc in the orbifold parameterization.
 * I should use free functions in the parameterization.
+* In some weights we use area_3, which is always positive. Is it ok?

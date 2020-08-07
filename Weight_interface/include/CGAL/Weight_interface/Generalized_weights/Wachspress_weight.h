@@ -20,13 +20,13 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
-#define CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_WACHSPRESS_WEIGHT_2_H
+#define CGAL_GENERALIZED_WACHSPRESS_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/internal/utils_2.h>
+#include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -34,18 +34,18 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DWeights
 
-    \brief 2D discrete harmonic weight.
+    \brief 2D Wachspress weight.
 
     The full weight is computed as
 
-    \f$w = \frac{r_p^2 A_m - r^2 B + r_m^2 A}{A_m A}\f$
+    \f$w = \frac{C}{A_m A}\f$
 
     with notations shown in the figure below. This weight is equal to the
-    `CGAL::Generalized_weights::Cotangent_weight_2`. This weight is a special
+    `CGAL::Generalized_weights::Authalic_weight_2`. This weight is a special
     case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
 
-    \cgalFigureBegin{discrete_harmonic_weight, discrete_harmonic.svg}
-      Notation used for the discrete harmonic weight.
+    \cgalFigureBegin{wachspress_weight, wachspress.svg}
+      Notation used for the Wachspress weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
@@ -54,7 +54,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Discrete_harmonic_weight_2 {
+  class Wachspress_weight_2 {
 
   public:
 
@@ -85,7 +85,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Discrete_harmonic_weight_2(
+    Wachspress_weight_2(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -96,7 +96,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D discrete harmonic weight.
+      \brief computes 2D Wachspress weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -108,7 +108,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D discrete harmonic weight.
+      \brief computes 2D Wachspress weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -130,20 +130,12 @@ namespace Generalized_weights {
       const Point_2& vj,
       const Point_2& vp) const {
 
-      const auto squared_distance_2 =
-        m_traits.compute_squared_distance_2_object();
-      const FT rm2 = squared_distance_2(query, vm);
-      const FT rj2 = squared_distance_2(query, vj);
-      const FT rp2 = squared_distance_2(query, vp);
-
       const auto area_2 =
         m_traits.compute_area_2_object();
       const FT Am = area_2(vm, vj, query);
       const FT Aj = area_2(vj, vp, query);
-      const FT Bj = area_2(vm, vp, query);
-
-      return weight(
-        rm2, rj2, rp2, Am, Aj, Bj);
+      const FT Cj  = area_2(vm, vj, vp);
+      return weight(Am, Aj, Cj);
     }
 
     const FT weight_3(
@@ -160,15 +152,14 @@ namespace Generalized_weights {
     }
 
     const FT weight(
-      const FT rm2, const FT rj2, const FT rp2,
-      const FT Am, const FT Aj, const FT Bj) const {
+      const FT Am, const FT Aj, const FT Cj) const {
 
       FT w = FT(0);
       CGAL_assertion(Am != FT(0) && Aj != FT(0));
       const FT prod = Am * Aj;
       if (prod != FT(0)) {
         const FT inv = FT(1) / prod;
-        w = (rp2 * Am - rj2 * Bj + rm2 * Aj) * inv;
+        w = Cj * inv;
       }
       return w;
     }
@@ -177,4 +168,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_WACHSPRESS_WEIGHT_2_H

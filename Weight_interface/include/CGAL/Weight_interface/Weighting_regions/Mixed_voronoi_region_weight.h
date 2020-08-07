@@ -26,7 +26,7 @@
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/internal/utils_2.h>
+#include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -150,8 +150,8 @@ namespace Generalized_weights {
       const Point_2 m2 =
         internal::barycenter_2(m_traits, q, r);
 
-      const FT A1 = internal::area_2(m_traits, q, center, m1);
-      const FT A2 = internal::area_2(m_traits, q, m2, center);
+      const FT A1 = internal::positive_area_2(m_traits, q, center, m1);
+      const FT A2 = internal::positive_area_2(m_traits, q, m2, center);
       return weight(A1, A2);
     }
 
@@ -180,8 +180,8 @@ namespace Generalized_weights {
       const Point_3 m2 =
         internal::barycenter_3(m_traits, q, r);
 
-      const FT A1 = internal::area_3(m_traits, q, center, m1);
-      const FT A2 = internal::area_3(m_traits, q, m2, center);
+      const FT A1 = internal::positive_area_3(m_traits, q, center, m1);
+      const FT A2 = internal::positive_area_3(m_traits, q, m2, center);
       return weight(A1, A2);
     }
 

@@ -29,8 +29,8 @@ if(CGAL_FOUND)
 
   # create_single_source_cgal_program(
   #   "mean_value_weight.cpp")
-  # create_single_source_cgal_program(
-  #   "tangent_weight.cpp")
+  create_single_source_cgal_program(
+    "tangent_weight.cpp")
 
   # create_single_source_cgal_program(
   #   "discrete_harmonic_weight.cpp")

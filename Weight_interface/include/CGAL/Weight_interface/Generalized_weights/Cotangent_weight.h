@@ -26,7 +26,7 @@
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/internal/utils_2.h>
+#include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -232,4 +232,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_COTANGENT_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_COTANGENT_WEIGHT_H

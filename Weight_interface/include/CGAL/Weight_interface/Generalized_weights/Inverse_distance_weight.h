@@ -20,13 +20,13 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
-#define CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_2_H
+#define CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_2_H
 
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/internal/utils_2.h>
+#include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -34,20 +34,17 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DWeights
 
-    \brief 2D Shepard weight.
+    \brief 2D inverse distance weight.
 
     The full weight is computed as
 
-    \f$w = \frac{1}{r^a}\f$
+    \f$w = \frac{1}{r}\f$
 
-    with notations shown in the figure below and \f$a\f$ any real number
-    being the power parameter.
+    with notations shown in the figure below. This weight is a special case of
+    the `CGAL::Generalized_weights::Shepard_weight_2`.
 
-    For \f$a = 1\f$ this weight is equal to the
-    `CGAL::Generalized_weights::Inverse_distance_weight_2`.
-
-    \cgalFigureBegin{shepard_weight, shepard.svg}
-      Notation used for the Shepard weight.
+    \cgalFigureBegin{inverse_distance_weight, inverse_distance.svg}
+      Notation used for the inverse distance weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
@@ -56,7 +53,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Shepard_weight_2 {
+  class Inverse_distance_weight_2 {
 
   public:
 
@@ -84,16 +81,12 @@ namespace Generalized_weights {
     /*!
       \brief initializes all internal data structures.
 
-      \param a
-      the power parameter
-
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Shepard_weight_2(
-      const FT a = FT(1), // default is for inverse distance weight
+    Inverse_distance_weight_2(
       const GeomTraits traits = GeomTraits()) :
-    m_p(a), m_traits(traits)
+    m_traits(traits)
     { }
 
     /// @}
@@ -102,7 +95,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Shepard weight.
+      \brief computes 2D inverse distance weight.
     */
     const FT operator()(
       const Point_2& query,
@@ -116,7 +109,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D Shepard weight.
+      \brief computes 2D inverse distance weight.
     */
     const FT operator()(
       const Point_3& query,
@@ -132,7 +125,6 @@ namespace Generalized_weights {
     /// @}
 
   private:
-    const FT m_p;
     const GeomTraits m_traits;
 
     const FT weight(
@@ -140,12 +132,8 @@ namespace Generalized_weights {
 
       FT w = FT(0);
       CGAL_assertion(rj != FT(0));
-      if (rj != FT(0)) {
-        FT denom = rj;
-        if (m_p != FT(1))
-          denom = internal::power(m_traits, rj, m_p);
-        w = FT(1) / denom;
-      }
+      if (rj != FT(0))
+        w = FT(1) / rj;
       return w;
     }
   };
@@ -153,4 +141,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_2_H
