@@ -25,7 +25,7 @@ int main() {
   TRW triangle;
   std::cout << "2D triangle: " << triangle(p2, q2, r2) << std::endl;
   std::cout << "3D triangle: " << triangle(p3, q3, r3) << std::endl;
-  std::cout << "-----------" << std::endl;
+  std::cout << "----------------" << std::endl;
 
   // Using free functions.
   std::cout << "2D triangle: " <<

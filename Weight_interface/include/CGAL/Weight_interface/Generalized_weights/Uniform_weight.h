@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_UNIFORM_WEIGHT_2_H
-#define CGAL_GENERALIZED_UNIFORM_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_UNIFORM_WEIGHT_H
+#define CGAL_GENERALIZED_UNIFORM_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,7 +34,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DWeights
 
-    \brief 2D uniform weight.
+    \brief Uniform weight.
 
     This weight always returns 1.
 
@@ -44,7 +44,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Uniform_weight_2 {
+  class Uniform_weight {
 
   public:
 
@@ -75,7 +75,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Uniform_weight_2(
+    Uniform_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -86,7 +86,7 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D uniform weight.
+      \brief computes the uniform weight.
     */
     const FT operator()(
       const Point_2&,
@@ -98,7 +98,7 @@ namespace Generalized_weights {
     }
 
     /*!
-      \brief computes 2D uniform weight.
+      \brief computes the uniform weight.
     */
     const FT operator()(
       const Point_3&,
@@ -119,7 +119,25 @@ namespace Generalized_weights {
     }
   };
 
+  template<typename Point_2>
+  decltype(auto) uniform_weight_2(
+    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Uniform_weight<Traits> uniform;
+    return uniform(q, t, r, p);
+  }
+
+  template<typename Point_3>
+  decltype(auto) uniform_weight_3(
+    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Uniform_weight<Traits> uniform;
+    return uniform(q, t, r, p);
+  }
+
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_UNIFORM_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_UNIFORM_WEIGHT_H

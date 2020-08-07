@@ -27,14 +27,14 @@ int main() {
   CW cw;
   std::cout << "2D cotangent: " << cw(q2, t2, r2, p2) << std::endl;
   std::cout << "3D cotangent: " << cw(q3, t3, r3, p3) << std::endl;
-  std::cout << "------------" << std::endl;
+  std::cout << "---------------" << std::endl;
 
   // Using free functions.
   std::cout << "2D cotangent: " <<
     CGAL::Generalized_weights::cotangent_weight_2(q2, t2, r2, p2) << std::endl;
   std::cout << "3D cotangent: " <<
     CGAL::Generalized_weights::cotangent_weight_3(q3, t3, r3, p3) << std::endl;
-  std::cout << "------------" << std::endl;
+  std::cout << "---------------" << std::endl;
 
   // Construct a 2D weight.
   const FT w2 =

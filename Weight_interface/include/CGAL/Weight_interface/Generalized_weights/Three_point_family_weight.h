@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_2_H
-#define CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_H
+#define CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,7 +34,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRef2DWeights
 
-    \brief 2D three point family weight.
+    \brief Three point family weight.
 
     The full weight is computed as
 
@@ -44,16 +44,16 @@ namespace Generalized_weights {
     being the power parameter.
 
     For \f$a = 0\f$ this weight is equal to the
-    `CGAL::Generalized_weights::Wachspress_weight_2` and
-    `CGAL::Generalized_weights::Authalic_weight_2`.
+    `CGAL::Generalized_weights::Wachspress_weight` and
+    `CGAL::Generalized_weights::Authalic_weight`.
 
     For \f$a = 1\f$ this weight is equal to the
-    `CGAL::Generalized_weights::Mean_value_weight_2` and
-    `CGAL::Generalized_weights::Tangent_weight_2`.
+    `CGAL::Generalized_weights::Mean_value_weight` and
+    `CGAL::Generalized_weights::Tangent_weight`.
 
     For \f$a = 2\f$ this weight is equal to the
-    `CGAL::Generalized_weights::Discrete_harmonic_weight_2` and
-    `CGAL::Generalized_weights::Cotangent_weight_2`.
+    `CGAL::Generalized_weights::Discrete_harmonic_weight` and
+    `CGAL::Generalized_weights::Cotangent_weight`.
 
     \cgalFigureBegin{three_point_family_weight, three_point_family.svg}
       Notation used for the three point family weight.
@@ -65,7 +65,7 @@ namespace Generalized_weights {
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Three_point_family_weight_2 {
+  class Three_point_family_weight {
 
   public:
 
@@ -99,7 +99,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Three_point_family_weight_2(
+    Three_point_family_weight(
       const FT a = FT(1), // default is for mean value coordinates
       const GeomTraits traits = GeomTraits()) :
     m_p(a), m_traits(traits)
@@ -111,27 +111,27 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D three point family weight.
+      \brief computes the three point family weight.
     */
     const FT operator()(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      return weight_2(query, vm, vj, vp);
+      return weight_2(q, t, r, p);
     }
 
     /*!
-      \brief computes 2D three point family weight.
+      \brief computes the three point family weight.
     */
     const FT operator()(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      return weight_3(query, vm, vj, vp);
+      return weight_3(q, t, r, p);
     }
 
     /// @}
@@ -141,62 +141,79 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT weight_2(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      const FT rm = internal::distance_2(m_traits, query, vm);
-      const FT rj = internal::distance_2(m_traits, query, vj);
-      const FT rp = internal::distance_2(m_traits, query, vp);
+      const FT d1 = internal::distance_2(m_traits, q, t);
+      const FT d2 = internal::distance_2(m_traits, q, r);
+      const FT d3 = internal::distance_2(m_traits, q, p);
 
-      const auto area_2 =
-        m_traits.compute_area_2_object();
-      const FT Am = area_2(vm, vj, query);
-      const FT Aj = area_2(vj, vp, query);
-      const FT Bj = area_2(vm, vp, query);
+      const FT A1 = internal::area_2(m_traits, r, q, t);
+      const FT A2 = internal::area_2(m_traits, p, q, r);
+      const FT B  = internal::area_2(m_traits, p, q, t);
 
       return weight(
-        rm, rj, rp, Am, Aj, Bj);
+        d1, d2, d3, A1, A2, B);
     }
 
     const FT weight_3(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      Point_2 pq, pm, pj, pp;
+      Point_2 qf, tf, rf, pf;
       internal::flatten(
-        m_traits, query, vm, vj, vp,
-        pq, pm, pj, pp);
-      return weight_2(pq, pm, pj, pp);
+        m_traits,
+        q,  t,  r,  p,
+        qf, tf, rf, pf);
+      return weight_2(qf, tf, rf, pf);
     }
 
     const FT weight(
-      const FT rm, const FT rj, const FT rp,
-      const FT Am, const FT Aj, const FT Bj) const {
+      const FT r1, const FT r2, const FT r3,
+      const FT A1, const FT A2, const FT B) const {
 
       FT w = FT(0);
-      CGAL_assertion(Am != FT(0) && Aj != FT(0));
-      const FT prod = Am * Aj;
+      CGAL_assertion(A1 != FT(0) && A2 != FT(0));
+      const FT prod = A1 * A2;
       if (prod != FT(0)) {
         const FT inv = FT(1) / prod;
-        FT a = rm;
-        FT b = rj;
-        FT c = rp;
+        FT a1 = r1;
+        FT b  = r2;
+        FT a2 = r3;
         if (m_p != FT(1)) {
-          a = internal::power(m_traits, rm, m_p);
-          b = internal::power(m_traits, rj, m_p);
-          c = internal::power(m_traits, rp, m_p);
+          a1 = internal::power(m_traits, r1, m_p);
+          b  = internal::power(m_traits, r2, m_p);
+          a2 = internal::power(m_traits, r3, m_p);
         }
-        w = (a * Am - b * Bj + c * Aj) * inv;
+        w = (a1 * A1 - b * B + a2 * A2) * inv;
       }
       return w;
     }
   };
 
+  template<typename Point_2>
+  decltype(auto) three_point_family_weight_2(
+    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Three_point_family_weight<Traits> family;
+    return family(q, t, r, p);
+  }
+
+  template<typename Point_3>
+  decltype(auto) three_point_family_weight_3(
+    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Three_point_family_weight<Traits> family;
+    return family(q, t, r, p);
+  }
+
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_H

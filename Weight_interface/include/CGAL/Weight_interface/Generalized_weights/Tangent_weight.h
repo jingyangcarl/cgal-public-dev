@@ -295,8 +295,8 @@ namespace Generalized_weights {
       const FT l2 = internal::length_2(m_traits, s2);
       const FT l3 = internal::length_2(m_traits, s3);
 
-      const FT A1 = internal::area_2(m_traits, t, r, q);
-      const FT A2 = internal::area_2(m_traits, q, r, p);
+      const FT A1 = internal::area_2(m_traits, r, q, t);
+      const FT A2 = internal::area_2(m_traits, p, q, r);
 
       const auto dot_product_2 =
         m_traits.compute_scalar_product_2_object();
@@ -321,8 +321,8 @@ namespace Generalized_weights {
       const FT l2 = internal::length_3(m_traits, s2);
       const FT l3 = internal::length_3(m_traits, s3);
 
-      const FT A1 = internal::positive_area_3(m_traits, t, r, q);
-      const FT A2 = internal::positive_area_3(m_traits, q, r, p);
+      const FT A1 = internal::positive_area_3(m_traits, r, q, t);
+      const FT A2 = internal::positive_area_3(m_traits, p, q, r);
 
       const auto dot_product_3 =
         m_traits.compute_scalar_product_3_object();

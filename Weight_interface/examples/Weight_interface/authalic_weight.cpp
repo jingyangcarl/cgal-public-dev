@@ -27,14 +27,14 @@ int main() {
   AW aw;
   std::cout << "2D authalic: " << aw(q2, t2, r2, p2) << std::endl;
   std::cout << "3D authalic: " << aw(q3, t3, r3, p3) << std::endl;
-  std::cout << "-----------" << std::endl;
+  std::cout << "--------------" << std::endl;
 
   // Using free functions.
   std::cout << "2D authalic: " <<
     CGAL::Generalized_weights::authalic_weight_2(q2, t2, r2, p2) << std::endl;
   std::cout << "3D authalic: " <<
     CGAL::Generalized_weights::authalic_weight_3(q3, t3, r3, p3) << std::endl;
-  std::cout << "-----------" << std::endl;
+  std::cout << "--------------" << std::endl;
 
   // Construct a 2D weight.
   const FT w2 =

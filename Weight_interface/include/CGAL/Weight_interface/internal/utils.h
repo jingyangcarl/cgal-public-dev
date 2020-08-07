@@ -454,14 +454,14 @@ const typename GeomTraits::Point_2 to_2d(
 template<typename GeomTraits>
 void flatten(
   const GeomTraits& traits,
-  const typename GeomTraits::Point_3& query, // query point
-  const typename GeomTraits::Point_3& nm,    // prev neighbor/vertex
-  const typename GeomTraits::Point_3& nj,    // curr neighbor/vertex
-  const typename GeomTraits::Point_3& np,    // next neighbor/vertex
-  typename GeomTraits::Point_2& pq,
-  typename GeomTraits::Point_2& pm,
-  typename GeomTraits::Point_2& pj,
-  typename GeomTraits::Point_2& pp) {
+  const typename GeomTraits::Point_3& q, // query point
+  const typename GeomTraits::Point_3& t, // prev neighbor/vertex
+  const typename GeomTraits::Point_3& r, // curr neighbor/vertex
+  const typename GeomTraits::Point_3& p, // next neighbor/vertex
+  typename GeomTraits::Point_2& qf,
+  typename GeomTraits::Point_2& tf,
+  typename GeomTraits::Point_2& rf,
+  typename GeomTraits::Point_2& pf) {
 
   // std::cout << std::endl;
   using Point_3 = typename GeomTraits::Point_3;
@@ -471,31 +471,31 @@ void flatten(
 
   // Compute barycenter.
   const Point_3 center =
-    barycenter_3(traits, query, nm, nj, np);
+    barycenter_3(traits, q, t, r, p);
   // std::cout << "barycenter: " << center << std::endl;
 
   // Translate.
-  const Point_3 vq = Point_3(
-    query.x() - center.x(), query.y() - center.y(), query.z() - center.z());
-  const Point_3 vm = Point_3(
-    nm.x() - center.x(), nm.y() - center.y(), nm.z() - center.z());
-  const Point_3 vj = Point_3(
-    nj.x() - center.x(), nj.y() - center.y(), nj.z() - center.z());
-  const Point_3 vp = Point_3(
-    np.x() - center.x(), np.y() - center.y(), np.z() - center.z());
+  const Point_3 q1 = Point_3(
+    q.x() - center.x(), q.y() - center.y(), q.z() - center.z());
+  const Point_3 t1 = Point_3(
+    t.x() - center.x(), t.y() - center.y(), t.z() - center.z());
+  const Point_3 r1 = Point_3(
+    r.x() - center.x(), r.y() - center.y(), r.z() - center.z());
+  const Point_3 p1 = Point_3(
+    p.x() - center.x(), p.y() - center.y(), p.z() - center.z());
 
-  // std::cout << "tr vq: " << vq << std::endl;
-  // std::cout << "tr vm: " << vm << std::endl;
-  // std::cout << "tr vj: " << vj << std::endl;
-  // std::cout << "tr vp: " << vp << std::endl;
+  // std::cout << "translated q1: " << q1 << std::endl;
+  // std::cout << "translated t1: " << t1 << std::endl;
+  // std::cout << "translated r1: " << r1 << std::endl;
+  // std::cout << "translated p1: " << p1 << std::endl;
 
   // Middle axis.
-  Vector_3 ax = Vector_3(vq, vj);
+  Vector_3 ax = Vector_3(q1, r1);
   normalize_3(traits, ax);
 
   // Prev and next vectors.
-  Vector_3 v1 = Vector_3(vq, vm);
-  Vector_3 v2 = Vector_3(vq, vp);
+  Vector_3 v1 = Vector_3(q1, t1);
+  Vector_3 v2 = Vector_3(q1, p1);
 
   normalize_3(traits, v1);
   normalize_3(traits, v2);
@@ -514,12 +514,12 @@ void flatten(
   const double angle_rad = angle_3(traits, n1, n2);
   // std::cout << "angle deg n1 <-> n2: " << angle_rad * 180.0 / CGAL_PI << std::endl;
 
-  // Rotate vp around ax so that it lands onto the plane [query, vm, vj].
-  const Point_3& rq = vq;
-  const Point_3& rm = vm;
-  const Point_3& rj = vj;
-  const Point_3  rp = rotate_point_3(traits, angle_rad, ax, vp);
-  // std::cout << "rotated vp: " << rp << std::endl;
+  // Rotate p1 around ax so that it lands onto the plane [q1, t1, r1].
+  const Point_3& q2 = q1;
+  const Point_3& t2 = t1;
+  const Point_3& r2 = r1;
+  const Point_3  p2 = rotate_point_3(traits, angle_rad, ax, p1);
+  // std::cout << "rotated p2: " << p2 << std::endl;
 
   // Compute orthogonal base vectors.
   Vector_3 b1, b2;
@@ -530,21 +530,21 @@ void flatten(
   // std::cout << "angle deg b1 <-> b2: " << angle12 * 180.0 / CGAL_PI << std::endl;
 
   // Flatten a quad.
-  const auto& origin = vq;
-  pq = to_2d(traits, b1, b2, origin, rq);
-  pm = to_2d(traits, b1, b2, origin, rm);
-  pj = to_2d(traits, b1, b2, origin, rj);
-  pp = to_2d(traits, b1, b2, origin, rp);
+  const auto& origin = q2;
+  qf = to_2d(traits, b1, b2, origin, q2);
+  tf = to_2d(traits, b1, b2, origin, t2);
+  rf = to_2d(traits, b1, b2, origin, r2);
+  pf = to_2d(traits, b1, b2, origin, p2);
 
-  // std::cout << "vq: " << pq << std::endl;
-  // std::cout << "vm: " << pm << std::endl;
-  // std::cout << "vj: " << pj << std::endl;
-  // std::cout << "vp: " << pp << std::endl;
+  // std::cout << "flattened qf: " << qf << std::endl;
+  // std::cout << "flattened tf: " << tf << std::endl;
+  // std::cout << "flattened rf: " << rf << std::endl;
+  // std::cout << "flattened pf: " << pf << std::endl;
 
-  // std::cout << "Am: " << area_2(traits, pq, pm, pj) << std::endl;
-  // std::cout << "Aj: " << area_2(traits, pq, pj, pp) << std::endl;
-  // std::cout << "C: "  << area_2(traits, pm, pj, pp) << std::endl;
-  // std::cout << "B: "  << area_2(traits, pq, pm, pp) << std::endl;
+  // std::cout << "A1: " << area_2(traits, rf, qf, pf) << std::endl;
+  // std::cout << "A2: " << area_2(traits, pf, qf, rf) << std::endl;
+  // std::cout << "C: "  << area_2(traits, tf, rf, pf) << std::endl;
+  // std::cout << "B: "  << area_2(traits, pf, qf, tf) << std::endl;
 }
 
 // Computes area of a 2D triangle.

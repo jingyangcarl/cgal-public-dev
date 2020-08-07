@@ -12,10 +12,10 @@ if(CGAL_FOUND)
   include(${CGAL_USE_FILE})
   include(CGAL_CreateSingleSourceCGALProgram)
 
-  # create_single_source_cgal_program(
-  #   "uniform_weight.cpp")
-  # create_single_source_cgal_program(
-  #   "three_point_family_weight.cpp")
+  create_single_source_cgal_program(
+    "uniform_weight.cpp")
+  create_single_source_cgal_program(
+    "three_point_family_weight.cpp")
 
   # create_single_source_cgal_program(
   #   "inverse_distance_weight.cpp")

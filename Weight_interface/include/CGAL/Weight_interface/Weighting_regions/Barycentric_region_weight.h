@@ -124,12 +124,12 @@ namespace Generalized_weights {
       const Point_2 center =
         internal::barycenter_2(m_traits, p, q, r);
       const Point_2 m1 =
-        internal::barycenter_2(m_traits, p, q);
-      const Point_2 m2 =
         internal::barycenter_2(m_traits, q, r);
+      const Point_2 m2 =
+        internal::barycenter_2(m_traits, q, p);
 
-      const FT A1 = internal::positive_area_2(m_traits, q, center, m1);
-      const FT A2 = internal::positive_area_2(m_traits, q, m2, center);
+      const FT A1 = internal::positive_area_2(m_traits, q, m1, center);
+      const FT A2 = internal::positive_area_2(m_traits, q, center, m2);
       return weight(A1, A2);
     }
 
@@ -141,12 +141,12 @@ namespace Generalized_weights {
       const Point_3 center =
         internal::barycenter_3(m_traits, p, q, r);
       const Point_3 m1 =
-        internal::barycenter_3(m_traits, p, q);
-      const Point_3 m2 =
         internal::barycenter_3(m_traits, q, r);
+      const Point_3 m2 =
+        internal::barycenter_3(m_traits, q, p);
 
-      const FT A1 = internal::positive_area_3(m_traits, q, center, m1);
-      const FT A2 = internal::positive_area_3(m_traits, q, m2, center);
+      const FT A1 = internal::positive_area_3(m_traits, q, m1, center);
+      const FT A2 = internal::positive_area_3(m_traits, q, center, m2);
       return weight(A1, A2);
     }
 
