@@ -32,7 +32,7 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DAverage
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief Mixed Voronoi region weight.
 
@@ -54,7 +54,7 @@ namespace Generalized_weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
   */
   template<typename GeomTraits>
   class Mixed_voronoi_region_weight {

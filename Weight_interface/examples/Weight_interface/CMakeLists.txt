@@ -17,23 +17,23 @@ if(CGAL_FOUND)
   create_single_source_cgal_program(
     "three_point_family_weight.cpp")
 
-  # create_single_source_cgal_program(
-  #   "inverse_distance_weight.cpp")
-  # create_single_source_cgal_program(
-  #   "shepard_weight.cpp")
+  create_single_source_cgal_program(
+    "inverse_distance_weight.cpp")
+  create_single_source_cgal_program(
+    "shepard_weight.cpp")
 
-  # create_single_source_cgal_program(
-  #   "wachspress_weight.cpp")
+  create_single_source_cgal_program(
+    "wachspress_weight.cpp")
   create_single_source_cgal_program(
     "authalic_weight.cpp")
 
-  # create_single_source_cgal_program(
-  #   "mean_value_weight.cpp")
+  create_single_source_cgal_program(
+    "mean_value_weight.cpp")
   create_single_source_cgal_program(
     "tangent_weight.cpp")
 
-  # create_single_source_cgal_program(
-  #   "discrete_harmonic_weight.cpp")
+  create_single_source_cgal_program(
+    "discrete_harmonic_weight.cpp")
   create_single_source_cgal_program(
     "cotangent_weight.cpp")
 

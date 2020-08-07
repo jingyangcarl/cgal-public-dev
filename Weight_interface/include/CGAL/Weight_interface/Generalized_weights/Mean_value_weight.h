@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_2_H
-#define CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_H
+#define CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,9 +32,9 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DWeights
+    \ingroup PkgWeightInterfaceRefWeights
 
-    \brief 2D mean value weight.
+    \brief Mean value weight.
 
     The full weight is computed as
 
@@ -44,23 +44,23 @@ namespace Generalized_weights {
 
     \f$D_m = (v_j - q) \cdot (v_m - q)\f$,
     \f$D_p = (v_j - q) \cdot (v_p - q)\f$, and
-    \f$D = (v_m - q) \cdot (v_p - q)\f$.
+    \f$D   = (v_m - q) \cdot (v_p - q)\f$.
 
     The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
-    This weight is equal to the `CGAL::Generalized_weights::Tangent_weight_2`.
-    This weight is a special case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
+    This weight is equal to the `CGAL::Generalized_weights::Tangent_weight`.
+    This weight is a special case of the `CGAL::Generalized_weights::Three_point_family_weight`.
 
     \cgalFigureBegin{mean_value_weight, mean_value.svg}
       Notation used for the mean value weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
 
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Mean_value_weight_2 {
+  class Mean_value_weight {
 
   public:
 
@@ -91,7 +91,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Mean_value_weight_2(
+    Mean_value_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -102,27 +102,27 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D mean value weight.
+      \brief computes the mean value weight.
     */
     const FT operator()(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      return weight_2(query, vm, vj, vp);
+      return weight_2(q, t, r, p);
     }
 
     /*!
-      \brief computes 2D mean value weight.
+      \brief computes the mean value weight.
     */
     const FT operator()(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      return weight_3(query, vm, vj, vp);
+      return weight_3(q, t, r, p);
     }
 
     /// @}
@@ -131,63 +131,62 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT weight_2(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      const auto sm = vm - query;
-      const auto sj = vj - query;
-      const auto sp = vp - query;
+      const auto s1 = t - q;
+      const auto s2 = r - q;
+      const auto s3 = p - q;
 
-      const FT rm = internal::length_2(m_traits, sm);
-      const FT rj = internal::length_2(m_traits, sj);
-      const FT rp = internal::length_2(m_traits, sp);
+      const FT l1 = internal::length_2(m_traits, s1);
+      const FT l2 = internal::length_2(m_traits, s2);
+      const FT l3 = internal::length_2(m_traits, s3);
 
       const auto dot_product_2 =
         m_traits.compute_scalar_product_2_object();
-      const FT Dm = dot_product_2(sm, sj);
-      const FT Dj = dot_product_2(sj, sp);
-      const FT Dq = dot_product_2(sm, sp);
+      const FT D1 = dot_product_2(s1, s2);
+      const FT D2 = dot_product_2(s2, s3);
+      const FT D  = dot_product_2(s1, s3);
 
-      const auto area_2 =
-        m_traits.compute_area_2_object();
-      const FT Am = area_2(vm, vj, query);
-      const FT Aj = area_2(vj, vp, query);
-      const FT Bj = area_2(vm, vp, query);
-      const FT sign = sign_of_weight(Am, Aj, Bj);
+      const FT A1 = internal::area_2(m_traits, r, q, t);
+      const FT A2 = internal::area_2(m_traits, p, q, r);
+      const FT B  = internal::area_2(m_traits, p, q, t);
+      const FT sign = sign_of_weight(A1, A2, B);
 
       return weight(
-        rm, rj, rp, Dm, Dj, Dq, sign);
+        l1, l2, l3, D1, D2, D, sign);
     }
 
     const FT weight_3(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      Point_2 pq, pm, pj, pp;
+      Point_2 qf, tf, rf, pf;
       internal::flatten(
-        m_traits, query, vm, vj, vp,
-        pq, pm, pj, pp);
-      return weight_2(pq, pm, pj, pp);
+        m_traits,
+        q,  t,  r,  p,
+        qf, tf, rf, pf);
+      return weight_2(qf, tf, rf, pf);
     }
 
     const FT weight(
-      const FT rm, const FT rj, const FT rp,
-      const FT Dm, const FT Dj, const FT Dq,
+      const FT r1, const FT r2, const FT r3,
+      const FT D1, const FT D2, const FT D,
       const FT sign) const {
 
-      const FT Pm = rm * rj + Dm;
-      const FT Pj = rj * rp + Dj;
+      const FT P1 = r1 * r2 + D1;
+      const FT P2 = r2 * r3 + D2;
 
       FT w = FT(0);
-      CGAL_assertion(Pm != FT(0) && Pj != FT(0));
-      const FT prod = Pm * Pj;
+      CGAL_assertion(P1 != FT(0) && P2 != FT(0));
+      const FT prod = P1 * P2;
       if (prod != FT(0)) {
         const FT inv = FT(1) / prod;
-        w = FT(2) * (rm * rp - Dq) * inv;
+        w = FT(2) * (r1 * r3 - D) * inv;
         CGAL_assertion(w >= FT(0));
         if (w < FT(0)) w = CGAL::abs(w);
         w = static_cast<FT>(
@@ -198,19 +197,35 @@ namespace Generalized_weights {
     }
 
     FT sign_of_weight(
-      const FT& Am,
-      const FT& Aj,
-      const FT& Bj) const {
+      const FT& A1, const FT& A2, const FT& B) const {
 
-      if (Am > FT(0) && Aj > FT(0) && Bj <= FT(0)) return  FT(1);
-      if (Am < FT(0) && Aj < FT(0) && Bj >= FT(0)) return -FT(1);
-      if (Bj > FT(0)) return  FT(1);
-      if (Bj < FT(0)) return -FT(1);
+      if (A1 > FT(0) && A2 > FT(0) && B <= FT(0)) return  FT(1);
+      if (A1 < FT(0) && A2 < FT(0) && B >= FT(0)) return -FT(1);
+      if (B  > FT(0)) return  FT(1);
+      if (B  < FT(0)) return -FT(1);
       return FT(0);
     }
   };
 
+  template<typename Point_2>
+  decltype(auto) mean_value_weight_2(
+    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Mean_value_weight<Traits> mean_value;
+    return mean_value(q, t, r, p);
+  }
+
+  template<typename Point_3>
+  decltype(auto) mean_value_weight_3(
+    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Mean_value_weight<Traits> mean_value;
+    return mean_value(q, t, r, p);
+  }
+
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_MEAN_VALUE_WEIGHT_H

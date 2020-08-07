@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
-#define CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_H
+#define CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,29 +32,29 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DWeights
+    \ingroup PkgWeightInterfaceRefWeights
 
-    \brief 2D discrete harmonic weight.
+    \brief Discrete harmonic weight.
 
     The full weight is computed as
 
     \f$w = \frac{r_p^2 A_m - r^2 B + r_m^2 A}{A_m A}\f$
 
     with notations shown in the figure below. This weight is equal to the
-    `CGAL::Generalized_weights::Cotangent_weight_2`. This weight is a special
-    case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
+    `CGAL::Generalized_weights::Cotangent_weight`. This weight is a special
+    case of the `CGAL::Generalized_weights::Three_point_family_weight`.
 
     \cgalFigureBegin{discrete_harmonic_weight, discrete_harmonic.svg}
       Notation used for the discrete harmonic weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
 
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Discrete_harmonic_weight_2 {
+  class Discrete_harmonic_weight {
 
   public:
 
@@ -85,7 +85,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Discrete_harmonic_weight_2(
+    Discrete_harmonic_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -96,27 +96,27 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D discrete harmonic weight.
+      \brief computes the discrete harmonic weight.
     */
     const FT operator()(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      return weight_2(query, vm, vj, vp);
+      return weight_2(q, t, r, p);
     }
 
     /*!
-      \brief computes 2D discrete harmonic weight.
+      \brief computes the discrete harmonic weight.
     */
     const FT operator()(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      return weight_3(query, vm, vj, vp);
+      return weight_3(q, t, r, p);
     }
 
     /// @}
@@ -125,56 +125,73 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT weight_2(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
       const auto squared_distance_2 =
         m_traits.compute_squared_distance_2_object();
-      const FT rm2 = squared_distance_2(query, vm);
-      const FT rj2 = squared_distance_2(query, vj);
-      const FT rp2 = squared_distance_2(query, vp);
+      const FT d1 = squared_distance_2(q, t);
+      const FT d2 = squared_distance_2(q, r);
+      const FT d3 = squared_distance_2(q, p);
 
-      const auto area_2 =
-        m_traits.compute_area_2_object();
-      const FT Am = area_2(vm, vj, query);
-      const FT Aj = area_2(vj, vp, query);
-      const FT Bj = area_2(vm, vp, query);
+      const FT A1 = internal::area_2(m_traits, r, q, t);
+      const FT A2 = internal::area_2(m_traits, p, q, r);
+      const FT B  = internal::area_2(m_traits, p, q, t);
 
       return weight(
-        rm2, rj2, rp2, Am, Aj, Bj);
+        d1, d2, d3, A1, A2, B);
     }
 
     const FT weight_3(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      Point_2 pq, pm, pj, pp;
+      Point_2 qf, tf, rf, pf;
       internal::flatten(
-        m_traits, query, vm, vj, vp,
-        pq, pm, pj, pp);
-      return weight_2(pq, pm, pj, pp);
+        m_traits,
+        q,  t,  r,  p,
+        qf, tf, rf, pf);
+      return weight_2(qf, tf, rf, pf);
     }
 
     const FT weight(
-      const FT rm2, const FT rj2, const FT rp2,
-      const FT Am, const FT Aj, const FT Bj) const {
+      const FT r1, const FT r2, const FT r3,
+      const FT A1, const FT A2, const FT B) const {
 
       FT w = FT(0);
-      CGAL_assertion(Am != FT(0) && Aj != FT(0));
-      const FT prod = Am * Aj;
+      CGAL_assertion(A1 != FT(0) && A2 != FT(0));
+      const FT prod = A1 * A2;
       if (prod != FT(0)) {
         const FT inv = FT(1) / prod;
-        w = (rp2 * Am - rj2 * Bj + rm2 * Aj) * inv;
+        w = (r3 * A1 - r2 * B + r1 * A2) * inv;
       }
       return w;
     }
   };
 
+  template<typename Point_2>
+  decltype(auto) discrete_harmonic_weight_2(
+    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Discrete_harmonic_weight<Traits> discrete_harmonic;
+    return discrete_harmonic(q, t, r, p);
+  }
+
+  template<typename Point_3>
+  decltype(auto) discrete_harmonic_weight_3(
+    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Discrete_harmonic_weight<Traits> discrete_harmonic;
+    return discrete_harmonic(q, t, r, p);
+  }
+
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHT_H

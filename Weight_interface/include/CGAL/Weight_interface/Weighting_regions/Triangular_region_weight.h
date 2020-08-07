@@ -32,7 +32,7 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DAverage
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief Triangular region weight.
 
@@ -43,7 +43,7 @@ namespace Generalized_weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
   */
   template<typename GeomTraits>
   class Triangular_region_weight {

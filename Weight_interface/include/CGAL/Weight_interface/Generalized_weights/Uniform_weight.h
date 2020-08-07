@@ -32,14 +32,14 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DWeights
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief Uniform weight.
 
     This weight always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
 
     \cgalModels `AnalyticWeight_2`
   */

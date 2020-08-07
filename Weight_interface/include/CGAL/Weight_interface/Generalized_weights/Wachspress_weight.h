@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WACHSPRESS_WEIGHT_2_H
-#define CGAL_GENERALIZED_WACHSPRESS_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_WACHSPRESS_WEIGHT_H
+#define CGAL_GENERALIZED_WACHSPRESS_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,29 +32,29 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DWeights
+    \ingroup PkgWeightInterfaceRefWeights
 
-    \brief 2D Wachspress weight.
+    \brief Wachspress weight.
 
     The full weight is computed as
 
     \f$w = \frac{C}{A_m A}\f$
 
     with notations shown in the figure below. This weight is equal to the
-    `CGAL::Generalized_weights::Authalic_weight_2`. This weight is a special
-    case of the `CGAL::Generalized_weights::Three_point_family_weight_2`.
+    `CGAL::Generalized_weights::Authalic_weight`. This weight is a special
+    case of the `CGAL::Generalized_weights::Three_point_family_weight`.
 
     \cgalFigureBegin{wachspress_weight, wachspress.svg}
       Notation used for the Wachspress weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
 
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Wachspress_weight_2 {
+  class Wachspress_weight {
 
   public:
 
@@ -85,7 +85,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Wachspress_weight_2(
+    Wachspress_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -96,27 +96,27 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Wachspress weight.
+      \brief computes the Wachspress weight.
     */
     const FT operator()(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      return weight_2(query, vm, vj, vp);
+      return weight_2(q, t, r, p);
     }
 
     /*!
-      \brief computes 2D Wachspress weight.
+      \brief computes the Wachspress weight.
     */
     const FT operator()(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      return weight_3(query, vm, vj, vp);
+      return weight_3(q, t, r, p);
     }
 
     /// @}
@@ -125,47 +125,64 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT weight_2(
-      const Point_2& query,
-      const Point_2& vm,
-      const Point_2& vj,
-      const Point_2& vp) const {
+      const Point_2& q,
+      const Point_2& t,
+      const Point_2& r,
+      const Point_2& p) const {
 
-      const auto area_2 =
-        m_traits.compute_area_2_object();
-      const FT Am = area_2(vm, vj, query);
-      const FT Aj = area_2(vj, vp, query);
-      const FT Cj  = area_2(vm, vj, vp);
-      return weight(Am, Aj, Cj);
+      const FT A1 = internal::area_2(m_traits, r, q, t);
+      const FT A2 = internal::area_2(m_traits, p, q, r);
+      const FT C  = internal::area_2(m_traits, t, r, p);
+      return weight(A1, A2, C);
     }
 
     const FT weight_3(
-      const Point_3& query,
-      const Point_3& vm,
-      const Point_3& vj,
-      const Point_3& vp) const {
+      const Point_3& q,
+      const Point_3& t,
+      const Point_3& r,
+      const Point_3& p) const {
 
-      Point_2 pq, pm, pj, pp;
+      Point_2 qf, tf, rf, pf;
       internal::flatten(
-        m_traits, query, vm, vj, vp,
-        pq, pm, pj, pp);
-      return weight_2(pq, pm, pj, pp);
+        m_traits,
+        q,  t,  r,  p,
+        qf, tf, rf, pf);
+      return weight_2(qf, tf, rf, pf);
     }
 
     const FT weight(
-      const FT Am, const FT Aj, const FT Cj) const {
+      const FT A1, const FT A2, const FT C) const {
 
       FT w = FT(0);
-      CGAL_assertion(Am != FT(0) && Aj != FT(0));
-      const FT prod = Am * Aj;
+      CGAL_assertion(A1 != FT(0) && A2 != FT(0));
+      const FT prod = A1 * A2;
       if (prod != FT(0)) {
         const FT inv = FT(1) / prod;
-        w = Cj * inv;
+        w = C * inv;
       }
       return w;
     }
   };
 
+  template<typename Point_2>
+  decltype(auto) wachspress_weight_2(
+    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Wachspress_weight<Traits> wachspress;
+    return wachspress(q, t, r, p);
+  }
+
+  template<typename Point_3>
+  decltype(auto) wachspress_weight_3(
+    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Wachspress_weight<Traits> wachspress;
+    return wachspress(q, t, r, p);
+  }
+
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WACHSPRESS_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_WACHSPRESS_WEIGHT_H

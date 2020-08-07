@@ -10,28 +10,27 @@ generalized weights, which can be computed analytically.
 \cgalFigureEnd
 
 \cgalHasModel
-- `CGAL::Generalized_weights::Uniform_weight_2`
-- `CGAL::Generalized_weights::Three_point_family_weight_2`
-- `CGAL::Generalized_weights::Inverse_distance_weight_2`
-- `CGAL::Generalized_weights::Shepard_weight_2`
-- `CGAL::Generalized_weights::Wachspress_weight_2`
-- `CGAL::Generalized_weights::Authalic_weight_2`
-- `CGAL::Generalized_weights::Mean_value_weight_2`
-- `CGAL::Generalized_weights::Tangent_weight_2`
-- `CGAL::Generalized_weights::Discrete_harmonic_weight_2`
-- `CGAL::Generalized_weights::Cotangent_weight_2`
+- `CGAL::Generalized_weights::Uniform_weight`
+- `CGAL::Generalized_weights::Three_point_family_weight`
+- `CGAL::Generalized_weights::Inverse_distance_weight`
+- `CGAL::Generalized_weights::Shepard_weight`
+- `CGAL::Generalized_weights::Wachspress_weight`
+- `CGAL::Generalized_weights::Authalic_weight`
+- `CGAL::Generalized_weights::Mean_value_weight`
+- `CGAL::Generalized_weights::Tangent_weight`
+- `CGAL::Generalized_weights::Discrete_harmonic_weight`
+- `CGAL::Generalized_weights::Cotangent_weight`
 */
 class AnalyticWeight_2 {
 
 public:
 
   /*!
-    computes a weight at the `query` point given its three 2D neighbors
-    `vm` - previous neighbor (m stands for minus), `vj` - jth neighbor, and
-    `vp` - next neighbor (p stands for plus).
+    computes a weight at the `q` point given its three 2D neighbors
+    `t` - previous neighbor, `r` - jth neighbor, and `p` - next neighbor.
 
-    Here, `query` is usually a query point inside a polygon, `vj` is the jth vertex
-    of a polygon, `vm` is the previous polygon vertex, and `vp` is the next polygon
+    Here, `q` is usually a query point inside a polygon, `r` is the jth vertex
+    of a polygon, `t` is the previous polygon vertex, and `p` is the next polygon
     vertex in the counterclockwise order (see the figure above).
 
     This configuration is arising when the weight is computed on a 2D plane.
@@ -39,20 +38,19 @@ public:
     \return weight
   */
   const FT operator()(
-    const Point_2& query,
-    const Point_2& vm,
-    const Point_2& vj,
-    const Point_2& vp) const
+    const Point_2& q,
+    const Point_2& t,
+    const Point_2& r,
+    const Point_2& p) const
   { }
 
   /*!
-    computes a weight at the `query` point given its three 3D neighbors
-    `vm` - previous neighbor (m stands for minus), `vj` - jth neighbor, and
-    `vp` - next neighbor (p stands for plus).
+    computes a weight at the `q` point given its three 3D neighbors
+    `t` - previous neighbor, `r` - jth neighbor, and `p` - next neighbor.
 
-    Here, `query` is usually the center vertex of the one-ring neighborhood in a
-    polygon mesh, `vj` is the jth neighbor of the center vertex, `vm` is the previous
-    neighbor, and `vp` is the next neighbor in the counterclockwise order (see the figure above).
+    Here, `q` is usually the center vertex of the one-ring neighborhood in a
+    polygon mesh, `r` is the jth neighbor of the center vertex, `t` is the previous
+    neighbor, and `p` is the next neighbor in the counterclockwise order (see the figure above).
 
     This configuration is arising when the weight is computed on a 2D surface
     embedded in 3D.
@@ -60,9 +58,9 @@ public:
     \return weight
   */
   const FT operator()(
-    const Point_3& query,
-    const Point_3& vm,
-    const Point_3& vj,
-    const Point_3& vp) const
+    const Point_3& q,
+    const Point_3& t,
+    const Point_3& r,
+    const Point_3& p) const
   { }
 };

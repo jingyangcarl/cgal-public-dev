@@ -32,7 +32,7 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DWeights
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief Three point family weight.
 
@@ -60,7 +60,7 @@ namespace Generalized_weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
 
     \cgalModels `AnalyticWeight_2`
   */
@@ -173,7 +173,7 @@ namespace Generalized_weights {
     }
 
     const FT weight(
-      const FT r1, const FT r2, const FT r3,
+      const FT d1, const FT d2, const FT d3,
       const FT A1, const FT A2, const FT B) const {
 
       FT w = FT(0);
@@ -181,15 +181,15 @@ namespace Generalized_weights {
       const FT prod = A1 * A2;
       if (prod != FT(0)) {
         const FT inv = FT(1) / prod;
-        FT a1 = r1;
-        FT b  = r2;
-        FT a2 = r3;
+        FT r1 = d1;
+        FT r2 = d2;
+        FT r3 = d3;
         if (m_p != FT(1)) {
-          a1 = internal::power(m_traits, r1, m_p);
-          b  = internal::power(m_traits, r2, m_p);
-          a2 = internal::power(m_traits, r3, m_p);
+          r1 = internal::power(m_traits, d1, m_p);
+          r2 = internal::power(m_traits, d2, m_p);
+          r3 = internal::power(m_traits, d3, m_p);
         }
-        w = (a1 * A1 - b * B + a2 * A2) * inv;
+        w = (r3 * A1 - r2 * B + r1 * A2) * inv;
       }
       return w;
     }

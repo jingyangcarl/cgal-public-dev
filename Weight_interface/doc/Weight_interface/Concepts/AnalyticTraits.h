@@ -3,12 +3,12 @@
 \cgalConcept
 
 A concept that describes the set of requirements of the template parameter
-`GeomTraits` used to parameterize all classes and functions with 2D generalized
+`GeomTraits` used to parameterize all classes and functions with the generalized
 weights from the namespace `CGAL::Generalized_weights`.
 
 \cgalHasModel All models of `Kernel`.
 */
-class AnalyticTraits_2 {
+class AnalyticTraits {
 
 public:
 

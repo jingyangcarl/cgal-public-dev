@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
-#define CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_SHEPARD_WEIGHT_H
+#define CGAL_GENERALIZED_SHEPARD_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,9 +32,9 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DWeights
+    \ingroup PkgWeightInterfaceRefWeights
 
-    \brief 2D Shepard weight.
+    \brief Shepard weight.
 
     The full weight is computed as
 
@@ -44,19 +44,19 @@ namespace Generalized_weights {
     being the power parameter.
 
     For \f$a = 1\f$ this weight is equal to the
-    `CGAL::Generalized_weights::Inverse_distance_weight_2`.
+    `CGAL::Generalized_weights::Inverse_distance_weight`.
 
     \cgalFigureBegin{shepard_weight, shepard.svg}
       Notation used for the Shepard weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
 
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Shepard_weight_2 {
+  class Shepard_weight {
 
   public:
 
@@ -90,7 +90,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Shepard_weight_2(
+    Shepard_weight(
       const FT a = FT(1), // default is for inverse distance weight
       const GeomTraits traits = GeomTraits()) :
     m_p(a), m_traits(traits)
@@ -102,31 +102,31 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D Shepard weight.
+      \brief computes the Shepard weight.
     */
     const FT operator()(
-      const Point_2& query,
+      const Point_2& p,
       const Point_2&,
-      const Point_2& vj,
+      const Point_2& q,
       const Point_2&) const {
 
-      const FT rj =
-        internal::distance_2(m_traits, query, vj);
-      return weight(rj);
+      const FT d =
+        internal::distance_2(m_traits, p, q);
+      return weight(d);
     }
 
     /*!
-      \brief computes 2D Shepard weight.
+      \brief computes the Shepard weight.
     */
     const FT operator()(
-      const Point_3& query,
+      const Point_3& p,
       const Point_3&,
-      const Point_3& vj,
+      const Point_3& q,
       const Point_3&) const {
 
-      const FT rj =
-        internal::distance_3(m_traits, query, vj);
-      return weight(rj);
+      const FT d =
+        internal::distance_3(m_traits, p, q);
+      return weight(d);
     }
 
     /// @}
@@ -136,21 +136,55 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT weight(
-      const FT rj) const {
+      const FT d) const {
 
       FT w = FT(0);
-      CGAL_assertion(rj != FT(0));
-      if (rj != FT(0)) {
-        FT denom = rj;
+      CGAL_assertion(d != FT(0));
+      if (d != FT(0)) {
+        FT denom = d;
         if (m_p != FT(1))
-          denom = internal::power(m_traits, rj, m_p);
+          denom = internal::power(m_traits, d, m_p);
         w = FT(1) / denom;
       }
       return w;
     }
   };
 
+  template<typename Point_2>
+  decltype(auto) shepard_weight_2(
+    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Shepard_weight<Traits> shepard;
+    return shepard(q, t, r, p);
+  }
+
+  template<typename Point_3>
+  decltype(auto) shepard_weight_3(
+    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Shepard_weight<Traits> shepard;
+    return shepard(q, t, r, p);
+  }
+
+  template<typename Point_2>
+  decltype(auto) shepard_weight_2(
+    const Point_2& p, const Point_2& q) {
+
+    Point_2 stub;
+    return shepard_weight_2(p, stub, q, stub);
+  }
+
+  template<typename Point_3>
+  decltype(auto) shepard_weight_3(
+    const Point_3& p, const Point_3& q) {
+
+    Point_3 stub;
+    return shepard_weight_3(p, stub, q, stub);
+  }
+
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_SHEPARD_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_SHEPARD_WEIGHT_H

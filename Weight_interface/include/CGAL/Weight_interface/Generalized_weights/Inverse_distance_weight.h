@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_2_H
-#define CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_2_H
+#ifndef CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_H
+#define CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,28 +32,28 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DWeights
+    \ingroup PkgWeightInterfaceRefWeights
 
-    \brief 2D inverse distance weight.
+    \brief Inverse distance weight.
 
     The full weight is computed as
 
     \f$w = \frac{1}{r}\f$
 
     with notations shown in the figure below. This weight is a special case of
-    the `CGAL::Generalized_weights::Shepard_weight_2`.
+    the `CGAL::Generalized_weights::Shepard_weight`.
 
     \cgalFigureBegin{inverse_distance_weight, inverse_distance.svg}
       Notation used for the inverse distance weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
 
     \cgalModels `AnalyticWeight_2`
   */
   template<typename GeomTraits>
-  class Inverse_distance_weight_2 {
+  class Inverse_distance_weight {
 
   public:
 
@@ -84,7 +84,7 @@ namespace Generalized_weights {
       \param traits
       An instance of `GeomTraits`. The default initialization is provided.
     */
-    Inverse_distance_weight_2(
+    Inverse_distance_weight(
       const GeomTraits traits = GeomTraits()) :
     m_traits(traits)
     { }
@@ -95,31 +95,31 @@ namespace Generalized_weights {
     /// @{
 
     /*!
-      \brief computes 2D inverse distance weight.
+      \brief computes the inverse distance weight.
     */
     const FT operator()(
-      const Point_2& query,
+      const Point_2& p,
       const Point_2&,
-      const Point_2& vj,
+      const Point_2& q,
       const Point_2&) const {
 
-      const FT rj =
-        internal::distance_2(m_traits, query, vj);
-      return weight(rj);
+      const FT d =
+        internal::distance_2(m_traits, p, q);
+      return weight(d);
     }
 
     /*!
-      \brief computes 2D inverse distance weight.
+      \brief computes the inverse distance weight.
     */
     const FT operator()(
-      const Point_3& query,
+      const Point_3& p,
       const Point_3&,
-      const Point_3& vj,
+      const Point_3& q,
       const Point_3&) const {
 
-      const FT rj =
-        internal::distance_3(m_traits, query, vj);
-      return weight(rj);
+      const FT d =
+        internal::distance_3(m_traits, p, q);
+      return weight(d);
     }
 
     /// @}
@@ -128,17 +128,51 @@ namespace Generalized_weights {
     const GeomTraits m_traits;
 
     const FT weight(
-      const FT rj) const {
+      const FT d) const {
 
       FT w = FT(0);
-      CGAL_assertion(rj != FT(0));
-      if (rj != FT(0))
-        w = FT(1) / rj;
+      CGAL_assertion(d != FT(0));
+      if (d != FT(0))
+        w = FT(1) / d;
       return w;
     }
   };
 
+  template<typename Point_2>
+  decltype(auto) inverse_distance_weight_2(
+    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+
+    using Traits = typename Kernel_traits<Point_2>::Kernel;
+    Inverse_distance_weight<Traits> inverse_distance;
+    return inverse_distance(q, t, r, p);
+  }
+
+  template<typename Point_3>
+  decltype(auto) inverse_distance_weight_3(
+    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+
+    using Traits = typename Kernel_traits<Point_3>::Kernel;
+    Inverse_distance_weight<Traits> inverse_distance;
+    return inverse_distance(q, t, r, p);
+  }
+
+  template<typename Point_2>
+  decltype(auto) inverse_distance_weight_2(
+    const Point_2& p, const Point_2& q) {
+
+    Point_2 stub;
+    return inverse_distance_weight_2(p, stub, q, stub);
+  }
+
+  template<typename Point_3>
+  decltype(auto) inverse_distance_weight_3(
+    const Point_3& p, const Point_3& q) {
+
+    Point_3 stub;
+    return inverse_distance_weight_3(p, stub, q, stub);
+  }
+
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_2_H
+#endif // CGAL_GENERALIZED_INVERSE_DISTANCE_WEIGHT_H

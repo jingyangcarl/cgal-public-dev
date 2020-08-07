@@ -32,14 +32,14 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRef2DAverage
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief Uniform region weight.
 
     This weight always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticTraits`.
   */
   template<typename GeomTraits>
   class Uniform_region_weight {

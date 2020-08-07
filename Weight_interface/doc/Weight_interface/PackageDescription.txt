@@ -7,15 +7,20 @@
 Concepts, which are used to parameterize the functions and classes
 from `CGAL::Generalized_weights`.
 
-\defgroup PkgWeightInterfaceRef2DWeights 2D Generalized Weights
+\defgroup PkgWeightInterfaceRefWeights Generalized Weights
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute 2D generalized weights.
+Models and functions that can be used to compute various generalized weights.
 
-\defgroup PkgWeightInterfaceRef2DAverage Weighting Regions
+\defgroup PkgWeightInterfaceRefRegions Weighting Regions
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute weighting regions.
+Models and functions that can be used to compute various weighting regions.
+
+\defgroup PkgWeightInterfaceRefFreeFunctions Free Functions
+\ingroup PkgWeightInterfaceRef
+
+Free functions to compute various weights.
 
 \addtogroup PkgWeightInterfaceRef
 
@@ -29,7 +34,7 @@ Models and functions that can be used to compute weighting regions.
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{5.2}
+\cgalPkgSince{5.3}
 \cgalPkgBib{cgal:a-wi}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Polyhedron demo, polyhedron_3.zip}
@@ -40,20 +45,42 @@ Models and functions that can be used to compute weighting regions.
 ## Generalized Weights ##
 
 ### Concepts ###
-- `AnalyticTraits_2`
+- `AnalyticTraits`
 - `AnalyticWeight_2`
 
-### 2D Generalized Weights ###
-- `CGAL::Generalized_weights::Uniform_weight_2`
-- `CGAL::Generalized_weights::Three_point_family_weight_2`
-- `CGAL::Generalized_weights::Inverse_distance_weight_2`
-- `CGAL::Generalized_weights::Shepard_weight_2`
-- `CGAL::Generalized_weights::Wachspress_weight_2`
-- `CGAL::Generalized_weights::Authalic_weight_2`
-- `CGAL::Generalized_weights::Mean_value_weight_2`
-- `CGAL::Generalized_weights::Tangent_weight_2`
-- `CGAL::Generalized_weights::Discrete_harmonic_weight_2`
-- `CGAL::Generalized_weights::Cotangent_weight_2`
+### Generalized Weights ###
+- `CGAL::Generalized_weights::Uniform_weight`
+- `CGAL::Generalized_weights::Three_point_family_weight`
+- `CGAL::Generalized_weights::Inverse_distance_weight`
+- `CGAL::Generalized_weights::Shepard_weight`
+- `CGAL::Generalized_weights::Wachspress_weight`
+- `CGAL::Generalized_weights::Authalic_weight`
+- `CGAL::Generalized_weights::Mean_value_weight`
+- `CGAL::Generalized_weights::Tangent_weight`
+- `CGAL::Generalized_weights::Discrete_harmonic_weight`
+- `CGAL::Generalized_weights::Cotangent_weight`
+
+### Free Functions ###
+- `CGAL::Generalized_weights::uniform_weight_2()`
+- `CGAL::Generalized_weights::uniform_weight_3()`
+- `CGAL::Generalized_weights::three_point_family_weight_2()`
+- `CGAL::Generalized_weights::three_point_family_weight_3()`
+- `CGAL::Generalized_weights::inverse_distance_weight_2()`
+- `CGAL::Generalized_weights::inverse_distance_weight_3()`
+- `CGAL::Generalized_weights::shepard_weight_2()`
+- `CGAL::Generalized_weights::shepard_weight_3()`
+- `CGAL::Generalized_weights::wachspress_weight_2()`
+- `CGAL::Generalized_weights::wachspress_weight_3()`
+- `CGAL::Generalized_weights::authalic_weight_2()`
+- `CGAL::Generalized_weights::authalic_weight_3()`
+- `CGAL::Generalized_weights::mean_value_weight_2()`
+- `CGAL::Generalized_weights::mean_value_weight_3()`
+- `CGAL::Generalized_weights::tangent_weight_2()`
+- `CGAL::Generalized_weights::tangent_weight_3()`
+- `CGAL::Generalized_weights::discrete_harmonic_weight_2()`
+- `CGAL::Generalized_weights::discrete_harmonic_weight_3()`
+- `CGAL::Generalized_weights::cotangent_weight_2()`
+- `CGAL::Generalized_weights::cotangent_weight_3()`
 
 ### Weighting Regions ###
 - `CGAL::Generalized_weights::Uniform_region_weight`
@@ -62,4 +89,15 @@ Models and functions that can be used to compute weighting regions.
 - `CGAL::Generalized_weights::Voronoi_region_weight`
 - `CGAL::Generalized_weights::Mixed_voronoi_region_weight`
 
+### Free Functions ###
+- `CGAL::Generalized_weights::uniform_area_2()`
+- `CGAL::Generalized_weights::uniform_area_3()`
+- `CGAL::Generalized_weights::triangle_area_2()`
+- `CGAL::Generalized_weights::triangle_area_3()`
+- `CGAL::Generalized_weights::barycentric_area_2()`
+- `CGAL::Generalized_weights::barycentric_area_3()`
+- `CGAL::Generalized_weights::voronoi_area_2()`
+- `CGAL::Generalized_weights::voronoi_area_3()`
+- `CGAL::Generalized_weights::mixed_voronoi_area_2()`
+- `CGAL::Generalized_weights::mixed_voronoi_area_3()`
 */
