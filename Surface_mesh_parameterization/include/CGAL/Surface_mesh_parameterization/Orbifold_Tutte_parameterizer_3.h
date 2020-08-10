@@ -798,12 +798,12 @@ private:
       if (i > j)
         continue;
 
-      NT cotw = NT(0);
       const vertex_descriptor v0 = vj;
       const vertex_descriptor v1 = vi;
       const Point_3& p0 = get(ppmap, v0);
       const Point_3& p1 = get(ppmap, v1);
 
+      NT cotw = NT(0);
       if (is_border_edge(hd, mesh)) {
         const halfedge_descriptor hd_cw = opposite(next(hd, mesh), mesh);
         vertex_descriptor v2 = source(hd_cw, mesh);
