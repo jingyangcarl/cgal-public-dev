@@ -22,7 +22,7 @@ int main() {
   const Point_3 r3 = Point_3( 0, 1, 1);
 
   // Compute weights.
-  VRW voronoi;
+  const VRW voronoi;
   std::cout << "2D voronoi: " << voronoi(p2, q2, r2) << std::endl;
   std::cout << "3D voronoi: " << voronoi(p3, q3, r3) << std::endl;
   std::cout << "----------------" << std::endl;

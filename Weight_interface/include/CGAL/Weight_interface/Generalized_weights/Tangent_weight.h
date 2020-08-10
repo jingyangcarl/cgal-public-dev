@@ -169,12 +169,31 @@ namespace Generalized_weights {
     }
 
     /*!
+      \brief to be added
+    */
+    const FT tangent(
+      const FT d, const FT l, const FT A, const FT D) const {
+
+      return tangent_half_angle(d, l, A, D);
+    }
+
+    /*!
+      \brief computes the half of the tangent weight.
+    */
+    const FT operator()(
+      const FT d, const FT tan) const {
+
+      return half_weight(d, tan);
+    }
+
+    /*!
       \brief computes the half of the tangent weight.
     */
     const FT operator()(
       const FT d, const FT l, const FT A, const FT D) const {
 
-      return half_weight(d, l, A, D);
+      const FT tan = tangent_half_angle(d, l, A, D);
+      return operator()(d, tan);
     }
 
     /*!
@@ -262,21 +281,28 @@ namespace Generalized_weights {
       return scalar_product_3(s1, s2);
     }
 
-    const FT half_weight(
+    const FT tangent_half_angle(
       const FT r, const FT d,
       const FT A, const FT D) const {
 
-      FT w = FT(0);
+      FT t = FT(0);
       const FT P = r * d + D;
       CGAL_assertion(P != FT(0));
       if (P != FT(0)) {
         const FT inv = FT(2) / P;
-        const FT t = A * inv;
-        CGAL_assertion(r != FT(0));
-        if (r != FT(0)) {
-          const FT inv = FT(2) / r;
-          w = t * inv;
-        }
+        t = A * inv;
+      }
+      return t;
+    }
+
+    const FT half_weight(
+      const FT r, const FT t) const {
+
+      FT w = FT(0);
+      CGAL_assertion(r != FT(0));
+      if (r != FT(0)) {
+        const FT inv = FT(2) / r;
+        w = t * inv;
       }
       return w;
     }
@@ -387,7 +413,7 @@ namespace Generalized_weights {
     const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
 
     using Traits = typename Kernel_traits<Point_2>::Kernel;
-    Tangent_weight<Traits> tangent;
+    const Tangent_weight<Traits> tangent;
     return tangent(q, t, r, p);
   }
 
@@ -420,7 +446,7 @@ namespace Generalized_weights {
     const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
 
     using Traits = typename Kernel_traits<Point_3>::Kernel;
-    Tangent_weight<Traits> tangent;
+    const Tangent_weight<Traits> tangent;
     return tangent(q, t, r, p);
   }
 

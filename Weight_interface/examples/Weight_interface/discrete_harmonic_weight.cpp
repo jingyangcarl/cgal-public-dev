@@ -24,7 +24,7 @@ int main() {
   const Point_3 p3 = Point_3( 1,  0, 1);
 
   // Compute weights.
-  DH dh;
+  const DH dh;
   std::cout << "2D discrete harmonic: " << dh(q2, t2, r2, p2) << std::endl;
   std::cout << "3D discrete harmonic: " << dh(q3, t3, r3, p3) << std::endl;
   std::cout << "-----------------------" << std::endl;

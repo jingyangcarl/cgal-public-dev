@@ -19,7 +19,7 @@
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
 #include <CGAL/Surface_mesh_parameterization/Circular_border_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Uniform_weight_2.h>
+#include <CGAL/Weight_interface/Generalized_weights/Uniform_weight.h>
 
 #include <CGAL/Default.h>
 
@@ -136,7 +136,8 @@ private:
   typedef typename Solver_traits::Matrix          Matrix;
 
   // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::Uniform_weight_2<Kernel> Uniform_weight;
+  typedef CGAL::Generalized_weights::Uniform_weight<Kernel> Uniform_weight;
+  const Uniform_weight m_uniform_weight;
 
 // Public operations
 public:
@@ -179,8 +180,7 @@ protected:
     /// In the Tutte Barycentric Mapping algorithm, we have w_ij = 1,
     /// for j neighbor vertex of i.
     const Point_3 stub;
-    const Uniform_weight uniform_weight;
-    return uniform_weight(
+    return m_uniform_weight(
       stub, stub, stub, stub);
   }
 };

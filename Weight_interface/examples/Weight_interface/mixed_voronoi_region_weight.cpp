@@ -22,7 +22,7 @@ int main() {
   const Point_3 r3 = Point_3( 0, 1, 1);
 
   // Compute weights.
-  MVR mixed_voronoi;
+  const MVR mixed_voronoi;
   std::cout << "2D mixed voronoi: " << mixed_voronoi(p2, q2, r2) << std::endl;
   std::cout << "3D mixed voronoi: " << mixed_voronoi(p3, q3, r3) << std::endl;
   std::cout << "----------------------" << std::endl;

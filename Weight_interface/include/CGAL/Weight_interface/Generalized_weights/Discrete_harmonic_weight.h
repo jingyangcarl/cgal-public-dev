@@ -202,7 +202,7 @@ namespace Generalized_weights {
     const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
 
     using Traits = typename Kernel_traits<Point_2>::Kernel;
-    Discrete_harmonic_weight<Traits> discrete_harmonic;
+    const Discrete_harmonic_weight<Traits> discrete_harmonic;
     return discrete_harmonic(q, t, r, p);
   }
 
@@ -235,7 +235,7 @@ namespace Generalized_weights {
     const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
 
     using Traits = typename Kernel_traits<Point_3>::Kernel;
-    Discrete_harmonic_weight<Traits> discrete_harmonic;
+    const Discrete_harmonic_weight<Traits> discrete_harmonic;
     return discrete_harmonic(q, t, r, p);
   }
 

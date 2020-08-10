@@ -218,7 +218,7 @@ namespace Generalized_weights {
     const Point_2& p, const Point_2& q, const Point_2& r) {
 
     using Traits = typename Kernel_traits<Point_2>::Kernel;
-    Mixed_voronoi_region_weight<Traits> mixed_voronoi_area;
+    const Mixed_voronoi_region_weight<Traits> mixed_voronoi_area;
     return mixed_voronoi_area(p, q, r);
   }
 
@@ -248,7 +248,7 @@ namespace Generalized_weights {
     const Point_3& p, const Point_3& q, const Point_3& r) {
 
     using Traits = typename Kernel_traits<Point_3>::Kernel;
-    Mixed_voronoi_region_weight<Traits> mixed_voronoi_area;
+    const Mixed_voronoi_region_weight<Traits> mixed_voronoi_area;
     return mixed_voronoi_area(p, q, r);
   }
 

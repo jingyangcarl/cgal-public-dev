@@ -22,7 +22,7 @@ int main() {
   const Point_3 r3 = Point_3( 0, 1, 1);
 
   // Compute weights.
-  TRW triangle;
+  const TRW triangle;
   std::cout << "2D triangle: " << triangle(p2, q2, r2) << std::endl;
   std::cout << "3D triangle: " << triangle(p3, q3, r3) << std::endl;
   std::cout << "----------------" << std::endl;

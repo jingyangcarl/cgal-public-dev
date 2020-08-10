@@ -25,8 +25,8 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/orbifold_shortest_path.h>
 
-#include <CGAL/Weight_interface/Generalized_weights_2/Tangent_weight_2.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Cotangent_weight_2.h>
+#include <CGAL/Weight_interface/Generalized_weights/Tangent_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
@@ -430,8 +430,11 @@ private:
   typedef typename Kernel::Point_3                                  Point_3;
 
   // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::Tangent_weight_2<Kernel>   Tangent_weight;
-  typedef CGAL::Generalized_weights::Cotangent_weight_2<Kernel> Cotangent_weight;
+  typedef CGAL::Generalized_weights::Tangent_weight<Kernel>   Tangent_weight;
+  typedef CGAL::Generalized_weights::Cotangent_weight<Kernel> Cotangent_weight;
+
+  const Tangent_weight   m_tangent_weight;
+  const Cotangent_weight m_cotangent_weight;
 
   const Orbifold_type orb_type;
   const Weight_type weight_type;
@@ -706,7 +709,8 @@ private:
   // `ij` in the face `ijk`
   void fill_mvc_matrix(const Point_3& pi, int i,
                        const Point_3& pj, int j,
-                       const Point_3& pk, int k, Matrix& M) const
+                       const Point_3& pk, int k,
+                       Matrix& M) const
   {
     // For MVC, the entry of M(i,j) is - [ tan(gamma_ij/2) + tan(delta_ij)/2 ] / |ij|
     // where gamma_ij and delta_ij are the angles at i around the edge ij
@@ -721,25 +725,25 @@ private:
 
     // @fixme unefficient: lengths are computed (and inversed!) twice per edge
 
-    // Set w_ij in matrix
-    const Tangent_weight tangent_weight;
-    const NT w_ij = tangent_weight(pi, pj, pk);
+    // Set w_i_base: - tan(alpha / 2)
+    const NT len_ij = m_tangent_weight.distance(pi, pj);
+    CGAL_assertion(len_ij != 0.0);   // two points are identical!
+    const NT len_ik = m_tangent_weight.distance(pi, pk);
+    CGAL_assertion(len_ik != 0.0);   // two points are identical!
+    const NT area_kij = m_tangent_weight.area(pk, pi, pj);
+    CGAL_assertion(area_kij != 0.0); // three points are identical!
+    const NT scalar_kij = m_tangent_weight.scalar_product(pk, pi, pj);
 
+    const NT w_i_base = m_tangent_weight.tangent(
+      len_ij, len_ik, area_kij, scalar_kij);
+
+    // Set w_ij in matrix
+    const NT w_ij = m_tangent_weight(len_ij, w_i_base);
     M.add_coef(2 * i, 2 * j, w_ij);
     M.add_coef(2 * i + 1, 2 * j + 1, w_ij);
 
-    // Set w_i_base: - tan(alpha / 2)
-    const Vector_3 edge_ij = pi - pj;
-    const NT len_ij = CGAL::sqrt(edge_ij * edge_ij);
-    CGAL_assertion(len_ij != 0.0); // two points are identical!
-    const NT w_i_base = w_ij * len_ij;
-
     // Set w_ik in matrix
-    const Vector_3 edge_ik = pi - pk;
-    const NT len_ik = CGAL::sqrt(edge_ik * edge_ik);
-    CGAL_assertion(len_ik != 0.0); // two points are identical!
-    const NT w_ik = w_i_base / len_ik;
-
+    const NT w_ik = m_tangent_weight(len_ik, w_i_base);
     M.add_coef(2 * i, 2 * k, w_ik);
     M.add_coef(2 * i + 1, 2 * k + 1, w_ik);
 
@@ -794,9 +798,7 @@ private:
       if (i > j)
         continue;
 
-      const Cotangent_weight cotangent_weight;
       NT cotw = NT(0);
-
       const vertex_descriptor v0 = vj;
       const vertex_descriptor v1 = vi;
       const Point_3& p0 = get(ppmap, v0);
@@ -811,10 +813,12 @@ private:
           v2 = source(hd_ccw, mesh);
 
           const Point_3& p2 = get(ppmap, v2);
-          cotw = cotangent_weight(p1, p0, p2);
+          cotw = m_cotangent_weight(
+            m_cotangent_weight.cotangent(p1, p2, p0));
         } else {
           const Point_3& p2 = get(ppmap, v2);
-          cotw = cotangent_weight(p0, p1, p2);
+          cotw = m_cotangent_weight(
+            m_cotangent_weight.cotangent(p0, p2, p1));
         }
 
       } else {
@@ -827,10 +831,11 @@ private:
         const Point_3& p1 = get(ppmap, v1);
         const Point_3& p2 = get(ppmap, v2);
         const Point_3& p3 = get(ppmap, v3);
-        cotw = cotangent_weight(p1, p3, p0, p2);
+        cotw = m_cotangent_weight(p1, p3, p0, p2);
       }
 
-      const NT w_ij = (CGAL::max)(NT(0), cotw); // do I need that?
+      // const NT w_ij = (CGAL::max)(NT(0), cotw); // do I need that?
+      const NT w_ij = cotw;
 
       // ij
       M.set_coef(2 * i, 2 * j, w_ij, true /* new coef */);

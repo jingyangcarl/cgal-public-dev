@@ -141,7 +141,7 @@ namespace Generalized_weights {
     const Point_2& p, const Point_2& q, const Point_2& r) {
 
     using Traits = typename Kernel_traits<Point_2>::Kernel;
-    Uniform_region_weight<Traits> uniform_area;
+    const Uniform_region_weight<Traits> uniform_area;
     return uniform_area(p, q, r);
   }
 
@@ -171,7 +171,7 @@ namespace Generalized_weights {
     const Point_3& p, const Point_3& q, const Point_3& r) {
 
     using Traits = typename Kernel_traits<Point_3>::Kernel;
-    Uniform_region_weight<Traits> uniform_area;
+    const Uniform_region_weight<Traits> uniform_area;
     return uniform_area(p, q, r);
   }
 

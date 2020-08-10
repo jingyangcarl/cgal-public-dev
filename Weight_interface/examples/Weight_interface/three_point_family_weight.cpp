@@ -24,7 +24,7 @@ int main() {
   const Point_3 p3 = Point_3( 1,  0, 1);
 
   // Compute weights.
-  TPF tpf;
+  const TPF tpf;
   std::cout << "2D family: " << tpf(q2, t2, r2, p2) << std::endl;
   std::cout << "3D family: " << tpf(q3, t3, r3, p3) << std::endl;
   std::cout << "------------" << std::endl;

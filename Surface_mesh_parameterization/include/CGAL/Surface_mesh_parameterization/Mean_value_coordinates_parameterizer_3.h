@@ -20,7 +20,7 @@
 
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
-#include <CGAL/Weight_interface/Generalized_weights_2/Tangent_weight_2.h>
+#include <CGAL/Weight_interface/Generalized_weights/Tangent_weight.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
@@ -146,7 +146,8 @@ private:
   typedef typename Solver_traits::Matrix      Matrix;
 
   // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::Tangent_weight_2<Kernel> Tangent_weight;
+  typedef CGAL::Generalized_weights::Tangent_weight<Kernel> Tangent_weight;
+  const Tangent_weight m_tangent_weight;
 
 // Public operations
 public:
@@ -189,9 +190,7 @@ protected:
                           vertex_descriptor main_vertex_v_i,
                           vertex_around_target_circulator neighbor_vertex_v_j) const
   {
-    const Tangent_weight tangent_weight;
     const PPM ppmap = get(vertex_point, mesh);
-
     const Point_3& position_v_i = get(ppmap, main_vertex_v_i);
     const Point_3& position_v_j = get(ppmap, *neighbor_vertex_v_j);
 
@@ -203,7 +202,7 @@ protected:
     next_vertex_v_l++;
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
 
-    return tangent_weight(
+    return m_tangent_weight(
       position_v_i, position_v_k, position_v_j, position_v_l);
   }
 };

@@ -24,7 +24,7 @@ int main() {
   const Point_3 p3 = Point_3( 1,  0, 1);
 
   // Compute weights.
-  UW uw;
+  const UW uw;
   std::cout << "2D uniform: " << uw(q2, t2, r2, p2) << std::endl;
   std::cout << "3D uniform: " << uw(q3, t3, r3, p3) << std::endl;
   std::cout << "-------------" << std::endl;

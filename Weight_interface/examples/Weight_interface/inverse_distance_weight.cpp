@@ -24,7 +24,7 @@ int main() {
   const Point_3 p3 = Point_3( 1,  0, 1);
 
   // Compute weights.
-  IDW idw;
+  const IDW idw;
   std::cout << "2D inverse distance: " << idw(q2, t2, r2, p2) << std::endl;
   std::cout << "3D inverse distance: " << idw(q3, t3, r3, p3) << std::endl;
   std::cout << "----------------------" << std::endl;

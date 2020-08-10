@@ -179,7 +179,7 @@ namespace Generalized_weights {
     const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
 
     using Traits = typename Kernel_traits<Point_2>::Kernel;
-    Shepard_weight<Traits> shepard;
+    const Shepard_weight<Traits> shepard;
     return shepard(q, t, r, p);
   }
 
@@ -212,7 +212,7 @@ namespace Generalized_weights {
     const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
 
     using Traits = typename Kernel_traits<Point_3>::Kernel;
-    Shepard_weight<Traits> shepard;
+    const Shepard_weight<Traits> shepard;
     return shepard(q, t, r, p);
   }
 
