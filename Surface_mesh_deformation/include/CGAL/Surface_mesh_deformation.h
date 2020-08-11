@@ -87,8 +87,7 @@ public:
     const auto& p1 = get(ppmap, v1);
     const auto& p2 = get(ppmap, v2);
 
-    const FT cotw = m_cotangent_weight(
-      m_cotangent_weight.cotangent(p0, p2, p1));
+    const FT cotw = m_cotangent_weight.cotangent(p0, p2, p1);
     const FT weight = cotw;
     return weight;
   }
@@ -131,12 +130,14 @@ public:
         v2 = source(he_ccw, pmesh);
 
         const auto& p2 = get(ppmap, v2);
-        cotw = m_cotangent_weight(
-          m_cotangent_weight.cotangent(p1, p2, p0));
+        cotw = m_cotangent_weight.cotangent(p1, p2, p0);
+        cotw = (CGAL::max)(FT(0), cotw);
+        cotw /= 2.0;
       } else {
         const auto& p2 = get(ppmap, v2);
-        cotw = m_cotangent_weight(
-          m_cotangent_weight.cotangent(p0, p2, p1));
+        cotw = m_cotangent_weight.cotangent(p0, p2, p1);
+        cotw = (CGAL::max)(FT(0), cotw);
+        cotw /= 2.0;
       }
 
     } else {
@@ -149,10 +150,16 @@ public:
       const auto& p1 = get(ppmap, v1);
       const auto& p2 = get(ppmap, v2);
       const auto& p3 = get(ppmap, v3);
-      cotw = m_cotangent_weight(p1, p3, p0, p2);
+      cotw = m_cotangent_weight(p1, p3, p0, p2) / 4.0;
+      FT a = m_cotangent_weight.cotangent(p1, p3, p0);
+      FT b = m_cotangent_weight.cotangent(p0, p2, p1);
+      a /= 2.0;
+      b /= 2.0;
+      a = (CGAL::max)(FT(0), a);
+      b = (CGAL::max)(FT(0), b);
+      cotw = a + b;
     }
 
-    // const FT weight = (CGAL::max)(FT(0), cotw); // do I need that?
     const FT weight = cotw;
     return weight;
   }
@@ -163,8 +170,8 @@ struct Types_selectors;
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
-  // typedef internal::Single_cotangent_weight_impl<TriangleMesh> Weight_calculator;
-  typedef internal::Single_cotangent_weight_calculator<TriangleMesh> Weight_calculator;
+  typedef internal::Single_cotangent_weight_impl<TriangleMesh> Weight_calculator;
+  // typedef internal::Single_cotangent_weight_calculator<TriangleMesh> Weight_calculator;
 
   struct ARAP_visitor{
     template <class VertexPointMap>
@@ -185,8 +192,8 @@ struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
-  // typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
-  typedef internal::Cotangent_weight_calculator<TriangleMesh> Weight_calculator;
+  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+  // typedef internal::Cotangent_weight_calculator<TriangleMesh> Weight_calculator;
 
   typedef typename Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS>
     ::ARAP_visitor ARAP_visitor;
@@ -194,8 +201,8 @@ struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
-  // typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
-  typedef internal::Cotangent_weight_calculator<TriangleMesh> Weight_calculator;
+  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
+  // typedef internal::Cotangent_weight_calculator<TriangleMesh> Weight_calculator;
 
   class ARAP_visitor{
     double m_nb_edges_incident;
