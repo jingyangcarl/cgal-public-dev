@@ -18,8 +18,9 @@
 #include <CGAL/Surface_mesh_parameterization/internal/kernel_traits.h>
 
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
-#include <CGAL/Weight_interface/Generalized_weights/Tangent_weight.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
+
+#include <CGAL/Weight_interface/internal/polygon_mesh_tools.h>
 
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -127,8 +128,8 @@ private:
   typedef typename Solver_traits::Matrix                            Matrix;
 
   // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::Tangent_weight<Kernel> Tangent_weight;
-  const Tangent_weight m_tangent_weight;
+  typedef CGAL::Generalized_weights::internal::PM_tangent_weight<
+    Kernel, TriangleMesh> Tangent_weight;
 
   // Types used for the convexification of the mesh
   // Each triangulation vertex is associated its corresponding vertex_descriptor
@@ -388,23 +389,17 @@ private:
     // @fixme unefficient: lengths are computed (and inversed!) twice per edge
 
     // Set w_i_base: - tan(alpha / 2)
-    const NT len_ij = m_tangent_weight.distance(pi, pj);
-    CGAL_assertion(len_ij != 0.0);   // two points are identical!
-    const NT len_ik = m_tangent_weight.distance(pi, pk);
-    CGAL_assertion(len_ik != 0.0);   // two points are identical!
-    const NT area_kij = m_tangent_weight.area(pk, pi, pj);
-    CGAL_assertion(area_kij != 0.0); // three points are identical!
-    const NT scalar_kij = m_tangent_weight.scalar_product(pk, pi, pj);
-
-    const NT w_i_base = -m_tangent_weight.tangent(
-      len_ij, len_ik, area_kij, scalar_kij);
+    const Point_2& p = pk;
+    const Point_2& q = pi;
+    const Point_2& r = pj;
+    const Tangent_weight tangent_weight(p, q, r);
 
     // Set w_ij in matrix
-    const NT w_ij = m_tangent_weight(len_ij, w_i_base);
+    const NT w_ij = tangent_weight.get_w_r();
     A.add_coef(i, j, w_ij);
 
     // Set w_ik in matrix
-    const NT w_ik = m_tangent_weight(len_ik, w_i_base);
+    const NT w_ik = tangent_weight.get_w_p();
     A.add_coef(i, k, w_ik);
 
     // Add to w_ii (w_ii = - sum w_ij)

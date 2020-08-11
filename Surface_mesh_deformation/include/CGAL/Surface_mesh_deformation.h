@@ -21,8 +21,7 @@
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
-#include <CGAL/Polygon_mesh_processing/Weights.h>
-#include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
+#include <CGAL/Weight_interface/internal/polygon_mesh_tools.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <vector>
@@ -56,122 +55,14 @@ enum Deformation_algorithm_tag
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal {
 
-template<typename PolygonMesh>
-class Single_cotangent_weight_calculator {
-
-  // Get weight from the weight interface.
-  typedef Simple_cartesian<double> Kernel;
-  typedef typename Kernel::FT FT;
-
-  typedef CGAL::Generalized_weights::Cotangent_weight<Kernel> Cotangent_weight;
-  const Cotangent_weight m_cotangent_weight;
-
-public:
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
-
-  // Returns the cotangent of the opposite angle of the edge.
-  // 0 for border edges (which does not have an opposite angle).
-  template<class VertexPointMap>
-  FT operator()(
-    halfedge_descriptor he,
-    PolygonMesh &pmesh,
-    const VertexPointMap &ppmap) {
-
-    if (is_border(he, pmesh)) { return FT(0); }
-
-    const vertex_descriptor v0 = target(he, pmesh);
-    const vertex_descriptor v1 = source(he, pmesh);
-    const vertex_descriptor v2 = target(next(he, pmesh), pmesh);
-    const auto& p0 = get(ppmap, v0);
-    const auto& p1 = get(ppmap, v1);
-    const auto& p2 = get(ppmap, v2);
-
-    const FT cotw = m_cotangent_weight.cotangent(p0, p2, p1);
-    const FT weight = cotw;
-    return weight;
-  }
-};
-
-template<typename PolygonMesh>
-class Cotangent_weight_calculator {
-
-  // Get weight from the weight interface.
-  typedef Simple_cartesian<double> Kernel;
-  typedef typename Kernel::FT FT;
-
-  typedef CGAL::Generalized_weights::Cotangent_weight<Kernel> Cotangent_weight;
-  const Cotangent_weight m_cotangent_weight;
-
-public:
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
-
-  // Returns the cotangent weight of the specified halfedge_descriptor.
-  // Edge orientation is trivial.
-  template<class VertexPointMap>
-  FT operator()(
-    halfedge_descriptor he,
-    PolygonMesh &pmesh,
-    const VertexPointMap &ppmap) {
-
-    const vertex_descriptor v0 = target(he, pmesh);
-    const vertex_descriptor v1 = source(he, pmesh);
-    const auto& p0 = get(ppmap, v0);
-    const auto& p1 = get(ppmap, v1);
-
-    FT cotw = FT(0);
-    if (is_border_edge(he, pmesh)) {
-      const halfedge_descriptor he_cw = opposite(next(he, pmesh), pmesh);
-      vertex_descriptor v2 = source(he_cw, pmesh);
-
-      if (is_border_edge(he_cw, pmesh)) {
-        const halfedge_descriptor he_ccw = prev(opposite(he, pmesh), pmesh);
-        v2 = source(he_ccw, pmesh);
-
-        const auto& p2 = get(ppmap, v2);
-        cotw = m_cotangent_weight.cotangent(p1, p2, p0);
-        cotw = (CGAL::max)(FT(0), cotw);
-        cotw /= 2.0;
-      } else {
-        const auto& p2 = get(ppmap, v2);
-        cotw = m_cotangent_weight.cotangent(p0, p2, p1);
-        cotw = (CGAL::max)(FT(0), cotw);
-        cotw /= 2.0;
-      }
-
-    } else {
-      const halfedge_descriptor he_cw = opposite(next(he, pmesh), pmesh);
-      const vertex_descriptor v2 = source(he_cw, pmesh);
-      const halfedge_descriptor he_ccw = prev(opposite(he, pmesh), pmesh);
-      const vertex_descriptor v3 = source(he_ccw, pmesh);
-
-      const auto& p0 = get(ppmap, v0);
-      const auto& p1 = get(ppmap, v1);
-      const auto& p2 = get(ppmap, v2);
-      const auto& p3 = get(ppmap, v3);
-      cotw = m_cotangent_weight(p1, p3, p0, p2) / 4.0;
-      FT a = m_cotangent_weight.cotangent(p1, p3, p0);
-      FT b = m_cotangent_weight.cotangent(p0, p2, p1);
-      a /= 2.0;
-      b /= 2.0;
-      a = (CGAL::max)(FT(0), a);
-      b = (CGAL::max)(FT(0), b);
-      cotw = a + b;
-    }
-
-    const FT weight = cotw;
-    return weight;
-  }
-};
-
 template<class TriangleMesh, Deformation_algorithm_tag deformation_algorithm_tag>
 struct Types_selectors;
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
-  typedef internal::Single_cotangent_weight_impl<TriangleMesh> Weight_calculator;
-  // typedef internal::Single_cotangent_weight_calculator<TriangleMesh> Weight_calculator;
+  typedef CGAL::Simple_cartesian<double> Weight_kernel;
+  typedef CGAL::Generalized_weights::internal::
+    PM_single_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;
 
   struct ARAP_visitor{
     template <class VertexPointMap>
@@ -192,8 +83,9 @@ struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
-  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
-  // typedef internal::Cotangent_weight_calculator<TriangleMesh> Weight_calculator;
+  typedef CGAL::Simple_cartesian<double> Weight_kernel;
+  typedef CGAL::Generalized_weights::internal::
+    PM_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;
 
   typedef typename Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS>
     ::ARAP_visitor ARAP_visitor;
@@ -201,8 +93,9 @@ struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
-  typedef internal::Cotangent_weight_impl<TriangleMesh> Weight_calculator;
-  // typedef internal::Cotangent_weight_calculator<TriangleMesh> Weight_calculator;
+  typedef CGAL::Simple_cartesian<double> Weight_kernel;
+  typedef CGAL::Generalized_weights::internal::
+    PM_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;
 
   class ARAP_visitor{
     double m_nb_edges_incident;

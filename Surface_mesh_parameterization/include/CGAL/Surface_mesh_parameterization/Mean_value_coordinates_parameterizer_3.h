@@ -17,9 +17,9 @@
 #include <CGAL/disable_warnings.h>
 
 #include <CGAL/Surface_mesh_parameterization/internal/validity.h>
-
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
+
 #include <CGAL/Weight_interface/Generalized_weights/Tangent_weight.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
@@ -203,7 +203,7 @@ protected:
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
 
     return m_tangent_weight(
-      position_v_i, position_v_k, position_v_j, position_v_l);
+      position_v_i, position_v_k, position_v_j, position_v_l) / NT(2);
   }
 };
 

@@ -26,9 +26,9 @@
 #include <CGAL/Surface_mesh_parameterization/LSCM_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/MVC_post_processor_3.h>
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
-
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
+#include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -44,8 +44,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/number_utils.h>
 
-// Below are two macros that can be used to improve the accuracy of optimal Lt
-// matrices.
+// Below are two macros that can be used to improve the accuracy of optimal Lt matrices.
 // Note that at least one of these macros should be defined. If:
 //
 // - CGAL_SMP_SOLVE_CUBIC_EQUATION is defined: a cubic equation is solved instead of the
@@ -61,7 +60,7 @@
 
 // -----------------------------------------------------------------------------
 #define CGAL_SMP_SOLVE_CUBIC_EQUATION
-//#define CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
+// #define CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP
 // -----------------------------------------------------------------------------
 
 #if !defined(CGAL_SMP_SOLVE_CUBIC_EQUATION) && !defined(CGAL_SMP_SOLVE_EQUATIONS_WITH_GMP)
@@ -163,16 +162,16 @@ namespace Surface_mesh_parameterization {
 ///
 /// \sa `CGAL::Surface_mesh_parameterization::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer, SolverTraits>`
 ///
-template < class TriangleMesh_,
-           class BorderParameterizer_ = Default,
-           class SolverTraits_ = Default>
+template <class TriangleMesh_,
+          class BorderParameterizer_ = Default,
+          class SolverTraits_ = Default>
 class ARAP_parameterizer_3
 {
 public:
 #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
     BorderParameterizer_,
-    Two_vertices_parameterizer_3<TriangleMesh_> >::type       Border_parameterizer;
+    Two_vertices_parameterizer_3<TriangleMesh_> >::type Border_parameterizer;
 
   #if !defined(CGAL_EIGEN3_ENABLED)
   CGAL_static_assertion_msg(!(boost::is_same<SolverTraits_, Default>::value),
@@ -226,20 +225,24 @@ private:
   typedef typename Solver_traits::Vector                            Vector;
   typedef typename Solver_traits::Matrix                            Matrix;
 
+  // Get weight from the weight interface.
+  typedef CGAL::Generalized_weights::Cotangent_weight<Kernel> Cotangent_weight;
+  const Cotangent_weight m_cotangent_weight;
+
   // Memory maps
-    // Each triangle is associated a linear transformation matrix
+  // Each triangle is associated a linear transformation matrix
   typedef std::pair<NT, NT>                                         Lt_matrix;
   typedef CGAL::Unique_hash_map<face_descriptor,
                                 Lt_matrix,
                                 boost::hash<face_descriptor> >      Lt_hash_map;
   typedef boost::associative_property_map<Lt_hash_map>              Lt_map;
 
-    // Each angle (uniquely determined by the opposite half edge) has a cotangent
+  // Each angle (uniquely determined by the opposite half edge) has a cotangent
   typedef CGAL::Unique_hash_map<halfedge_descriptor, NT,
                                 boost::hash<halfedge_descriptor> >  Cot_hm;
   typedef boost::associative_property_map<Cot_hm>                   Cot_map;
 
-    // Each face has a local 2D isometric parameterization
+  // Each face has a local 2D isometric parameterization
   typedef std::pair<int, int>                                       Local_indices;
   typedef CGAL::Unique_hash_map<halfedge_descriptor,
                                 Local_indices,
@@ -437,7 +440,8 @@ private:
     const Point_3& position_vj = get(ppmap, vj);
     const Point_3& position_vk = get(ppmap, vk);
 
-    NT cot = internal::cotangent<Kernel>(position_vi, position_vj, position_vk);
+    const NT cot = m_cotangent_weight.cotangent(
+      position_vi, position_vj, position_vk);
     put(ctmap, hd, cot);
   }
 
@@ -477,13 +481,13 @@ private:
 
     // coefficient corresponding to the angle at vk if vk is the vertex before vj
     // while circulating around vi
-    NT c_k = get(ctmap, opposite(hd, mesh));
+    const NT c_k = get(ctmap, opposite(hd, mesh));
 
     // coefficient corresponding to the angle at vl if vl is the vertex after vj
     // while circulating around vi
-    NT c_l = get(ctmap, hd);
+    const NT c_l = get(ctmap, hd);
 
-    NT weight = c_k + c_l;
+    const NT weight = c_k + c_l;
     return weight;
   }
 
@@ -772,7 +776,7 @@ private:
         const Point_2& uvpj = get(uvmap, target(hd, mesh));
         NT diff_x = uvpi.x() - uvpj.x();
         NT diff_y = uvpi.y() - uvpj.y();
-//        CGAL_warning(diff_x == 0. && diff_y == 0.);
+        // CGAL_warning(diff_x == 0. && diff_y == 0.);
 
         // local positions (in the isometric 2D param)
         const Local_indices& li = get(lpmap, hd);
@@ -1227,7 +1231,7 @@ private:
     return E;
   }
 
-// Post processing functions
+  // Post processing functions
   // Use the convex virtual boundary algorithm of Karni et al.[2005] to fix
   // the (hopefully few) flips in the result.
   template <typename VertexUVMap,
