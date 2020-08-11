@@ -60,6 +60,8 @@ struct Types_selectors;
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
+
+  // Get weight from the weight interface.
   typedef CGAL::Simple_cartesian<double> Weight_kernel;
   typedef CGAL::Generalized_weights::internal::
     PM_single_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;
@@ -83,6 +85,8 @@ struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
+
+  // Get weight from the weight interface.
   typedef CGAL::Simple_cartesian<double> Weight_kernel;
   typedef CGAL::Generalized_weights::internal::
     PM_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;
@@ -93,6 +97,8 @@ struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
 
 template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
+
+  // Get weight from the weight interface.
   typedef CGAL::Simple_cartesian<double> Weight_kernel;
   typedef CGAL::Generalized_weights::internal::
     PM_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;

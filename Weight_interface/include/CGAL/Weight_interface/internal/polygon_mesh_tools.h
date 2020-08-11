@@ -87,10 +87,19 @@ class PM_cotangent_weight {
   using FT = typename GeomTraits::FT;
   using Cotangent_weight = CGAL::Generalized_weights::Cotangent_weight<GeomTraits>;
   const Cotangent_weight m_cotangent_weight;
+  bool m_use_secure_version;
+  GeomTraits m_traits;
 
 public:
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
+
+  PM_cotangent_weight(
+    const bool use_secure_version = false,
+    GeomTraits traits = GeomTraits()) :
+  m_use_secure_version(use_secure_version),
+  m_traits(traits)
+  { }
 
   template<class VertexPointMap>
   FT operator()(
@@ -113,12 +122,18 @@ public:
         v2 = source(he_ccw, pmesh);
 
         const auto& p2 = get(ppmap, v2);
-        weight = m_cotangent_weight.cotangent(p1, p2, p0);
+        if (m_use_secure_version)
+          weight = internal::cotangent_3_secure(m_traits, p1, p2, p0);
+        else
+          weight = m_cotangent_weight.cotangent(p1, p2, p0);
         weight = (CGAL::max)(FT(0), weight);
         weight /= 2.0;
       } else {
         const auto& p2 = get(ppmap, v2);
-        weight = m_cotangent_weight.cotangent(p0, p2, p1);
+        if (m_use_secure_version)
+          weight = internal::cotangent_3_secure(m_traits, p0, p2, p1);
+        else
+          weight = m_cotangent_weight.cotangent(p0, p2, p1);
         weight = (CGAL::max)(FT(0), weight);
         weight /= 2.0;
       }
@@ -133,12 +148,21 @@ public:
       const auto& p1 = get(ppmap, v1);
       const auto& p2 = get(ppmap, v2);
       const auto& p3 = get(ppmap, v3);
-      FT cot_beta = m_cotangent_weight.cotangent(p1, p3, p0);
-      FT cot_gamma = m_cotangent_weight.cotangent(p0, p2, p1);
-      cot_beta = (CGAL::max)(FT(0), cot_beta);
-      cot_gamma = (CGAL::max)(FT(0), cot_gamma);
-      cot_beta /= 2.0;
-      cot_gamma /= 2.0;
+
+      FT cot_beta = FT(0), cot_gamma = FT(0);
+
+      if (m_use_secure_version)
+        cot_beta = internal::cotangent_3_secure(m_traits, p1, p3, p0);
+      else
+        cot_beta = m_cotangent_weight.cotangent(p1, p3, p0);
+
+      if (m_use_secure_version)
+        cot_gamma = internal::cotangent_3_secure(m_traits, p0, p2, p1);
+      else
+        cot_gamma = m_cotangent_weight.cotangent(p0, p2, p1);
+
+      cot_beta  = (CGAL::max)(FT(0), cot_beta);  cot_beta  /= 2.0;
+      cot_gamma = (CGAL::max)(FT(0), cot_gamma); cot_gamma /= 2.0;
       weight = cot_beta + cot_gamma;
     }
     return weight;
