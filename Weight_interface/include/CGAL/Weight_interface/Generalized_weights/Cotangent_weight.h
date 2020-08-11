@@ -72,8 +72,8 @@ namespace Generalized_weights {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
-    /// 2D point type.
-    typedef typename GeomTraits::Point_2 Point_2;
+    // /// 2D point type.
+    // typedef typename GeomTraits::Point_2 Point_2;
 
     /// 3D point type.
     typedef typename GeomTraits::Point_3 Point_3;
@@ -102,6 +102,7 @@ namespace Generalized_weights {
     /*!
       \brief to be added
     */
+    template<typename Point_2>
     const FT cotangent(
       const Point_2& p,
       const Point_2& q,
@@ -133,6 +134,7 @@ namespace Generalized_weights {
     /*!
       \brief computes the cotangent weight.
     */
+    template<typename Point_2>
     const FT operator()(
       const Point_2& q,
       const Point_2& t,
@@ -159,6 +161,7 @@ namespace Generalized_weights {
   private:
     const GeomTraits m_traits;
 
+    template<typename Point_2>
     const FT cotangent_2(
       const Point_2& p,
       const Point_2& q,
@@ -181,6 +184,7 @@ namespace Generalized_weights {
       return FT(2) * cot;
     }
 
+    template<typename Point_2>
     const FT weight_2(
       const Point_2& q,
       const Point_2& t,

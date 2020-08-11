@@ -204,13 +204,15 @@ const typename GeomTraits::FT cotangent_3(
   using FT = typename GeomTraits::FT;
   using Vector_3 = typename GeomTraits::Vector_3;
 
+  const auto construct_vector_3 =
+    traits.construct_vector_3_object();
   const auto dot_product_3 =
     traits.compute_scalar_product_3_object();
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
 
-  const Vector_3 v = Vector_3(q, r);
-  const Vector_3 w = Vector_3(q, p);
+  const Vector_3 v = construct_vector_3(q, r);
+  const Vector_3 w = construct_vector_3(q, p);
 
   const FT dot = dot_product_3(v, w);
   const Vector_3 cross = cross_product_3(v, w);

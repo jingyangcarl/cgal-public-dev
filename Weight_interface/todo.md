@@ -9,3 +9,5 @@
 * Should I move polygon weights from the internal namespace in BC to this package?
 * I do not want to make Surface_mesh_shortest_path depend on the Barycentric_coordinates_2 package due to the license issues. In
   addition, they also use a 3D version for 3D triangles.
+* Some packages require traits, which do not have a Point_2. What should we do in that case? See e.g. heat_method_3_concept.
+* I should add more construct_objects from the kernel instead of constructors.
