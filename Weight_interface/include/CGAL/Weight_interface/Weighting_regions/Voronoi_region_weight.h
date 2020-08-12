@@ -62,9 +62,6 @@ namespace Generalized_weights {
     /// Number type.
     typedef typename GeomTraits::FT FT;
 
-    /// 2D point type.
-    typedef typename GeomTraits::Point_2 Point_2;
-
     /// 3D point type.
     typedef typename GeomTraits::Point_3 Point_3;
 
@@ -92,6 +89,7 @@ namespace Generalized_weights {
     /*!
       \brief computes 2D Voronoi area weight.
     */
+    template<typename Point_2>
     const FT operator()(
       const Point_2& p,
       const Point_2& q,
@@ -116,6 +114,7 @@ namespace Generalized_weights {
   private:
     const GeomTraits m_traits;
 
+    template<typename Point_2>
     const FT weight_2(
       const Point_2& p,
       const Point_2& q,

@@ -31,6 +31,7 @@
 // Internal includes.
 #include <CGAL/Weight_interface/Generalized_weights/Tangent_weight.h>
 #include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
+#include <CGAL/Weight_interface/Weighting_regions/Mixed_voronoi_region_weight.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -47,8 +48,8 @@ class PM_tangent_weight {
   FT m_d_r, m_d_p, m_w_base;
 
 public:
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
   PM_tangent_weight() { }
 
@@ -91,8 +92,8 @@ class PM_cotangent_weight {
   GeomTraits m_traits;
 
 public:
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
   PM_cotangent_weight(
     const bool use_secure_version = false,
@@ -170,6 +171,186 @@ public:
 };
 
 template<
+typename PolygonMesh,
+typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
+class PM_cotangent_weight_with_voronoi_area_fairing_secure {
+
+  using GeomTraits = typename CGAL::Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type>::type;
+  using FT = typename GeomTraits::FT;
+
+  using Mixed_voronoi_region_weight = CGAL::Generalized_weights::Mixed_voronoi_region_weight<GeomTraits>;
+  using Cotangent_weight = CGAL::Generalized_weights::Cotangent_weight<GeomTraits>;
+
+  const Mixed_voronoi_region_weight m_voronoi_region_weight;
+  const Cotangent_weight m_cotangent_weight;
+
+  const PolygonMesh& m_pmesh;
+  const VertexPointMap m_ppmap;
+  GeomTraits m_traits;
+  std::size_t count = 0;
+
+public:
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+
+  PM_cotangent_weight_with_voronoi_area_fairing_secure(
+    const PolygonMesh& pmesh, const VertexPointMap ppmap) :
+  m_pmesh(pmesh), m_ppmap(ppmap), m_traits(GeomTraits())
+  { }
+
+  PolygonMesh& pmesh() {
+    return m_pmesh;
+  }
+
+  FT w_i(vertex_descriptor v_i) {
+    // std::cout << "new: " << (FT(1) / FT(2)) / voronoi(v_i) << std::endl;
+    // ++count;
+    // if (count == 1000) exit(1);
+    return 0.5 / voronoi(v_i);
+  }
+
+  FT w_ij(halfedge_descriptor he) {
+    return FT(2) * cotangent(he);
+  }
+
+private:
+
+  FT cotangent(halfedge_descriptor he) const {
+
+    const vertex_descriptor v0 = target(he, m_pmesh);
+    const vertex_descriptor v1 = source(he, m_pmesh);
+    const auto& p0 = get(m_ppmap, v0);
+    const auto& p1 = get(m_ppmap, v1);
+
+    FT weight = FT(0);
+    if (is_border_edge(he, m_pmesh)) {
+      const halfedge_descriptor he_cw = opposite(next(he, m_pmesh), m_pmesh);
+      vertex_descriptor v2 = source(he_cw, m_pmesh);
+
+      if (is_border_edge(he_cw, m_pmesh)) {
+        const halfedge_descriptor he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
+        v2 = source(he_ccw, m_pmesh);
+
+        const auto& p2 = get(m_ppmap, v2);
+        weight = internal::cotangent_3_secure(m_traits, p1, p2, p0);
+        weight /= 2.0;
+      } else {
+        const auto& p2 = get(m_ppmap, v2);
+        weight = internal::cotangent_3_secure(m_traits, p0, p2, p1);
+        weight /= 2.0;
+      }
+
+    } else {
+      const halfedge_descriptor he_cw = opposite(next(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v2 = source(he_cw, m_pmesh);
+      const halfedge_descriptor he_ccw = prev(opposite(he, m_pmesh), m_pmesh);
+      const vertex_descriptor v3 = source(he_ccw, m_pmesh);
+
+      const auto& p0 = get(m_ppmap, v0);
+      const auto& p1 = get(m_ppmap, v1);
+      const auto& p2 = get(m_ppmap, v2);
+      const auto& p3 = get(m_ppmap, v3);
+
+      FT cot_beta  = internal::cotangent_3_secure(m_traits, p1, p3, p0); cot_beta  /= 2.0;
+      FT cot_gamma = internal::cotangent_3_secure(m_traits, p0, p2, p1); cot_gamma /= 2.0;
+      weight = cot_beta + cot_gamma;
+    }
+    return weight;
+  }
+
+  FT voronoi(vertex_descriptor v0) const {
+
+    FT voronoi_area = FT(0);
+    for (halfedge_descriptor he :
+      halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh)) {
+
+      if (is_border(he, m_pmesh) ) { continue; }
+
+      CGAL_assertion(CGAL::is_triangle_mesh(m_pmesh));
+      CGAL_assertion(v0 == target(he, m_pmesh));
+      vertex_descriptor v1 = source(he, m_pmesh);
+      vertex_descriptor v2 = target(next(he, m_pmesh), m_pmesh);
+
+      const auto& p0 = get(m_ppmap, v0);
+      const auto& p1 = get(m_ppmap, v1);
+      const auto& p2 = get(m_ppmap, v2);
+
+      voronoi_area += m_voronoi_region_weight(p1, p0, p2);
+    }
+    CGAL_assertion(voronoi_area != FT(0));
+    return voronoi_area;
+  }
+};
+
+template<
+typename GeomTraits,
+typename PolygonMesh,
+typename VertexPointMap>
+class PM_edge_cotangent_weight {
+
+  using FT = typename GeomTraits::FT;
+  using Cotangent_weight = CGAL::Generalized_weights::Cotangent_weight<GeomTraits>;
+  const Cotangent_weight m_cotangent_weight;
+  const PolygonMesh& m_pmesh;
+  const VertexPointMap m_ppmap;
+  GeomTraits m_traits;
+
+public:
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
+
+  PM_edge_cotangent_weight(
+    PolygonMesh& pmesh, VertexPointMap ppmap) :
+  m_pmesh(pmesh),
+  m_ppmap(ppmap),
+  m_traits(GeomTraits())
+  { }
+
+  PolygonMesh& pmesh() {
+    return m_pmesh;
+  }
+
+  FT operator()(
+    halfedge_descriptor he) const {
+
+    FT weight = FT(0);
+    if (is_border_edge(he, m_pmesh)) {
+      halfedge_descriptor h1 = next(he, m_pmesh);
+
+      vertex_descriptor v0 = target(he, m_pmesh);
+      vertex_descriptor v1 = source(he, m_pmesh);
+      vertex_descriptor v2 = target(h1, m_pmesh);
+
+      const auto& p0 = get(m_ppmap, v0);
+      const auto& p1 = get(m_ppmap, v1);
+      const auto& p2 = get(m_ppmap, v2);
+
+      weight = m_cotangent_weight.cotangent(p0, p2, p1);
+
+    } else {
+      halfedge_descriptor h1 = next(he, m_pmesh);
+      halfedge_descriptor h2 = prev(opposite(he, m_pmesh), m_pmesh);
+
+      vertex_descriptor v0 = target(he, m_pmesh);
+      vertex_descriptor v1 = source(he, m_pmesh);
+      vertex_descriptor v2 = target(h1, m_pmesh);
+      vertex_descriptor v3 = source(h2, m_pmesh);
+
+      const auto& p0 = get(m_ppmap, v0);
+      const auto& p1 = get(m_ppmap, v1);
+      const auto& p2 = get(m_ppmap, v2);
+      const auto& p3 = get(m_ppmap, v3);
+
+      const FT cot_beta  = m_cotangent_weight.cotangent(p1, p3, p0);
+      const FT cot_gamma = m_cotangent_weight.cotangent(p0, p2, p1);
+      weight = cot_beta + cot_gamma;
+    }
+    return weight;
+  }
+};
+
+template<
 typename GeomTraits,
 typename PolygonMesh>
 class PM_single_cotangent_weight {
@@ -179,8 +360,8 @@ class PM_single_cotangent_weight {
   const Cotangent_weight m_cotangent_weight;
 
 public:
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor   vertex_descriptor;
+  using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
+  using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
   template<class VertexPointMap>
   FT operator()(
