@@ -11,13 +11,11 @@
 * Change to
   using GeomTraits = typename CGAL::Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type>::type;
-* Remove all classes, change them to free functions with dimensions. Add overloads with no traits.
 * Add a concept test as in the heat_method.
-* Add more overloads to the uniform weight.
 * Remove my current examples from the user manual and use them only in the reference manual. While in the user manual add more complete examples:
   one that chooses a weight from the list, one that shows how to set up a Laplacian, one that shows how to compute barycentric coordinates, one that shows how to define your own traits class, one that shows how to normalize weights with weighting regions. Make the user manual short.
 * Clean up the reference manual.
 * Add tests.
 * Mention that Tangent_weight_3 uses positive areas (no distortions) and can be used only for PMP, while MV_weight_2/3 e.g. can have different signs/distortions for 2D and 3D versions due to the flattenning of the 3D region.
 * Add a flattenning version for the polygonal weights, which I will export from BC. Or better use an arbitrary direction projection traits from the triangulation package.
-* Should I remove the positive area from the Tangent_weight and substitute it by computing tan(alpha / 2)? In this case, I will keep the correct sign in any configuration.
+* Should I remove the positive area from the Tangent_weight and substitute it by computing tan(alpha/2)? In this case, I will keep the correct sign in any configuration.
