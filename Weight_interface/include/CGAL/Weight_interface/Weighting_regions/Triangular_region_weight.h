@@ -31,115 +31,43 @@
 namespace CGAL {
 namespace Generalized_weights {
 
+  // This weight is the area of the shaded triangle in the figure below.
+
+  // \cgalFigureBegin{triangular_region_weight, triangle_cell.svg}
+  //   Notation used for the triangular region weight.
+  // \cgalFigureEnd
+
   /*!
-    \ingroup PkgWeightInterfaceRefRegions
+    \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief Triangular region weight.
-
-    This weight is the area of the shaded triangle in the figure below.
-
-    \cgalFigureBegin{triangular_region_weight, triangle_cell.svg}
-      Notation used for the triangular region weight.
-    \cgalFigureEnd
+    \brief computes the triangle area on a 2D triangle [p, q, r].
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits`.
+    must be a model of `AnalyticTraits_2`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param r
+    the third point
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed area.
   */
   template<typename GeomTraits>
-  class Triangular_region_weight {
+  decltype(auto) triangle_area_2(
+    const typename GeomTraits::Point_2& p,
+    const typename GeomTraits::Point_2& q,
+    const typename GeomTraits::Point_2& r,
+    const GeomTraits& traits) {
 
-  public:
-
-    /// \name Types
-    /// @{
-
-    /// \cond SKIP_IN_MANUAL
-    using GT = GeomTraits;
-    /// \endcond
-
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// 2D point type.
-    typedef typename GeomTraits::Point_2 Point_2;
-
-    /// 3D point type.
-    typedef typename GeomTraits::Point_3 Point_3;
-
-    /// @}
-
-    /// \name Initialization
-    /// @{
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \param traits
-      An instance of `GeomTraits`. The default initialization is provided.
-    */
-    Triangular_region_weight(
-      const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
-    { }
-
-    /// @}
-
-    /// \name Access
-    /// @{
-
-    /*!
-      \brief computes 2D triangle area weight.
-    */
-    const FT operator()(
-      const Point_2& p,
-      const Point_2& q,
-      const Point_2& r) const {
-
-      return weight_2(p, q, r);
-    }
-
-    /*!
-      \brief computes 2D triangle area weight.
-    */
-    const FT operator()(
-      const Point_3& p,
-      const Point_3& q,
-      const Point_3& r) const {
-
-      return weight_3(p, q, r);
-    }
-
-    /// @}
-
-  private:
-    const GeomTraits m_traits;
-
-    const FT weight_2(
-      const Point_2& p,
-      const Point_2& q,
-      const Point_2& r) const {
-
-      const FT A =
-        internal::positive_area_2(m_traits, p, q, r);
-      return weight(A);
-    }
-
-    const FT weight_3(
-      const Point_3& p,
-      const Point_3& q,
-      const Point_3& r) const {
-
-      const FT A =
-        internal::positive_area_3(m_traits, p, q, r);
-      return weight(A);
-    }
-
-    const FT weight(
-      const FT A) const {
-
-      return A;
-    }
-  };
+    return internal::positive_area_2(traits, p, q, r);
+  }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
@@ -166,9 +94,41 @@ namespace Generalized_weights {
   decltype(auto) triangle_area_2(
     const Point_2& p, const Point_2& q, const Point_2& r) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    const Triangular_region_weight<Traits> triangle_area;
-    return triangle_area(p, q, r);
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return triangle_area_2(p, q, r, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the triangle area on a 3D triangle [p, q, r].
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_3`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param r
+    the third point
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed area.
+  */
+  template<typename GeomTraits>
+  decltype(auto) triangle_area_3(
+    const typename GeomTraits::Point_3& p,
+    const typename GeomTraits::Point_3& q,
+    const typename GeomTraits::Point_3& r,
+    const GeomTraits& traits) {
+
+    return internal::positive_area_3(traits, p, q, r);
   }
 
   /*!
@@ -196,9 +156,9 @@ namespace Generalized_weights {
   decltype(auto) triangle_area_3(
     const Point_3& p, const Point_3& q, const Point_3& r) {
 
-    using Traits = typename Kernel_traits<Point_3>::Kernel;
-    const Triangular_region_weight<Traits> triangle_area;
-    return triangle_area(p, q, r);
+    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    const GeomTraits traits;
+    return triangle_area_3(p, q, r, traits);
   }
 
 } // namespace Generalized_weights

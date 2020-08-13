@@ -29,15 +29,8 @@
 #include <CGAL/boost/graph/helpers.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/Generalized_weights/Tangent_weight.h>
-#include <CGAL/Weight_interface/Generalized_weights/Authalic_weight.h>
-#include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
-
-#include <CGAL/Weight_interface/Weighting_regions/Uniform_region_weight.h>
-#include <CGAL/Weight_interface/Weighting_regions/Voronoi_region_weight.h>
-#include <CGAL/Weight_interface/Weighting_regions/Triangular_region_weight.h>
-#include <CGAL/Weight_interface/Weighting_regions/Barycentric_region_weight.h>
-#include <CGAL/Weight_interface/Weighting_regions/Mixed_voronoi_region_weight.h>
+#include <CGAL/Weight_interface/Weighting_regions.h>
+#include <CGAL/Weight_interface/Generalized_weights.h>
 
 namespace CGAL {
 namespace Generalized_weights {

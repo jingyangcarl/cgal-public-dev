@@ -25,19 +25,15 @@
 
 // #include <CGAL/license/Weight_interface.h>
 
-#include <CGAL/Weight_interface/Generalized_weights/Uniform_weight>
-#include <CGAL/Weight_interface/Generalized_weights/Three_point_family_weight>
-
-#include <CGAL/Weight_interface/Generalized_weights/Inverse_distance_weight>
-#include <CGAL/Weight_interface/Generalized_weights/Shepard_weight>
-
-#include <CGAL/Weight_interface/Generalized_weights/Wachspress_weight>
-#include <CGAL/Weight_interface/Generalized_weights/Authalic_weight>
-
-#include <CGAL/Weight_interface/Generalized_weights/Mean_value_weight>
-#include <CGAL/Weight_interface/Generalized_weights/Tangent_weight>
-
-#include <CGAL/Weight_interface/Generalized_weights/Discrete_harmonic_weight>
-#include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight>
+#include <CGAL/Weight_interface/Generalized_weights/uniform_weight>
+#include <CGAL/Weight_interface/Generalized_weights/three_point_family_weight>
+#include <CGAL/Weight_interface/Generalized_weights/inverse_distance_weight>
+#include <CGAL/Weight_interface/Generalized_weights/shepard_weight>
+#include <CGAL/Weight_interface/Generalized_weights/wachspress_weight>
+#include <CGAL/Weight_interface/Generalized_weights/authalic_weight>
+#include <CGAL/Weight_interface/Generalized_weights/mean_value_weight>
+#include <CGAL/Weight_interface/Generalized_weights/tangent_weight>
+#include <CGAL/Weight_interface/Generalized_weights/discrete_harmonic_weight>
+#include <CGAL/Weight_interface/Generalized_weights/cotangent_weight>
 
 #endif // CGAL_GENERALIZED_WEIGHTS_H

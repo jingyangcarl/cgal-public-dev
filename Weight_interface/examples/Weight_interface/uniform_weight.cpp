@@ -1,13 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/Uniform_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/uniform_weight.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
-using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Point_3 = typename Kernel::Point_3;
-
-using UW = CGAL::Generalized_weights::Uniform_weight<Kernel>;
 
 int main() {
 
@@ -24,16 +21,17 @@ int main() {
   const Point_3 p3 = Point_3( 1,  0, 1);
 
   // Compute weights.
-  const UW uw;
-  std::cout << "2D uniform: " << uw(q2, t2, r2, p2) << std::endl;
-  std::cout << "3D uniform: " << uw(q3, t3, r3, p3) << std::endl;
-  std::cout << "-------------" << std::endl;
-
-  // Using free functions.
   std::cout << "2D uniform: " <<
     CGAL::Generalized_weights::uniform_weight_2(q2, t2, r2, p2) << std::endl;
   std::cout << "3D uniform: " <<
     CGAL::Generalized_weights::uniform_weight_3(q3, t3, r3, p3) << std::endl;
+  std::cout << "-------------" << std::endl;
+
+  // // Overloads.
+  // std::cout << "2D uniform: " <<
+  //   CGAL::Generalized_weights::uniform_weight_2() << std::endl;
+  // std::cout << "3D uniform: " <<
+  //   CGAL::Generalized_weights::uniform_weight_3() << std::endl;
 
   return EXIT_SUCCESS;
 }

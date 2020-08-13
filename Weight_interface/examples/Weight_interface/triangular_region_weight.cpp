@@ -1,13 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Weighting_regions/Triangular_region_weight.h>
+#include <CGAL/Weight_interface/Weighting_regions/triangular_region_weight.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
-using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Point_3 = typename Kernel::Point_3;
-
-using TRW = CGAL::Generalized_weights::Triangular_region_weight<Kernel>;
 
 int main() {
 
@@ -22,12 +19,6 @@ int main() {
   const Point_3 r3 = Point_3( 0, 1, 1);
 
   // Compute weights.
-  const TRW triangle;
-  std::cout << "2D triangle: " << triangle(p2, q2, r2) << std::endl;
-  std::cout << "3D triangle: " << triangle(p3, q3, r3) << std::endl;
-  std::cout << "----------------" << std::endl;
-
-  // Using free functions.
   std::cout << "2D triangle: " <<
     CGAL::Generalized_weights::triangle_area_2(p2, q2, r2) << std::endl;
   std::cout << "3D triangle: " <<

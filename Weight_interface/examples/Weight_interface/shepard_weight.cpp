@@ -1,13 +1,10 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/Shepard_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/shepard_weight.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
-using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Point_3 = typename Kernel::Point_3;
-
-using SW = CGAL::Generalized_weights::Shepard_weight<Kernel>;
 
 int main() {
 
@@ -24,12 +21,13 @@ int main() {
   const Point_3 p3 = Point_3( 1,  0, 1);
 
   // Compute weights.
-  const SW sw;
-  std::cout << "2D shepard: " << sw(q2, t2, r2, p2) << std::endl;
-  std::cout << "3D shepard: " << sw(q3, t3, r3, p3) << std::endl;
+  std::cout << "2D shepard: " <<
+    CGAL::Generalized_weights::shepard_weight_2(q2, t2, r2, p2) << std::endl;
+  std::cout << "3D shepard: " <<
+    CGAL::Generalized_weights::shepard_weight_3(q3, t3, r3, p3) << std::endl;
   std::cout << "-------------" << std::endl;
 
-  // Using free functions.
+  // Overloads.
   std::cout << "2D shepard: " <<
     CGAL::Generalized_weights::shepard_weight_2(q2, r2) << std::endl;
   std::cout << "3D shepard: " <<

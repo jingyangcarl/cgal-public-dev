@@ -31,134 +31,59 @@
 namespace CGAL {
 namespace Generalized_weights {
 
+  // This weight is the area of the shaded region in the figure below. The region
+  // is formed by two midpoints of the edges incident to `q` and the circumcenter of
+  // the triangle `[p, q, r]`.
+
+  // \cgalFigureBegin{voronoi_region_weight, voronoi_cell.svg}
+  //   Notation used for the Voronoi region weight.
+  // \cgalFigureEnd
+
   /*!
-    \ingroup PkgWeightInterfaceRefRegions
+    \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief Voronoi region weight.
-
-    This weight is the area of the shaded region in the figure below. The region
-    is formed by two midpoints of the edges incident to `q` and the circumcenter of
-    the triangle `[p, q, r]`.
-
-    \cgalFigureBegin{voronoi_region_weight, voronoi_cell.svg}
-      Notation used for the Voronoi region weight.
-    \cgalFigureEnd
+    \brief computes the Voronoi area on a 2D triangle [p, q, r].
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits`.
+    must be a model of `AnalyticTraits_2`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param r
+    the third point
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed area.
   */
   template<typename GeomTraits>
-  class Voronoi_region_weight {
+  decltype(auto) voronoi_area_2(
+    const typename GeomTraits::Point_2& p,
+    const typename GeomTraits::Point_2& q,
+    const typename GeomTraits::Point_2& r,
+    const GeomTraits& traits) {
 
-  public:
+    using FT = typename GeomTraits::FT;
+    using Point_2 = typename GeomTraits::Point_2;
 
-    /// \name Types
-    /// @{
+    const auto circumcenter_2 =
+      traits.construct_circumcenter_2_object();
+    const Point_2 center =
+      circumcenter_2(p, q, r);
+    const Point_2 m1 =
+      internal::barycenter_2(traits, q, r);
+    const Point_2 m2 =
+      internal::barycenter_2(traits, q, p);
 
-    /// \cond SKIP_IN_MANUAL
-    using GT = GeomTraits;
-    /// \endcond
-
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// 3D point type.
-    typedef typename GeomTraits::Point_3 Point_3;
-
-    /// @}
-
-    /// \name Initialization
-    /// @{
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \param traits
-      An instance of `GeomTraits`. The default initialization is provided.
-    */
-    Voronoi_region_weight(
-      const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
-    { }
-
-    /// @}
-
-    /// \name Access
-    /// @{
-
-    /*!
-      \brief computes 2D Voronoi area weight.
-    */
-    template<typename Point_2>
-    const FT operator()(
-      const Point_2& p,
-      const Point_2& q,
-      const Point_2& r) const {
-
-      return weight_2(p, q, r);
-    }
-
-    /*!
-      \brief computes 2D Voronoi area weight.
-    */
-    const FT operator()(
-      const Point_3& p,
-      const Point_3& q,
-      const Point_3& r) const {
-
-      return weight_3(p, q, r);
-    }
-
-    /// @}
-
-  private:
-    const GeomTraits m_traits;
-
-    template<typename Point_2>
-    const FT weight_2(
-      const Point_2& p,
-      const Point_2& q,
-      const Point_2& r) const {
-
-      const auto circumcenter_2 =
-        m_traits.construct_circumcenter_2_object();
-      const Point_2 center =
-        circumcenter_2(p, q, r);
-      const Point_2 m1 =
-        internal::barycenter_2(m_traits, q, r);
-      const Point_2 m2 =
-        internal::barycenter_2(m_traits, q, p);
-
-      const FT A1 = internal::positive_area_2(m_traits, q, m1, center);
-      const FT A2 = internal::positive_area_2(m_traits, q, center, m2);
-      return weight(A1, A2);
-    }
-
-    const FT weight_3(
-      const Point_3& p,
-      const Point_3& q,
-      const Point_3& r) const {
-
-      const auto circumcenter_3 =
-        m_traits.construct_circumcenter_3_object();
-      const Point_3 center =
-        circumcenter_3(p, q, r);
-      const Point_3 m1 =
-        internal::barycenter_3(m_traits, q, r);
-      const Point_3 m2 =
-        internal::barycenter_3(m_traits, q, p);
-
-      const FT A1 = internal::positive_area_3(m_traits, q, m1, center);
-      const FT A2 = internal::positive_area_3(m_traits, q, center, m2);
-      return weight(A1, A2);
-    }
-
-    const FT weight(
-      const FT A1, const FT A2) const {
-
-      return A1 + A2;
-    }
-  };
+    const FT A1 = internal::positive_area_2(traits, q, m1, center);
+    const FT A2 = internal::positive_area_2(traits, q, center, m2);
+    return A1 + A2;
+  }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
@@ -185,9 +110,55 @@ namespace Generalized_weights {
   decltype(auto) voronoi_area_2(
     const Point_2& p, const Point_2& q, const Point_2& r) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    const Voronoi_region_weight<Traits> voronoi_area;
-    return voronoi_area(p, q, r);
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return voronoi_area_2(p, q, r, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the Voronoi area on a 3D triangle [p, q, r].
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_3`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param r
+    the third point
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed area.
+  */
+  template<typename GeomTraits>
+  decltype(auto) voronoi_area_3(
+    const typename GeomTraits::Point_3& p,
+    const typename GeomTraits::Point_3& q,
+    const typename GeomTraits::Point_3& r,
+    const GeomTraits& traits) {
+
+    using FT = typename GeomTraits::FT;
+    using Point_3 = typename GeomTraits::Point_3;
+
+    const auto circumcenter_3 =
+      traits.construct_circumcenter_3_object();
+    const Point_3 center =
+      circumcenter_3(p, q, r);
+    const Point_3 m1 =
+      internal::barycenter_3(traits, q, r);
+    const Point_3 m2 =
+      internal::barycenter_3(traits, q, p);
+
+    const FT A1 = internal::positive_area_3(traits, q, m1, center);
+    const FT A2 = internal::positive_area_3(traits, q, center, m2);
+    return A1 + A2;
   }
 
   /*!
@@ -215,9 +186,9 @@ namespace Generalized_weights {
   decltype(auto) voronoi_area_3(
     const Point_3& p, const Point_3& q, const Point_3& r) {
 
-    using Traits = typename Kernel_traits<Point_3>::Kernel;
-    const Voronoi_region_weight<Traits> voronoi_area;
-    return voronoi_area(p, q, r);
+    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    const GeomTraits traits;
+    return voronoi_area_3(p, q, r, traits);
   }
 
 } // namespace Generalized_weights
