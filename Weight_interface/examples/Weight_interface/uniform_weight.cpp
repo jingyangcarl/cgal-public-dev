@@ -27,11 +27,11 @@ int main() {
     CGAL::Generalized_weights::uniform_weight_3(q3, t3, r3, p3) << std::endl;
   std::cout << "-------------" << std::endl;
 
-  // // Overloads.
-  // std::cout << "2D uniform: " <<
-  //   CGAL::Generalized_weights::uniform_weight_2() << std::endl;
-  // std::cout << "3D uniform: " <<
-  //   CGAL::Generalized_weights::uniform_weight_3() << std::endl;
+  // Overloads.
+  std::cout << "2D uniform: " <<
+    CGAL::Generalized_weights::uniform_weight_2() << std::endl;
+  std::cout << "3D uniform: " <<
+    CGAL::Generalized_weights::uniform_weight_3() << std::endl;
 
   return EXIT_SUCCESS;
 }

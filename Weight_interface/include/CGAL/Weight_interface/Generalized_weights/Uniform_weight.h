@@ -31,93 +31,29 @@
 namespace CGAL {
 namespace Generalized_weights {
 
+  // This weight always returns 1.
+
   /*!
-    \ingroup PkgWeightInterfaceRefWeights
+    \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief Uniform weight.
-
-    This weight always returns 1.
+    \brief computes the uniform weight for 2D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits`.
+    must be a model of `AnalyticTraits_2`.
 
-    \cgalModels `AnalyticWeight_2`
+    \return the computed weight.
   */
   template<typename GeomTraits>
-  class Uniform_weight {
+  decltype(auto) uniform_weight_2(
+    const typename GeomTraits::Point_2&,
+    const typename GeomTraits::Point_2&,
+    const typename GeomTraits::Point_2&,
+    const typename GeomTraits::Point_2&,
+    const GeomTraits&) {
 
-  public:
-
-    /// \name Types
-    /// @{
-
-    /// \cond SKIP_IN_MANUAL
-    using GT = GeomTraits;
-    /// \endcond
-
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// 2D point type.
-    typedef typename GeomTraits::Point_2 Point_2;
-
-    /// 3D point type.
-    typedef typename GeomTraits::Point_3 Point_3;
-
-    /// @}
-
-    /// \name Initialization
-    /// @{
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \param traits
-      An instance of `GeomTraits`. The default initialization is provided.
-    */
-    Uniform_weight(
-      const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
-    { }
-
-    /// @}
-
-    /// \name Access
-    /// @{
-
-    /*!
-      \brief computes the uniform weight.
-    */
-    const FT operator()(
-      const Point_2&,
-      const Point_2&,
-      const Point_2&,
-      const Point_2&) const {
-
-      return weight();
-    }
-
-    /*!
-      \brief computes the uniform weight.
-    */
-    const FT operator()(
-      const Point_3&,
-      const Point_3&,
-      const Point_3&,
-      const Point_3&) const {
-
-      return weight();
-    }
-
-    /// @}
-
-  private:
-    const GeomTraits m_traits;
-
-    const FT weight() const {
-      return FT(1);
-    }
-  };
+    using FT = typename GeomTraits::FT;
+    return FT(1);
+  }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
@@ -145,11 +81,47 @@ namespace Generalized_weights {
   */
   template<typename Point_2>
   decltype(auto) uniform_weight_2(
-    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+    const Point_2& q,
+    const Point_2& t,
+    const Point_2& r,
+    const Point_2& p) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    const Uniform_weight<Traits> uniform;
-    return uniform(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return uniform_weight_2(q, t, r, p, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the uniform weight.
+
+    \return the computed weight.
+  */
+  double uniform_weight_2() {
+    return 1.0;
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the uniform weight for 3D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_3`.
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) uniform_weight_3(
+    const typename GeomTraits::Point_3&,
+    const typename GeomTraits::Point_3&,
+    const typename GeomTraits::Point_3&,
+    const typename GeomTraits::Point_3&,
+    const GeomTraits&) {
+
+    using FT = typename GeomTraits::FT;
+    return FT(1);
   }
 
   /*!
@@ -178,11 +150,25 @@ namespace Generalized_weights {
   */
   template<typename Point_3>
   decltype(auto) uniform_weight_3(
-    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+    const Point_3& q,
+    const Point_3& t,
+    const Point_3& r,
+    const Point_3& p) {
 
-    using Traits = typename Kernel_traits<Point_3>::Kernel;
-    const Uniform_weight<Traits> uniform;
-    return uniform(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    const GeomTraits traits;
+    return uniform_weight_3(q, t, r, p, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the uniform weight.
+
+    \return the computed weight.
+  */
+  double uniform_weight_3() {
+    return 1.0;
   }
 
 } // namespace Generalized_weights

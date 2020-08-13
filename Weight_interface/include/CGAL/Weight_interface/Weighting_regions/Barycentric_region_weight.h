@@ -106,7 +106,9 @@ namespace Generalized_weights {
   */
   template<typename Point_2>
   decltype(auto) barycentric_area_2(
-    const Point_2& p, const Point_2& q, const Point_2& r) {
+    const Point_2& p,
+    const Point_2& q,
+    const Point_2& r) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
@@ -180,7 +182,9 @@ namespace Generalized_weights {
   */
   template<typename Point_3>
   decltype(auto) barycentric_area_3(
-    const Point_3& p, const Point_3& q, const Point_3& r) {
+    const Point_3& p,
+    const Point_3& q,
+    const Point_3& r) {
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;

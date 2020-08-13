@@ -31,152 +31,43 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
+  // The full weight is computed as
 
-    \brief Mean value weight.
+  // \f$w = \pm 2 \sqrt{\frac{2 (r_m r_p - D)}{(r r_m + D_m)(r r_p + D_p)}}\f$,
 
-    The full weight is computed as
+  // with notations shown in the figure below and dot products
 
-    \f$w = \pm 2 \sqrt{\frac{2 (r_m r_p - D)}{(r r_m + D_m)(r r_p + D_p)}}\f$,
+  // \f$D_m = (v_j - q) \cdot (v_m - q)\f$,
+  // \f$D_p = (v_j - q) \cdot (v_p - q)\f$, and
+  // \f$D   = (v_m - q) \cdot (v_p - q)\f$.
 
-    with notations shown in the figure below and dot products
+  // The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
+  // This weight is equal to the `CGAL::Generalized_weights::Tangent_weight`.
+  // This weight is a special case of the `CGAL::Generalized_weights::Three_point_family_weight`.
 
-    \f$D_m = (v_j - q) \cdot (v_m - q)\f$,
-    \f$D_p = (v_j - q) \cdot (v_p - q)\f$, and
-    \f$D   = (v_m - q) \cdot (v_p - q)\f$.
+  // \cgalFigureBegin{mean_value_weight, mean_value.svg}
+  //   Notation used for the mean value weight.
+  // \cgalFigureEnd
 
-    The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
-    This weight is equal to the `CGAL::Generalized_weights::Tangent_weight`.
-    This weight is a special case of the `CGAL::Generalized_weights::Three_point_family_weight`.
+  /// \cond SKIP_IN_MANUAL
+  namespace internal {
 
-    \cgalFigureBegin{mean_value_weight, mean_value.svg}
-      Notation used for the mean value weight.
-    \cgalFigureEnd
+    template<typename FT>
+    const FT sign_of_weight(
+      const FT A1, const FT A2, const FT B) {
 
-    \tparam GeomTraits
-    must be a model of `AnalyticTraits`.
-
-    \cgalModels `AnalyticWeight_2`
-  */
-  template<typename GeomTraits>
-  class Mean_value_weight {
-
-  public:
-
-    /// \name Types
-    /// @{
-
-    /// \cond SKIP_IN_MANUAL
-    using GT = GeomTraits;
-    /// \endcond
-
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// 2D point type.
-    typedef typename GeomTraits::Point_2 Point_2;
-
-    /// 3D point type.
-    typedef typename GeomTraits::Point_3 Point_3;
-
-    /// @}
-
-    /// \name Initialization
-    /// @{
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \param traits
-      An instance of `GeomTraits`. The default initialization is provided.
-    */
-    Mean_value_weight(
-      const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
-    { }
-
-    /// @}
-
-    /// \name Access
-    /// @{
-
-    /*!
-      \brief computes the mean value weight.
-    */
-    const FT operator()(
-      const Point_2& q,
-      const Point_2& t,
-      const Point_2& r,
-      const Point_2& p) const {
-
-      return weight_2(q, t, r, p);
+      if (A1 > FT(0) && A2 > FT(0) && B <= FT(0)) return  FT(1);
+      if (A1 < FT(0) && A2 < FT(0) && B >= FT(0)) return -FT(1);
+      if (B  > FT(0)) return  FT(1);
+      if (B  < FT(0)) return -FT(1);
+      return FT(0);
     }
 
-    /*!
-      \brief computes the mean value weight.
-    */
-    const FT operator()(
-      const Point_3& q,
-      const Point_3& t,
-      const Point_3& r,
-      const Point_3& p) const {
-
-      return weight_3(q, t, r, p);
-    }
-
-    /// @}
-
-  private:
-    const GeomTraits m_traits;
-
-    const FT weight_2(
-      const Point_2& q,
-      const Point_2& t,
-      const Point_2& r,
-      const Point_2& p) const {
-
-      const auto s1 = t - q;
-      const auto s2 = r - q;
-      const auto s3 = p - q;
-
-      const FT l1 = internal::length_2(m_traits, s1);
-      const FT l2 = internal::length_2(m_traits, s2);
-      const FT l3 = internal::length_2(m_traits, s3);
-
-      const auto dot_product_2 =
-        m_traits.compute_scalar_product_2_object();
-      const FT D1 = dot_product_2(s1, s2);
-      const FT D2 = dot_product_2(s2, s3);
-      const FT D  = dot_product_2(s1, s3);
-
-      const FT A1 = internal::area_2(m_traits, r, q, t);
-      const FT A2 = internal::area_2(m_traits, p, q, r);
-      const FT B  = internal::area_2(m_traits, p, q, t);
-      const FT sign = sign_of_weight(A1, A2, B);
-
-      return weight(
-        l1, l2, l3, D1, D2, D, sign);
-    }
-
-    const FT weight_3(
-      const Point_3& q,
-      const Point_3& t,
-      const Point_3& r,
-      const Point_3& p) const {
-
-      Point_2 qf, tf, rf, pf;
-      internal::flatten(
-        m_traits,
-        q,  t,  r,  p,
-        qf, tf, rf, pf);
-      return weight_2(qf, tf, rf, pf);
-    }
-
+    template<typename FT>
     const FT weight(
       const FT r1, const FT r2, const FT r3,
       const FT D1, const FT D2, const FT D,
-      const FT sign) const {
+      const FT sign) {
 
       const FT P1 = r1 * r2 + D1;
       const FT P2 = r2 * r3 + D2;
@@ -195,17 +86,66 @@ namespace Generalized_weights {
       w *= FT(2); w *= sign;
       return w;
     }
+  }
+  /// \endcond
 
-    FT sign_of_weight(
-      const FT& A1, const FT& A2, const FT& B) const {
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
 
-      if (A1 > FT(0) && A2 > FT(0) && B <= FT(0)) return  FT(1);
-      if (A1 < FT(0) && A2 < FT(0) && B >= FT(0)) return -FT(1);
-      if (B  > FT(0)) return  FT(1);
-      if (B  < FT(0)) return -FT(1);
-      return FT(0);
-    }
-  };
+    \brief computes the mean value weight for 2D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) mean_value_weight_2(
+    const typename GeomTraits::Point_2& q,
+    const typename GeomTraits::Point_2& t,
+    const typename GeomTraits::Point_2& r,
+    const typename GeomTraits::Point_2& p,
+    const GeomTraits& traits) {
+
+    using FT = typename GeomTraits::FT;
+
+    const auto s1 = t - q;
+    const auto s2 = r - q;
+    const auto s3 = p - q;
+
+    const FT l1 = internal::length_2(traits, s1);
+    const FT l2 = internal::length_2(traits, s2);
+    const FT l3 = internal::length_2(traits, s3);
+
+    const auto dot_product_2 =
+      traits.compute_scalar_product_2_object();
+    const FT D1 = dot_product_2(s1, s2);
+    const FT D2 = dot_product_2(s2, s3);
+    const FT D  = dot_product_2(s1, s3);
+
+    const FT A1 = internal::area_2(traits, r, q, t);
+    const FT A2 = internal::area_2(traits, p, q, r);
+    const FT B  = internal::area_2(traits, p, q, t);
+    const FT sign = internal::sign_of_weight(A1, A2, B);
+
+    return internal::weight(
+      l1, l2, l3, D1, D2, D, sign);
+  }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
@@ -233,11 +173,56 @@ namespace Generalized_weights {
   */
   template<typename Point_2>
   decltype(auto) mean_value_weight_2(
-    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+    const Point_2& q,
+    const Point_2& t,
+    const Point_2& r,
+    const Point_2& p) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    const Mean_value_weight<Traits> mean_value;
-    return mean_value(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return mean_value_weight_2(q, t, r, p, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the mean value weight for 3D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) mean_value_weight_3(
+    const typename GeomTraits::Point_3& q,
+    const typename GeomTraits::Point_3& t,
+    const typename GeomTraits::Point_3& r,
+    const typename GeomTraits::Point_3& p,
+    const GeomTraits& traits) {
+
+    using Point_2 = typename GeomTraits::Point_2;
+    Point_2 qf, tf, rf, pf;
+    internal::flatten(
+      traits,
+      q,  t,  r,  p,
+      qf, tf, rf, pf);
+    return mean_value_weight_2(qf, tf, rf, pf, traits);
   }
 
   /*!
@@ -266,11 +251,14 @@ namespace Generalized_weights {
   */
   template<typename Point_3>
   decltype(auto) mean_value_weight_3(
-    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+    const Point_3& q,
+    const Point_3& t,
+    const Point_3& r,
+    const Point_3& p) {
 
-    using Traits = typename Kernel_traits<Point_3>::Kernel;
-    const Mean_value_weight<Traits> mean_value;
-    return mean_value(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    const GeomTraits traits;
+    return mean_value_weight_3(q, t, r, p, traits);
   }
 
 } // namespace Generalized_weights

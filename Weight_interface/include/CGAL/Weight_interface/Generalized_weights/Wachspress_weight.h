@@ -31,127 +31,24 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
+  // The full weight is computed as
 
-    \brief Wachspress weight.
+  // \f$w = \frac{C}{A_m A}\f$
 
-    The full weight is computed as
+  // with notations shown in the figure below. This weight is equal to the
+  // `CGAL::Generalized_weights::Authalic_weight`. This weight is a special
+  // case of the `CGAL::Generalized_weights::Three_point_family_weight`.
 
-    \f$w = \frac{C}{A_m A}\f$
+  // \cgalFigureBegin{wachspress_weight, wachspress.svg}
+  //   Notation used for the Wachspress weight.
+  // \cgalFigureEnd
 
-    with notations shown in the figure below. This weight is equal to the
-    `CGAL::Generalized_weights::Authalic_weight`. This weight is a special
-    case of the `CGAL::Generalized_weights::Three_point_family_weight`.
+  /// \cond SKIP_IN_MANUAL
+  namespace internal {
 
-    \cgalFigureBegin{wachspress_weight, wachspress.svg}
-      Notation used for the Wachspress weight.
-    \cgalFigureEnd
-
-    \tparam GeomTraits
-    must be a model of `AnalyticTraits`.
-
-    \cgalModels `AnalyticWeight_2`
-  */
-  template<typename GeomTraits>
-  class Wachspress_weight {
-
-  public:
-
-    /// \name Types
-    /// @{
-
-    /// \cond SKIP_IN_MANUAL
-    using GT = GeomTraits;
-    /// \endcond
-
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// 2D point type.
-    typedef typename GeomTraits::Point_2 Point_2;
-
-    /// 3D point type.
-    typedef typename GeomTraits::Point_3 Point_3;
-
-    /// @}
-
-    /// \name Initialization
-    /// @{
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \param traits
-      An instance of `GeomTraits`. The default initialization is provided.
-    */
-    Wachspress_weight(
-      const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
-    { }
-
-    /// @}
-
-    /// \name Access
-    /// @{
-
-    /*!
-      \brief computes the Wachspress weight.
-    */
-    const FT operator()(
-      const Point_2& q,
-      const Point_2& t,
-      const Point_2& r,
-      const Point_2& p) const {
-
-      return weight_2(q, t, r, p);
-    }
-
-    /*!
-      \brief computes the Wachspress weight.
-    */
-    const FT operator()(
-      const Point_3& q,
-      const Point_3& t,
-      const Point_3& r,
-      const Point_3& p) const {
-
-      return weight_3(q, t, r, p);
-    }
-
-    /// @}
-
-  private:
-    const GeomTraits m_traits;
-
-    const FT weight_2(
-      const Point_2& q,
-      const Point_2& t,
-      const Point_2& r,
-      const Point_2& p) const {
-
-      const FT A1 = internal::area_2(m_traits, r, q, t);
-      const FT A2 = internal::area_2(m_traits, p, q, r);
-      const FT C  = internal::area_2(m_traits, t, r, p);
-      return weight(A1, A2, C);
-    }
-
-    const FT weight_3(
-      const Point_3& q,
-      const Point_3& t,
-      const Point_3& r,
-      const Point_3& p) const {
-
-      Point_2 qf, tf, rf, pf;
-      internal::flatten(
-        m_traits,
-        q,  t,  r,  p,
-        qf, tf, rf, pf);
-      return weight_2(qf, tf, rf, pf);
-    }
-
+    template<typename FT>
     const FT weight(
-      const FT A1, const FT A2, const FT C) const {
+      const FT A1, const FT A2, const FT C) {
 
       FT w = FT(0);
       CGAL_assertion(A1 != FT(0) && A2 != FT(0));
@@ -162,7 +59,48 @@ namespace Generalized_weights {
       }
       return w;
     }
-  };
+  }
+  /// \endcond
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the Wachspress weight for 2D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) wachspress_weight_2(
+    const typename GeomTraits::Point_2& q,
+    const typename GeomTraits::Point_2& t,
+    const typename GeomTraits::Point_2& r,
+    const typename GeomTraits::Point_2& p,
+    const GeomTraits& traits) {
+
+    using FT = typename GeomTraits::FT;
+    const FT A1 = internal::area_2(traits, r, q, t);
+    const FT A2 = internal::area_2(traits, p, q, r);
+    const FT C  = internal::area_2(traits, t, r, p);
+    return internal::weight(A1, A2, C);
+  }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
@@ -190,11 +128,56 @@ namespace Generalized_weights {
   */
   template<typename Point_2>
   decltype(auto) wachspress_weight_2(
-    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+    const Point_2& q,
+    const Point_2& t,
+    const Point_2& r,
+    const Point_2& p) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    const Wachspress_weight<Traits> wachspress;
-    return wachspress(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return wachspress_weight_2(q, t, r, p, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the Wachspress weight for 3D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) wachspress_weight_3(
+    const typename GeomTraits::Point_3& q,
+    const typename GeomTraits::Point_3& t,
+    const typename GeomTraits::Point_3& r,
+    const typename GeomTraits::Point_3& p,
+    const GeomTraits& traits) {
+
+    using Point_2 = typename GeomTraits::Point_2;
+    Point_2 qf, tf, rf, pf;
+    internal::flatten(
+      traits,
+      q,  t,  r,  p,
+      qf, tf, rf, pf);
+    return wachspress_weight_2(qf, tf, rf, pf, traits);
   }
 
   /*!
@@ -223,11 +206,14 @@ namespace Generalized_weights {
   */
   template<typename Point_3>
   decltype(auto) wachspress_weight_3(
-    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+    const Point_3& q,
+    const Point_3& t,
+    const Point_3& r,
+    const Point_3& p) {
 
-    using Traits = typename Kernel_traits<Point_3>::Kernel;
-    const Wachspress_weight<Traits> wachspress;
-    return wachspress(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    const GeomTraits traits;
+    return wachspress_weight_3(q, t, r, p, traits);
   }
 
 } // namespace Generalized_weights

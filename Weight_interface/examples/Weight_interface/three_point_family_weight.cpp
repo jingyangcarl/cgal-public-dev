@@ -24,7 +24,7 @@ int main() {
   std::cout << "2D family: " <<
     CGAL::Generalized_weights::three_point_family_weight_2(q2, t2, r2, p2) << std::endl;
   std::cout << "3D family: " <<
-    CGAL::Generalized_weights::three_point_family_weight_3(q3, t3, r3, p3) << std::endl;
+    CGAL::Generalized_weights::three_point_family_weight_3(q3, t3, r3, p3, 1) << std::endl;
 
   return EXIT_SUCCESS;
 }
