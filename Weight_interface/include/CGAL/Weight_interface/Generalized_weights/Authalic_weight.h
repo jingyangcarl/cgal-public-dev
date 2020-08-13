@@ -26,195 +26,33 @@
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/internal/utils.h>
+#include <CGAL/Weight_interface/Generalized_weights/utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
+  // The full weight is computed as
 
-    \brief Authalic weight.
+  // \f$w = 2 \frac{\cot\beta + \cot\gamma}{r^2}\f$
 
-    The full weight is computed as
+  // and the half weight as
 
-    \f$w = 2 \frac{\cot\beta + \cot\gamma}{r^2}\f$
+  // \f$h = 2 \frac{\cot\beta}{r^2}\f$
 
-    and the half weight as
+  // with notations shown in the figure below. This weight is equal to the
+  // `CGAL::Generalized_weights::Wachspress_weight`. This weight is a special
+  // case of the `CGAL::Generalized_weights::Three_point_family_weight`.
 
-    \f$h = 2 \frac{\cot\beta}{r^2}\f$
+  // \cgalFigureBegin{authalic_weight, authalic.svg}
+  //   Notation used for the authalic weight.
+  // \cgalFigureEnd
 
-    with notations shown in the figure below. This weight is equal to the
-    `CGAL::Generalized_weights::Wachspress_weight`. This weight is a special
-    case of the `CGAL::Generalized_weights::Three_point_family_weight`.
+  /// \cond SKIP_IN_MANUAL
+  namespace internal {
 
-    \cgalFigureBegin{authalic_weight, authalic.svg}
-      Notation used for the authalic weight.
-    \cgalFigureEnd
-
-    \tparam GeomTraits
-    must be a model of `AnalyticTraits`.
-
-    \cgalModels `AnalyticWeight_2`
-  */
-  template<typename GeomTraits>
-  class Authalic_weight {
-
-  public:
-
-    /// \name Types
-    /// @{
-
-    /// \cond SKIP_IN_MANUAL
-    using GT = GeomTraits;
-    /// \endcond
-
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    /// 2D point type.
-    typedef typename GeomTraits::Point_2 Point_2;
-
-    /// 3D point type.
-    typedef typename GeomTraits::Point_3 Point_3;
-
-    /// @}
-
-    /// \name Initialization
-    /// @{
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \param traits
-      An instance of `GeomTraits`. The default initialization is provided.
-    */
-    Authalic_weight(
-      const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
-    { }
-
-    /// @}
-
-    /// \name Access
-    /// @{
-
-    /*!
-      \brief to be added
-    */
-    const FT cotangent(
-      const Point_2& p,
-      const Point_2& q,
-      const Point_2& r) const {
-
-      return cotangent_2(p, q, r);
-    }
-
-    /*!
-      \brief to be added
-    */
-    const FT squared_distance(
-      const Point_2& p,
-      const Point_2& q) const {
-
-      return squared_distance_2(p, q);
-    }
-
-    /*!
-      \brief to be added
-    */
-    const FT cotangent(
-      const Point_3& p,
-      const Point_3& q,
-      const Point_3& r) const {
-
-      return cotangent_3(p, q, r);
-    }
-
-    /*!
-      \brief to be added
-    */
-    const FT squared_distance(
-      const Point_3& p,
-      const Point_3& q) const {
-
-      return squared_distance_3(p, q);
-    }
-
-    /*!
-      \brief computes the half of the authalic weight.
-    */
-    const FT operator()(
-      const FT cot, const FT d2) const {
-
-      return half_weight(cot, d2);
-    }
-
-    /*!
-      \brief computes the authalic weight.
-    */
-    const FT operator()(
-      const Point_2& q,
-      const Point_2& t,
-      const Point_2& r,
-      const Point_2& p) const {
-
-      return weight_2(q, t, r, p);
-    }
-
-    /*!
-      \brief computes the authalic weight.
-    */
-    const FT operator()(
-      const Point_3& q,
-      const Point_3& t,
-      const Point_3& r,
-      const Point_3& p) const {
-
-      return weight_3(q, t, r, p);
-    }
-
-    /// @}
-
-  private:
-    const GeomTraits m_traits;
-
-    const FT cotangent_2(
-      const Point_2& p,
-      const Point_2& q,
-      const Point_2& r) const {
-
-      return internal::cotangent_2(m_traits, p, q, r);
-    }
-
-    const FT squared_distance_2(
-      const Point_2& p,
-      const Point_2& q) const {
-
-      const auto squared_distance_2 =
-        m_traits.compute_squared_distance_2_object();
-      return squared_distance_2(p, q);
-    }
-
-    const FT cotangent_3(
-      const Point_3& p,
-      const Point_3& q,
-      const Point_3& r) const {
-
-      return internal::cotangent_3(m_traits, p, q, r);
-    }
-
-    const FT squared_distance_3(
-      const Point_3& p,
-      const Point_3& q) const {
-
-      const auto squared_distance_3 =
-        m_traits.compute_squared_distance_3_object();
-      return squared_distance_3(p, q);
-    }
-
+    template<typename FT>
     const FT half_weight(
-      const FT cot, const FT r2) const {
+      const FT cot, const FT r2) {
 
       FT w = FT(0);
       CGAL_assertion(r2 != FT(0));
@@ -225,44 +63,9 @@ namespace Generalized_weights {
       return w;
     }
 
-    const FT weight_2(
-      const Point_2& q,
-      const Point_2& t,
-      const Point_2& r,
-      const Point_2& p) const {
-
-      const FT cot_gamma = internal::cotangent_2(m_traits, t, r, q);
-      const FT cot_beta  = internal::cotangent_2(m_traits, q, r, p);
-
-      const auto squared_distance_2 =
-        m_traits.compute_squared_distance_2_object();
-      const FT d2 = squared_distance_2(q, r);
-
-      return weight(
-        cot_gamma, cot_beta, d2);
-    }
-
-    const FT weight_3(
-      const Point_3& q,
-      const Point_3& t,
-      const Point_3& r,
-      const Point_3& p) const {
-
-      const FT cot_gamma = internal::cotangent_3(m_traits, t, r, q);
-      const FT cot_beta  = internal::cotangent_3(m_traits, q, r, p);
-
-      const auto squared_distance_3 =
-        m_traits.compute_squared_distance_3_object();
-      const FT d2 = squared_distance_3(q, r);
-
-      return weight(
-        cot_gamma, cot_beta, d2);
-    }
-
+    template<typename FT>
     const FT weight(
-      const FT cot_gamma,
-      const FT cot_beta,
-      const FT r2) const {
+      const FT cot_gamma, const FT cot_beta, const FT r2) {
 
       FT w = FT(0);
       CGAL_assertion(r2 != FT(0));
@@ -272,7 +75,76 @@ namespace Generalized_weights {
       }
       return w;
     }
-  };
+  }
+  /// \endcond
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the half value of the authalic weight.
+
+    \tparam FT
+    must be `FieldNumberType`.
+
+    \param cot
+    the cotangent value
+
+    \param d2
+    the squared distance value
+
+    \return the computed half weight.
+  */
+  template<typename FT>
+  const FT half_authalic_weight(
+    const FT cot, const FT d2) {
+
+    return internal::half_weight(cot, d2);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the authalic weight for 2D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) authalic_weight_2(
+    const typename GeomTraits::Point_2& q,
+    const typename GeomTraits::Point_2& t,
+    const typename GeomTraits::Point_2& r,
+    const typename GeomTraits::Point_2& p,
+    const GeomTraits& traits) {
+
+    using FT = typename GeomTraits::FT;
+    const FT cot_gamma = internal::cotangent_2(traits, t, r, q);
+    const FT cot_beta  = internal::cotangent_2(traits, q, r, p);
+
+    const auto squared_distance_2 =
+      traits.compute_squared_distance_2_object();
+    const FT d2 = squared_distance_2(q, r);
+
+    return internal::weight(
+      cot_gamma, cot_beta, d2);
+  }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
@@ -300,11 +172,59 @@ namespace Generalized_weights {
   */
   template<typename Point_2>
   decltype(auto) authalic_weight_2(
-    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+    const Point_2& q,
+    const Point_2& t,
+    const Point_2& r,
+    const Point_2& p) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    const Authalic_weight<Traits> authalic;
-    return authalic(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return authalic_weight_2(q, t, r, p, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the authalic weight for 3D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_3`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) authalic_weight_3(
+    const typename GeomTraits::Point_3& q,
+    const typename GeomTraits::Point_3& t,
+    const typename GeomTraits::Point_3& r,
+    const typename GeomTraits::Point_3& p,
+    const GeomTraits& traits) {
+
+    using FT = typename GeomTraits::FT;
+    const FT cot_gamma = internal::cotangent_3(traits, t, r, q);
+    const FT cot_beta  = internal::cotangent_3(traits, q, r, p);
+
+    const auto squared_distance_3 =
+      traits.compute_squared_distance_3_object();
+    const FT d2 = squared_distance_3(q, r);
+
+    return internal::weight(
+      cot_gamma, cot_beta, d2);
   }
 
   /*!
@@ -333,11 +253,14 @@ namespace Generalized_weights {
   */
   template<typename Point_3>
   decltype(auto) authalic_weight_3(
-    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+    const Point_3& q,
+    const Point_3& t,
+    const Point_3& r,
+    const Point_3& p) {
 
-    using Traits = typename Kernel_traits<Point_3>::Kernel;
-    const Authalic_weight<Traits> authalic;
-    return authalic(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    const GeomTraits traits;
+    return authalic_weight_3(q, t, r, p, traits);
   }
 
 } // namespace Generalized_weights

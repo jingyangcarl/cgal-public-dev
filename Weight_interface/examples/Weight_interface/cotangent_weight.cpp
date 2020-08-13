@@ -27,17 +27,21 @@ int main() {
     CGAL::Generalized_weights::cotangent_weight_3(q3, t3, r3, p3) << std::endl;
   std::cout << "---------------" << std::endl;
 
-  // // Construct a 2D weight.
-  // const FT w2 =
-  //   cw(cw.cotangent(q2, t2, r2)) +
-  //   cw(cw.cotangent(r2, p2, q2));
-  // std::cout << "2D cotangent: " << w2 << std::endl;
+  // Construct a 2D weight.
+  const auto w2 =
+    CGAL::Generalized_weights::half_cotangent_weight(
+      CGAL::Generalized_weights::utils::cotangent_2(q2, t2, r2)) +
+    CGAL::Generalized_weights::half_cotangent_weight(
+      CGAL::Generalized_weights::utils::cotangent_2(r2, p2, q2));
+  std::cout << "2D cotangent: " << w2 << std::endl;
 
-  // // Construct a 3D weight.
-  // const FT w3 =
-  //   cw(cw.cotangent(q3, t3, r3)) +
-  //   cw(cw.cotangent(r3, p3, q3));
-  // std::cout << "3D cotangent: " << w3 << std::endl;
+  // Construct a 3D weight.
+  const auto w3 =
+    CGAL::Generalized_weights::half_cotangent_weight(
+      CGAL::Generalized_weights::utils::cotangent_3(q3, t3, r3)) +
+    CGAL::Generalized_weights::half_cotangent_weight(
+      CGAL::Generalized_weights::utils::cotangent_3(r3, p3, q3));
+  std::cout << "3D cotangent: " << w3 << std::endl;
 
   return EXIT_SUCCESS;
 }

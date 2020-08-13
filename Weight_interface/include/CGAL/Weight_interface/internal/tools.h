@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_TOOLS_H
-#define CGAL_GENERALIZED_WEIGHTS_TOOLS_H
+#ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_TOOLS_H
+#define CGAL_GENERALIZED_WEIGHTS_INTERNAL_TOOLS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -416,4 +416,4 @@ public:
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_TOOLS_H
+#endif // CGAL_GENERALIZED_WEIGHTS_INTERNAL_TOOLS_H

@@ -27,17 +27,25 @@ int main() {
     CGAL::Generalized_weights::authalic_weight_3(q3, t3, r3, p3) << std::endl;
   std::cout << "--------------" << std::endl;
 
-  // // Construct a 2D weight.
-  // const FT w2 =
-  //   aw(aw.cotangent(t2, r2, q2), aw.squared_distance(q2, r2)) +
-  //   aw(aw.cotangent(q2, r2, p2), aw.squared_distance(q2, r2));
-  // std::cout << "2D authalic: " << w2 << std::endl;
+  // Construct a 2D weight.
+  const auto w2 =
+    CGAL::Generalized_weights::half_authalic_weight(
+      CGAL::Generalized_weights::utils::cotangent_2(t2, r2, q2),
+      CGAL::Generalized_weights::utils::squared_distance_2(q2, r2)) +
+    CGAL::Generalized_weights::half_authalic_weight(
+      CGAL::Generalized_weights::utils::cotangent_2(q2, r2, p2),
+      CGAL::Generalized_weights::utils::squared_distance_2(q2, r2));
+  std::cout << "2D authalic: " << w2 << std::endl;
 
-  // // Construct a 3D weight.
-  // const FT w3 =
-  //   aw(aw.cotangent(t3, r3, q3), aw.squared_distance(q3, r3)) +
-  //   aw(aw.cotangent(q3, r3, p3), aw.squared_distance(q3, r3));
-  // std::cout << "3D authalic: " << w3 << std::endl;
+  // Construct a 3D weight.
+  const auto w3 =
+    CGAL::Generalized_weights::half_authalic_weight(
+      CGAL::Generalized_weights::utils::cotangent_3(t3, r3, q3),
+      CGAL::Generalized_weights::utils::squared_distance_3(q3, r3)) +
+    CGAL::Generalized_weights::half_authalic_weight(
+      CGAL::Generalized_weights::utils::cotangent_3(q3, r3, p3),
+      CGAL::Generalized_weights::utils::squared_distance_3(q3, r3));
+  std::cout << "3D authalic: " << w3 << std::endl;
 
   return EXIT_SUCCESS;
 }

@@ -20,8 +20,8 @@
 // Author(s)     : Yin Xu, Andreas Fabri, Ilker O. Yaz
 //
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_PMP_DEPRECATED_H
-#define CGAL_GENERALIZED_WEIGHTS_PMP_DEPRECATED_H
+#ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_PMP_DEPRECATED_H
+#define CGAL_GENERALIZED_WEIGHTS_INTERNAL_PMP_DEPRECATED_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -962,4 +962,4 @@ public:
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_PMP_DEPRECATED_H
+#endif // CGAL_GENERALIZED_WEIGHTS_INTERNAL_PMP_DEPRECATED_H

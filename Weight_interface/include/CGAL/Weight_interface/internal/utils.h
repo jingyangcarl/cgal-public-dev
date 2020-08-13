@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_UTILS_H
-#define CGAL_GENERALIZED_WEIGHTS_UTILS_H
+#ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_UTILS_H
+#define CGAL_GENERALIZED_WEIGHTS_INTERNAL_UTILS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -650,4 +650,4 @@ const typename GeomTraits::FT positive_area_3(
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_UTILS_H
+#endif // CGAL_GENERALIZED_WEIGHTS_INTERNAL_UTILS_H

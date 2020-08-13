@@ -26,194 +26,104 @@
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/internal/utils.h>
+#include <CGAL/Weight_interface/Generalized_weights/utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
+  // The full weight is computed as
 
-    \brief Cotangent weight.
+  // \f$w = 2 (\cot\beta + \cot\gamma)\f$
 
-    The full weight is computed as
+  // and the half weight as
 
-    \f$w = 2 (\cot\beta + \cot\gamma)\f$
+  // \f$h = 2 \cot\gamma\f$
 
-    and the half weight as
+  // with notations shown in the figure below. This weight is equal to the
+  // `CGAL::Generalized_weights::Discrete_harmonic_weight`. This weight is a special
+  // case of the `CGAL::Generalized_weights::Three_point_family_weight`.
 
-    \f$h = 2 \cot\gamma\f$
+  // \cgalFigureBegin{cotangent_weight, cotangent.svg}
+  //   Notation used for the cotangent weight.
+  // \cgalFigureEnd
 
-    with notations shown in the figure below. This weight is equal to the
-    `CGAL::Generalized_weights::Discrete_harmonic_weight`. This weight is a special
-    case of the `CGAL::Generalized_weights::Three_point_family_weight`.
+  /// \cond SKIP_IN_MANUAL
+  namespace internal {
 
-    \cgalFigureBegin{cotangent_weight, cotangent.svg}
-      Notation used for the cotangent weight.
-    \cgalFigureEnd
-
-    \tparam GeomTraits
-    must be a model of `AnalyticTraits`.
-
-    \cgalModels `AnalyticWeight_2`
-  */
-  template<typename GeomTraits>
-  class Cotangent_weight {
-
-  public:
-
-    /// \name Types
-    /// @{
-
-    /// \cond SKIP_IN_MANUAL
-    using GT = GeomTraits;
-    /// \endcond
-
-    /// Number type.
-    typedef typename GeomTraits::FT FT;
-
-    // /// 2D point type.
-    // typedef typename GeomTraits::Point_2 Point_2;
-
-    /// 3D point type.
-    typedef typename GeomTraits::Point_3 Point_3;
-
-    /// @}
-
-    /// \name Initialization
-    /// @{
-
-    /*!
-      \brief initializes all internal data structures.
-
-      \param traits
-      An instance of `GeomTraits`. The default initialization is provided.
-    */
-    Cotangent_weight(
-      const GeomTraits traits = GeomTraits()) :
-    m_traits(traits)
-    { }
-
-    /// @}
-
-    /// \name Access
-    /// @{
-
-    /*!
-      \brief to be added
-    */
-    template<typename Point_2>
-    const FT cotangent(
-      const Point_2& p,
-      const Point_2& q,
-      const Point_2& r) const {
-
-      return cotangent_2(p, q, r);
-    }
-
-    /*!
-      \brief to be added
-    */
-    const FT cotangent(
-      const Point_3& p,
-      const Point_3& q,
-      const Point_3& r) const {
-
-      return cotangent_3(p, q, r);
-    }
-
-    /*!
-      \brief computes the half of the cotangent weight.
-    */
-    const FT operator()(
-      const FT cot) const {
-
-      return half_weight(cot);
-    }
-
-    /*!
-      \brief computes the cotangent weight.
-    */
-    template<typename Point_2>
-    const FT operator()(
-      const Point_2& q,
-      const Point_2& t,
-      const Point_2& r,
-      const Point_2& p) const {
-
-      return weight_2(q, t, r, p);
-    }
-
-    /*!
-      \brief computes the cotangent weight.
-    */
-    const FT operator()(
-      const Point_3& q,
-      const Point_3& t,
-      const Point_3& r,
-      const Point_3& p) const {
-
-      return weight_3(q, t, r, p);
-    }
-
-    /// @}
-
-  private:
-    const GeomTraits m_traits;
-
-    template<typename Point_2>
-    const FT cotangent_2(
-      const Point_2& p,
-      const Point_2& q,
-      const Point_2& r) const {
-
-      return internal::cotangent_2(m_traits, p, q, r);
-    }
-
-    const FT cotangent_3(
-      const Point_3& p,
-      const Point_3& q,
-      const Point_3& r) const {
-
-      return internal::cotangent_3(m_traits, p, q, r);
-    }
-
+    template<typename FT>
     const FT half_weight(
-      const FT cot) const {
+      const FT cot) {
 
       return FT(2) * cot;
     }
 
-    template<typename Point_2>
-    const FT weight_2(
-      const Point_2& q,
-      const Point_2& t,
-      const Point_2& r,
-      const Point_2& p) const {
-
-      const FT cot_beta  = internal::cotangent_2(m_traits, q, t, r);
-      const FT cot_gamma = internal::cotangent_2(m_traits, r, p, q);
-      return weight(cot_beta, cot_gamma);
-    }
-
-    const FT weight_3(
-      const Point_3& q,
-      const Point_3& t,
-      const Point_3& r,
-      const Point_3& p) const {
-
-      const FT cot_beta  = internal::cotangent_3(m_traits, q, t, r);
-      const FT cot_gamma = internal::cotangent_3(m_traits, r, p, q);
-      return weight(cot_beta, cot_gamma);
-    }
-
+    template<typename FT>
     const FT weight(
-      const FT cot_beta,
-      const FT cot_gamma) const {
+      const FT cot_beta, const FT cot_gamma) {
 
       return FT(2) * (cot_beta + cot_gamma);
     }
-  };
+  }
+  /// \endcond
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the half value of the cotangent weight.
+
+    \tparam FT
+    must be `FieldNumberType`.
+
+    \param cot
+    the cotangent value
+
+    \return the computed half weight.
+  */
+  template<typename FT>
+  const FT half_cotangent_weight(
+    const FT cot) {
+
+    return internal::half_weight(cot);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the cotangent weight for 2D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) cotangent_weight_2(
+    const typename GeomTraits::Point_2& q,
+    const typename GeomTraits::Point_2& t,
+    const typename GeomTraits::Point_2& r,
+    const typename GeomTraits::Point_2& p,
+    const GeomTraits& traits) {
+
+    using FT = typename GeomTraits::FT;
+    const FT cot_beta  = internal::cotangent_2(traits, q, t, r);
+    const FT cot_gamma = internal::cotangent_2(traits, r, p, q);
+    return internal::weight(cot_beta, cot_gamma);
+  }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
@@ -241,11 +151,53 @@ namespace Generalized_weights {
   */
   template<typename Point_2>
   decltype(auto) cotangent_weight_2(
-    const Point_2& q, const Point_2& t, const Point_2& r, const Point_2& p) {
+    const Point_2& q,
+    const Point_2& t,
+    const Point_2& r,
+    const Point_2& p) {
 
-    using Traits = typename Kernel_traits<Point_2>::Kernel;
-    const Cotangent_weight<Traits> cotangent;
-    return cotangent(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
+    return cotangent_weight_2(q, t, r, p, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the cotangent weight for 3D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_3`.
+
+    \param q
+    a query point
+
+    \param t
+    the first neighbor
+
+    \param r
+    the second neighbor
+
+    \param p
+    the third neighbor
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) cotangent_weight_3(
+    const typename GeomTraits::Point_3& q,
+    const typename GeomTraits::Point_3& t,
+    const typename GeomTraits::Point_3& r,
+    const typename GeomTraits::Point_3& p,
+    const GeomTraits& traits) {
+
+    using FT = typename GeomTraits::FT;
+    const FT cot_beta  = internal::cotangent_3(traits, q, t, r);
+    const FT cot_gamma = internal::cotangent_3(traits, r, p, q);
+    return internal::weight(cot_beta, cot_gamma);
   }
 
   /*!
@@ -274,11 +226,14 @@ namespace Generalized_weights {
   */
   template<typename Point_3>
   decltype(auto) cotangent_weight_3(
-    const Point_3& q, const Point_3& t, const Point_3& r, const Point_3& p) {
+    const Point_3& q,
+    const Point_3& t,
+    const Point_3& r,
+    const Point_3& p) {
 
-    using Traits = typename Kernel_traits<Point_3>::Kernel;
-    const Cotangent_weight<Traits> cotangent;
-    return cotangent(q, t, r, p);
+    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    const GeomTraits traits;
+    return cotangent_weight_3(q, t, r, p, traits);
   }
 
 } // namespace Generalized_weights
