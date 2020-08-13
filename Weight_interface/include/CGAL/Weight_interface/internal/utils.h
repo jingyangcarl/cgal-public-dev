@@ -223,41 +223,6 @@ const typename GeomTraits::FT cotangent_3(
   else return FT(0); // undefined
 }
 
-// Computes a secure cotanget between two 3D vectors.
-template<typename GeomTraits>
-const typename GeomTraits::FT cotangent_3_secure(
-  const GeomTraits& traits,
-  const typename GeomTraits::Point_3& p,
-  const typename GeomTraits::Point_3& q,
-  const typename GeomTraits::Point_3& r) {
-
-  using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
-
-  const auto dot_product_3 =
-    traits.compute_scalar_product_3_object();
-  const auto cross_product_3 =
-    traits.construct_cross_product_vector_3_object();
-
-  const Vector_3 v = Vector_3(q, r);
-  const Vector_3 w = Vector_3(q, p);
-
-  const FT dot = dot_product_3(v, w);
-  const FT length_v = length_3(traits, v);
-  const FT length_w = length_3(traits, w);
-
-  const FT lb = -FT(999) / FT(1000), ub = FT(999) / FT(1000);
-  FT cosine = dot / length_v / length_w;
-  cosine = (cosine < lb) ? lb : cosine;
-  cosine = (cosine > ub) ? ub : cosine;
-  const FT sine = static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(FT(1) - cosine * cosine)));
-
-  CGAL_assertion(sine != FT(0));
-  if (sine != FT(0)) return cosine / sine;
-  return FT(0); // undefined
-}
-
 // Computes tanget between two 3D vectors.
 template<typename GeomTraits>
 const typename GeomTraits::FT tangent_3(

@@ -12,8 +12,6 @@
   using GeomTraits = typename CGAL::Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type>::type;
 * Remove all classes, change them to free functions with dimensions. Add overloads with no traits.
-* Move secure cotangent to the polygon_mesh_tools, rename polygon_mesh_tools to tools.
-* Rename Weights.h to pmp_depr_weights.h and clean it up.
 * Add a concept test as in the heat_method.
 * Add more overloads to the uniform weight.
 * Remove my current examples from the user manual and use them only in the reference manual. While in the user manual add more complete examples:

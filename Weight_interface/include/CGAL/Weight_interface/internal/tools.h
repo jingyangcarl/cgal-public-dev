@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_POLYGON_MESH_TOOLS_H
-#define CGAL_GENERALIZED_WEIGHTS_POLYGON_MESH_TOOLS_H
+#ifndef CGAL_GENERALIZED_WEIGHTS_TOOLS_H
+#define CGAL_GENERALIZED_WEIGHTS_TOOLS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -30,12 +30,53 @@
 
 // Internal includes.
 #include <CGAL/Weight_interface/Generalized_weights/Tangent_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/Authalic_weight.h>
 #include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
+
+#include <CGAL/Weight_interface/Weighting_regions/Uniform_region_weight.h>
+#include <CGAL/Weight_interface/Weighting_regions/Voronoi_region_weight.h>
+#include <CGAL/Weight_interface/Weighting_regions/Triangular_region_weight.h>
+#include <CGAL/Weight_interface/Weighting_regions/Barycentric_region_weight.h>
 #include <CGAL/Weight_interface/Weighting_regions/Mixed_voronoi_region_weight.h>
 
 namespace CGAL {
 namespace Generalized_weights {
 namespace internal {
+
+// Computes a secure cotanget between two 3D vectors.
+template<typename GeomTraits>
+const typename GeomTraits::FT cotangent_3_secure(
+  const GeomTraits& traits,
+  const typename GeomTraits::Point_3& p,
+  const typename GeomTraits::Point_3& q,
+  const typename GeomTraits::Point_3& r) {
+
+  using FT = typename GeomTraits::FT;
+  using Vector_3 = typename GeomTraits::Vector_3;
+
+  const auto dot_product_3 =
+    traits.compute_scalar_product_3_object();
+  const auto cross_product_3 =
+    traits.construct_cross_product_vector_3_object();
+
+  const Vector_3 v = Vector_3(q, r);
+  const Vector_3 w = Vector_3(q, p);
+
+  const FT dot = dot_product_3(v, w);
+  const FT length_v = length_3(traits, v);
+  const FT length_w = length_3(traits, w);
+
+  const FT lb = -FT(999) / FT(1000), ub = FT(999) / FT(1000);
+  FT cosine = dot / length_v / length_w;
+  cosine = (cosine < lb) ? lb : cosine;
+  cosine = (cosine > ub) ? ub : cosine;
+  const FT sine = static_cast<FT>(
+    CGAL::sqrt(CGAL::to_double(FT(1) - cosine * cosine)));
+
+  CGAL_assertion(sine != FT(0));
+  if (sine != FT(0)) return cosine / sine;
+  return FT(0); // undefined
+}
 
 template<
 typename GeomTraits,
@@ -204,9 +245,6 @@ public:
   }
 
   FT w_i(vertex_descriptor v_i) {
-    // std::cout << "new: " << (FT(1) / FT(2)) / voronoi(v_i) << std::endl;
-    // ++count;
-    // if (count == 1000) exit(1);
     return 0.5 / voronoi(v_i);
   }
 
@@ -215,7 +253,6 @@ public:
   }
 
 private:
-
   FT cotangent(halfedge_descriptor he) const {
 
     const vertex_descriptor v0 = target(he, m_pmesh);
@@ -262,7 +299,7 @@ private:
   FT voronoi(vertex_descriptor v0) const {
 
     FT voronoi_area = FT(0);
-    for (halfedge_descriptor he :
+    for (const halfedge_descriptor he :
       halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh)) {
 
       if (is_border(he, m_pmesh) ) { continue; }
@@ -386,4 +423,4 @@ public:
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_POLYGON_MESH_TOOLS_H
+#endif // CGAL_GENERALIZED_WEIGHTS_TOOLS_H
