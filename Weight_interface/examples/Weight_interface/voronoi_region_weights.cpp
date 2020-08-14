@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Weighting_regions/triangular_region_weight.h>
+#include <CGAL/Weight_interface/Weighting_regions/voronoi_region_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -19,10 +19,10 @@ int main() {
   const Point_3 r3 = Point_3( 0, 1, 1);
 
   // Compute weights.
-  std::cout << "2D triangle: " <<
-    CGAL::Generalized_weights::triangle_area_2(p2, q2, r2) << std::endl;
-  std::cout << "3D triangle: " <<
-    CGAL::Generalized_weights::triangle_area_3(p3, q3, r3) << std::endl;
+  std::cout << "2D voronoi: " <<
+    CGAL::Generalized_weights::voronoi_area_2(p2, q2, r2) << std::endl;
+  std::cout << "3D voronoi: " <<
+    CGAL::Generalized_weights::voronoi_area_3(p3, q3, r3) << std::endl;
 
   return EXIT_SUCCESS;
 }

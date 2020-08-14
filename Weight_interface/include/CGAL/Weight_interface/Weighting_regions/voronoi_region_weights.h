@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHT_H
-#define CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHT_H
+#ifndef CGAL_GENERALIZED_VORONOI_REGION_WEIGHTS_H
+#define CGAL_GENERALIZED_VORONOI_REGION_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -31,16 +31,17 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // This weight is the area of the shaded triangle in the figure below.
-
-  // \cgalFigureBegin{triangular_region_weight, triangle_cell.svg}
-  //   Notation used for the triangular region weight.
+  // This weight is the area of the shaded region in the figure below. The region
+  // is formed by two midpoints of the edges incident to `q` and the circumcenter of
+  // the triangle `[p, q, r]`.
+  // \cgalFigureBegin{voronoi_region_weight, voronoi_cell.svg}
+  //   Notation used for the Voronoi region weight.
   // \cgalFigureEnd
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the triangle area on a 2D triangle [p, q, r].
+    \brief computes the Voronoi area on a 2D triangle [p, q, r].
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -60,19 +61,33 @@ namespace Generalized_weights {
     \return the computed area.
   */
   template<typename GeomTraits>
-  decltype(auto) triangle_area_2(
+  decltype(auto) voronoi_area_2(
     const typename GeomTraits::Point_2& p,
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& r,
     const GeomTraits& traits) {
 
-    return internal::positive_area_2(traits, p, q, r);
+    using FT = typename GeomTraits::FT;
+    using Point_2 = typename GeomTraits::Point_2;
+
+    const auto circumcenter_2 =
+      traits.construct_circumcenter_2_object();
+    const Point_2 center =
+      circumcenter_2(p, q, r);
+    const Point_2 m1 =
+      internal::barycenter_2(traits, q, r);
+    const Point_2 m2 =
+      internal::barycenter_2(traits, q, p);
+
+    const FT A1 = internal::positive_area_2(traits, q, m1, center);
+    const FT A2 = internal::positive_area_2(traits, q, center, m2);
+    return A1 + A2;
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the triangle area on a 2D triangle [p, q, r].
+    \brief computes the Voronoi area on a 2D triangle [p, q, r].
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -91,20 +106,20 @@ namespace Generalized_weights {
     \return the computed area.
   */
   template<typename Point_2>
-  decltype(auto) triangle_area_2(
+  decltype(auto) voronoi_area_2(
     const Point_2& p,
     const Point_2& q,
     const Point_2& r) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    return triangle_area_2(p, q, r, traits);
+    return voronoi_area_2(p, q, r, traits);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the triangle area on a 3D triangle [p, q, r].
+    \brief computes the Voronoi area on a 3D triangle [p, q, r].
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -124,19 +139,33 @@ namespace Generalized_weights {
     \return the computed area.
   */
   template<typename GeomTraits>
-  decltype(auto) triangle_area_3(
+  decltype(auto) voronoi_area_3(
     const typename GeomTraits::Point_3& p,
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& r,
     const GeomTraits& traits) {
 
-    return internal::positive_area_3(traits, p, q, r);
+    using FT = typename GeomTraits::FT;
+    using Point_3 = typename GeomTraits::Point_3;
+
+    const auto circumcenter_3 =
+      traits.construct_circumcenter_3_object();
+    const Point_3 center =
+      circumcenter_3(p, q, r);
+    const Point_3 m1 =
+      internal::barycenter_3(traits, q, r);
+    const Point_3 m2 =
+      internal::barycenter_3(traits, q, p);
+
+    const FT A1 = internal::positive_area_3(traits, q, m1, center);
+    const FT A2 = internal::positive_area_3(traits, q, center, m2);
+    return A1 + A2;
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the triangle area on a 3D triangle [p, q, r].
+    \brief computes the Voronoi area on a 3D triangle [p, q, r].
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -155,17 +184,17 @@ namespace Generalized_weights {
     \return the computed area.
   */
   template<typename Point_3>
-  decltype(auto) triangle_area_3(
+  decltype(auto) voronoi_area_3(
     const Point_3& p,
     const Point_3& q,
     const Point_3& r) {
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return triangle_area_3(p, q, r, traits);
+    return voronoi_area_3(p, q, r, traits);
   }
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHT_H
+#endif // CGAL_GENERALIZED_VORONOI_REGION_WEIGHTS_H

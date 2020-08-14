@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Weighting_regions/barycentric_region_weight.h>
+#include <CGAL/Weight_interface/Weighting_regions/barycentric_region_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;

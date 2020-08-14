@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_COTANGENT_WEIGHT_H
-#define CGAL_GENERALIZED_COTANGENT_WEIGHT_H
+#ifndef CGAL_GENERALIZED_COTANGENT_WEIGHTS_H
+#define CGAL_GENERALIZED_COTANGENT_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,17 +32,12 @@ namespace CGAL {
 namespace Generalized_weights {
 
   // The full weight is computed as
-
   // \f$w = 2 (\cot\beta + \cot\gamma)\f$
-
   // and the half weight as
-
   // \f$h = 2 \cot\gamma\f$
-
   // with notations shown in the figure below. This weight is equal to the
   // `CGAL::Generalized_weights::Discrete_harmonic_weight`. This weight is a special
   // case of the `CGAL::Generalized_weights::Three_point_family_weight`.
-
   // \cgalFigureBegin{cotangent_weight, cotangent.svg}
   //   Notation used for the cotangent weight.
   // \cgalFigureEnd
@@ -239,4 +234,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_COTANGENT_WEIGHT_H
+#endif // CGAL_GENERALIZED_COTANGENT_WEIGHTS_H

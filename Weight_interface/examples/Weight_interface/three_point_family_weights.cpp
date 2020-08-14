@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/shepard_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/three_point_family_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -21,17 +21,10 @@ int main() {
   const Point_3 p3 = Point_3( 1,  0, 1);
 
   // Compute weights.
-  std::cout << "2D shepard: " <<
-    CGAL::Generalized_weights::shepard_weight_2(q2, t2, r2, p2) << std::endl;
-  std::cout << "3D shepard: " <<
-    CGAL::Generalized_weights::shepard_weight_3(q3, t3, r3, p3, 1) << std::endl;
-  std::cout << "-------------" << std::endl;
-
-  // Overloads.
-  std::cout << "2D shepard: " <<
-    CGAL::Generalized_weights::shepard_weight_2(q2, r2) << std::endl;
-  std::cout << "3D shepard: " <<
-    CGAL::Generalized_weights::shepard_weight_3(q3, r3, 1) << std::endl;
+  std::cout << "2D family: " <<
+    CGAL::Generalized_weights::three_point_family_weight_2(q2, t2, r2, p2) << std::endl;
+  std::cout << "3D family: " <<
+    CGAL::Generalized_weights::three_point_family_weight_3(q3, t3, r3, p3, 1) << std::endl;
 
   return EXIT_SUCCESS;
 }

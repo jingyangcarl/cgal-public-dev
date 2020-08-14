@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_TANGENT_WEIGHT_H
-#define CGAL_GENERALIZED_TANGENT_WEIGHT_H
+#ifndef CGAL_GENERALIZED_TANGENT_WEIGHTS_H
+#define CGAL_GENERALIZED_TANGENT_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,22 +32,15 @@ namespace CGAL {
 namespace Generalized_weights {
 
   // The full weight is computed as
-
   // \f$w = 2 \frac{t_m + t}{r}\f$, where \f$t_m = \frac{A_m}{r r_m + D_m}\f$ and
   // \f$t = \frac{A}{r r_p + D_p}\f$
-
   // and the half weight as
-
   // \f$h = 2 \frac{t}{r}\f$
-
   // with notations shown in the figure below and dot products
-
   // \f$D_m = (v_j - q) \cdot (v_m - q)\f$ and
   // \f$D_p = (v_j - q) \cdot (v_p - q)\f$.
-
   // This weight is equal to the `CGAL::Generalized_weights::Mean_value_weight`.
   // This weight is a special case of the `CGAL::Generalized_weights::Three_point_family_weight`.
-
   // \cgalFigureBegin{tangent_weight, tangent.svg}
   //   Notation used for the tangent weight.
   // \cgalFigureEnd
@@ -381,4 +374,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_TANGENT_WEIGHT_H
+#endif // CGAL_GENERALIZED_TANGENT_WEIGHTS_H

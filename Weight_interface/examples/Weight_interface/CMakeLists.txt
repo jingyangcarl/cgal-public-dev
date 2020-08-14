@@ -13,40 +13,40 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program(
-    "uniform_weight.cpp")
+    "uniform_weights.cpp")
   create_single_source_cgal_program(
-    "three_point_family_weight.cpp")
+    "three_point_family_weights.cpp")
 
   create_single_source_cgal_program(
-    "inverse_distance_weight.cpp")
+    "inverse_distance_weights.cpp")
   create_single_source_cgal_program(
-    "shepard_weight.cpp")
+    "shepard_weights.cpp")
 
   create_single_source_cgal_program(
-    "wachspress_weight.cpp")
+    "wachspress_weights.cpp")
   create_single_source_cgal_program(
-    "authalic_weight.cpp")
+    "authalic_weights.cpp")
 
   create_single_source_cgal_program(
-    "mean_value_weight.cpp")
+    "mean_value_weights.cpp")
   create_single_source_cgal_program(
-    "tangent_weight.cpp")
+    "tangent_weights.cpp")
 
   create_single_source_cgal_program(
-    "discrete_harmonic_weight.cpp")
+    "discrete_harmonic_weights.cpp")
   create_single_source_cgal_program(
-    "cotangent_weight.cpp")
+    "cotangent_weights.cpp")
 
   create_single_source_cgal_program(
-    "uniform_region_weight.cpp")
+    "uniform_region_weights.cpp")
   create_single_source_cgal_program(
-    "triangular_region_weight.cpp")
+    "triangular_region_weights.cpp")
   create_single_source_cgal_program(
-    "barycentric_region_weight.cpp")
+    "barycentric_region_weights.cpp")
   create_single_source_cgal_program(
-    "voronoi_region_weight.cpp")
+    "voronoi_region_weights.cpp")
   create_single_source_cgal_program(
-    "mixed_voronoi_region_weight.cpp")
+    "mixed_voronoi_region_weights.cpp")
 
 else()
   message(WARNING

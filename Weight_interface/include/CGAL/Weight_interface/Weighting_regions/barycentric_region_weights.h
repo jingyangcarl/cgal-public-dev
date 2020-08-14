@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHT_H
-#define CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHT_H
+#ifndef CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHTS_H
+#define CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,7 +34,6 @@ namespace Generalized_weights {
   // This weight is the area of the shaded region in the figure below. The region
   // is formed by two midpoints of the edges incident to `q` and the barycenter of
   // the triangle `[p, q, r]`.
-
   // \cgalFigureBegin{barycentric_region_weight, barycentric_cell.svg}
   //   Notation used for the barycentric region weight.
   // \cgalFigureEnd
@@ -194,4 +193,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHT_H
+#endif // CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHTS_H

@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WACHSPRESS_WEIGHT_H
-#define CGAL_GENERALIZED_WACHSPRESS_WEIGHT_H
+#ifndef CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHTS_H
+#define CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,15 +32,12 @@ namespace CGAL {
 namespace Generalized_weights {
 
   // The full weight is computed as
-
-  // \f$w = \frac{C}{A_m A}\f$
-
+  // \f$w = \frac{r_p^2 A_m - r^2 B + r_m^2 A}{A_m A}\f$
   // with notations shown in the figure below. This weight is equal to the
-  // `CGAL::Generalized_weights::Authalic_weight`. This weight is a special
+  // `CGAL::Generalized_weights::Cotangent_weight`. This weight is a special
   // case of the `CGAL::Generalized_weights::Three_point_family_weight`.
-
-  // \cgalFigureBegin{wachspress_weight, wachspress.svg}
-  //   Notation used for the Wachspress weight.
+  // \cgalFigureBegin{discrete_harmonic_weight, discrete_harmonic.svg}
+  //   Notation used for the discrete harmonic weight.
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
@@ -48,14 +45,15 @@ namespace Generalized_weights {
 
     template<typename FT>
     const FT weight(
-      const FT A1, const FT A2, const FT C) {
+      const FT r1, const FT r2, const FT r3,
+      const FT A1, const FT A2, const FT B) {
 
       FT w = FT(0);
       CGAL_assertion(A1 != FT(0) && A2 != FT(0));
       const FT prod = A1 * A2;
       if (prod != FT(0)) {
         const FT inv = FT(1) / prod;
-        w = C * inv;
+        w = (r3 * A1 - r2 * B + r1 * A2) * inv;
       }
       return w;
     }
@@ -65,7 +63,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the Wachspress weight for 2D points.
+    \brief computes the discrete harmonic weight for 2D points.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -88,7 +86,7 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename GeomTraits>
-  decltype(auto) wachspress_weight_2(
+  decltype(auto) discrete_harmonic_weight_2(
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& t,
     const typename GeomTraits::Point_2& r,
@@ -96,16 +94,25 @@ namespace Generalized_weights {
     const GeomTraits& traits) {
 
     using FT = typename GeomTraits::FT;
+
+    const auto squared_distance_2 =
+      traits.compute_squared_distance_2_object();
+    const FT d1 = squared_distance_2(q, t);
+    const FT d2 = squared_distance_2(q, r);
+    const FT d3 = squared_distance_2(q, p);
+
     const FT A1 = internal::area_2(traits, r, q, t);
     const FT A2 = internal::area_2(traits, p, q, r);
-    const FT C  = internal::area_2(traits, t, r, p);
-    return internal::weight(A1, A2, C);
+    const FT B  = internal::area_2(traits, p, q, t);
+
+    return internal::weight(
+      d1, d2, d3, A1, A2, B);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the Wachspress weight for 2D points.
+    \brief computes the discrete harmonic weight for 2D points.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -127,7 +134,7 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename Point_2>
-  decltype(auto) wachspress_weight_2(
+  decltype(auto) discrete_harmonic_weight_2(
     const Point_2& q,
     const Point_2& t,
     const Point_2& r,
@@ -135,13 +142,13 @@ namespace Generalized_weights {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    return wachspress_weight_2(q, t, r, p, traits);
+    return discrete_harmonic_weight_2(q, t, r, p, traits);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the Wachspress weight for 3D points.
+    \brief computes the discrete harmonic weight for 3D points.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
@@ -164,7 +171,7 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename GeomTraits>
-  decltype(auto) wachspress_weight_3(
+  decltype(auto) discrete_harmonic_weight_3(
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& t,
     const typename GeomTraits::Point_3& r,
@@ -177,13 +184,13 @@ namespace Generalized_weights {
       traits,
       q,  t,  r,  p,
       qf, tf, rf, pf);
-    return wachspress_weight_2(qf, tf, rf, pf, traits);
+    return discrete_harmonic_weight_2(qf, tf, rf, pf, traits);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the Wachspress weight for 3D points.
+    \brief computes the discrete harmonic weight for 3D points.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -205,7 +212,7 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename Point_3>
-  decltype(auto) wachspress_weight_3(
+  decltype(auto) discrete_harmonic_weight_3(
     const Point_3& q,
     const Point_3& t,
     const Point_3& r,
@@ -213,10 +220,10 @@ namespace Generalized_weights {
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return wachspress_weight_3(q, t, r, p, traits);
+    return discrete_harmonic_weight_3(q, t, r, p, traits);
   }
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WACHSPRESS_WEIGHT_H
+#endif // CGAL_GENERALIZED_DISCRETE_HARMONIC_WEIGHTS_H

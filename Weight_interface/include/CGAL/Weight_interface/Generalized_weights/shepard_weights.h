@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_H
-#define CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_H
+#ifndef CGAL_GENERALIZED_SHEPARD_WEIGHTS_H
+#define CGAL_GENERALIZED_SHEPARD_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -32,26 +32,13 @@ namespace CGAL {
 namespace Generalized_weights {
 
   // The full weight is computed as
-
-  // \f$w = \frac{r_p^a A_m - r^a B + r_m^a A}{A_m A}\f$
-
+  // \f$w = \frac{1}{r^a}\f$
   // with notations shown in the figure below and \f$a\f$ any real number
   // being the power parameter.
-
-  // For \f$a = 0\f$ this weight is equal to the
-  // `CGAL::Generalized_weights::Wachspress_weight` and
-  // `CGAL::Generalized_weights::Authalic_weight`.
-
   // For \f$a = 1\f$ this weight is equal to the
-  // `CGAL::Generalized_weights::Mean_value_weight` and
-  // `CGAL::Generalized_weights::Tangent_weight`.
-
-  // For \f$a = 2\f$ this weight is equal to the
-  // `CGAL::Generalized_weights::Discrete_harmonic_weight` and
-  // `CGAL::Generalized_weights::Cotangent_weight`.
-
-  // \cgalFigureBegin{three_point_family_weight, three_point_family.svg}
-  //   Notation used for the three point family weight.
+  // `CGAL::Generalized_weights::Inverse_distance_weight`.
+  // \cgalFigureBegin{shepard_weight, shepard.svg}
+  //   Notation used for the Shepard weight.
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
@@ -60,29 +47,17 @@ namespace Generalized_weights {
     template<typename GeomTraits>
     const typename GeomTraits::FT weight(
       const GeomTraits& traits,
-      const typename GeomTraits::FT d1,
-      const typename GeomTraits::FT d2,
-      const typename GeomTraits::FT d3,
-      const typename GeomTraits::FT A1,
-      const typename GeomTraits::FT A2,
-      const typename GeomTraits::FT B,
+      const typename GeomTraits::FT d,
       const typename GeomTraits::FT p) {
 
       using FT = typename GeomTraits::FT;
       FT w = FT(0);
-      CGAL_assertion(A1 != FT(0) && A2 != FT(0));
-      const FT prod = A1 * A2;
-      if (prod != FT(0)) {
-        const FT inv = FT(1) / prod;
-        FT r1 = d1;
-        FT r2 = d2;
-        FT r3 = d3;
-        if (p != FT(1)) {
-          r1 = internal::power(traits, d1, p);
-          r2 = internal::power(traits, d2, p);
-          r3 = internal::power(traits, d3, p);
-        }
-        w = (r3 * A1 - r2 * B + r1 * A2) * inv;
+      CGAL_assertion(d != FT(0));
+      if (d != FT(0)) {
+        FT denom = d;
+        if (p != FT(1))
+          denom = internal::power(traits, d, p);
+        w = FT(1) / denom;
       }
       return w;
     }
@@ -92,7 +67,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the three point family weight for 2D points.
+    \brief computes the Shepard weight for 2D points.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -100,14 +75,8 @@ namespace Generalized_weights {
     \param q
     a query point
 
-    \param t
-    the first neighbor
-
     \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
+    the neighbor
 
     \param a
     the power parameter
@@ -118,31 +87,24 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename GeomTraits>
-  decltype(auto) three_point_family_weight_2(
+  decltype(auto) shepard_weight_2(
     const typename GeomTraits::Point_2& q,
-    const typename GeomTraits::Point_2& t,
+    const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2& r,
-    const typename GeomTraits::Point_2& p,
+    const typename GeomTraits::Point_2&,
     const typename GeomTraits::FT a,
     const GeomTraits& traits) {
 
     using FT = typename GeomTraits::FT;
-    const FT d1 = internal::distance_2(traits, q, t);
-    const FT d2 = internal::distance_2(traits, q, r);
-    const FT d3 = internal::distance_2(traits, q, p);
-
-    const FT A1 = internal::area_2(traits, r, q, t);
-    const FT A2 = internal::area_2(traits, p, q, r);
-    const FT B  = internal::area_2(traits, p, q, t);
-
-    return internal::weight(
-      traits, d1, d2, d3, A1, A2, B, a);
+    const FT d =
+      internal::distance_2(traits, q, r);
+    return internal::weight(traits, d, a);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the three point family weight for 2D points.
+    \brief computes the Shepard weight for 2D points.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -162,12 +124,12 @@ namespace Generalized_weights {
     the third neighbor
 
     \param a
-    the power parameter, the default is `mean_value_weight_2()`
+    the power parameter, the default is `inverse_distance_weight_2()`
 
     \return the computed weight.
   */
   template<typename Point_2>
-  decltype(auto) three_point_family_weight_2(
+  decltype(auto) shepard_weight_2(
     const Point_2& q,
     const Point_2& t,
     const Point_2& r,
@@ -177,28 +139,54 @@ namespace Generalized_weights {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    return three_point_family_weight_2(q, t, r, p, a, traits);
+    return shepard_weight_2(q, t, r, p, a, traits);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the three point family weight for 3D points.
+    \brief computes the Shepard weight for 2D points.
+
+    This function infers a traits class `GeomTraits` from the `Point_2` type.
+
+    \tparam Point_2
+    must be `CGAL::Point_2<GeomTraits>`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param a
+    the power parameter, the default is `inverse_distance_weight_2()`
+
+    \return the computed weight.
+  */
+  template<typename Point_2>
+  decltype(auto) shepard_weight_2(
+    const Point_2& p,
+    const Point_2& q,
+    const typename Kernel_traits<Point_2>::Kernel::FT a =
+    typename Kernel_traits<Point_2>::Kernel::FT(1)) {
+
+    Point_2 stub;
+    return shepard_weight_2(p, stub, q, stub, a);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the Shepard weight for 3D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
+    must be a model of `AnalyticTraits_3`.
 
     \param q
     a query point
 
-    \param t
-    the first neighbor
-
     \param r
     the second neighbor
-
-    \param p
-    the third neighbor
 
     \param a
     the power parameter
@@ -209,27 +197,24 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename GeomTraits>
-  decltype(auto) three_point_family_weight_3(
+  decltype(auto) shepard_weight_3(
     const typename GeomTraits::Point_3& q,
-    const typename GeomTraits::Point_3& t,
+    const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3& r,
-    const typename GeomTraits::Point_3& p,
+    const typename GeomTraits::Point_3&,
     const typename GeomTraits::FT a,
     const GeomTraits& traits) {
 
-    using Point_2 = typename GeomTraits::Point_2;
-    Point_2 qf, tf, rf, pf;
-    internal::flatten(
-      traits,
-      q,  t,  r,  p,
-      qf, tf, rf, pf);
-    return three_point_family_weight_2(qf, tf, rf, pf, a, traits);
+    using FT = typename GeomTraits::FT;
+    const FT d =
+      internal::distance_3(traits, q, r);
+    return internal::weight(traits, d, a);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the three point family weight for 3D points.
+    \brief computes the Shepard weight for 3D points.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -249,12 +234,12 @@ namespace Generalized_weights {
     the third neighbor
 
     \param a
-    the power parameter, the default is `mean_value_weight_3()`
+    the power parameter, the default is `inverse_distance_weight_3()`
 
     \return the computed weight.
   */
   template<typename Point_3>
-  decltype(auto) three_point_family_weight_3(
+  decltype(auto) shepard_weight_3(
     const Point_3& q,
     const Point_3& t,
     const Point_3& r,
@@ -264,10 +249,42 @@ namespace Generalized_weights {
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return three_point_family_weight_3(q, t, r, p, a, traits);
+    return shepard_weight_3(q, t, r, p, a, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes the Shepard weight for 3D points.
+
+    This function infers a traits class `GeomTraits` from the `Point_3` type.
+
+    \tparam Point_3
+    must be `CGAL::Point_3<GeomTraits>`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param a
+    the power parameter, the default is `inverse_distance_weight_3()`
+
+    \return the computed weight.
+  */
+  template<typename Point_3>
+  decltype(auto) shepard_weight_3(
+    const Point_3& p,
+    const Point_3& q,
+    const typename Kernel_traits<Point_3>::Kernel::FT a =
+    typename Kernel_traits<Point_3>::Kernel::FT(1)) {
+
+    Point_3 stub;
+    return shepard_weight_3(p, stub, q, stub, a);
   }
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_THREE_POINT_FAMILY_WEIGHT_H
+#endif // CGAL_GENERALIZED_SHEPARD_WEIGHTS_H

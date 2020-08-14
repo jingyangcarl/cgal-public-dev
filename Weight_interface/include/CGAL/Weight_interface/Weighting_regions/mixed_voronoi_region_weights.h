@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHT_H
-#define CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHT_H
+#ifndef CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHTS_H
+#define CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -34,16 +34,13 @@ namespace Generalized_weights {
   // This weight is the area of the shaded region in the figure below. The region
   // is formed by two midpoints of the edges incident to `q` and the circumcenter of
   // the triangle `[p, q, r]`.
-
   // \cgalFigureBegin{mixed_voronoi_region_weight, mixed_voronoi_cell.svg}
   //   Notation used for the mixed Voronoi region weight.
   // \cgalFigureEnd
-
   // However, unlike the original `CGAL::Generalized_weights::Voronoi_region_weight`,
   // if one of the angles in the triangle `[p, q, r]` is obtuse and the circumcenter
   // vertex of the region is outside this triangle, this vertex is moved to the mid
   // point of the edge `[r, p]`.
-
   // \cgalFigureBegin{mixed_voronoi_region_weight_obtuse, mixed_voronoi_cell_obtuse.svg}
   //   The case with the obtuse angle.
   // \cgalFigureEnd
@@ -229,4 +226,4 @@ namespace Generalized_weights {
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHT_H
+#endif // CGAL_GENERALIZED_MIXED_VORONOI_REGION_WEIGHTS_H

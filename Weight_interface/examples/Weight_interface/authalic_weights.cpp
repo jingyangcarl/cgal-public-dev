@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/authalic_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/authalic_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;

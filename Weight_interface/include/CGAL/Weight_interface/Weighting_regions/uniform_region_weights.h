@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_UNIFORM_WEIGHT_H
-#define CGAL_GENERALIZED_UNIFORM_WEIGHT_H
+#ifndef CGAL_GENERALIZED_UNIFORM_REGION_WEIGHTS_H
+#define CGAL_GENERALIZED_UNIFORM_REGION_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -36,16 +36,15 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the uniform weight for 2D points.
+    \brief computes the uniform area on a 2D triangle.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
-    \return the computed weight.
+    \return the computed area.
   */
   template<typename GeomTraits>
-  decltype(auto) uniform_weight_2(
-    const typename GeomTraits::Point_2&,
+  decltype(auto) uniform_area_2(
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2&,
@@ -58,63 +57,58 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the uniform weight for 2D points.
+    \brief computes the uniform area on a 2D triangle [p, q, r].
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
     must be `CGAL::Point_2<GeomTraits>`.
 
-    \param q
-    a query point
+    \param p
+    the first point
 
-    \param t
-    the first neighbor
+    \param q
+    the second point
 
     \param r
-    the second neighbor
+    the third point
 
-    \param p
-    the third neighbor
-
-    \return the computed weight.
+    \return the computed area.
   */
   template<typename Point_2>
-  decltype(auto) uniform_weight_2(
+  decltype(auto) uniform_area_2(
+    const Point_2& p,
     const Point_2& q,
-    const Point_2& t,
-    const Point_2& r,
-    const Point_2& p) {
+    const Point_2& r) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    return uniform_weight_2(q, t, r, p, traits);
+    return uniform_area_2(p, q, r, traits);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the uniform weight.
+    \brief computes the uniform area.
 
-    \return the computed weight.
+    \return the computed area.
   */
-  double uniform_weight_2() {
+  double uniform_area_2() {
     return 1.0;
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the uniform weight for 3D points.
+    \brief computes the uniform area on a 3D triangle.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
 
-    \return the computed weight.
+    \return the computed area.
   */
   template<typename GeomTraits>
-  decltype(auto) uniform_weight_3(
-    const typename GeomTraits::Point_3&,
+  decltype(auto) uniform_area_3(
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3&,
@@ -127,51 +121,47 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the uniform weight for 3D points.
+    \brief computes the uniform area on a 3D triangle [p, q, r].
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
     \tparam Point_3
     must be `CGAL::Point_3<GeomTraits>`.
 
-    \param q
-    a query point
+    \param p
+    the first point
 
-    \param t
-    the first neighbor
+    \param q
+    the second point
 
     \param r
-    the second neighbor
+    the third point
 
-    \param p
-    the third neighbor
-
-    \return the computed weight.
+    \return the computed area.
   */
   template<typename Point_3>
-  decltype(auto) uniform_weight_3(
+  decltype(auto) uniform_area_3(
+    const Point_3& p,
     const Point_3& q,
-    const Point_3& t,
-    const Point_3& r,
-    const Point_3& p) {
+    const Point_3& r) {
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return uniform_weight_3(q, t, r, p, traits);
+    return uniform_area_3(p, q, r, traits);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief computes the uniform weight.
+    \brief computes the uniform area.
 
-    \return the computed weight.
+    \return the computed area.
   */
-  double uniform_weight_3() {
+  double uniform_area_3() {
     return 1.0;
   }
 
 } // namespace Generalized_weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_UNIFORM_WEIGHT_H
+#endif // CGAL_GENERALIZED_UNIFORM_REGION_WEIGHTS_H
