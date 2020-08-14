@@ -9,17 +9,18 @@ To discuss:
 
 Do it now:
 * I should try to combine mvc and dhc in the orbifold parameterization.
-* Some packages require traits, which do not have a Point_2. What should we do in that case? See e.g. heat_method_3_concept.
+* Some packages require traits, which do not have a Point_2. What should we do in that case? See e.g. heat_method_3_concept. Almost fixed.
 * Change to
   using GeomTraits = typename CGAL::Kernel_traits<
-      typename boost::property_traits<VertexPointMap>::value_type>::type;
+      typename boost::property_traits<VertexPointMap>::value_type>::type; Not sure if it is yet necessary!
 * Add a concept test as in the heat_method.
 * Remove my current examples from the user manual and use them only in the reference manual. While in the user manual add more complete examples:
   one that chooses a weight from the list, one that shows how to set up a Laplacian, one that shows how to compute barycentric coordinates, one that shows how to define your own traits class, one that shows how to normalize weights with weighting regions. Make the user manual short.
 * Clean up the reference manual.
-* Add tests.
 * Mention that Tangent_weight_3 uses positive areas (no distortions) and can be used only for PMP, while MV_weight_2/3 e.g. can have different signs/distortions for 2D and 3D versions due to the flattenning of the 3D region.
-* Or better use an arbitrary direction projection traits from the triangulation package for the polygonal weights.
-* Comment the code.
-* Add WP polygon example to the wachspress_weights.cpp file.
 * Mention that some functions do not use all objects from the traits class but only a subset.
+
+Later:
+* Add tests.
+* Comment the code.
+* Cleanup the projection traits class.
