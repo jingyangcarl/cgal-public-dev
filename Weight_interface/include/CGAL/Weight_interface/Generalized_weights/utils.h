@@ -363,11 +363,14 @@ namespace utils {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    const auto s1 = r - q;
-    const auto s2 = p - q;
     const auto scalar_product_2 =
       traits.compute_scalar_product_2_object();
-    return scalar_product_2(s1, s2);
+    const auto construct_vector_2 =
+      traits.construct_vector_2_object();
+
+    const auto v1 = construct_vector_2(q, r);
+    const auto v2 = construct_vector_2(q, p);
+    return scalar_product_2(v1, v2);
   }
 
   template<typename Point_3>
@@ -378,11 +381,14 @@ namespace utils {
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    const auto s1 = r - q;
-    const auto s2 = p - q;
     const auto scalar_product_3 =
       traits.compute_scalar_product_3_object();
-    return scalar_product_3(s1, s2);
+    const auto construct_vector_3 =
+      traits.construct_vector_3_object();
+
+    const auto v1 = construct_vector_3(q, r);
+    const auto v2 = construct_vector_3(q, p);
+    return scalar_product_3(v1, v2);
   }
   /// \endcond
 

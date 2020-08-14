@@ -34,6 +34,9 @@
 #include <iterator>
 #include <iostream>
 
+// Boost headers.
+#include <boost/mpl/has_xxx.hpp>
+
 // CGAL includes.
 #include <CGAL/utils.h>
 #include <CGAL/assertions.h>
@@ -43,6 +46,50 @@
 namespace CGAL {
 namespace Generalized_weights {
 namespace internal {
+
+// Sqrt helpers.
+template<typename GeomTraits>
+class Default_sqrt {
+
+private:
+  using Traits = GeomTraits;
+  using FT = typename Traits::FT;
+
+public:
+  FT operator()(const FT value) const {
+    return static_cast<FT>(
+      CGAL::sqrt(CGAL::to_double(CGAL::abs(value))));
+  }
+};
+
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_nested_type_Sqrt, Sqrt, false)
+
+// Case: do_not_use_default = false.
+template<typename GeomTraits,
+bool do_not_use_default = Has_nested_type_Sqrt<GeomTraits>::value>
+class Get_sqrt {
+
+public:
+  using Traits = GeomTraits;
+  using Sqrt = Default_sqrt<Traits>;
+
+  static Sqrt sqrt_object(const Traits& ) {
+    return Sqrt();
+  }
+};
+
+// Case: do_not_use_default = true.
+template<typename GeomTraits>
+class Get_sqrt<GeomTraits, true> {
+
+public:
+  using Traits = GeomTraits;
+  using Sqrt = typename Traits::Sqrt;
+
+  static Sqrt sqrt_object(const Traits& traits) {
+    return traits.sqrt_object();
+  }
+};
 
 // Raises value to the power.
 template<typename GeomTraits>
@@ -65,10 +112,12 @@ const typename GeomTraits::FT distance_2(
   const typename GeomTraits::Point_2& q) {
 
   using FT = typename GeomTraits::FT;
+  using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+  const auto sqrt = Get_sqrt::sqrt_object(traits);
+
   const auto squared_distance_2 =
     traits.compute_squared_distance_2_object();
-  return static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(squared_distance_2(p, q))));
+  return sqrt(squared_distance_2(p, q));
 }
 
 // Computes length of a 2D vector.
@@ -78,10 +127,12 @@ const typename GeomTraits::FT length_2(
   const typename GeomTraits::Vector_2& v) {
 
   using FT = typename GeomTraits::FT;
+  using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+  const auto sqrt = Get_sqrt::sqrt_object(traits);
+
   const auto squared_length_2 =
     traits.compute_squared_length_2_object();
-  return static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(squared_length_2(v))));
+  return sqrt(squared_length_2(v));
 }
 
 // Normalizes a 2D vector.
@@ -106,18 +157,18 @@ const typename GeomTraits::FT cotangent_2(
   const typename GeomTraits::Point_2& r) {
 
   using FT = typename GeomTraits::FT;
-  using Vector_2 = typename GeomTraits::Vector_2;
-
   const auto dot_product_2 =
     traits.compute_scalar_product_2_object();
   const auto cross_product_2 =
     traits.compute_determinant_2_object();
+  const auto construct_vector_2 =
+    traits.construct_vector_2_object();
 
-  const Vector_2 v = Vector_2(q, r);
-  const Vector_2 w = Vector_2(q, p);
+  const auto v1 = construct_vector_2(q, r);
+  const auto v2 = construct_vector_2(q, p);
 
-  const FT dot = dot_product_2(v, w);
-  const FT cross = cross_product_2(v, w);
+  const FT dot = dot_product_2(v1, v2);
+  const FT cross = cross_product_2(v1, v2);
 
   const FT length = CGAL::abs(cross);
   CGAL_assertion(length != FT(0));
@@ -134,18 +185,18 @@ const typename GeomTraits::FT tangent_2(
   const typename GeomTraits::Point_2& r) {
 
   using FT = typename GeomTraits::FT;
-  using Vector_2 = typename GeomTraits::Vector_2;
-
   const auto dot_product_2 =
     traits.compute_scalar_product_2_object();
   const auto cross_product_2 =
     traits.compute_determinant_2_object();
+  const auto construct_vector_2 =
+    traits.construct_vector_2_object();
 
-  const Vector_2 v = Vector_2(q, r);
-  const Vector_2 w = Vector_2(q, p);
+  const auto v1 = construct_vector_2(q, r);
+  const auto v2 = construct_vector_2(q, p);
 
-  const FT dot = dot_product_2(v, w);
-  const FT cross = cross_product_2(v, w);
+  const FT dot = dot_product_2(v1, v2);
+  const FT cross = cross_product_2(v1, v2);
 
   const FT length = CGAL::abs(cross);
   CGAL_assertion(dot != FT(0));
@@ -161,10 +212,12 @@ const typename GeomTraits::FT distance_3(
   const typename GeomTraits::Point_3& q) {
 
   using FT = typename GeomTraits::FT;
+  using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+  const auto sqrt = Get_sqrt::sqrt_object(traits);
+
   const auto squared_distance_3 =
     traits.compute_squared_distance_3_object();
-  return static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(squared_distance_3(p, q))));
+  return sqrt(squared_distance_3(p, q));
 }
 
 // Computes length of a 3D vector.
@@ -174,10 +227,12 @@ const typename GeomTraits::FT length_3(
   const typename GeomTraits::Vector_3& v) {
 
   using FT = typename GeomTraits::FT;
+  using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+  const auto sqrt = Get_sqrt::sqrt_object(traits);
+
   const auto squared_length_3 =
     traits.compute_squared_length_3_object();
-  return static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(squared_length_3(v))));
+  return sqrt(squared_length_3(v));
 }
 
 // Normalizes a 3D vector.
@@ -202,20 +257,18 @@ const typename GeomTraits::FT cotangent_3(
   const typename GeomTraits::Point_3& r) {
 
   using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
-
-  const auto construct_vector_3 =
-    traits.construct_vector_3_object();
   const auto dot_product_3 =
     traits.compute_scalar_product_3_object();
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
+  const auto construct_vector_3 =
+    traits.construct_vector_3_object();
 
-  const Vector_3 v = construct_vector_3(q, r);
-  const Vector_3 w = construct_vector_3(q, p);
+  const auto v1 = construct_vector_3(q, r);
+  const auto v2 = construct_vector_3(q, p);
 
-  const FT dot = dot_product_3(v, w);
-  const Vector_3 cross = cross_product_3(v, w);
+  const FT dot = dot_product_3(v1, v2);
+  const auto cross = cross_product_3(v1, v2);
 
   const FT length = length_3(traits, cross);
   CGAL_assertion(length != FT(0));
@@ -232,18 +285,18 @@ const typename GeomTraits::FT tangent_3(
   const typename GeomTraits::Point_3& r) {
 
   using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
-
   const auto dot_product_3 =
     traits.compute_scalar_product_3_object();
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
+  const auto construct_vector_3 =
+    traits.construct_vector_3_object();
 
-  const Vector_3 v = Vector_3(q, r);
-  const Vector_3 w = Vector_3(q, p);
+  const auto v1 = construct_vector_3(q, r);
+  const auto v2 = construct_vector_3(q, p);
 
-  const FT dot = dot_product_3(v, w);
-  const Vector_3 cross = cross_product_3(v, w);
+  const FT dot = dot_product_3(v1, v2);
+  const auto cross = cross_product_3(v1, v2);
 
   const FT length = length_3(traits, cross);
   CGAL_assertion(dot != FT(0));
@@ -442,11 +495,12 @@ const typename GeomTraits::Point_2 to_2d(
   const typename GeomTraits::Point_3& query) {
 
   using Point_2  = typename GeomTraits::Point_2;
-  using Vector_3 = typename GeomTraits::Vector_3;
   const auto dot_product_3 =
     traits.compute_scalar_product_3_object();
+  const auto construct_vector_3 =
+    traits.construct_vector_3_object();
 
-  const Vector_3 v = Vector_3(origin, query);
+  const auto v = construct_vector_3(origin, query);
   const auto x = dot_product_3(b1, v);
   const auto y = dot_product_3(b2, v);
   return Point_2(x, y);
@@ -468,8 +522,11 @@ void flatten(
   // std::cout << std::endl;
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
+
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
+  const auto construct_vector_3 =
+    traits.construct_vector_3_object();
 
   // Compute barycenter.
   const Point_3 center =
@@ -492,19 +549,19 @@ void flatten(
   // std::cout << "translated p1: " << p1 << std::endl;
 
   // Middle axis.
-  Vector_3 ax = Vector_3(q1, r1);
+  auto ax = construct_vector_3(q1, r1);
   normalize_3(traits, ax);
 
   // Prev and next vectors.
-  Vector_3 v1 = Vector_3(q1, t1);
-  Vector_3 v2 = Vector_3(q1, p1);
+  auto v1 = construct_vector_3(q1, t1);
+  auto v2 = construct_vector_3(q1, p1);
 
   normalize_3(traits, v1);
   normalize_3(traits, v2);
 
   // Two triangle normals.
-  Vector_3 n1 = cross_product_3(v1, ax);
-  Vector_3 n2 = cross_product_3(ax, v2);
+  auto n1 = cross_product_3(v1, ax);
+  auto n2 = cross_product_3(ax, v2);
 
   normalize_3(traits, n1);
   normalize_3(traits, n2);
@@ -585,7 +642,11 @@ const typename GeomTraits::FT area_3(
   using FT = typename GeomTraits::FT;
   using Point_3 = typename GeomTraits::Point_3;
   using Vector_3 = typename GeomTraits::Vector_3;
-  using Plane_3 = typename GeomTraits::Plane_3;
+
+  const auto cross_product_3 =
+    traits.construct_cross_product_vector_3_object();
+  const auto construct_vector_3 =
+    traits.construct_vector_3_object();
 
   // Compute barycenter.
   const Point_3 center =
@@ -600,14 +661,13 @@ const typename GeomTraits::FT area_3(
     r.x() - center.x(), r.y() - center.y(), r.z() - center.z());
 
   // Prev and next vectors.
-  Vector_3 v1 = Vector_3(b, a);
-  Vector_3 v2 = Vector_3(b, c);
+  auto v1 = construct_vector_3(b, a);
+  auto v2 = construct_vector_3(b, c);
   normalize_3(traits, v1);
   normalize_3(traits, v2);
 
-  const auto cross_product_3 =
-    traits.construct_cross_product_vector_3_object();
-  Vector_3 normal = cross_product_3(v1, v2);
+  // Compute normal.
+  auto normal = cross_product_3(v1, v2);
   normalize_3(traits, normal);
 
   // Compute orthogonal base vectors.
@@ -633,14 +693,15 @@ const typename GeomTraits::FT positive_area_3(
   const typename GeomTraits::Point_3& r) {
 
   using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
+  const auto construct_vector_3 =
+    traits.construct_vector_3_object();
 
-  const Vector_3 v = Vector_3(q, r);
-  const Vector_3 w = Vector_3(q, p);
+  const auto v1 = construct_vector_3(q, r);
+  const auto v2 = construct_vector_3(q, p);
 
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
-  const Vector_3 cross = cross_product_3(v, w);
+  const auto cross = cross_product_3(v1, v2);
   const FT half = FT(1) / FT(2);
   const FT area_3 = half * length_3(traits, cross);
   return area_3;

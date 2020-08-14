@@ -45,26 +45,28 @@ const typename GeomTraits::FT cotangent_3_secure(
   const typename GeomTraits::Point_3& r) {
 
   using FT = typename GeomTraits::FT;
-  using Vector_3 = typename GeomTraits::Vector_3;
+  using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+  const auto sqrt = Get_sqrt::sqrt_object(traits);
 
   const auto dot_product_3 =
     traits.compute_scalar_product_3_object();
   const auto cross_product_3 =
     traits.construct_cross_product_vector_3_object();
+  const auto construct_vector_3 =
+    traits.construct_vector_3_object();
 
-  const Vector_3 v = Vector_3(q, r);
-  const Vector_3 w = Vector_3(q, p);
+  const auto v1 = construct_vector_3(q, r);
+  const auto v2 = construct_vector_3(q, p);
 
-  const FT dot = dot_product_3(v, w);
-  const FT length_v = length_3(traits, v);
-  const FT length_w = length_3(traits, w);
+  const FT dot = dot_product_3(v1, v2);
+  const FT length_v1 = length_3(traits, v1);
+  const FT length_v2 = length_3(traits, v2);
 
   const FT lb = -FT(999) / FT(1000), ub = FT(999) / FT(1000);
-  FT cosine = dot / length_v / length_w;
+  FT cosine = dot / length_v1 / length_v2;
   cosine = (cosine < lb) ? lb : cosine;
   cosine = (cosine > ub) ? ub : cosine;
-  const FT sine = static_cast<FT>(
-    CGAL::sqrt(CGAL::to_double(FT(1) - cosine * cosine)));
+  const FT sine = sqrt(FT(1) - cosine * cosine);
 
   CGAL_assertion(sine != FT(0));
   if (sine != FT(0)) return cosine / sine;

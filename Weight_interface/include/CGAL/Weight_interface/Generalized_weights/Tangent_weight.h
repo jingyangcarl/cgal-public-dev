@@ -226,21 +226,24 @@ namespace Generalized_weights {
     const GeomTraits& traits) {
 
     using FT = typename GeomTraits::FT;
-    const auto s1 = t - q;
-    const auto s2 = r - q;
-    const auto s3 = p - q;
+    const auto dot_product_2 =
+      traits.compute_scalar_product_2_object();
+    const auto construct_vector_2 =
+      traits.construct_vector_2_object();
 
-    const FT l1 = internal::length_2(traits, s1);
-    const FT l2 = internal::length_2(traits, s2);
-    const FT l3 = internal::length_2(traits, s3);
+    const auto v1 = construct_vector_2(q, t);
+    const auto v2 = construct_vector_2(q, r);
+    const auto v3 = construct_vector_2(q, p);
+
+    const FT l1 = internal::length_2(traits, v1);
+    const FT l2 = internal::length_2(traits, v2);
+    const FT l3 = internal::length_2(traits, v3);
 
     const FT A1 = internal::area_2(traits, r, q, t);
     const FT A2 = internal::area_2(traits, p, q, r);
 
-    const auto dot_product_2 =
-      traits.compute_scalar_product_2_object();
-    const FT D1 = dot_product_2(s1, s2);
-    const FT D2 = dot_product_2(s2, s3);
+    const FT D1 = dot_product_2(v1, v2);
+    const FT D2 = dot_product_2(v2, v3);
 
     return internal::weight(
       l1, l2, l3, A1, A2, D1, D2);
@@ -316,21 +319,24 @@ namespace Generalized_weights {
     const GeomTraits& traits) {
 
     using FT = typename GeomTraits::FT;
-    const auto s1 = t - q;
-    const auto s2 = r - q;
-    const auto s3 = p - q;
+    const auto dot_product_3 =
+      traits.compute_scalar_product_3_object();
+    const auto construct_vector_3 =
+      traits.construct_vector_3_object();
 
-    const FT l1 = internal::length_3(traits, s1);
-    const FT l2 = internal::length_3(traits, s2);
-    const FT l3 = internal::length_3(traits, s3);
+    const auto v1 = construct_vector_3(q, t);
+    const auto v2 = construct_vector_3(q, r);
+    const auto v3 = construct_vector_3(q, p);
+
+    const FT l1 = internal::length_3(traits, v1);
+    const FT l2 = internal::length_3(traits, v2);
+    const FT l3 = internal::length_3(traits, v3);
 
     const FT A1 = internal::positive_area_3(traits, r, q, t);
     const FT A2 = internal::positive_area_3(traits, p, q, r);
 
-    const auto dot_product_3 =
-      traits.compute_scalar_product_3_object();
-    const FT D1 = dot_product_3(s1, s2);
-    const FT D2 = dot_product_3(s2, s3);
+    const FT D1 = dot_product_3(v1, v2);
+    const FT D2 = dot_product_3(v2, v3);
 
     return internal::weight(
       l1, l2, l3, A1, A2, D1, D2);

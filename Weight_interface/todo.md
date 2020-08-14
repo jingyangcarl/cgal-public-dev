@@ -7,7 +7,6 @@
 * Should I move polygon weights from the internal namespace in BC to this package?
 * I do not want to make Surface_mesh_shortest_path depend on the Barycentric_coordinates_2 package due to the license issues. In addition, they also use a 3D version for 3D triangles.
 * Some packages require traits, which do not have a Point_2. What should we do in that case? See e.g. heat_method_3_concept.
-* I should add more construct_objects from the kernel instead of constructors.
 * Change to
   using GeomTraits = typename CGAL::Kernel_traits<
       typename boost::property_traits<VertexPointMap>::value_type>::type;
@@ -19,3 +18,4 @@
 * Mention that Tangent_weight_3 uses positive areas (no distortions) and can be used only for PMP, while MV_weight_2/3 e.g. can have different signs/distortions for 2D and 3D versions due to the flattenning of the 3D region.
 * Add a flattenning version for the polygonal weights, which I will export from BC. Or better use an arbitrary direction projection traits from the triangulation package.
 * Should I remove the positive area from the Tangent_weight and substitute it by computing tan(alpha/2)? In this case, I will keep the correct sign in any configuration.
+* Comment the code.

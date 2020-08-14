@@ -63,11 +63,20 @@ namespace Generalized_weights {
       return FT(0);
     }
 
-    template<typename FT>
-    const FT weight(
-      const FT r1, const FT r2, const FT r3,
-      const FT D1, const FT D2, const FT D,
-      const FT sign) {
+    template<typename GeomTraits>
+    const typename GeomTraits::FT weight(
+      const GeomTraits& traits,
+      const typename GeomTraits::FT r1,
+      const typename GeomTraits::FT r2,
+      const typename GeomTraits::FT r3,
+      const typename GeomTraits::FT D1,
+      const typename GeomTraits::FT D2,
+      const typename GeomTraits::FT D,
+      const typename GeomTraits::FT sign) {
+
+      using FT = typename GeomTraits::FT;
+      using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+      const auto sqrt = Get_sqrt::sqrt_object(traits);
 
       const FT P1 = r1 * r2 + D1;
       const FT P2 = r2 * r3 + D2;
@@ -79,9 +88,7 @@ namespace Generalized_weights {
         const FT inv = FT(1) / prod;
         w = FT(2) * (r1 * r3 - D) * inv;
         CGAL_assertion(w >= FT(0));
-        if (w < FT(0)) w = CGAL::abs(w);
-        w = static_cast<FT>(
-          CGAL::sqrt(CGAL::to_double(w)));
+        w = sqrt(w);
       }
       w *= FT(2); w *= sign;
       return w;
@@ -123,20 +130,22 @@ namespace Generalized_weights {
     const GeomTraits& traits) {
 
     using FT = typename GeomTraits::FT;
-
-    const auto s1 = t - q;
-    const auto s2 = r - q;
-    const auto s3 = p - q;
-
-    const FT l1 = internal::length_2(traits, s1);
-    const FT l2 = internal::length_2(traits, s2);
-    const FT l3 = internal::length_2(traits, s3);
-
     const auto dot_product_2 =
       traits.compute_scalar_product_2_object();
-    const FT D1 = dot_product_2(s1, s2);
-    const FT D2 = dot_product_2(s2, s3);
-    const FT D  = dot_product_2(s1, s3);
+    const auto construct_vector_2 =
+      traits.construct_vector_2_object();
+
+    const auto v1 = construct_vector_2(q, t);
+    const auto v2 = construct_vector_2(q, r);
+    const auto v3 = construct_vector_2(q, p);
+
+    const FT l1 = internal::length_2(traits, v1);
+    const FT l2 = internal::length_2(traits, v2);
+    const FT l3 = internal::length_2(traits, v3);
+
+    const FT D1 = dot_product_2(v1, v2);
+    const FT D2 = dot_product_2(v2, v3);
+    const FT D  = dot_product_2(v1, v3);
 
     const FT A1 = internal::area_2(traits, r, q, t);
     const FT A2 = internal::area_2(traits, p, q, r);
@@ -144,7 +153,7 @@ namespace Generalized_weights {
     const FT sign = internal::sign_of_weight(A1, A2, B);
 
     return internal::weight(
-      l1, l2, l3, D1, D2, D, sign);
+      traits, l1, l2, l3, D1, D2, D, sign);
   }
 
   /*!
