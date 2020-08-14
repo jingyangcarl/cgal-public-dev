@@ -21,3 +21,4 @@ Do it now:
 * Or better use an arbitrary direction projection traits from the triangulation package for the polygonal weights.
 * Comment the code.
 * Add WP polygon example to the wachspress_weights.cpp file.
+* Mention that some functions do not use all objects from the traits class but only a subset.
