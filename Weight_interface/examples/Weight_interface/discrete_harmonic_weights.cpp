@@ -25,6 +25,18 @@ int main() {
     CGAL::Generalized_weights::discrete_harmonic_weight_2(q2, t2, r2, p2) << std::endl;
   std::cout << "3D discrete harmonic: " <<
     CGAL::Generalized_weights::discrete_harmonic_weight_3(q3, t3, r3, p3) << std::endl;
+  std::cout << "-----------------------" << std::endl;
+
+  // Compute weights on a polygon.
+  const std::vector<Point_2> polygon = {t2, r2, p2, Point_2(0, 1)};
+  std::vector<double> weights;
+  weights.reserve(polygon.size());
+  CGAL::Generalized_weights::discrete_harmonic_weights_2(
+    polygon, q2, std::back_inserter(weights));
+  std::cout << "2D discrete harmonic: ";
+  for (const double weight : weights)
+    std::cout << weight << " ";
+  std::cout << std::endl;
 
   return EXIT_SUCCESS;
 }

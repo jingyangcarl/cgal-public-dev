@@ -27,9 +27,14 @@
 
 // Internal includes.
 #include <CGAL/Weight_interface/internal/utils.h>
+#include <CGAL/Weight_interface/internal/polygon_utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {
+
+  // [1] Reference: "K. Hormann and M. Floater.
+  // Mean value coordinates for arbitrary planar polygons.
+  // ACM Transactions on Graphics, 25(4):1424-1441, 2006.".
 
   // The full weight is computed as
   // \f$w = \pm 2 \sqrt{\frac{2 (r_m r_p - D)}{(r r_m + D_m)(r r_p + D_p)}}\f$,
@@ -263,6 +268,362 @@ namespace Generalized_weights {
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
     return mean_value_weight_3(q, t, r, p, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief 2D mean value weights.
+
+    This class implements 2D mean value weights ( \cite cgal:bc:hf-mvcapp-06,
+    \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ), which can be computed
+    at any point in the plane.
+
+    Mean value weights are well-defined everywhere in the plane and are
+    non-negative in the kernel of a star-shaped polygon. The weights are
+    computed analytically. See more details in the user manual here.
+
+    \tparam Polygon
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2`.
+
+    \tparam VertexMap
+    must be a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+    value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+  */
+  template<
+  typename Polygon,
+  typename GeomTraits,
+  typename VertexMap = CGAL::Identity_property_map<typename GeomTraits::Point_2> >
+  class Mean_value_weights_2 {
+
+  public:
+
+    /// \name Types
+    /// @{
+
+    /// \cond SKIP_IN_MANUAL
+    using Polygon_ = Polygon;
+    using GT = GeomTraits;
+    using Vertex_map = VertexMap;
+
+    using Vector_2 = typename GeomTraits::Vector_2;
+    using Area_2 = typename GeomTraits::Compute_area_2;
+    using Squared_length_2 = typename GeomTraits::Compute_squared_length_2;
+    using Scalar_product_2 = typename GeomTraits::Compute_scalar_product_2;
+    using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+    using Sqrt = typename Get_sqrt::Sqrt;
+    /// \endcond
+
+    /// Number type.
+    typedef typename GeomTraits::FT FT;
+
+    /// Point type.
+    typedef typename GeomTraits::Point_2 Point_2;
+
+    /// @}
+
+    /// \name Initialization
+    /// @{
+
+    /*!
+      \brief initializes all internal data structures.
+
+      This class implements the behavior of mean value weights
+      for 2D query points.
+
+      \param polygon
+      An instance of `Polygon` with the vertices of a simple polygon.
+
+      \param traits
+      An instance of `GeomTraits`. The default initialization is provided.
+
+      \param vertex_map
+      An instance of `VertexMap` that maps a vertex from `polygon`
+      to `Point_2`. The default is the identity property map.
+
+      \pre polygon.size() >= 3
+      \pre polygon is simple
+    */
+    Mean_value_weights_2(
+      const Polygon& polygon,
+      const GeomTraits traits = GeomTraits(),
+      const VertexMap vertex_map = VertexMap()) :
+    m_polygon(polygon),
+    m_traits(traits),
+    m_vertex_map(vertex_map),
+    m_area_2(m_traits.compute_area_2_object()),
+    m_squared_length_2(m_traits.compute_squared_length_2_object()),
+    m_scalar_product_2(m_traits.compute_scalar_product_2_object()),
+    m_sqrt(Get_sqrt::sqrt_object(m_traits))  {
+
+      CGAL_precondition(
+        polygon.size() >= 3);
+      CGAL_precondition(
+        internal::is_simple_2(polygon, traits, vertex_map));
+      resize();
+    }
+
+    /// @}
+
+    /// \name Access
+    /// @{
+
+    /*!
+      \brief computes 2D mean value weights.
+
+      This function fills `weights` with 2D mean value weights computed at the `query`
+      point with respect to the vertices of the input polygon. If `query` belongs to
+      the polygon boundary, the weights are not well-defined. You can see the more
+      precise version in the package Barycentric Coordinates 2.
+
+      The number of returned weights equals to the number of polygon vertices.
+
+      \tparam OutputIterator
+      the dereferenced output iterator type must be convertible to `FT`.
+
+      \param query
+      A query point.
+
+      \param w_begin
+      The beginning of the destination range with the computed weights.
+
+      \return an output iterator to the element in the destination range,
+      one past the last weight stored.
+    */
+    template<typename OutputIterator>
+    OutputIterator operator()(
+      const Point_2& query,
+      OutputIterator w_begin) {
+
+      const bool normalize = false;
+      return operator()(query, w_begin, normalize);
+    }
+
+    /// @}
+
+    /// \cond SKIP_IN_MANUAL
+    template<typename OutputIterator>
+    OutputIterator operator()(
+      const Point_2& query,
+      OutputIterator weights,
+      const bool normalize) {
+
+      return optimal_weights(
+        query, weights, normalize);
+    }
+    /// \endcond
+
+  private:
+
+    // Fields.
+    const Polygon& m_polygon;
+    const GeomTraits m_traits;
+    const VertexMap m_vertex_map;
+    const Area_2 m_area_2;
+    const Squared_length_2 m_squared_length_2;
+    const Scalar_product_2 m_scalar_product_2;
+    const Sqrt m_sqrt;
+
+    std::vector<Vector_2> s;
+    std::vector<FT> r;
+    std::vector<FT> A;
+    std::vector<FT> D;
+    std::vector<FT> t;
+    std::vector<FT> w;
+
+    // Functions.
+    void resize() {
+      s.resize(m_polygon.size());
+      r.resize(m_polygon.size());
+      A.resize(m_polygon.size());
+      D.resize(m_polygon.size());
+      t.resize(m_polygon.size());
+      w.resize(m_polygon.size());
+    }
+
+    template<typename OutputIterator>
+    OutputIterator optimal_weights(
+      const Point_2& query,
+      OutputIterator weights,
+      const bool normalize) {
+
+      // Get the number of vertices in the polygon.
+      const std::size_t n = m_polygon.size();
+
+      // Compute vectors s following the pseudo-code in the Figure 10 from [1].
+      for (std::size_t i = 0; i < n; ++i) {
+        const auto& pi = get(m_vertex_map, *(m_polygon.begin() + i));
+        s[i] = pi - query;
+      }
+
+      // Compute lengths r, areas A, and dot products D following the pseudo-code
+      // in the Figure 10 from [1]. Split the loop to make this computation faster.
+      const auto& p1 = get(m_vertex_map, *(m_polygon.begin() + 0));
+      const auto& p2 = get(m_vertex_map, *(m_polygon.begin() + 1));
+
+      r[0] = m_sqrt(m_squared_length_2(s[0]));
+      A[0] = m_area_2(p1, p2, query);
+      D[0] = m_scalar_product_2(s[0], s[1]);
+
+      for (std::size_t i = 1; i < n - 1; ++i) {
+        const auto& pi1 = get(m_vertex_map, *(m_polygon.begin() + (i + 0)));
+        const auto& pi2 = get(m_vertex_map, *(m_polygon.begin() + (i + 1)));
+
+        r[i] = m_sqrt(m_squared_length_2(s[i]));
+        A[i] = m_area_2(pi1, pi2, query);
+        D[i] = m_scalar_product_2(s[i], s[i + 1]);
+      }
+
+      const auto& pn = get(m_vertex_map, *(m_polygon.begin() + (n - 1)));
+      r[n - 1] = m_sqrt(m_squared_length_2(s[n - 1]));
+      A[n - 1] = m_area_2(pn, p1, query);
+      D[n - 1] = m_scalar_product_2(s[n - 1], s[0]);
+
+      // Compute intermediate values t using the formulas from slide 19 here
+      // - http://www.inf.usi.ch/hormann/nsfworkshop/presentations/Hormann.pdf
+      for (std::size_t i = 0; i < n - 1; ++i) {
+        CGAL_assertion((r[i] * r[i + 1] + D[i]) != FT(0));
+        t[i] = FT(2) * A[i] / (r[i] * r[i + 1] + D[i]);
+      }
+
+      CGAL_assertion((r[n - 1] * r[0] + D[n - 1]) != FT(0));
+      t[n - 1] = FT(2) * A[n - 1] / (r[n - 1] * r[0] + D[n - 1]);
+
+      // Compute mean value weights using the same pseudo-code as before.
+      CGAL_assertion(r[0] != FT(0));
+      w[0] = FT(2) * (t[n - 1] + t[0]) / r[0];
+
+      for (std::size_t i = 1; i < n - 1; ++i) {
+        CGAL_assertion(r[i] != FT(0));
+        w[i] = FT(2) * (t[i - 1] + t[i]) / r[i];
+      }
+
+      CGAL_assertion(r[n - 1] != FT(0));
+      w[n - 1] = FT(2) * (t[n - 2] + t[n - 1]) / r[n - 1];
+
+      // Normalize if necessary.
+      if (normalize)
+        internal::normalize(w);
+
+      // Return weights.
+      for (std::size_t i = 0; i < n; ++i)
+        *(weights++) = w[i];
+      return weights;
+    }
+  };
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes 2D mean value weights.
+
+    This function computes 2D mean value weights at a given `query` point
+    with respect to the vertices of a simple `polygon`, that is one
+    weight per vertex. The weights are stored in a destination range
+    beginning at `w_begin`.
+
+    Internally, the class `CGAL::Generalized_weights::Mean_value_weights_2` is used.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
+
+    \tparam PointRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2`.
+
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a simple polygon.
+
+    \param query
+    A query point.
+
+    \param w_begin
+    The beginning of the destination range with the computed weights.
+
+    \param traits
+    An instance of `GeomTraits`.
+
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored.
+
+    \pre polygon.size() >= 3
+    \pre polygon is simple
+  */
+  template<
+  typename PointRange,
+  typename OutputIterator,
+  typename GeomTraits>
+  OutputIterator mean_value_weights_2(
+    const PointRange& polygon,
+    const typename GeomTraits::Point_2& query,
+    OutputIterator w_begin,
+    const GeomTraits traits) {
+
+    Mean_value_weights_2<PointRange, GeomTraits> mean_value(
+      polygon, traits);
+    return mean_value(query, w_begin);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefFreeFunctions
+
+    \brief computes 2D mean value weights.
+
+    This function computes 2D mean value weights at a given `query` point
+    with respect to the vertices of a simple `polygon`, that is one
+    weight per vertex. The weights are stored in a destination range
+    beginning at `w_begin`.
+
+    Internally, the class `CGAL::Generalized_weights::Mean_value_weights_2` is used.
+    If one needs a flexible API, please refer to that class. If you want to handle
+    multiple query points, you better use that class, too. When using this function,
+    internal memory is allocated for each query point, while when using the class,
+    it is allocated only once, which is much more efficient.
+
+    This function infers a traits class from the `Point_2` class.
+
+    \tparam PointRange
+    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+
+    \tparam OutputIterator
+    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
+
+    \param polygon
+    An instance of `PointRange` with 2D points, which form a simple polygon.
+
+    \param query
+    A query point.
+
+    \param w_begin
+    The beginning of the destination range with the computed weights.
+
+    \return an output iterator to the element in the destination range,
+    one past the last weight stored.
+
+    \pre polygon.size() >= 3
+    \pre polygon is simple
+  */
+  template<
+  typename PointRange,
+  typename Point_2,
+  typename OutputIterator>
+  OutputIterator mean_value_weights_2(
+    const PointRange& polygon,
+    const Point_2& query,
+    OutputIterator w_begin) {
+
+    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    return mean_value_weights_2(
+      polygon, query, w_begin, GeomTraits());
   }
 
 } // namespace Generalized_weights

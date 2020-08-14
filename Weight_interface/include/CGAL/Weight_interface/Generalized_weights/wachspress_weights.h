@@ -293,8 +293,8 @@ namespace Generalized_weights {
     */
     Wachspress_weights_2(
       const Polygon& polygon,
-      const GeomTraits traits,
-      const VertexMap vertex_map) :
+      const GeomTraits traits = GeomTraits(),
+      const VertexMap vertex_map = VertexMap()) :
     m_polygon(polygon),
     m_traits(traits),
     m_vertex_map(vertex_map),
@@ -320,7 +320,7 @@ namespace Generalized_weights {
 
       This function fills `weights` with 2D Wachspress weights computed at the `query`
       point with respect to the vertices of the input polygon. If `query` belongs to
-      the polygon boundary, the returned weights are not defined. You can see the more
+      the polygon boundary, the weights are not well-defined. You can see the more
       precise version in the package Barycentric Coordinates 2.
 
       The number of returned weights equals to the number of polygon vertices.
@@ -343,8 +343,7 @@ namespace Generalized_weights {
       OutputIterator w_begin) {
 
       const bool normalize = false;
-      return optimal_weights(
-        query, w_begin, normalize);
+      return operator()(query, w_begin, normalize);
     }
 
     /// @}
@@ -353,11 +352,11 @@ namespace Generalized_weights {
     template<typename OutputIterator>
     OutputIterator operator()(
       const Point_2& query,
-      OutputIterator weights,
+      OutputIterator w_begin,
       const bool normalize) {
 
       return optimal_weights(
-        query, weights, normalize);
+        query, w_begin, normalize);
     }
     /// \endcond
 

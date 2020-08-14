@@ -5,6 +5,7 @@ To discuss:
 * Skeletonization uses the weird secure version for the cotangent weights.
 * In skeletonization, the final example results are not determenistic.
 * Should I remove the positive area from the Tangent_weight and substitute it by computing tan(alpha/2)? In this case, I will keep the correct sign in any configuration.
+* Should I use reference in the traits?
 
 Do it now:
 * I should try to combine mvc and dhc in the orbifold parameterization.
