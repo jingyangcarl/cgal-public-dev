@@ -1,17 +1,17 @@
 /*!
-\example Weight_interface/uniform_weight.cpp
-\example Weight_interface/three_point_family_weight.cpp
-\example Weight_interface/inverse_distance_weight.cpp
-\example Weight_interface/shepard_weight.cpp
-\example Weight_interface/wachspress_weight.cpp
-\example Weight_interface/authalic_weight.cpp
-\example Weight_interface/mean_value_weight.cpp
-\example Weight_interface/tangent_weight.cpp
-\example Weight_interface/discrete_harmonic_weight.cpp
-\example Weight_interface/cotangent_weight.cpp
-\example Weight_interface/uniform_region_weight.cpp
-\example Weight_interface/triangular_region_weight.cpp
-\example Weight_interface/barycentric_region_weight.cpp
-\example Weight_interface/voronoi_region_weight.cpp
-\example Weight_interface/mixed_voronoi_region_weight.cpp
+\example Weight_interface/uniform_weights.cpp
+\example Weight_interface/three_point_family_weights.cpp
+\example Weight_interface/inverse_distance_weights.cpp
+\example Weight_interface/shepard_weights.cpp
+\example Weight_interface/wachspress_weights.cpp
+\example Weight_interface/authalic_weights.cpp
+\example Weight_interface/mean_value_weights.cpp
+\example Weight_interface/tangent_weights.cpp
+\example Weight_interface/discrete_harmonic_weights.cpp
+\example Weight_interface/cotangent_weights.cpp
+\example Weight_interface/uniform_region_weights.cpp
+\example Weight_interface/triangular_region_weights.cpp
+\example Weight_interface/barycentric_region_weights.cpp
+\example Weight_interface/voronoi_region_weights.cpp
+\example Weight_interface/mixed_voronoi_region_weights.cpp
 */

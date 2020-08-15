@@ -1,13 +1,11 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/Wachspress_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/wachspress_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
 using FT      = typename Kernel::FT;
 using Point_2 = typename Kernel::Point_2;
 using Point_3 = typename Kernel::Point_3;
-
-using WP = CGAL::Generalized_weights::Wachspress_weight<Kernel>;
 
 int main() {
 
@@ -54,9 +52,9 @@ int main() {
   // Am = 17.701, Aj = 26.585, C = 13.819, B = 30.480, 3D: 0.0293438.
 
   // Compute weights.
-  WP wp;
-  std::cout << "2D wachspress: " << wp(query2, vm2, vj2, vp2) << std::endl;
-  std::cout << "3D wachspress: " << wp(query3, vm3, vj3, vp3) << std::endl;
+  // WP wp;
+  // std::cout << "2D wachspress: " << wp(query2, vm2, vj2, vp2) << std::endl;
+  // std::cout << "3D wachspress: " << wp(query3, vm3, vj3, vp3) << std::endl;
 
   return EXIT_SUCCESS;
 }

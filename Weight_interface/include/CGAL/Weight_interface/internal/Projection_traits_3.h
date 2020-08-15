@@ -1,4 +1,4 @@
-// Copyright (c) 2009 GeometryFactory SARL (France)
+// Copyright (c) 2020 GeometryFactory SARL (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -17,7 +17,7 @@
 // SPDX-License-Identifier: GPL-3.0+
 //
 //
-// Author(s)     : Laurent Rineau
+// Author(s)     : Dmitry Anisimov
 
 #ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_PROJECTION_TRAITS_3_H
 #define CGAL_GENERALIZED_WEIGHTS_INTERNAL_PROJECTION_TRAITS_3_H
@@ -33,23 +33,24 @@ template<class Filtered_kernel >
 class Filtered_projection_traits_3
   : public Projection_traits_base_3<Filtered_kernel> {
 
-  typedef Filtered_kernel K;
-  typedef Filtered_projection_traits_3<K> Self;
-  typedef Projection_traits_base_3<K> Base;
+  using K    = Filtered_kernel;
+  using Self = Filtered_projection_traits_3<K>;
+  using Base = Projection_traits_base_3<K>;
 
-  typedef typename K::Exact_kernel Exact_kernel;
-  typedef typename K::Approximate_kernel Approximate_kernel;
-  typedef typename K::C2E C2E;
-  typedef typename K::C2F C2F;
+  using Exact_kernel       = typename K::Exact_kernel;
+  using Approximate_kernel = typename K::Approximate_kernel;
+
+  using C2E = typename K::C2E;
+  using C2F = typename K::C2F;
 
 public:
-  typedef Projection_traits_base_3<Exact_kernel> Exact_traits;
-  typedef Projection_traits_base_3<Approximate_kernel> Filtering_traits;
+  using Exact_traits     = Projection_traits_base_3<Exact_kernel>;
+  using Filtering_traits = Projection_traits_base_3<Approximate_kernel>;
 
 public:
   explicit Filtered_projection_traits_3(
-    const typename K::Vector_3& normal)
-    : Base(normal)
+    const typename K::Vector_3& normal) :
+  Base(normal)
   { }
 
 #define CGAL_PROJ_TRAITS_FILTER_PRED(P, Pf, ACCESSOR) \
@@ -68,25 +69,9 @@ public:
     orientation_2_object,
     normal)
   CGAL_PROJ_TRAITS_FILTER_PRED(
-    Side_of_oriented_circle_2,
-    side_of_oriented_circle_2_object,
+    Collinear_2,
+    collinear_2_object,
     normal)
-  CGAL_PROJ_TRAITS_FILTER_PRED(
-    Less_x_2,
-		less_x_2_object,
-		base1)
-  CGAL_PROJ_TRAITS_FILTER_PRED(
-    Less_y_2,
-		less_y_2_object,
-		base2)
-  CGAL_PROJ_TRAITS_FILTER_PRED(
-    Compare_x_2,
-		compare_x_2_object,
-		base1)
-  CGAL_PROJ_TRAITS_FILTER_PRED(
-    Compare_y_2,
-		compare_y_2_object,
-		base2)
 };
 
 // This declaration is necessary for breaking the cyclic dependency.
@@ -110,8 +95,8 @@ class Projection_traits_3<Kernel, true>
 public:
   explicit
   Projection_traits_3(
-    const typename Kernel::Vector_3& normal)
-    : Filtered_projection_traits_3<Kernel>(normal)
+    const typename Kernel::Vector_3& normal) :
+  Filtered_projection_traits_3<Kernel>(normal)
   { }
 };
 
