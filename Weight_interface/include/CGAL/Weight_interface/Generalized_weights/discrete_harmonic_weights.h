@@ -231,7 +231,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief 2D discrete harmonic weights.
+    \brief 2D discrete harmonic weights for polygons.
 
     This class implements 2D discrete harmonic weights ( \cite cgal:bc:fhk-gcbcocp-06,
     \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ), which can be computed

@@ -46,7 +46,7 @@ namespace utils {
     \param q
     the second point
 
-    \param p
+    \param r
     the third point
 
     \param traits
@@ -80,7 +80,7 @@ namespace utils {
     \param q
     the second point
 
-    \param p
+    \param r
     the third point
 
     \return the computed tangent.
@@ -110,7 +110,7 @@ namespace utils {
     \param q
     the second point
 
-    \param p
+    \param r
     the third point
 
     \param traits
@@ -144,7 +144,7 @@ namespace utils {
     \param q
     the second point
 
-    \param p
+    \param r
     the third point
 
     \return the computed tangent.
@@ -174,7 +174,7 @@ namespace utils {
     \param q
     the second point
 
-    \param p
+    \param r
     the third point
 
     \param traits
@@ -208,7 +208,7 @@ namespace utils {
     \param q
     the second point
 
-    \param p
+    \param r
     the third point
 
     \return the computed cotangent.
@@ -238,7 +238,7 @@ namespace utils {
     \param q
     the second point
 
-    \param p
+    \param r
     the third point
 
     \param traits
@@ -272,7 +272,7 @@ namespace utils {
     \param q
     the second point
 
-    \param p
+    \param r
     the third point
 
     \return the computed cotangent.

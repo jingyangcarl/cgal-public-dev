@@ -273,7 +273,7 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefFreeFunctions
 
-    \brief 2D mean value weights.
+    \brief 2D mean value weights for polygons.
 
     This class implements 2D mean value weights ( \cite cgal:bc:hf-mvcapp-06,
     \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ), which can be computed
