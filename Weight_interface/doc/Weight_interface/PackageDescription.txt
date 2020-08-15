@@ -32,6 +32,11 @@ Models and functions that can be used to compute weighting regions on 2D points.
 
 Models and functions that can be used to compute weighting regions on 3D points.
 
+\defgroup PkgWeightInterfaceRefUtils Utility Functions
+\ingroup PkgWeightInterfaceRef
+
+Different related utility functions.
+
 \addtogroup PkgWeightInterfaceRef
 
 \cgalPkgDescriptionBegin{Generalized Weights, PkgWeightInterfaceRef}

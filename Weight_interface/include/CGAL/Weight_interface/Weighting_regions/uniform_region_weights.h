@@ -34,7 +34,7 @@ namespace Generalized_weights {
   // This weight always returns 1.
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions2DPoints
 
     \brief computes the uniform area on a 2D triangle.
 
@@ -55,7 +55,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions2DPoints
 
     \brief computes the uniform area on a 2D triangle [p, q, r].
 
@@ -87,7 +87,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions2DPoints
 
     \brief computes the uniform area.
 
@@ -98,7 +98,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions3DPoints
 
     \brief computes the uniform area on a 3D triangle.
 
@@ -119,7 +119,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions3DPoints
 
     \brief computes the uniform area on a 3D triangle [p, q, r].
 
@@ -151,7 +151,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions3DPoints
 
     \brief computes the uniform area.
 

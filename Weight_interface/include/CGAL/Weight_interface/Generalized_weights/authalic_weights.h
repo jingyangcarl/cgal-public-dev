@@ -74,7 +74,7 @@ namespace Generalized_weights {
   /// \endcond
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the half value of the authalic weight.
 
@@ -97,7 +97,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the authalic weight for 2D points.
 
@@ -142,7 +142,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the authalic weight for 2D points.
 
@@ -178,7 +178,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the authalic weight for 3D points.
 
@@ -223,7 +223,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the authalic weight for 3D points.
 

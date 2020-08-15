@@ -33,7 +33,7 @@ namespace Generalized_weights {
 namespace utils {
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the 2D tangent.
 
@@ -65,7 +65,7 @@ namespace utils {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the 2D tangent.
 
@@ -97,7 +97,7 @@ namespace utils {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the 3D tangent.
 
@@ -129,7 +129,7 @@ namespace utils {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the 3D tangent.
 
@@ -161,7 +161,7 @@ namespace utils {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the 2D cotangent.
 
@@ -193,7 +193,7 @@ namespace utils {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the 2D cotangent.
 
@@ -225,7 +225,7 @@ namespace utils {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the 3D cotangent.
 
@@ -257,7 +257,7 @@ namespace utils {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the 3D cotangent.
 

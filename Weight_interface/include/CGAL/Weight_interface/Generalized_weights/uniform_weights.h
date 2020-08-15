@@ -34,7 +34,7 @@ namespace Generalized_weights {
   // This weight always returns 1.
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the uniform weight for 2D points.
 
@@ -56,7 +56,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the uniform weight for 2D points.
 
@@ -92,7 +92,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the uniform weight.
 
@@ -103,7 +103,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the uniform weight for 3D points.
 
@@ -125,7 +125,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the uniform weight for 3D points.
 
@@ -161,7 +161,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the uniform weight.
 

@@ -37,7 +37,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions2DPoints
 
     \brief computes the triangle area on a 2D triangle [p, q, r].
 
@@ -69,7 +69,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions2DPoints
 
     \brief computes the triangle area on a 2D triangle [p, q, r].
 
@@ -101,7 +101,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions3DPoints
 
     \brief computes the triangle area on a 3D triangle [p, q, r].
 
@@ -133,7 +133,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefRegions3DPoints
 
     \brief computes the triangle area on a 3D triangle [p, q, r].
 

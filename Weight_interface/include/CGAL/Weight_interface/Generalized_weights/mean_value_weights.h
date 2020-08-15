@@ -97,7 +97,7 @@ namespace Generalized_weights {
   /// \endcond
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the mean value weight for 2D points.
 
@@ -157,7 +157,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the mean value weight for 2D points.
 
@@ -193,7 +193,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the mean value weight for 3D points.
 
@@ -235,7 +235,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the mean value weight for 3D points.
 
@@ -271,7 +271,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
     \brief 2D mean value weights for polygons.
 
@@ -516,9 +516,9 @@ namespace Generalized_weights {
   };
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
-    \brief computes 2D mean value weights.
+    \brief computes 2D mean value weights for polygons.
 
     This function computes 2D mean value weights at a given `query` point
     with respect to the vertices of a simple `polygon`, that is one
@@ -574,9 +574,9 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
-    \brief computes 2D mean value weights.
+    \brief computes 2D mean value weights for polygons.
 
     This function computes 2D mean value weights at a given `query` point
     with respect to the vertices of a simple `polygon`, that is one

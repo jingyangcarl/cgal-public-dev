@@ -65,7 +65,7 @@ namespace Generalized_weights {
   /// \endcond
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the Wachspress weight for 2D points.
 
@@ -105,7 +105,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the Wachspress weight for 2D points.
 
@@ -141,7 +141,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the Wachspress weight for 3D points.
 
@@ -183,7 +183,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the Wachspress weight for 3D points.
 
@@ -219,7 +219,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
     \brief 2D Wachspress weights for polygons.
 
@@ -434,9 +434,9 @@ namespace Generalized_weights {
   };
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
-    \brief computes 2D Wachspress weights.
+    \brief computes 2D Wachspress weights for polygons.
 
     This function computes 2D Wachspress weights at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
@@ -493,9 +493,9 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
-    \brief computes 2D Wachspress weights.
+    \brief computes 2D Wachspress weights for polygons.
 
     This function computes 2D Wachspress weights at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one

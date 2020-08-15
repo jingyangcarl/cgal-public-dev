@@ -66,7 +66,7 @@ namespace Generalized_weights {
   /// \endcond
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the discrete harmonic weight for 2D points.
 
@@ -115,7 +115,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the discrete harmonic weight for 2D points.
 
@@ -151,7 +151,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the discrete harmonic weight for 3D points.
 
@@ -193,7 +193,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the discrete harmonic weight for 3D points.
 
@@ -229,7 +229,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
     \brief 2D discrete harmonic weights for polygons.
 
@@ -452,9 +452,9 @@ namespace Generalized_weights {
   };
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
-    \brief computes 2D discrete harmonic weights.
+    \brief computes 2D discrete harmonic weights for polygons.
 
     This function computes 2D discrete harmonic weights at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
@@ -511,9 +511,9 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefFreeFunctions
+    \ingroup PkgWeightInterfaceRefWeights2DPolygons
 
-    \brief computes 2D discrete harmonic weights.
+    \brief computes 2D discrete harmonic weights for polygons.
 
     This function computes 2D discrete harmonic weights at a given `query` point
     with respect to the vertices of a strictly convex `polygon`, that is one
