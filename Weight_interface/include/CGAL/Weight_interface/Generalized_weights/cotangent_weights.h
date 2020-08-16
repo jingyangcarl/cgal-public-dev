@@ -43,7 +43,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace cotangent_ns {
 
     template<typename FT>
     const FT half_weight(
@@ -78,7 +78,7 @@ namespace Generalized_weights {
   const FT half_cotangent_weight(
     const FT cot) {
 
-    return internal::half_weight(cot);
+    return cotangent_ns::half_weight(cot);
   }
 
   /*!
@@ -117,7 +117,7 @@ namespace Generalized_weights {
     using FT = typename GeomTraits::FT;
     const FT cot_beta  = internal::cotangent_2(traits, q, t, r);
     const FT cot_gamma = internal::cotangent_2(traits, r, p, q);
-    return internal::weight(cot_beta, cot_gamma);
+    return cotangent_ns::weight(cot_beta, cot_gamma);
   }
 
   /*!
@@ -192,7 +192,7 @@ namespace Generalized_weights {
     using FT = typename GeomTraits::FT;
     const FT cot_beta  = internal::cotangent_3(traits, q, t, r);
     const FT cot_gamma = internal::cotangent_3(traits, r, p, q);
-    return internal::weight(cot_beta, cot_gamma);
+    return cotangent_ns::weight(cot_beta, cot_gamma);
   }
 
   /*!

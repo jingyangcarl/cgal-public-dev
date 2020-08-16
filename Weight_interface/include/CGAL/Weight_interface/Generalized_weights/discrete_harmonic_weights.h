@@ -46,7 +46,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace discrete_harmonic_ns {
 
     template<typename FT>
     const FT weight(
@@ -110,7 +110,7 @@ namespace Generalized_weights {
     const FT A2 = internal::area_2(traits, p, q, r);
     const FT B  = internal::area_2(traits, p, q, t);
 
-    return internal::weight(
+    return discrete_harmonic_ns::weight(
       d1, d2, d3, A1, A2, B);
   }
 

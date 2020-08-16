@@ -42,7 +42,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace shepard_ns {
 
     template<typename GeomTraits>
     const typename GeomTraits::FT weight(
@@ -98,7 +98,7 @@ namespace Generalized_weights {
     using FT = typename GeomTraits::FT;
     const FT d =
       internal::distance_2(traits, q, r);
-    return internal::weight(traits, d, a);
+    return shepard_ns::weight(traits, d, a);
   }
 
   /*!
@@ -208,7 +208,7 @@ namespace Generalized_weights {
     using FT = typename GeomTraits::FT;
     const FT d =
       internal::distance_3(traits, q, r);
-    return internal::weight(traits, d, a);
+    return shepard_ns::weight(traits, d, a);
   }
 
   /*!

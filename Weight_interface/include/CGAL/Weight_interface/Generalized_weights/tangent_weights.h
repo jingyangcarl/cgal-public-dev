@@ -46,7 +46,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace tangent_ns {
 
     template<typename FT>
     const FT half_angle_tangent(
@@ -129,7 +129,7 @@ namespace Generalized_weights {
   const FT tangent_half_angle(
     const FT d, const FT l, const FT A, const FT D) {
 
-    return internal::half_angle_tangent(d, l, A, D);
+    return tangent_ns::half_angle_tangent(d, l, A, D);
   }
 
   /*!
@@ -152,7 +152,7 @@ namespace Generalized_weights {
   const FT half_tangent_weight(
     const FT tan05, const FT d) {
 
-    return internal::half_weight(tan05, d);
+    return tangent_ns::half_weight(tan05, d);
   }
 
   /*!
@@ -238,7 +238,7 @@ namespace Generalized_weights {
     const FT D1 = dot_product_2(v1, v2);
     const FT D2 = dot_product_2(v2, v3);
 
-    return internal::weight(
+    return tangent_ns::weight(
       l1, l2, l3, A1, A2, D1, D2);
   }
 
@@ -331,7 +331,7 @@ namespace Generalized_weights {
     const FT D1 = dot_product_3(v1, v2);
     const FT D2 = dot_product_3(v2, v3);
 
-    return internal::weight(
+    return tangent_ns::weight(
       l1, l2, l3, A1, A2, D1, D2);
   }
 

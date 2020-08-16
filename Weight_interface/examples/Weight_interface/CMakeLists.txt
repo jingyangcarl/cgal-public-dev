@@ -15,12 +15,11 @@ if(CGAL_FOUND)
   create_single_source_cgal_program(
     "uniform_weights.cpp")
   create_single_source_cgal_program(
-    "three_point_family_weights.cpp")
-
-  create_single_source_cgal_program(
     "inverse_distance_weights.cpp")
   create_single_source_cgal_program(
     "shepard_weights.cpp")
+  create_single_source_cgal_program(
+    "three_point_family_weights.cpp")
 
   create_single_source_cgal_program(
     "wachspress_weights.cpp")
@@ -47,6 +46,13 @@ if(CGAL_FOUND)
     "voronoi_region_weights.cpp")
   create_single_source_cgal_program(
     "mixed_voronoi_region_weights.cpp")
+
+  create_single_source_cgal_program(
+    "generalized_weights.cpp")
+  create_single_source_cgal_program(
+    "weighting_regions.cpp")
+  create_single_source_cgal_program(
+    "bc_one_query.cpp")
 
 else()
   message(WARNING

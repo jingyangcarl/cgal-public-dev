@@ -46,7 +46,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace wachspress_ns {
 
     template<typename FT>
     const FT weight(
@@ -101,7 +101,7 @@ namespace Generalized_weights {
     const FT A1 = internal::area_2(traits, r, q, t);
     const FT A2 = internal::area_2(traits, p, q, r);
     const FT C  = internal::area_2(traits, t, r, p);
-    return internal::weight(A1, A2, C);
+    return wachspress_ns::weight(A1, A2, C);
   }
 
   /*!

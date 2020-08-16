@@ -49,7 +49,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace three_point_family_ns {
 
     template<typename GeomTraits>
     const typename GeomTraits::FT weight(
@@ -129,7 +129,7 @@ namespace Generalized_weights {
     const FT A2 = internal::area_2(traits, p, q, r);
     const FT B  = internal::area_2(traits, p, q, t);
 
-    return internal::weight(
+    return three_point_family_ns::weight(
       traits, d1, d2, d3, A1, A2, B, a);
   }
 

@@ -19,6 +19,8 @@ Do it now:
 * Clean up the reference manual.
 * Mention that Tangent_weight_3 uses positive areas (no distortions) and can be used only for PMP, while MV_weight_2/3 e.g. can have different signs/distortions for 2D and 3D versions due to the flattenning of the 3D region.
 * Mention that some functions do not use all objects from the traits class but only a subset.
+* Add traits version of the free functions to the example set that will not be included in the user manual.
+* Add example with projection traits.
 
 Later:
 * Add tests.

@@ -67,9 +67,9 @@ Different related utility functions.
 
 #### 2D Points ####
 - `CGAL::Generalized_weights::uniform_weight_2()`
-- `CGAL::Generalized_weights::three_point_family_weight_2()`
 - `CGAL::Generalized_weights::inverse_distance_weight_2()`
 - `CGAL::Generalized_weights::shepard_weight_2()`
+- `CGAL::Generalized_weights::three_point_family_weight_2()`
 - `CGAL::Generalized_weights::wachspress_weight_2()`
 - `CGAL::Generalized_weights::authalic_weight_2()`
 - `CGAL::Generalized_weights::mean_value_weight_2()`
@@ -79,9 +79,9 @@ Different related utility functions.
 
 #### 3D Points ####
 - `CGAL::Generalized_weights::uniform_weight_3()`
-- `CGAL::Generalized_weights::three_point_family_weight_3()`
 - `CGAL::Generalized_weights::inverse_distance_weight_3()`
 - `CGAL::Generalized_weights::shepard_weight_3()`
+- `CGAL::Generalized_weights::three_point_family_weight_3()`
 - `CGAL::Generalized_weights::wachspress_weight_3()`
 - `CGAL::Generalized_weights::authalic_weight_3()`
 - `CGAL::Generalized_weights::mean_value_weight_3()`

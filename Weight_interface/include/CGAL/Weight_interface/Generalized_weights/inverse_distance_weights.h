@@ -40,7 +40,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace inverse_distance_ns {
 
     template<typename FT>
     const FT weight(const FT d) {
@@ -84,7 +84,7 @@ namespace Generalized_weights {
     using FT = typename GeomTraits::FT;
     const FT d =
       internal::distance_2(traits, q, r);
-    return internal::weight(d);
+    return inverse_distance_ns::weight(d);
   }
 
   /*!
@@ -180,7 +180,7 @@ namespace Generalized_weights {
     using FT = typename GeomTraits::FT;
     const FT d =
       internal::distance_3(traits, q, r);
-    return internal::weight(d);
+    return inverse_distance_ns::weight(d);
   }
 
   /*!

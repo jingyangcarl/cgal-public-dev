@@ -43,7 +43,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace authalic_ns {
 
     template<typename FT>
     const FT half_weight(
@@ -93,7 +93,7 @@ namespace Generalized_weights {
   const FT half_authalic_weight(
     const FT cot, const FT d2) {
 
-    return internal::half_weight(cot, d2);
+    return authalic_ns::half_weight(cot, d2);
   }
 
   /*!
@@ -137,7 +137,7 @@ namespace Generalized_weights {
       traits.compute_squared_distance_2_object();
     const FT d2 = squared_distance_2(q, r);
 
-    return internal::weight(
+    return authalic_ns::weight(
       cot_gamma, cot_beta, d2);
   }
 
@@ -218,7 +218,7 @@ namespace Generalized_weights {
       traits.compute_squared_distance_3_object();
     const FT d2 = squared_distance_3(q, r);
 
-    return internal::weight(
+    return authalic_ns::weight(
       cot_gamma, cot_beta, d2);
   }
 

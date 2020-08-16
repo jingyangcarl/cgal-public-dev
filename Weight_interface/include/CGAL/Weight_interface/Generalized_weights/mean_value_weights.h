@@ -50,7 +50,7 @@ namespace Generalized_weights {
   // \cgalFigureEnd
 
   /// \cond SKIP_IN_MANUAL
-  namespace internal {
+  namespace mean_value_ns {
 
     template<typename FT>
     const FT sign_of_weight(
@@ -150,9 +150,9 @@ namespace Generalized_weights {
     const FT A1 = internal::area_2(traits, r, q, t);
     const FT A2 = internal::area_2(traits, p, q, r);
     const FT B  = internal::area_2(traits, p, q, t);
-    const FT sign = internal::sign_of_weight(A1, A2, B);
 
-    return internal::weight(
+    const FT sign = mean_value_ns::sign_of_weight(A1, A2, B);
+    return mean_value_ns::weight(
       traits, l1, l2, l3, D1, D2, D, sign);
   }
 

@@ -25,10 +25,10 @@
 
 // #include <CGAL/license/Weight_interface.h>
 
-#include <CGAL/Weight_interface/Weighting_regions/uniform_region_weights>
-#include <CGAL/Weight_interface/Weighting_regions/triangular_region_weights>
-#include <CGAL/Weight_interface/Weighting_regions/barycentric_region_weights>
-#include <CGAL/Weight_interface/Weighting_regions/voronoi_region_weights>
-#include <CGAL/Weight_interface/Weighting_regions/mixed_voronoi_region_weights>
+#include <CGAL/Weight_interface/Weighting_regions/uniform_region_weights.h>
+#include <CGAL/Weight_interface/Weighting_regions/triangular_region_weights.h>
+#include <CGAL/Weight_interface/Weighting_regions/barycentric_region_weights.h>
+#include <CGAL/Weight_interface/Weighting_regions/voronoi_region_weights.h>
+#include <CGAL/Weight_interface/Weighting_regions/mixed_voronoi_region_weights.h>
 
 #endif // CGAL_WEIGHTING_REGIONS_H
