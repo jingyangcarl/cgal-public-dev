@@ -8,21 +8,19 @@ To discuss:
 * Should I use reference in the traits?
 
 Do it now:
-* I should try to combine mvc and dhc in the orbifold parameterization.
+* I should try to combine mvc and dhc in the orbifold parameterization. Not sure if this is necessary.
 * Some packages require traits, which do not have a Point_2. What should we do in that case? See e.g. heat_method_3_concept. Almost fixed.
 * Change to
   using GeomTraits = typename CGAL::Kernel_traits<
-      typename boost::property_traits<VertexPointMap>::value_type>::type; Not sure if it is yet necessary!
-* Add a concept test as in the heat_method.
-* Remove my current examples from the user manual and use them only in the reference manual. While in the user manual add more complete examples:
-  one that chooses a weight from the list, one that shows how to set up a Laplacian, one that shows how to compute barycentric coordinates, one that shows how to define your own traits class, one that shows how to normalize weights with weighting regions. Make the user manual short.
+      typename boost::property_traits<VertexPointMap>::value_type>::type; Not sure if it is still necessary!
+
+Docs:
+* Make the user manual short.
 * Clean up the reference manual.
 * Mention that Tangent_weight_3 uses positive areas (no distortions) and can be used only for PMP, while MV_weight_2/3 e.g. can have different signs/distortions for 2D and 3D versions due to the flattenning of the 3D region.
 * Mention that some functions do not use all objects from the traits class but only a subset.
-* Add traits version of the free functions to the example set that will not be included in the user manual.
-* Add example with projection traits.
 
 Later:
-* Add tests.
+* Cleanup tests.
 * Comment the code.
-* Cleanup the projection traits class.
+* Add a concept test as in the heat_method.

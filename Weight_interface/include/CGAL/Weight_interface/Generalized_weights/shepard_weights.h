@@ -147,6 +147,39 @@ namespace Generalized_weights {
 
     \brief computes the Shepard weight for 2D points.
 
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_2`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param a
+    the power parameter
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) shepard_weight_2(
+    const typename GeomTraits::Point_2& p,
+    const typename GeomTraits::Point_2& q,
+    const typename GeomTraits::FT a,
+    const GeomTraits& traits) {
+
+    typename GeomTraits::Point_2 stub;
+    return shepard_weight_2(p, stub, q, stub, a, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefWeights2DPoints
+
+    \brief computes the Shepard weight for 2D points.
+
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
@@ -250,6 +283,39 @@ namespace Generalized_weights {
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
     return shepard_weight_3(q, t, r, p, a, traits);
+  }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefWeights3DPoints
+
+    \brief computes the Shepard weight for 3D points.
+
+    \tparam GeomTraits
+    must be a model of `AnalyticTraits_3`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param a
+    the power parameter
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \return the computed weight.
+  */
+  template<typename GeomTraits>
+  decltype(auto) shepard_weight_3(
+    const typename GeomTraits::Point_3& p,
+    const typename GeomTraits::Point_3& q,
+    const typename GeomTraits::FT a,
+    const GeomTraits& traits) {
+
+    typename GeomTraits::Point_3 stub;
+    return shepard_weight_3(p, stub, q, stub, a, traits);
   }
 
   /*!

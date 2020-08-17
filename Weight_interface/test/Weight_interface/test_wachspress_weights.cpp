@@ -1,5 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Weight_interface/Generalized_weights/wachspress_weights.h>
+#include <CGAL/Weight_interface/internal/Projection_traits_3.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -10,17 +11,69 @@ using Point_3 = typename Kernel::Point_3;
 int main() {
 
   // 2D configuration.
-  const Point_2 query2 = Point_2(+FT(0), FT(0));
-  const Point_2 vm2    = Point_2(+FT(1), FT(0));
-  const Point_2 vj2    = Point_2(+FT(0), FT(1));
-  const Point_2 vp2    = Point_2(-FT(1), FT(0));
+  const Point_2 q2 = Point_2( 0,  0);
+  const Point_2 t2 = Point_2(-1,  0);
+  const Point_2 r2 = Point_2( 0, -1);
+  const Point_2 p2 = Point_2( 1,  0);
+
+  // 3D configuration.
+  const Point_3 q3 = Point_3( 0,  0, 1);
+  const Point_3 t3 = Point_3(-1,  0, 1);
+  const Point_3 r3 = Point_3( 0, -1, 1);
+  const Point_3 p3 = Point_3( 1,  0, 1);
+
+  // Compute weights.
+  std::cout << "2D wachspress: " <<
+    CGAL::Generalized_weights::wachspress_weight_2(q2, t2, r2, p2) << std::endl;
+  std::cout << "3D wachspress: " <<
+    CGAL::Generalized_weights::wachspress_weight_3(q3, t3, r3, p3) << std::endl;
+
+  // 2D configuration.
+  const std::vector<Point_2> polygon2 = {t2, r2, p2, Point_2(0, 1)};
+
+  std::vector<double> weights2;
+  weights2.reserve(polygon2.size());
+  CGAL::Generalized_weights::wachspress_weights_2(
+    polygon2, q2, std::back_inserter(weights2));
+
+  std::cout << "2D wachspress (polygon): ";
+  for (const double weight2 : weights2)
+    std::cout << weight2 << " ";
+  std::cout << std::endl;
+
+  // 3D configuration.
+  CGAL::Generalized_weights::internal::Projection_traits_3<Kernel> ptraits(
+    typename Kernel::Vector_3(0, 0, 1));
+
+  const std::vector<Point_3> polygon3 = {t3, r3, p3, Point_3(0, 1, 1)};
+
+  std::vector<double> weights3;
+  weights3.reserve(polygon3.size());
+  CGAL::Generalized_weights::wachspress_weights_2(
+    polygon3, q3, std::back_inserter(weights3), ptraits);
+
+  std::cout << "3D wachspress (polygon): ";
+  for (const double weight3 : weights3)
+    std::cout << weight3 << " ";
+  std::cout << std::endl;
+
+  return EXIT_SUCCESS;
+}
+
+  // Merge it with the current test!
+
+  // 2D configuration.
+  // const Point_2 query2 = Point_2(+FT(0), FT(0));
+  // const Point_2 vm2    = Point_2(+FT(1), FT(0));
+  // const Point_2 vj2    = Point_2(+FT(0), FT(1));
+  // const Point_2 vp2    = Point_2(-FT(1), FT(0));
   // Am = 0.5, Aj = 0.5, C = 1, B = 0.
 
   // 3D configuration 1. All points are coplanar on a horizontal plane.
-  const Point_3 query3 = Point_3(+FT(0), FT(0), FT(1));
-  const Point_3 vm3    = Point_3(+FT(1), FT(0), FT(1));
-  const Point_3 vj3    = Point_3(+FT(0), FT(1), FT(1));
-  const Point_3 vp3    = Point_3(-FT(1), FT(0), FT(1));
+  // const Point_3 query3 = Point_3(+FT(0), FT(0), FT(1));
+  // const Point_3 vm3    = Point_3(+FT(1), FT(0), FT(1));
+  // const Point_3 vj3    = Point_3(+FT(0), FT(1), FT(1));
+  // const Point_3 vp3    = Point_3(-FT(1), FT(0), FT(1));
   // Am = 0.5, Aj = 0.5, C = 1, B = 0, 2D : 4.
 
   // 3D configuration 2. All points are coplanar on an arbitrary plane.
@@ -55,6 +108,3 @@ int main() {
   // WP wp;
   // std::cout << "2D wachspress: " << wp(query2, vm2, vj2, vp2) << std::endl;
   // std::cout << "3D wachspress: " << wp(query3, vm3, vj3, vp3) << std::endl;
-
-  return EXIT_SUCCESS;
-}

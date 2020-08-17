@@ -27,6 +27,8 @@
 
 // Internal includes.
 #include <CGAL/Weight_interface/internal/utils.h>
+#include <CGAL/Weight_interface/internal/polygon_utils.h>
+#include <CGAL/Weight_interface/internal/Projection_traits_3.h>
 
 namespace CGAL {
 namespace Generalized_weights {
@@ -390,6 +392,10 @@ namespace utils {
     const auto v2 = construct_vector_3(q, p);
     return scalar_product_3(v1, v2);
   }
+
+  template<typename Kernel>
+  using Projection_traits_3 =
+    CGAL::Generalized_weights::internal::Projection_traits_3<Kernel>;
   /// \endcond
 
 } // namespace utils

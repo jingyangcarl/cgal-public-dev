@@ -26,7 +26,7 @@
 // #include <CGAL/license/Weight_interface.h>
 
 // Internal includes.
-#include <CGAL/Weight_interface/Generalized_weights/utils.h>
+#include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
 namespace Generalized_weights {

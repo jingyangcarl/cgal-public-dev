@@ -1,17 +1,10 @@
 /*!
-\example Weight_interface/uniform_weights.cpp
-\example Weight_interface/inverse_distance_weights.cpp
-\example Weight_interface/shepard_weights.cpp
-\example Weight_interface/three_point_family_weights.cpp
-\example Weight_interface/wachspress_weights.cpp
-\example Weight_interface/authalic_weights.cpp
-\example Weight_interface/mean_value_weights.cpp
-\example Weight_interface/tangent_weights.cpp
-\example Weight_interface/discrete_harmonic_weights.cpp
-\example Weight_interface/cotangent_weights.cpp
-\example Weight_interface/uniform_region_weights.cpp
-\example Weight_interface/triangular_region_weights.cpp
-\example Weight_interface/barycentric_region_weights.cpp
-\example Weight_interface/voronoi_region_weights.cpp
-\example Weight_interface/mixed_voronoi_region_weights.cpp
+\example Weight_interface/generalized_weights.cpp
+\example Weight_interface/weighting_regions.cpp
+\example Weight_interface/coordinates_one_query.cpp
+\example Weight_interface/coordinates_multiple_queries.cpp
+\example Weight_interface/weighted_laplacian.cpp
+\example Weight_interface/projection_traits.cpp
+\example Weight_interface/custom_traits.cpp
+\example Weight_interface/flattening.cpp
 */

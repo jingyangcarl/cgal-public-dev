@@ -13,46 +13,21 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program(
-    "uniform_weights.cpp")
-  create_single_source_cgal_program(
-    "inverse_distance_weights.cpp")
-  create_single_source_cgal_program(
-    "shepard_weights.cpp")
-  create_single_source_cgal_program(
-    "three_point_family_weights.cpp")
-
-  create_single_source_cgal_program(
-    "wachspress_weights.cpp")
-  create_single_source_cgal_program(
-    "authalic_weights.cpp")
-
-  create_single_source_cgal_program(
-    "mean_value_weights.cpp")
-  create_single_source_cgal_program(
-    "tangent_weights.cpp")
-
-  create_single_source_cgal_program(
-    "discrete_harmonic_weights.cpp")
-  create_single_source_cgal_program(
-    "cotangent_weights.cpp")
-
-  create_single_source_cgal_program(
-    "uniform_region_weights.cpp")
-  create_single_source_cgal_program(
-    "triangular_region_weights.cpp")
-  create_single_source_cgal_program(
-    "barycentric_region_weights.cpp")
-  create_single_source_cgal_program(
-    "voronoi_region_weights.cpp")
-  create_single_source_cgal_program(
-    "mixed_voronoi_region_weights.cpp")
-
-  create_single_source_cgal_program(
     "generalized_weights.cpp")
   create_single_source_cgal_program(
     "weighting_regions.cpp")
   create_single_source_cgal_program(
-    "bc_one_query.cpp")
+    "coordinates_one_query.cpp")
+  create_single_source_cgal_program(
+    "coordinates_multiple_queries.cpp")
+  create_single_source_cgal_program(
+    "weighted_laplacian.cpp")
+  create_single_source_cgal_program(
+    "projection_traits.cpp")
+  create_single_source_cgal_program(
+    "custom_traits.cpp")
+  create_single_source_cgal_program(
+    "flattening.cpp")
 
 else()
   message(WARNING

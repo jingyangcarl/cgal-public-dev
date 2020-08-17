@@ -25,6 +25,7 @@
 
 // #include <CGAL/license/Weight_interface.h>
 
+#include <CGAL/Weight_interface/Generalized_weights/utils.h>
 #include <CGAL/Weight_interface/Generalized_weights/uniform_weights.h>
 #include <CGAL/Weight_interface/Generalized_weights/inverse_distance_weights.h>
 #include <CGAL/Weight_interface/Generalized_weights/shepard_weights.h>

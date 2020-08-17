@@ -1,4 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
+#include <CGAL/Weight_interface/Generalized_weights/utils.h>
 #include <CGAL/Weight_interface/Generalized_weights/tangent_weights.h>
 
 // Typedefs.
