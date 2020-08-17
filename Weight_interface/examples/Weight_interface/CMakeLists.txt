@@ -21,13 +21,21 @@ if(CGAL_FOUND)
   create_single_source_cgal_program(
     "coordinates_multiple_queries.cpp")
   create_single_source_cgal_program(
-    "weighted_laplacian.cpp")
-  create_single_source_cgal_program(
     "projection_traits.cpp")
   create_single_source_cgal_program(
     "custom_traits.cpp")
   create_single_source_cgal_program(
     "flattening.cpp")
+
+  find_package(Eigen3 REQUIRED)
+  if(EIGEN3_FOUND)
+    include(${EIGEN3_USE_FILE})
+    create_single_source_cgal_program(
+      "weighted_laplacian.cpp")
+  else()
+    message(WARNING
+    "Several examples require the Eigen library, and will not be compiled.")
+  endif()
 
 else()
   message(WARNING

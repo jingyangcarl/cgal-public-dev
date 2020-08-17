@@ -213,7 +213,6 @@ class PM_cotangent_weight_with_voronoi_area_fairing_secure {
 
   const PolygonMesh& m_pmesh;
   const VertexPointMap m_ppmap;
-  std::size_t count = 0;
 
 public:
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
