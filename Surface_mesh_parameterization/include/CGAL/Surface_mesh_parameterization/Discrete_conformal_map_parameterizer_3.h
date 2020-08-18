@@ -20,7 +20,7 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
 
-#include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/cotangent_weights.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>
@@ -141,10 +141,6 @@ private:
   typedef typename Solver_traits::Vector    Vector;
   typedef typename Solver_traits::Matrix    Matrix;
 
-  // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::Cotangent_weight<Kernel> Cotangent_weight;
-  const Cotangent_weight m_cotangent_weight;
-
 // Public operations
 public:
   /// Constructor
@@ -182,7 +178,7 @@ protected:
     next_vertex_v_l++;
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
 
-    return m_cotangent_weight(
+    return CGAL::Generalized_weights::cotangent_weight_3(
       position_v_i, position_v_k, position_v_j, position_v_l) / NT(2);
   }
 };

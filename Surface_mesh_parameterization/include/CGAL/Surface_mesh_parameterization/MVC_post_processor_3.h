@@ -20,7 +20,7 @@
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
-#include <CGAL/Weight_interface/internal/polygon_mesh_tools.h>
+#include <CGAL/Weight_interface/internal/tools.h>
 
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -126,10 +126,6 @@ private:
   // Solver traits subtypes:
   typedef typename Solver_traits::Vector                            Vector;
   typedef typename Solver_traits::Matrix                            Matrix;
-
-  // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::internal::PM_tangent_weight<
-    Kernel, TriangleMesh> Tangent_weight;
 
   // Types used for the convexification of the mesh
   // Each triangulation vertex is associated its corresponding vertex_descriptor
@@ -392,7 +388,8 @@ private:
     const Point_2& p = pk;
     const Point_2& q = pi;
     const Point_2& r = pj;
-    const Tangent_weight tangent_weight(p, q, r);
+    const CGAL::Generalized_weights::internal::
+      Tangent_weight_wrapper<Kernel> tangent_weight(p, q, r);
 
     // Set w_ij in matrix
     const NT w_ij = tangent_weight.get_w_r();

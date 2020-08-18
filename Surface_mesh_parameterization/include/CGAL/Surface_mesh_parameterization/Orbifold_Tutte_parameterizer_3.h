@@ -23,7 +23,7 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/orbifold_shortest_path.h>
 
-#include <CGAL/Weight_interface/internal/polygon_mesh_tools.h>
+#include <CGAL/Weight_interface/internal/tools.h>
 
 #include <CGAL/assertions.h>
 #include <CGAL/circulator.h>
@@ -426,12 +426,6 @@ private:
   typedef typename Kernel::Point_2                                  Point_2;
   typedef typename Kernel::Point_3                                  Point_3;
 
-  // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::internal::PM_tangent_weight<
-    Kernel, SeamMesh> Tangent_weight;
-  typedef CGAL::Generalized_weights::internal::PM_cotangent_weight<
-    Kernel, SeamMesh> Cotangent_weight;
-
   const Orbifold_type orb_type;
   const Weight_type weight_type;
 
@@ -725,7 +719,8 @@ private:
     const Point_3& p = pk;
     const Point_3& q = pi;
     const Point_3& r = pj;
-    const Tangent_weight tangent_weight(p, q, r);
+    const CGAL::Generalized_weights::internal::
+      Tangent_weight_wrapper<Kernel> tangent_weight(p, q, r);
 
     // Set w_ij in matrix
     const NT w_ij = tangent_weight.get_w_r();
@@ -777,17 +772,18 @@ private:
                            VertexIndexMap vimap,
                            Matrix& M) const
   {
-    const PPM ppmap = get(vertex_point, mesh);
-    for (const halfedge_descriptor hd : halfedges(mesh)) {
+    const PPM pmap = get(vertex_point, mesh);
+    for (const halfedge_descriptor he : halfedges(mesh)) {
 
-      const vertex_descriptor vi = source(hd, mesh);
-      const vertex_descriptor vj = target(hd, mesh);
+      const vertex_descriptor vi = source(he, mesh);
+      const vertex_descriptor vj = target(he, mesh);
       const int i = get(vimap, vi);
       const int j = get(vimap, vj);
 
       if (i > j) continue;
-      const Cotangent_weight cotangent_weight;
-      const NT w_ij = NT(2) * cotangent_weight(hd, mesh, ppmap);
+      const CGAL::Generalized_weights::internal::
+        Cotangent_weight_wrapper<SeamMesh> cotangent_weight;
+      const NT w_ij = NT(2) * cotangent_weight(he, mesh, pmap);
 
       // ij
       M.set_coef(2 * i, 2 * j, w_ij, true /* new coef */);

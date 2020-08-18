@@ -28,7 +28,8 @@
 #include <CGAL/Surface_mesh_parameterization/Two_vertices_parameterizer_3.h>
 #include <CGAL/Surface_mesh_parameterization/parameterize.h>
 
-#include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/utils.h>
+
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
@@ -224,10 +225,6 @@ private:
   // Solver traits subtypes:
   typedef typename Solver_traits::Vector                            Vector;
   typedef typename Solver_traits::Matrix                            Matrix;
-
-  // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::Cotangent_weight<Kernel> Cotangent_weight;
-  const Cotangent_weight m_cotangent_weight;
 
   // Memory maps
   // Each triangle is associated a linear transformation matrix
@@ -440,7 +437,7 @@ private:
     const Point_3& position_vj = get(ppmap, vj);
     const Point_3& position_vk = get(ppmap, vk);
 
-    const NT cot = m_cotangent_weight.cotangent(
+    const NT cot = CGAL::Generalized_weights::utils::cotangent_3(
       position_vi, position_vj, position_vk);
     put(ctmap, hd, cot);
   }

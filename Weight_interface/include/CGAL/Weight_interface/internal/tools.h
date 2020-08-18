@@ -78,44 +78,59 @@ template<typename GeomTraits>
 class Tangent_weight_wrapper {
 
   using FT = typename GeomTraits::FT;
+  using Point_2 = typename GeomTraits::Point_2;
+  using Point_3 = typename GeomTraits::Point_3;
   FT m_d_r, m_d_p, m_w_base;
 
 public:
-  template<typename Point>
+
   Tangent_weight_wrapper(
-    const Point& p,
-    const Point& q,
-    const Point& r) {
+    const Point_2& p,
+    const Point_2& q,
+    const Point_2& r) {
+
+    m_d_r = CGAL::Generalized_weights::utils::distance_2(q, r);
+    CGAL_assertion(m_d_r != FT(0)); // two points are identical!
+    m_d_p = CGAL::Generalized_weights::utils::distance_2(q, p);
+    CGAL_assertion(m_d_p != FT(0)); // two points are identical!
+    const auto area = CGAL::Generalized_weights::utils::area_2(p, q, r);
+    CGAL_assertion(area != FT(0));  // three points are identical!
+    const auto scalar = CGAL::Generalized_weights::utils::scalar_product_2(p, q, r);
+
+    m_w_base = -CGAL::Generalized_weights::
+      tangent_half_angle(m_d_r, m_d_p, area, scalar);
+  }
+
+  Tangent_weight_wrapper(
+    const Point_3& p,
+    const Point_3& q,
+    const Point_3& r) {
 
     m_d_r = CGAL::Generalized_weights::utils::distance_3(q, r);
     CGAL_assertion(m_d_r != FT(0)); // two points are identical!
     m_d_p = CGAL::Generalized_weights::utils::distance_3(q, p);
     CGAL_assertion(m_d_p != FT(0)); // two points are identical!
-    const FT area = CGAL::Generalized_weights::utils::area_3(p, q, r);
+    const auto area = CGAL::Generalized_weights::utils::area_3(p, q, r);
     CGAL_assertion(area != FT(0));  // three points are identical!
-    const FT scalar = CGAL::Generalized_weights::utils::scalar_product_3(p, q, r);
+    const auto scalar = CGAL::Generalized_weights::utils::scalar_product_3(p, q, r);
 
-    m_w_base = -CGAL::Generalized_weights::utils::
+    m_w_base = -CGAL::Generalized_weights::
       tangent_half_angle(m_d_r, m_d_p, area, scalar);
   }
 
   const FT get_w_r() const {
-    return CGAL::Generalized_weights::utils::
+    return CGAL::Generalized_weights::
       half_tangent_weight(m_w_base, m_d_r) / FT(2);
   }
 
   const FT get_w_p() const {
-    return CGAL::Generalized_weights::utils::
+    return CGAL::Generalized_weights::
       half_tangent_weight(m_w_base, m_d_p) / FT(2);
   }
 };
 
-template<
-typename GeomTraits,
-typename PolygonMesh>
+template<typename PolygonMesh>
 class Cotangent_weight_wrapper {
-
-  using FT = typename GeomTraits::FT;
   bool m_use_secure_version;
 
 public:
@@ -128,9 +143,9 @@ public:
   { }
 
   template<class VertexPointMap>
-  FT operator()(
-    const PolygonMesh& pmesh,
+  decltype(auto) operator()(
     const halfedge_descriptor he,
+    const PolygonMesh& pmesh,
     const VertexPointMap& pmap) const {
 
     const auto v0 = target(he, pmesh);
@@ -138,6 +153,10 @@ public:
 
     const auto& p0 = get(pmap, v0);
     const auto& p1 = get(pmap, v1);
+
+    using Kernel = typename CGAL::Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type>::type;
+    using FT = typename Kernel::FT;
 
     FT weight = FT(0);
     if (is_border_edge(he, pmesh)) {
@@ -275,8 +294,8 @@ private:
     CGAL_assertion(CGAL::is_triangle_mesh(m_pmesh));
     for (const auto he :
       halfedges_around_target(halfedge(v0, m_pmesh), m_pmesh)) {
-      if (is_border(he, m_pmesh)) continue;
       CGAL_assertion(v0 == target(he, m_pmesh));
+      if (is_border(he, m_pmesh)) continue;
 
       const auto v1 = source(he, m_pmesh);
       const auto v2 = target(next(he, m_pmesh), m_pmesh);
@@ -294,12 +313,14 @@ private:
 };
 
 template<
-typename GeomTraits,
 typename PolygonMesh,
-typename VertexPointMap>
+typename VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type>
 class Edge_cotangent_weight_wrapper {
 
+  using GeomTraits = typename CGAL::Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type>::type;
   using FT = typename GeomTraits::FT;
+
   const PolygonMesh& m_pmesh;
   const VertexPointMap m_pmap;
 
@@ -307,8 +328,9 @@ public:
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
-  PM_edge_cotangent_weight(
-    PolygonMesh& pmesh, VertexPointMap pmap) :
+  Edge_cotangent_weight_wrapper(
+    PolygonMesh& pmesh,
+    VertexPointMap pmap) :
   m_pmesh(pmesh),
   m_pmap(pmap)
   { }
@@ -355,22 +377,22 @@ public:
   }
 };
 
-template<
-typename GeomTraits,
-typename PolygonMesh>
+template<typename PolygonMesh>
 class Single_cotangent_weight_wrapper {
-
-  using FT = typename GeomTraits::FT;
 
 public:
   using halfedge_descriptor = typename boost::graph_traits<PolygonMesh>::halfedge_descriptor;
   using vertex_descriptor   = typename boost::graph_traits<PolygonMesh>::vertex_descriptor;
 
   template<class VertexPointMap>
-  FT operator()(
-    const PolygonMesh& pmesh,
+  decltype(auto) operator()(
     const halfedge_descriptor he,
+    const PolygonMesh& pmesh,
     const VertexPointMap& pmap) const {
+
+    using Kernel = typename CGAL::Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type>::type;
+    using FT = typename Kernel::FT;
 
     if (is_border(he, pmesh)) return FT(0);
 

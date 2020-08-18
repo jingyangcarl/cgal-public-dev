@@ -20,7 +20,7 @@
 #include <CGAL/Surface_mesh_parameterization/Error_code.h>
 #include <CGAL/Surface_mesh_parameterization/Fixed_border_parameterizer_3.h>
 
-#include <CGAL/Weight_interface/Generalized_weights/Authalic_weight.h>
+#include <CGAL/Weight_interface/Generalized_weights/authalic_weights.h>
 
 #include <CGAL/Default.h>
 
@@ -141,10 +141,6 @@ private:
   typedef typename Solver_traits::Vector                       Vector;
   typedef typename Solver_traits::Matrix                       Matrix;
 
-  // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::Authalic_weight<Kernel> Authalic_weight;
-  const Authalic_weight m_authalic_weight;
-
 // Public operations
 public:
   /// Constructor
@@ -182,7 +178,7 @@ protected:
     next_vertex_v_l++;
     const Point_3& position_v_l = get(ppmap, *next_vertex_v_l);
 
-    return m_authalic_weight(
+    return CGAL::Generalized_weights::authalic_weight_3(
       position_v_i, position_v_k, position_v_j, position_v_l) / NT(2);
   }
 };

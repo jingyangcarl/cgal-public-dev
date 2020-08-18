@@ -24,11 +24,12 @@
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
-#include <CGAL/Weight_interface/Generalized_weights/Cotangent_weight.h>
 #include <CGAL/number_utils.h>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>
 #endif
+
+#include <CGAL/Weight_interface/Generalized_weights/utils.h>
 
 #include <boost/range/has_range_iterator.hpp>
 
@@ -87,10 +88,6 @@ protected:
   typedef CGAL::dynamic_face_property_t<Index> Face_property_tag;
   typedef typename boost::property_map<TriangleMesh, Face_property_tag >::const_type Face_id_map;
   Face_id_map face_id_map;
-
-  // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::Cotangent_weight<Traits> Cotangent_weight;
-  const Cotangent_weight m_cotangent_weight;
 
 public:
 
@@ -384,9 +381,13 @@ private:
       const Vector_3 v_ki = construct_vector(p_k, p_i);
       const Vector_3 v_kj = construct_vector(p_k, p_j);
 
-      const FT cotan_i = m_cotangent_weight.cotangent(p_k, p_i, p_j);
-      const FT cotan_j = m_cotangent_weight.cotangent(p_k, p_j, p_i);
-      const FT cotan_k = m_cotangent_weight.cotangent(p_j, p_k, p_i);
+      const Traits traits;
+      const FT cotan_i = CGAL::Generalized_weights::utils::
+        cotangent_3(p_k, p_i, p_j, traits);
+      const FT cotan_j = CGAL::Generalized_weights::utils::
+        cotangent_3(p_k, p_j, p_i, traits);
+      const FT cotan_k = CGAL::Generalized_weights::utils::
+        cotangent_3(p_j, p_k, p_i, traits);
 
       const Vector_3& a  = m_X[face_i];
       const double i_entry =
@@ -543,6 +544,7 @@ private:
       Index k = get(vertex_id_map, neighbor_two);
       Point_3 pi, pj, pk;
 
+      const Traits traits;
       VertexPointMap_reference p_i = get(vpm, current);
       VertexPointMap_reference p_j = get(vpm, neighbor_one);
       VertexPointMap_reference p_k = get(vpm, neighbor_two);
@@ -550,19 +552,22 @@ private:
       pj = p_j;
       pk = p_k;
 
-      const double cotan_i = to_double(m_cotangent_weight.cotangent(pk, pi, pj));
+      const double cotan_i = to_double(
+        CGAL::Generalized_weights::utils::cotangent_3(pk, pi, pj, traits));
       m_cotan_matrix.add_coef(j,k,-(1./2)*cotan_i);
       m_cotan_matrix.add_coef(k,j,-(1./2)*cotan_i);
       m_cotan_matrix.add_coef(j,j,(1./2)*cotan_i);
       m_cotan_matrix.add_coef(k,k,(1./2)*cotan_i);
 
-      const double cotan_j = to_double(m_cotangent_weight.cotangent(pk, pj, pi));
+      const double cotan_j = to_double(
+        CGAL::Generalized_weights::utils::cotangent_3(pk, pj, pi, traits));
       m_cotan_matrix.add_coef(i,k,-(1./2)*cotan_j);
       m_cotan_matrix.add_coef(k,i,-(1./2)*cotan_j);
       m_cotan_matrix.add_coef(i,i,(1./2)*cotan_j);
       m_cotan_matrix.add_coef(k,k,(1./2)*cotan_j);
 
-      const double cotan_k = to_double(m_cotangent_weight.cotangent(pj, pk, pi));
+      const double cotan_k = to_double(
+        CGAL::Generalized_weights::utils::cotangent_3(pj, pk, pi, traits));
       m_cotan_matrix.add_coef(i,j,-(1./2)*cotan_k);
       m_cotan_matrix.add_coef(j,i,-(1./2)*cotan_k);
       m_cotan_matrix.add_coef(i,i,(1./2)*cotan_k);

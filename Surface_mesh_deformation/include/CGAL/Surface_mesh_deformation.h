@@ -21,8 +21,9 @@
 #include <CGAL/config.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
-#include <CGAL/Weight_interface/internal/polygon_mesh_tools.h>
 #include <CGAL/Simple_cartesian.h>
+
+#include <CGAL/Weight_interface/internal/tools.h>
 
 #include <vector>
 #include <list>
@@ -62,9 +63,8 @@ template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS> {
 
   // Get weight from the weight interface.
-  typedef CGAL::Simple_cartesian<double> Weight_kernel;
   typedef CGAL::Generalized_weights::internal::
-    PM_single_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;
+    Single_cotangent_weight_wrapper<TriangleMesh> Weight_calculator;
 
   struct ARAP_visitor{
     template <class VertexPointMap>
@@ -87,9 +87,8 @@ template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::ORIGINAL_ARAP> {
 
   // Get weight from the weight interface.
-  typedef CGAL::Simple_cartesian<double> Weight_kernel;
   typedef CGAL::Generalized_weights::internal::
-    PM_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;
+    Cotangent_weight_wrapper<TriangleMesh> Weight_calculator;
 
   typedef typename Types_selectors<TriangleMesh, CGAL::SPOKES_AND_RIMS>
     ::ARAP_visitor ARAP_visitor;
@@ -99,9 +98,8 @@ template<class TriangleMesh>
 struct Types_selectors<TriangleMesh, CGAL::SRE_ARAP> {
 
   // Get weight from the weight interface.
-  typedef CGAL::Simple_cartesian<double> Weight_kernel;
   typedef CGAL::Generalized_weights::internal::
-    PM_cotangent_weight<Weight_kernel, TriangleMesh> Weight_calculator;
+    Cotangent_weight_wrapper<TriangleMesh> Weight_calculator;
 
   class ARAP_visitor{
     double m_nb_edges_incident;

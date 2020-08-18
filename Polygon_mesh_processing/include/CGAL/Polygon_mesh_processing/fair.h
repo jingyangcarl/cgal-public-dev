@@ -21,7 +21,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <CGAL/Weight_interface/internal/polygon_mesh_tools.h>
+#include <CGAL/Weight_interface/internal/tools.h>
 
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
@@ -164,7 +164,7 @@ namespace internal {
     // Cotangent_weight_with_voronoi_area_fairing has been changed to the version:
     // PM_cotangent_weight_with_voronoi_area_fairing_secure to avoid imprecisions from
     // the issue #4706 - https://github.com/CGAL/cgal/issues/4706.
-    typedef CGAL::Generalized_weights::internal::PM_cotangent_weight_with_voronoi_area_fairing_secure<
+    typedef CGAL::Generalized_weights::internal::Cotangent_weight_wrapper_with_voronoi_secure<
       TriangleMesh, VPMap> Default_Weight_calculator;
 
     VPMap vpmap_ = choose_parameter(get_parameter(np, internal_np::vertex_point),

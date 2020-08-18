@@ -7,13 +7,6 @@ To discuss:
 * Should I remove the positive area from the Tangent_weight and substitute it by computing tan(alpha/2)? In this case, I will keep the correct sign in any configuration.
 * Should I use reference in the traits?
 
-Do it now:
-* I should try to combine mvc and dhc in the orbifold parameterization. Not sure if this is necessary.
-* Some packages require traits, which do not have a Point_2. What should we do in that case? See e.g. heat_method_3_concept. Almost fixed.
-* Change to
-  using GeomTraits = typename CGAL::Kernel_traits<
-      typename boost::property_traits<VertexPointMap>::value_type>::type; Not sure if it is still necessary!
-
 Docs:
 * Make the user manual short.
 * Clean up the reference manual.
@@ -24,3 +17,5 @@ Later:
 * Cleanup tests.
 * Comment the code.
 * Add a concept test as in the heat_method.
+* Try to combine cotangent wrappers from the tools.h. Not sure if this is necessary.
+* Try to combine mvc and dhc in the orbifold parameterization. Not sure if this is necessary.

@@ -20,7 +20,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <CGAL/Weight_interface/internal/polygon_mesh_tools.h>
+#include <CGAL/Weight_interface/internal/tools.h>
 
 #include <CGAL/Dynamic_property_map.h>
 #include <CGAL/utility.h>
@@ -371,8 +371,8 @@ private:
   std::vector<bool> constrained_flags_;
 
   const GeomTraits& traits_;
-  CGAL::Generalized_weights::internal::PM_edge_cotangent_weight<
-    GeomTraits, TriangleMesh, VertexPointMap> weight_calculator_;
+  CGAL::Generalized_weights::internal::Edge_cotangent_weight_wrapper<
+    TriangleMesh, VertexPointMap> weight_calculator_;
 };
 
 } // internal

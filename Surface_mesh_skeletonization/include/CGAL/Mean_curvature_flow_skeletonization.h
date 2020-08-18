@@ -35,7 +35,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 // Compute cotangent Laplacian
-#include <CGAL/Weight_interface/internal/polygon_mesh_tools.h>
+#include <CGAL/Weight_interface/internal/tools.h>
 
 // Compute the vertex normal
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
@@ -188,7 +188,7 @@ public:
   #endif
 
   /// @cond CGAL_DOCUMENT_INTERNAL
-  typedef typename Traits::Point_3                                             Point;
+  typedef typename Traits::Point_3                                              Point;
   typedef typename Traits::Vector_3                                             Vector;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  Input_vertex_descriptor;
@@ -223,8 +223,8 @@ public:
   typedef typename boost::graph_traits<mTriangleMesh>::edge_iterator           edge_iterator;
 
   // Get weight from the weight interface.
-  typedef CGAL::Generalized_weights::internal::PM_cotangent_weight<
-    Traits, mTriangleMesh>                                                     Weight_calculator;
+  typedef CGAL::Generalized_weights::internal::
+    Cotangent_weight_wrapper<mTriangleMesh>                                    Weight_calculator;
 
   typedef internal::Curve_skeleton<mTriangleMesh,
                                    VertexIndexMap,
