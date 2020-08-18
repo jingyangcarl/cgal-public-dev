@@ -24,5 +24,3 @@ Later:
 * Cleanup tests.
 * Comment the code.
 * Add a concept test as in the heat_method.
-* Check ordering of the points in the tools file.
-* Improve the weighted Laplacian example.
