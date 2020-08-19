@@ -31,23 +31,6 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // The full weight is computed as
-  // \f$w = \frac{r_p^a A_m - r^a B + r_m^a A}{A_m A}\f$
-  // with notations shown in the figure below and \f$a\f$ any real number
-  // being the power parameter.
-  // For \f$a = 0\f$ this weight is equal to the
-  // `CGAL::Generalized_weights::Wachspress_weight` and
-  // `CGAL::Generalized_weights::Authalic_weight`.
-  // For \f$a = 1\f$ this weight is equal to the
-  // `CGAL::Generalized_weights::Mean_value_weight` and
-  // `CGAL::Generalized_weights::Tangent_weight`.
-  // For \f$a = 2\f$ this weight is equal to the
-  // `CGAL::Generalized_weights::Discrete_harmonic_weight` and
-  // `CGAL::Generalized_weights::Cotangent_weight`.
-  // \cgalFigureBegin{three_point_family_weight, three_point_family.svg}
-  //   Notation used for the three point family weight.
-  // \cgalFigureEnd
-
   /// \cond SKIP_IN_MANUAL
   namespace three_point_family_ns {
 
@@ -87,6 +70,27 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the three point family weight for 2D points.
+
+    The weight is computed as
+    \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
+    with notations shown in the figure below and \f$a\f$ any real number
+    being the power parameter.
+
+    For \f$a = 0\f$ this weight is equal to the
+    `CGAL::Generalized_weights::wachspress_weight_2()` and
+    `CGAL::Generalized_weights::authalic_weight_2()`.
+
+    For \f$a = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::mean_value_weight_2()` and
+    `CGAL::Generalized_weights::tangent_weight_2()`.
+
+    For \f$a = 2\f$ this weight is equal to the
+    `CGAL::Generalized_weights::discrete_harmonic_weight_2()` and
+    `CGAL::Generalized_weights::cotangent_weight_2()`.
+
+    \cgalFigureBegin{three_point_family_weight_2, three_point_family.svg}
+      Notation used for the three point family weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -138,6 +142,23 @@ namespace Generalized_weights {
 
     \brief computes the three point family weight for 2D points.
 
+    The weight is computed as
+    \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
+    with notations shown in \cgalFigureRef{three_point_family_weight_2} below
+    and \f$a\f$ any real number being the power parameter.
+
+    For \f$a = 0\f$ this weight is equal to the
+    `CGAL::Generalized_weights::wachspress_weight_2()` and
+    `CGAL::Generalized_weights::authalic_weight_2()`.
+
+    For \f$a = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::mean_value_weight_2()` and
+    `CGAL::Generalized_weights::tangent_weight_2()`.
+
+    For \f$a = 2\f$ this weight is equal to the
+    `CGAL::Generalized_weights::discrete_harmonic_weight_2()` and
+    `CGAL::Generalized_weights::cotangent_weight_2()`.
+
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
@@ -178,6 +199,27 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the three point family weight for 3D points.
+
+    The weight is computed as
+    \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
+    with notations shown in the figure below and \f$a\f$ any real number
+    being the power parameter.
+
+    For \f$a = 0\f$ this weight is equal to the
+    `CGAL::Generalized_weights::wachspress_weight_3()` and
+    `CGAL::Generalized_weights::authalic_weight_3()`.
+
+    For \f$a = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::mean_value_weight_3()` and
+    `CGAL::Generalized_weights::tangent_weight_3()`.
+
+    For \f$a = 2\f$ this weight is equal to the
+    `CGAL::Generalized_weights::discrete_harmonic_weight_3()` and
+    `CGAL::Generalized_weights::cotangent_weight_3()`.
+
+    \cgalFigureBegin{three_point_family_weight_3, three_point_family.svg}
+      Notation used for the three point family weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
@@ -224,6 +266,23 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the three point family weight for 3D points.
+
+    The weight is computed as
+    \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
+    with notations shown in \cgalFigureRef{three_point_family_weight_3} below
+    and \f$a\f$ any real number being the power parameter.
+
+    For \f$a = 0\f$ this weight is equal to the
+    `CGAL::Generalized_weights::wachspress_weight_3()` and
+    `CGAL::Generalized_weights::authalic_weight_3()`.
+
+    For \f$a = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::mean_value_weight_3()` and
+    `CGAL::Generalized_weights::tangent_weight_3()`.
+
+    For \f$a = 2\f$ this weight is equal to the
+    `CGAL::Generalized_weights::discrete_harmonic_weight_3()` and
+    `CGAL::Generalized_weights::cotangent_weight_3()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 

@@ -32,19 +32,6 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // [1] Reference: "M. S. Floater, K. Hormann, and G. Kos.
-  // A general construction of barycentric coordinates over convex polygons.
-  // Advances in Computational Mathematics, 24(1-4):311-331, 2006.".
-
-  // The full weight is computed as
-  // \f$w = \frac{r_p^2 A_m - r^2 B + r_m^2 A}{A_m A}\f$
-  // with notations shown in the figure below. This weight is equal to the
-  // `CGAL::Generalized_weights::Cotangent_weight`. This weight is a special
-  // case of the `CGAL::Generalized_weights::Three_point_family_weight`.
-  // \cgalFigureBegin{discrete_harmonic_weight, discrete_harmonic.svg}
-  //   Notation used for the discrete harmonic weight.
-  // \cgalFigureEnd
-
   /// \cond SKIP_IN_MANUAL
   namespace discrete_harmonic_ns {
 
@@ -69,6 +56,18 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the discrete harmonic weight for 2D points.
+
+    The weight is computed as
+    \f$w = \frac{d_2^2 A_1 - d^2 B + d_1^2 A_2}{A_1 A_2}\f$
+    with notations shown in the figure below.
+
+    This weight is equal to the `CGAL::Generalized_weights::cotangent_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
+    \cgalFigureBegin{discrete_harmonic_weight_2, discrete_harmonic.svg}
+      Notation used for the discrete harmonic weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -119,6 +118,14 @@ namespace Generalized_weights {
 
     \brief computes the discrete harmonic weight for 2D points.
 
+    The weight is computed as
+    \f$w = \frac{d_2^2 A_1 - d^2 B + d_1^2 A_2}{A_1 A_2}\f$
+    with notations shown in \cgalFigureRef{discrete_harmonic_weight_2}.
+
+    This weight is equal to the `CGAL::Generalized_weights::cotangent_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
@@ -154,6 +161,18 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the discrete harmonic weight for 3D points.
+
+    The weight is computed as
+    \f$w = \frac{d_2^2 A_1 - d^2 B + d_1^2 A_2}{A_1 A_2}\f$
+    with notations shown in the figure below.
+
+    This weight is equal to the `CGAL::Generalized_weights::cotangent_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
+
+    \cgalFigureBegin{discrete_harmonic_weight_3, discrete_harmonic.svg}
+      Notation used for the discrete harmonic weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
@@ -196,6 +215,14 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the discrete harmonic weight for 3D points.
+
+    The weight is computed as
+    \f$w = \frac{d_2^2 A_1 - d^2 B + d_1^2 A_2}{A_1 A_2}\f$
+    with notations shown in \cgalFigureRef{discrete_harmonic_weight_3}.
+
+    This weight is equal to the `CGAL::Generalized_weights::cotangent_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 

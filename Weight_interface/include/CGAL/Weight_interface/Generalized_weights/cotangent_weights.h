@@ -31,17 +31,6 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // The full weight is computed as
-  // \f$w = 2 (\cot\beta + \cot\gamma)\f$
-  // and the half weight as
-  // \f$h = 2 \cot\gamma\f$
-  // with notations shown in the figure below. This weight is equal to the
-  // `CGAL::Generalized_weights::Discrete_harmonic_weight`. This weight is a special
-  // case of the `CGAL::Generalized_weights::Three_point_family_weight`.
-  // \cgalFigureBegin{cotangent_weight, cotangent.svg}
-  //   Notation used for the cotangent weight.
-  // \cgalFigureEnd
-
   /// \cond SKIP_IN_MANUAL
   namespace cotangent_ns {
 
@@ -95,6 +84,18 @@ namespace Generalized_weights {
 
     \brief computes the cotangent weight for 2D points.
 
+    The weight is computed as
+    \f$w = 2 (\cot\beta + \cot\gamma)\f$
+    with notations shown in the figure below.
+
+    This weight is equal to the `CGAL::Generalized_weights::discrete_harmonic_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
+    \cgalFigureBegin{cotangent_weight_2, cotangent.svg}
+      Notation used for the cotangent weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
@@ -134,6 +135,14 @@ namespace Generalized_weights {
 
     \brief computes the cotangent weight for 2D points.
 
+    The weight is computed as
+    \f$w = 2 (\cot\beta + \cot\gamma)\f$
+    with notations shown in \cgalFigureRef{cotangent_weight_2}.
+
+    This weight is equal to the `CGAL::Generalized_weights::discrete_harmonic_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
@@ -169,6 +178,18 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the cotangent weight for 3D points.
+
+    The weight is computed as
+    \f$w = 2 (\cot\beta + \cot\gamma)\f$
+    with notations shown in the figure below.
+
+    This weight is equal to the `CGAL::Generalized_weights::discrete_harmonic_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
+
+    \cgalFigureBegin{cotangent_weight_3, cotangent.svg}
+      Notation used for the cotangent weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -208,6 +229,14 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the cotangent weight for 3D points.
+
+    The weight is computed as
+    \f$w = 2 (\cot\beta + \cot\gamma)\f$
+    with notations shown in \cgalFigureRef{cotangent_weight_3}.
+
+    This weight is equal to the `CGAL::Generalized_weights::discrete_harmonic_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 

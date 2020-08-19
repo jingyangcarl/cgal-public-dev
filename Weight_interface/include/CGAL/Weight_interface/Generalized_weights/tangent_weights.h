@@ -31,20 +31,6 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // The full weight is computed as
-  // \f$w = 2 \frac{t_m + t}{r}\f$, where \f$t_m = \frac{A_m}{r r_m + D_m}\f$ and
-  // \f$t = \frac{A}{r r_p + D_p}\f$
-  // and the half weight as
-  // \f$h = 2 \frac{t}{r}\f$
-  // with notations shown in the figure below and dot products
-  // \f$D_m = (v_j - q) \cdot (v_m - q)\f$ and
-  // \f$D_p = (v_j - q) \cdot (v_p - q)\f$.
-  // This weight is equal to the `CGAL::Generalized_weights::Mean_value_weight`.
-  // This weight is a special case of the `CGAL::Generalized_weights::Three_point_family_weight`.
-  // \cgalFigureBegin{tangent_weight, tangent.svg}
-  //   Notation used for the tangent weight.
-  // \cgalFigureEnd
-
   /// \cond SKIP_IN_MANUAL
   namespace tangent_ns {
 
@@ -218,6 +204,22 @@ namespace Generalized_weights {
 
     \brief computes the tangent weight for 2D points.
 
+    The weight is computed as
+    \f$w = 2 \frac{t_1 + t_2}{r}\f$, where
+    \f$t_1 = \frac{2 A_1}{d d_1 + D_1}\f$ and
+    \f$t_2 = \frac{2 A_2}{d d_2 + D_2}\f$
+    with notations shown in the figure below and dot products
+    \f$D_1 = (t - q) \cdot (r - q)\f$ and
+    \f$D_2 = (r - q) \cdot (p - q)\f$.
+
+    This weight is equal to the `CGAL::Generalized_weights::mean_value_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
+    \cgalFigureBegin{tangent_weight_2, tangent.svg}
+      Notation used for the tangent weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
@@ -275,6 +277,18 @@ namespace Generalized_weights {
 
     \brief computes the tangent weight for 2D points.
 
+    The weight is computed as
+    \f$w = 2 \frac{t_1 + t_2}{r}\f$, where
+    \f$t_1 = \frac{2 A_1}{d d_1 + D_1}\f$ and
+    \f$t_2 = \frac{2 A_2}{d d_2 + D_2}\f$
+    with notations shown in \cgalFigureRef{tangent_weight_2} and dot products
+    \f$D_1 = (t - q) \cdot (r - q)\f$ and
+    \f$D_2 = (r - q) \cdot (p - q)\f$.
+
+    This weight is equal to the `CGAL::Generalized_weights::mean_value_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
@@ -310,6 +324,22 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the tangent weight for 3D points.
+
+    The weight is computed as
+    \f$w = 2 \frac{t_1 + t_2}{r}\f$, where
+    \f$t_1 = \frac{2 A_1}{d d_1 + D_1}\f$ and
+    \f$t_2 = \frac{2 A_2}{d d_2 + D_2}\f$
+    with notations shown in the figure below and dot products
+    \f$D_1 = (t - q) \cdot (r - q)\f$ and
+    \f$D_2 = (r - q) \cdot (p - q)\f$.
+
+    This weight is equal to the `CGAL::Generalized_weights::mean_value_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
+
+    \cgalFigureBegin{tangent_weight_3, tangent.svg}
+      Notation used for the tangent weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -367,6 +397,18 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the tangent weight for 3D points.
+
+    The weight is computed as
+    \f$w = 2 \frac{t_1 + t_2}{r}\f$, where
+    \f$t_1 = \frac{2 A_1}{d d_1 + D_1}\f$ and
+    \f$t_2 = \frac{2 A_2}{d d_2 + D_2}\f$
+    with notations shown in \cgalFigureRef{tangent_weight_3} and dot products
+    \f$D_1 = (t - q) \cdot (r - q)\f$ and
+    \f$D_2 = (r - q) \cdot (p - q)\f$.
+
+    This weight is equal to the `CGAL::Generalized_weights::mean_value_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 

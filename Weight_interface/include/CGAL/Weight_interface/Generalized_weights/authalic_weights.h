@@ -31,17 +31,6 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // The full weight is computed as
-  // \f$w = 2 \frac{\cot\beta + \cot\gamma}{r^2}\f$
-  // and the half weight as
-  // \f$h = 2 \frac{\cot\beta}{r^2}\f$
-  // with notations shown in the figure below. This weight is equal to the
-  // `CGAL::Generalized_weights::Wachspress_weight`. This weight is a special
-  // case of the `CGAL::Generalized_weights::Three_point_family_weight`.
-  // \cgalFigureBegin{authalic_weight, authalic.svg}
-  //   Notation used for the authalic weight.
-  // \cgalFigureEnd
-
   /// \cond SKIP_IN_MANUAL
   namespace authalic_ns {
 
@@ -110,6 +99,18 @@ namespace Generalized_weights {
 
     \brief computes the authalic weight for 2D points.
 
+    The weight is computed as
+    \f$w = 2 \frac{\cot\beta + \cot\gamma}{d^2}\f$
+    with notations shown in the figure below.
+
+    This weight is equal to the `CGAL::Generalized_weights::wachspress_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
+    \cgalFigureBegin{authalic_weight_2, authalic.svg}
+      Notation used for the authalic weight.
+    \cgalFigureEnd
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
@@ -155,6 +156,14 @@ namespace Generalized_weights {
 
     \brief computes the authalic weight for 2D points.
 
+    The weight is computed as
+    \f$w = 2 \frac{\cot\beta + \cot\gamma}{d^2}\f$
+    with notations shown in \cgalFigureRef{authalic_weight_2}.
+
+    This weight is equal to the `CGAL::Generalized_weights::wachspress_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
@@ -190,6 +199,18 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the authalic weight for 3D points.
+
+    The weight is computed as
+    \f$w = 2 \frac{\cot\beta + \cot\gamma}{d^2}\f$
+    with notations shown in the figure below.
+
+    This weight is equal to the `CGAL::Generalized_weights::wachspress_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
+
+    \cgalFigureBegin{authalic_weight_3, authalic.svg}
+      Notation used for the authalic weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -235,6 +256,14 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the authalic weight for 3D points.
+
+    The weight is computed as
+    \f$w = 2 \frac{\cot\beta + \cot\gamma}{d^2}\f$
+    with notations shown in \cgalFigureRef{authalic_weight_3}.
+
+    This weight is equal to the `CGAL::Generalized_weights::wachspress_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 

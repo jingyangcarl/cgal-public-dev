@@ -31,12 +31,12 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // This weight always returns 1.
-
   /*!
     \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the uniform weight for 2D points.
+
+    This function always returns 1.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -59,6 +59,8 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the uniform weight for 2D points.
+
+    This function always returns 1.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -96,6 +98,8 @@ namespace Generalized_weights {
 
     \brief computes the uniform weight.
 
+    This function always returns 1.
+
     \return the computed weight.
   */
   double uniform_weight_2() {
@@ -106,6 +110,8 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the uniform weight for 3D points.
+
+    This function always returns 1.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -128,6 +134,8 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the uniform weight for 3D points.
+
+    This function always returns 1.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -162,6 +170,8 @@ namespace Generalized_weights {
 
   /*!
     \ingroup PkgWeightInterfaceRefWeights3DPoints
+
+    This function always returns 1.
 
     \brief computes the uniform weight.
 

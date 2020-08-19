@@ -32,23 +32,6 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // [1] Reference: "K. Hormann and M. Floater.
-  // Mean value coordinates for arbitrary planar polygons.
-  // ACM Transactions on Graphics, 25(4):1424-1441, 2006.".
-
-  // The full weight is computed as
-  // \f$w = \pm 2 \sqrt{\frac{2 (r_m r_p - D)}{(r r_m + D_m)(r r_p + D_p)}}\f$,
-  // with notations shown in the figure below and dot products
-  // \f$D_m = (v_j - q) \cdot (v_m - q)\f$,
-  // \f$D_p = (v_j - q) \cdot (v_p - q)\f$, and
-  // \f$D   = (v_m - q) \cdot (v_p - q)\f$.
-  // The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
-  // This weight is equal to the `CGAL::Generalized_weights::Tangent_weight`.
-  // This weight is a special case of the `CGAL::Generalized_weights::Three_point_family_weight`.
-  // \cgalFigureBegin{mean_value_weight, mean_value.svg}
-  //   Notation used for the mean value weight.
-  // \cgalFigureEnd
-
   /// \cond SKIP_IN_MANUAL
   namespace mean_value_ns {
 
@@ -100,6 +83,22 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the mean value weight for 2D points.
+
+    The weight is computed as
+    \f$w = \pm 2 \sqrt{\frac{2 (d_1 d_2 - D)}{(d d_1 + D_1)(d d_2 + D_2)}}\f$,
+    with notations shown in the figure below and dot products
+    \f$D_1 = (t - q) \cdot (r - q)\f$,
+    \f$D_2 = (r - q) \cdot (p - q)\f$, and
+    \f$D   = (t - q) \cdot (p - q)\f$.
+    The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
+
+    This weight is equal to the `CGAL::Generalized_weights::tangent_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
+    \cgalFigureBegin{mean_value_weight_2, mean_value.svg}
+      Notation used for the mean value weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -161,6 +160,18 @@ namespace Generalized_weights {
 
     \brief computes the mean value weight for 2D points.
 
+    The weight is computed as
+    \f$w = \pm 2 \sqrt{\frac{2 (d_1 d_2 - D)}{(d d_1 + D_1)(d d_2 + D_2)}}\f$,
+    with notations shown in \cgalFigureRef{mean_value_weight_2} and dot products
+    \f$D_1 = (t - q) \cdot (r - q)\f$,
+    \f$D_2 = (r - q) \cdot (p - q)\f$, and
+    \f$D   = (t - q) \cdot (p - q)\f$.
+    The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
+
+    This weight is equal to the `CGAL::Generalized_weights::tangent_weight_2()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
@@ -196,6 +207,22 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the mean value weight for 3D points.
+
+    The weight is computed as
+    \f$w = \pm 2 \sqrt{\frac{2 (d_1 d_2 - D)}{(d d_1 + D_1)(d d_2 + D_2)}}\f$,
+    with notations shown in the figure below and dot products
+    \f$D_1 = (t - q) \cdot (r - q)\f$,
+    \f$D_2 = (r - q) \cdot (p - q)\f$, and
+    \f$D   = (t - q) \cdot (p - q)\f$.
+    The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
+
+    This weight is equal to the `CGAL::Generalized_weights::tangent_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
+
+    \cgalFigureBegin{mean_value_weight_3, mean_value.svg}
+      Notation used for the mean value weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
@@ -238,6 +265,18 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the mean value weight for 3D points.
+
+    The weight is computed as
+    \f$w = \pm 2 \sqrt{\frac{2 (d_1 d_2 - D)}{(d d_1 + D_1)(d d_2 + D_2)}}\f$,
+    with notations shown in \cgalFigureRef{mean_value_weight_3} and dot products
+    \f$D_1 = (t - q) \cdot (r - q)\f$,
+    \f$D_2 = (r - q) \cdot (p - q)\f$, and
+    \f$D   = (t - q) \cdot (p - q)\f$.
+    The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
+
+    This weight is equal to the `CGAL::Generalized_weights::tangent_weight_3()`.
+
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 

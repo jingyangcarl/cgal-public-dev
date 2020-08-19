@@ -31,16 +31,6 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // The full weight is computed as
-  // \f$w = \frac{1}{r^a}\f$
-  // with notations shown in the figure below and \f$a\f$ any real number
-  // being the power parameter.
-  // For \f$a = 1\f$ this weight is equal to the
-  // `CGAL::Generalized_weights::Inverse_distance_weight`.
-  // \cgalFigureBegin{shepard_weight, shepard.svg}
-  //   Notation used for the Shepard weight.
-  // \cgalFigureEnd
-
   /// \cond SKIP_IN_MANUAL
   namespace shepard_ns {
 
@@ -68,6 +58,18 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the Shepard weight for 2D points.
+
+    The weight is computed as
+    \f$w = \frac{1}{d^a}\f$
+    with notations shown in the figure below and \f$a\f$ any real number
+    being the power parameter.
+
+    For \f$a = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::inverse_distance_weight_2()`.
+
+    \cgalFigureBegin{shepard_weight_2, shepard.svg}
+      Notation used for the Shepard weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -105,6 +107,14 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights2DPoints
 
     \brief computes the Shepard weight for 2D points.
+
+    The weight is computed as
+    \f$w = \frac{1}{d^a}\f$
+    with notations shown in \cgalFigureRef{shepard_weight_2} and \f$a\f$ any real number
+    being the power parameter.
+
+    For \f$a = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::inverse_distance_weight_2()`.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -147,6 +157,8 @@ namespace Generalized_weights {
 
     \brief computes the Shepard weight for 2D points.
 
+    This function calls the function `CGAL::Generalized_weights::shepard_weight_2()`.
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
 
@@ -180,6 +192,8 @@ namespace Generalized_weights {
 
     \brief computes the Shepard weight for 2D points.
 
+    This function calls the function `CGAL::Generalized_weights::shepard_weight_2()`.
+
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
     \tparam Point_2
@@ -211,6 +225,18 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the Shepard weight for 3D points.
+
+    The weight is computed as
+    \f$w = \frac{1}{d^a}\f$
+    with notations shown in the figure below and \f$a\f$ any real number
+    being the power parameter.
+
+    For \f$a = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::inverse_distance_weight_3()`.
+
+    \cgalFigureBegin{shepard_weight_3, shepard.svg}
+      Notation used for the Shepard weight.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -248,6 +274,14 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the Shepard weight for 3D points.
+
+    The weight is computed as
+    \f$w = \frac{1}{d^a}\f$
+    with notations shown in \cgalFigureRef{shepard_weight_3} and \f$a\f$ any real number
+    being the power parameter.
+
+    For \f$a = 1\f$ this weight is equal to the
+    `CGAL::Generalized_weights::inverse_distance_weight_3()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -290,6 +324,8 @@ namespace Generalized_weights {
 
     \brief computes the Shepard weight for 3D points.
 
+    This function calls the function `CGAL::Generalized_weights::shepard_weight_3()`.
+
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
 
@@ -322,6 +358,8 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefWeights3DPoints
 
     \brief computes the Shepard weight for 3D points.
+
+    This function calls the function `CGAL::Generalized_weights::shepard_weight_3()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
