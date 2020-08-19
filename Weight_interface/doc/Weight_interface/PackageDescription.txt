@@ -10,27 +10,27 @@ from `CGAL::Generalized_weights`.
 \defgroup PkgWeightInterfaceRefWeights2DPoints Generalized Weights (2D Points)
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute generalized weights on 2D points.
+Models and functions that can be used to compute generalized weights for 2D points.
 
 \defgroup PkgWeightInterfaceRefWeights3DPoints Generalized Weights (3D Points)
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute generalized weights on 3D points.
+Models and functions that can be used to compute generalized weights for 3D points.
 
 \defgroup PkgWeightInterfaceRefWeights2DPolygons Generalized Weights (2D Polygons)
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute generalized weights on 2D polygons.
+Models and functions that can be used to compute generalized weights for 2D polygons.
 
 \defgroup PkgWeightInterfaceRefRegions2DPoints Weighting Regions (2D Points)
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute weighting regions on 2D points.
+Models and functions that can be used to compute weighting regions for 2D points.
 
 \defgroup PkgWeightInterfaceRefRegions3DPoints Weighting Regions (3D Points)
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute weighting regions on 3D points.
+Models and functions that can be used to compute weighting regions for 3D points.
 
 \defgroup PkgWeightInterfaceRefUtils Utility Functions
 \ingroup PkgWeightInterfaceRef
@@ -101,14 +101,14 @@ Different related utility functions.
 
 #### 2D Points ####
 - `CGAL::Generalized_weights::uniform_area_2()`
-- `CGAL::Generalized_weights::triangle_area_2()`
+- `CGAL::Generalized_weights::triangular_area_2()`
 - `CGAL::Generalized_weights::barycentric_area_2()`
 - `CGAL::Generalized_weights::voronoi_area_2()`
 - `CGAL::Generalized_weights::mixed_voronoi_area_2()`
 
 #### 3D Points ####
 - `CGAL::Generalized_weights::uniform_area_3()`
-- `CGAL::Generalized_weights::triangle_area_3()`
+- `CGAL::Generalized_weights::triangular_area_3()`
 - `CGAL::Generalized_weights::barycentric_area_3()`
 - `CGAL::Generalized_weights::voronoi_area_3()`
 - `CGAL::Generalized_weights::mixed_voronoi_area_3()`

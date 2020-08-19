@@ -37,7 +37,10 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the 2D tangent.
+    \brief computes the tangent.
+
+    This function computes the tangent of the angle between
+    2D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -69,7 +72,10 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the 2D tangent.
+    \brief computes the tangent.
+
+    This function computes the tangent of the angle between
+    2D vectors `[q, r]` and `[q, p]`.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -101,7 +107,10 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the 3D tangent.
+    \brief computes the tangent.
+
+    This function computes the tangent of the angle between
+    3D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -133,7 +142,10 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the 3D tangent.
+    \brief computes the tangent.
+
+    This function computes the tangent of the angle between
+    3D vectors `[q, r]` and `[q, p]`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -165,7 +177,10 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the 2D cotangent.
+    \brief computes the cotangent.
+
+    This function computes the cotangent of the angle between
+    2D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -197,7 +212,10 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the 2D cotangent.
+    \brief computes the cotangent.
+
+    This function computes the cotangent of the angle between
+    2D vectors `[q, r]` and `[q, p]`.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -229,7 +247,10 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the 3D cotangent.
+    \brief computes the cotangent.
+
+    This function computes the cotangent of the angle between
+    3D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -261,7 +282,10 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the 3D cotangent.
+    \brief computes the cotangent.
+
+    This function computes the cotangent of the angle between
+    3D vectors `[q, r]` and `[q, p]`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 

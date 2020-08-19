@@ -66,6 +66,12 @@ namespace Generalized_weights {
 
     \brief computes the half value of the cotangent weight.
 
+    This function constructs the half of the cotangent weight using the precomputed
+    cotangent value.
+
+    The returned value is
+    \f$2\textbf{cot}\f$.
+
     \tparam FT
     must be `FieldNumberType`.
 
@@ -73,6 +79,9 @@ namespace Generalized_weights {
     the cotangent value
 
     \return the computed half weight.
+
+    \sa `CGAL::Generalized_weights::cotangent_weight_2()`
+    \sa `CGAL::Generalized_weights::cotangent_weight_3()`
   */
   template<typename FT>
   const FT half_cotangent_weight(

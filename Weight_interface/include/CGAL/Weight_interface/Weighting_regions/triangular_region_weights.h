@@ -31,15 +31,16 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // This weight is the area of the shaded triangle in the figure below.
-  // \cgalFigureBegin{triangular_region_weight, triangle_cell.svg}
-  //   Notation used for the triangular region weight.
-  // \cgalFigureEnd
-
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the triangle area on a 2D triangle [p, q, r].
+    \brief computes area of the triangular cell in 2D.
+
+    This area is the area of the shaded triangle `[p, q, r]` in the figure below.
+
+    \cgalFigureBegin{triangular_area_2, triangular_cell.svg}
+      Notation used for the triangular cell.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -59,7 +60,7 @@ namespace Generalized_weights {
     \return the computed area.
   */
   template<typename GeomTraits>
-  decltype(auto) triangle_area_2(
+  decltype(auto) triangular_area_2(
     const typename GeomTraits::Point_2& p,
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& r,
@@ -71,7 +72,9 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the triangle area on a 2D triangle [p, q, r].
+    \brief computes area of the triangular cell in 2D.
+
+    This area is the area of the shaded triangle `[p, q, r]` in \cgalFigureRef{triangular_area_2}.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -90,20 +93,26 @@ namespace Generalized_weights {
     \return the computed area.
   */
   template<typename Point_2>
-  decltype(auto) triangle_area_2(
+  decltype(auto) triangular_area_2(
     const Point_2& p,
     const Point_2& q,
     const Point_2& r) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    return triangle_area_2(p, q, r, traits);
+    return triangular_area_2(p, q, r, traits);
   }
 
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the triangle area on a 3D triangle [p, q, r].
+    \brief computes area of the triangular cell in 3D.
+
+    This area is the area of the shaded triangle `[p, q, r]` in the figure below.
+
+    \cgalFigureBegin{triangular_area_3, triangular_cell.svg}
+      Notation used for the triangular cell.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -123,7 +132,7 @@ namespace Generalized_weights {
     \return the computed area.
   */
   template<typename GeomTraits>
-  decltype(auto) triangle_area_3(
+  decltype(auto) triangular_area_3(
     const typename GeomTraits::Point_3& p,
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& r,
@@ -135,7 +144,9 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the triangle area on a 3D triangle [p, q, r].
+    \brief computes area of the triangular cell in 3D.
+
+    This area is the area of the shaded triangle `[p, q, r]` in \cgalFigureRef{triangular_area_3}.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -154,14 +165,14 @@ namespace Generalized_weights {
     \return the computed area.
   */
   template<typename Point_3>
-  decltype(auto) triangle_area_3(
+  decltype(auto) triangular_area_3(
     const Point_3& p,
     const Point_3& q,
     const Point_3& r) {
 
     using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return triangle_area_3(p, q, r, traits);
+    return triangular_area_3(p, q, r, traits);
   }
 
 } // namespace Generalized_weights

@@ -30,8 +30,8 @@ int main() {
     std::cout << CGAL::Generalized_weights::uniform_area_2(p2, q2, r2) << "/";
     std::cout << CGAL::Generalized_weights::uniform_area_3(p3, q3, r3) << std::endl;
   #elif defined(TR_WEIGHT)
-    std::cout << CGAL::Generalized_weights::triangle_area_2(p2, q2, r2) << "/";
-    std::cout << CGAL::Generalized_weights::triangle_area_3(p3, q3, r3) << std::endl;
+    std::cout << CGAL::Generalized_weights::triangular_area_2(p2, q2, r2) << "/";
+    std::cout << CGAL::Generalized_weights::triangular_area_3(p3, q3, r3) << std::endl;
   #elif defined(BC_WEIGHT)
     std::cout << CGAL::Generalized_weights::barycentric_area_2(p2, q2, r2) << "/";
     std::cout << CGAL::Generalized_weights::barycentric_area_3(p3, q3, r3) << std::endl;

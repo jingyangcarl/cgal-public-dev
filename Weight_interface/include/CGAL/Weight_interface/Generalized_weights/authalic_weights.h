@@ -78,6 +78,12 @@ namespace Generalized_weights {
 
     \brief computes the half value of the authalic weight.
 
+    This function constructs the half of the authalic weight using the precomputed
+    cotangent and squared distance values.
+
+    The returned value is
+    \f$\frac{2\textbf{cot}}{\textbf{d2}}\f$.
+
     \tparam FT
     must be `FieldNumberType`.
 
@@ -88,6 +94,9 @@ namespace Generalized_weights {
     the squared distance value
 
     \return the computed half weight.
+
+    \sa `CGAL::Generalized_weights::authalic_weight_2()`
+    \sa `CGAL::Generalized_weights::authalic_weight_3()`
   */
   template<typename FT>
   const FT half_authalic_weight(

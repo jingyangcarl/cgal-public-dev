@@ -31,12 +31,12 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // This weight always returns 1.
-
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the uniform area on a 2D triangle.
+    \brief computes area of the uniform cell in 2D.
+
+    This function always returns 1.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -57,7 +57,9 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the uniform area on a 2D triangle [p, q, r].
+    \brief computes area of the uniform cell in 2D.
+
+    This function always returns 1.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -89,7 +91,9 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the uniform area.
+    \brief computes area of the uniform cell in 2D.
+
+    This function always returns 1.
 
     \return the computed area.
   */
@@ -100,7 +104,9 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the uniform area on a 3D triangle.
+    \brief computes area of the uniform cell in 3D.
+
+    This function always returns 1.
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -121,7 +127,9 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the uniform area on a 3D triangle [p, q, r].
+    \brief computes area of the uniform cell in 3D.
+
+    This function always returns 1.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -153,7 +161,9 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the uniform area.
+    \brief computes area of the uniform cell in 3D.
+
+    This function always returns 1.
 
     \return the computed area.
   */

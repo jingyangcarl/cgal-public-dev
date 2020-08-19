@@ -31,17 +31,18 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // This weight is the area of the shaded region in the figure below. The region
-  // is formed by two midpoints of the edges incident to `q` and the barycenter of
-  // the triangle `[p, q, r]`.
-  // \cgalFigureBegin{barycentric_region_weight, barycentric_cell.svg}
-  //   Notation used for the barycentric region weight.
-  // \cgalFigureEnd
-
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the barycentric area on a 2D triangle [p, q, r].
+    \brief computes area of the barycentric cell in 2D.
+
+    This area is the area of the shaded region in the figure below. The region
+    is formed by two midpoints of the edges incident to `q` and the barycenter of
+    the triangle `[p, q, r]`.
+
+    \cgalFigureBegin{barycentric_area_2, barycentric_cell.svg}
+      Notation used for the barycentric cell.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -85,7 +86,11 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the barycentric area on a 2D triangle [p, q, r].
+    \brief computes area of the barycentric cell in 2D.
+
+    This area is the area of the shaded region in \cgalFigureRef{barycentric_area_2}.
+    The region is formed by two midpoints of the edges incident to `q` and the barycenter of
+    the triangle `[p, q, r]`.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -117,7 +122,15 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the barycentric area on a 3D triangle [p, q, r].
+    \brief computes area of the barycentric cell in 3D.
+
+    This area is the area of the shaded region in the figure below. The region
+    is formed by two midpoints of the edges incident to `q` and the barycenter of
+    the triangle `[p, q, r]`.
+
+    \cgalFigureBegin{barycentric_area_3, barycentric_cell.svg}
+      Notation used for the barycentric cell.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -161,7 +174,11 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the barycentric area on a 3D triangle [p, q, r].
+    \brief computes area of the barycentric cell in 3D.
+
+    This area is the area of the shaded region in \cgalFigureRef{barycentric_area_3}.
+    The region is formed by two midpoints of the edges incident to `q` and the barycenter of
+    the triangle `[p, q, r]`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 

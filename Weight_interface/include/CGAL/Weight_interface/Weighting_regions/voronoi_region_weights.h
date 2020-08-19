@@ -31,17 +31,18 @@
 namespace CGAL {
 namespace Generalized_weights {
 
-  // This weight is the area of the shaded region in the figure below. The region
-  // is formed by two midpoints of the edges incident to `q` and the circumcenter of
-  // the triangle `[p, q, r]`.
-  // \cgalFigureBegin{voronoi_region_weight, voronoi_cell.svg}
-  //   Notation used for the Voronoi region weight.
-  // \cgalFigureEnd
-
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the Voronoi area on a 2D triangle [p, q, r].
+    \brief computes area of the Voronoi cell in 2D.
+
+    This area is the area of the shaded region in the figure below. The region
+    is formed by two midpoints of the edges incident to `q` and the circumcenter of
+    the triangle `[p, q, r]`.
+
+    \cgalFigureBegin{voronoi_area_2, voronoi_cell.svg}
+      Notation used for the Voronoi cell.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_2`.
@@ -59,6 +60,8 @@ namespace Generalized_weights {
     an instance of `GeomTraits`
 
     \return the computed area.
+
+    \sa `CGAL::Generalized_weights::mixed_voronoi_area_2()`
   */
   template<typename GeomTraits>
   decltype(auto) voronoi_area_2(
@@ -87,7 +90,11 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions2DPoints
 
-    \brief computes the Voronoi area on a 2D triangle [p, q, r].
+    \brief computes area of the Voronoi cell in 2D.
+
+    This area is the area of the shaded region in \cgalFigureRef{voronoi_area_2}.
+    The region is formed by two midpoints of the edges incident to `q` and the circumcenter of
+    the triangle `[p, q, r]`.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
@@ -104,6 +111,8 @@ namespace Generalized_weights {
     the third point
 
     \return the computed area.
+
+    \sa `CGAL::Generalized_weights::mixed_voronoi_area_2()`
   */
   template<typename Point_2>
   decltype(auto) voronoi_area_2(
@@ -119,7 +128,15 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the Voronoi area on a 3D triangle [p, q, r].
+    \brief computes area of the Voronoi cell in 3D.
+
+    This area is the area of the shaded region in the figure below. The region
+    is formed by two midpoints of the edges incident to `q` and the circumcenter of
+    the triangle `[p, q, r]`.
+
+    \cgalFigureBegin{voronoi_area_3, voronoi_cell.svg}
+      Notation used for the Voronoi cell.
+    \cgalFigureEnd
 
     \tparam GeomTraits
     must be a model of `AnalyticTraits_3`.
@@ -137,6 +154,8 @@ namespace Generalized_weights {
     an instance of `GeomTraits`
 
     \return the computed area.
+
+    \sa `CGAL::Generalized_weights::mixed_voronoi_area_3()`
   */
   template<typename GeomTraits>
   decltype(auto) voronoi_area_3(
@@ -165,7 +184,11 @@ namespace Generalized_weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions3DPoints
 
-    \brief computes the Voronoi area on a 3D triangle [p, q, r].
+    \brief computes area of the Voronoi cell in 3D.
+
+    This area is the area of the shaded region in \cgalFigureRef{voronoi_area_3}.
+    The region is formed by two midpoints of the edges incident to `q` and the circumcenter of
+    the triangle `[p, q, r]`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
@@ -182,6 +205,8 @@ namespace Generalized_weights {
     the third point
 
     \return the computed area.
+
+    \sa `CGAL::Generalized_weights::mixed_voronoi_area_3()`
   */
   template<typename Point_3>
   decltype(auto) voronoi_area_3(

@@ -108,6 +108,12 @@ namespace Generalized_weights {
 
     \brief computes the tangent of the half angle.
 
+    This function computes the tangent of the half angle using the precomputed
+    distance, area, and dot product values.
+
+    The returned value is
+    \f$\frac{2\textbf{A}}{\textbf{d}\textbf{l} + \textbf{D}}\f$.
+
     \tparam FT
     must be `FieldNumberType`.
 
@@ -124,6 +130,8 @@ namespace Generalized_weights {
     the dot product value
 
     \return the computed tangent.
+
+    \sa `CGAL::Generalized_weights::half_tangent_weight()`
   */
   template<typename FT>
   const FT tangent_half_angle(
@@ -137,6 +145,12 @@ namespace Generalized_weights {
 
     \brief computes the half value of the tangent weight.
 
+    This function constructs the half of the tangent weight using the precomputed
+    half angle tangent and distance values.
+
+    The returned value is
+    \f$\frac{2\textbf{tan05}}{\textbf{d}}\f$.
+
     \tparam FT
     must be `FieldNumberType`.
 
@@ -147,6 +161,10 @@ namespace Generalized_weights {
     the distance value
 
     \return the computed half weight.
+
+    \sa `CGAL::Generalized_weights::tangent_half_angle()`
+    \sa `CGAL::Generalized_weights::tangent_weight_2()`
+    \sa `CGAL::Generalized_weights::tangent_weight_3()`
   */
   template<typename FT>
   const FT half_tangent_weight(
@@ -159,6 +177,13 @@ namespace Generalized_weights {
     \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the half value of the tangent weight.
+
+    This function constructs the half of the tangent weight using the precomputed
+    distance, area, and dot product values.
+
+    The returned value is
+    \f$\frac{2\textbf{t}}{\textbf{d}}\f$ where
+    \f$\textbf{t} = \frac{2\textbf{A}}{\textbf{d}\textbf{l} + \textbf{D}}\f$.
 
     \tparam FT
     must be `FieldNumberType`.
@@ -176,6 +201,9 @@ namespace Generalized_weights {
     the dot product value
 
     \return the computed half weight.
+
+    \sa `CGAL::Generalized_weights::tangent_weight_2()`
+    \sa `CGAL::Generalized_weights::tangent_weight_3()`
   */
   template<typename FT>
   const FT half_tangent_weight(
