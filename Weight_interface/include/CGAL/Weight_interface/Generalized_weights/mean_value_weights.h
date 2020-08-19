@@ -277,11 +277,11 @@ namespace Generalized_weights {
 
     This class implements 2D mean value weights ( \cite cgal:bc:hf-mvcapp-06,
     \cite cgal:bc:fhk-gcbcocp-06, \cite cgal:f-mvc-03 ), which can be computed
-    at any point in the plane.
+    at any point inside and outside a simple polygon.
 
-    Mean value weights are well-defined everywhere in the plane and are
-    non-negative in the kernel of a star-shaped polygon. The weights are
-    computed analytically. See more details in the user manual here.
+    Mean value weights are well-defined inside and outside a simple polygon and are
+    non-negative in the kernel of a star-shaped polygon. The weights are computed
+    analytically using the formulation from `CGAL::Generalized_weights::tangent_weight_2()`.
 
     \tparam Polygon
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -332,7 +332,7 @@ namespace Generalized_weights {
       \brief initializes all internal data structures.
 
       This class implements the behavior of mean value weights
-      for 2D query points.
+      for 2D query points inside simple polygons.
 
       \param polygon
       An instance of `Polygon` with the vertices of a simple polygon.
@@ -376,8 +376,10 @@ namespace Generalized_weights {
 
       This function fills `weights` with 2D mean value weights computed at the `query`
       point with respect to the vertices of the input polygon. If `query` belongs to
-      the polygon boundary, the weights are not well-defined. You can see the more
-      precise version in the package Barycentric Coordinates 2.
+      the polygon boundary, the weights are not well-defined.
+
+      The method `CGAL::Barycentric_coordinates::Mean_value_coordinates_2::weights()`
+      provides a more precise version that also handles query points on the polygon boundary.
 
       The number of returned weights equals to the number of polygon vertices.
 

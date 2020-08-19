@@ -237,9 +237,9 @@ namespace Generalized_weights {
     \cite cgal:pp-cdmsc-93, \cite cgal:bc:eddhls-maam-95 ), which can be computed
     at any point inside a strictly convex polygon.
 
-    Discrete harmonic weights are well-defined in the closure of a strictly
-    convex polygon but they are not necessarily positive. The weights are
-    computed analytically. See more details in the user manual here.
+    Discrete harmonic weights are well-defined inside a strictly convex polygon
+    but they are not necessarily positive. The weights are computed analytically
+    using the formulation from `CGAL::Generalized_weights::discrete_harmonic_weight_2()`.
 
     \tparam Polygon
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -286,7 +286,7 @@ namespace Generalized_weights {
       \brief initializes all internal data structures.
 
       This class implements the behavior of discrete harmonic weights
-      for 2D query points.
+      for 2D query points inside strictly convex polygons.
 
       \param polygon
       An instance of `Polygon` with the vertices of a strictly convex polygon.
@@ -332,8 +332,10 @@ namespace Generalized_weights {
 
       This function fills `weights` with 2D discrete harmonic weights computed at the `query`
       point with respect to the vertices of the input polygon. If `query` belongs to
-      the polygon boundary, the weights are not well-defined. You can see the more
-      precise version in the package Barycentric Coordinates 2.
+      the polygon boundary, the weights are not well-defined.
+
+      The method `CGAL::Barycentric_coordinates::Discrete_harmonic_coordinates_2::weights()`
+      provides a more precise version that also handles query points on the polygon boundary.
 
       The number of returned weights equals to the number of polygon vertices.
 
