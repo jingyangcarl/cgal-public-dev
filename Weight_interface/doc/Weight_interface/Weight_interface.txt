@@ -9,8 +9,150 @@ namespace CGAL {
 
 \section Weight_Interface_Intro Introduction
 
-This chapter is about generalized weights.
-For more information see examples below.
+Many geometric algorithms rely on the weighted constructions. In \cgal, weights
+are often used to setup different optimization problems based on the discretized
+Laplacian or when computing coordinates of a point with respect to polygons. This
+package provides a simple and unified interface to different types of weights.
+
+
+\section Weight_Interface_Generalized_Weights Generalized Weights
+
+We call *generalized weights* all weights, which can be computed analytically in 2D or 3D.
+In particular, we have three subgroups of such weights:
+
+- \ref PkgWeightInterfaceRefWeights2DPoints "weights",
+which can be computed on a finite (usually very small) set of 2D points;
+- \ref PkgWeightInterfaceRefWeights3DPoints "weights",
+which can be computed on a finite (usually very small) set of 3D points;
+- \ref PkgWeightInterfaceRefWeights2DPolygons "weights",
+which can be computed for a point with respect to a 2D polygon.
+
+The last group of weights comes from the package
+\ref PkgBarycentricCoordinates2 "Barycentric Coordinates 2".
+
+
+\section Weight_Interface_Weighting_Regions Weighting Regions
+
+We call *weighting regions* a set of weights, which are used to balance other
+weights, and are rarely used on their own. Sometimes such weights are referred as
+local averaging regions. These weights are usually lengths, areas, and volumes of
+2D and 3D objects. We have two subgroups of such weights:
+
+- \ref PkgWeightInterfaceRefRegions2DPoints "weights",
+which can be computed on a finite (usually very small) set of 2D points;
+- \ref PkgWeightInterfaceRefRegions3DPoints "weights",
+which can be computed on a finite (usually very small) set of 3D points;
+
+
+\section Weight_Interface_Examples Examples
+
+In this section, you can find a few examples of how and when the provided
+weights can be used.
+
+
+\subsection Weight_Interface_Examples_GeneralizedWeights Generalized Weights
+
+This trivial example shows how to compute both 2D and 3D generalized weights.
+The weight is computed at the query point `q` with respect to its neighbors `t`, `r`,
+and `p` either in 2D or 3D.
+
+\cgalExample{Weight_interface/generalized_weights.cpp}
+
+
+\subsection Weight_Interface_Examples_WeightingRegions Weighting Regions
+
+This trivial example shows how to compute both 2D and 3D weighting regions.
+The computed weights are all areas of the corresponding regions being a part of a
+triangle `[p, q, r]` either in 2D or 3D.
+
+\cgalExample{Weight_interface/weighting_regions.cpp}
+
+
+\subsection Weight_Interface_Examples_CoordinatesOneQuery Coordinates One Query
+
+This example shows how to compute barycentric weights and barycentric coordinates,
+which are normalized barycentric weights, for a query point with respect to a polygon
+in 2D. Since we have only one query point, we use a free function to show the simplified
+interface. For multiple query points though, calling a free function is not efficient
+(see the following example for more details). The used type of barycentric weights is
+`CGAL::Generalized_weights::Discrete_harmonic_weights_2`.
+
+\cgalExample{Weight_interface/coordinates_one_query.cpp}
+
+
+\subsection Weight_Interface_Examples_CoordinatesMultipleQueries Coordinates Multiple Queries
+
+This example shows how to compute barycentric weights and barycentric coordinates,
+which are normalized barycentric weights, for a set of query points with respect to
+a polygon in 2D. Since we have multiple query points, we first create a class and then
+use it to compute the weights. Using a class for multiple query points is preferred, because
+in that case, the memory required to compute weights is allocated only once, while
+when using a free function as in the previous example, it is allocated for each query point.
+The used type of barycentric weights is `CGAL::Generalized_weights::Wachspress_weights_2`.
+
+\cgalExample{Weight_interface/coordinates_multiple_queries.cpp}
+
+
+\subsection Weight_Interface_Examples_ProjectionTraits Projection Traits
+
+If you have a 2D polygon in 3D plane that is not an XY plane, you can still compute
+the 2D weights, however you need to provide a special projection traits class. This example
+shows how to achieve that when using the type of barycentric weights, which is
+`CGAL::Generalized_weights::Mean_value_weights_2`.
+
+\cgalExample{Weight_interface/projection_traits.cpp}
+
+
+\subsection Weight_Interface_Examples_CustomTraits Custom Traits
+
+As you could see from the previous example, it is possible to provide your own traits
+class with basic geometric objects, constructions, and predicates required by the algorithm.
+All weights in this \cgal component are models of the `AnalyticTraits_2` and `AnalyticTraits_3`
+concepts. However, many weights do not require all objects from these concepts. This example shows that
+the inverse distance weight for instance requires only the squared distance object, which is specified
+in the custom traits class.
+
+\cgalExample{Weight_interface/custom_traits.cpp}
+
+
+\subsection Weight_Interface_Examples_WeightedLaplacian Weighted Laplacian
+
+A typical example of using generalized weights is discretizing Poisson and Laplace
+equations, which play an important role in various geometry processing applications
+such as, for example, \ref PkgSurfaceMeshDeformation "surface mesh deformation" and
+\ref PkgSurfaceMeshParameterization "surface mesh parameterization". This example shows
+how to write the discretized Laplacian for all vertices of the given triangle mesh in
+matrix notation. We use the standard cotangent discretization weighted by the areas of
+the mixed Voronoi cells around each mesh vertex.
+
+\cgalExample{Weight_interface/weighted_laplacian.cpp}
+
+
+\subsection Weight_Interface_Examples_Flattening Flattening
+
+When computing generalized weights at a query point `q` with respect to its neighbors
+`t`, `r`, and `p` as shown in the first example, the local configuration is a quadrilateral
+`[q, t, r, p]` or two connected triangles `[r, q, t]` and `[p, q, r]`.
+
+When computing 3D weights, these triangles are not necessarily coplanar. When they are not
+coplanar, we make them coplanar, since several weights cannot be compute in such cases,
+however this so-called flattening introduces a distortion since the weights are computed
+not with respect to the original configuration but to its flattened version. This example
+shows this distortion and how it decreases when the point `q` moves back to the original
+non-flat configuration.
+
+Moreover, this example shows how to use the family of weights, which includes
+multiple types of generalized weights in one function. In particular, we show how by
+changing an input parameter, we converge from Wachspress weights to the mean value
+weights.
+
+\cgalExample{Weight_interface/flattening.cpp}
+
+
+\section Weight_Interface_History History
+
+This component is a part of the weights unification effort inside \cgal that has been
+carried out by Dmitry Anisimov in 2020.
 
 */
 } /* namespace CGAL */
