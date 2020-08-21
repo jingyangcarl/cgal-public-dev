@@ -42,6 +42,8 @@
 #include <CGAL/assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Point_3.h>
 
 namespace CGAL {
 namespace Generalized_weights {

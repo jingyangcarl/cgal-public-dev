@@ -26,7 +26,7 @@ int main() {
   const PTraits ptraits(normal);
 
   // Compute weights.
-  CGAL::Generalized_weights::mean_value_weights_2(
+  CGAL::Generalized_weights::mean_value_weights(
     polygon, query, std::back_inserter(weights), ptraits);
 
   std::cout << "2D weights: ";

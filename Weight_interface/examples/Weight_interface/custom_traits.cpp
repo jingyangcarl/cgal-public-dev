@@ -37,9 +37,9 @@ int main() {
   // Compute weights.
   std::cout << "2D/3D weight: ";
   std::cout << CGAL::Generalized_weights::
-    inverse_distance_weight_2(p2, q2, ctraits) << "/";
+    inverse_distance_weight(p2, q2, ctraits) << "/";
   std::cout << CGAL::Generalized_weights::
-    inverse_distance_weight_3(p3, q3, ctraits) << std::endl;
+    inverse_distance_weight(p3, q3, ctraits) << std::endl;
 
   return EXIT_SUCCESS;
 }

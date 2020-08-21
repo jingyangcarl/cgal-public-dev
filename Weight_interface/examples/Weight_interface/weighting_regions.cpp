@@ -27,20 +27,20 @@ int main() {
   // Compute weights.
   std::cout << "2D/3D weight: ";
   #if defined(UF_WEIGHT)
-    std::cout << CGAL::Generalized_weights::uniform_area_2(p2, q2, r2) << "/";
-    std::cout << CGAL::Generalized_weights::uniform_area_3(p3, q3, r3) << std::endl;
+    std::cout << CGAL::Generalized_weights::uniform_area(p2, q2, r2) << "/";
+    std::cout << CGAL::Generalized_weights::uniform_area(p3, q3, r3) << std::endl;
   #elif defined(TR_WEIGHT)
-    std::cout << CGAL::Generalized_weights::triangular_area_2(p2, q2, r2) << "/";
-    std::cout << CGAL::Generalized_weights::triangular_area_3(p3, q3, r3) << std::endl;
+    std::cout << CGAL::Generalized_weights::triangular_area(p2, q2, r2) << "/";
+    std::cout << CGAL::Generalized_weights::triangular_area(p3, q3, r3) << std::endl;
   #elif defined(BC_WEIGHT)
-    std::cout << CGAL::Generalized_weights::barycentric_area_2(p2, q2, r2) << "/";
-    std::cout << CGAL::Generalized_weights::barycentric_area_3(p3, q3, r3) << std::endl;
+    std::cout << CGAL::Generalized_weights::barycentric_area(p2, q2, r2) << "/";
+    std::cout << CGAL::Generalized_weights::barycentric_area(p3, q3, r3) << std::endl;
   #elif defined(VN_WEIGHT)
-    std::cout << CGAL::Generalized_weights::voronoi_area_2(p2, q2, r2) << "/";
-    std::cout << CGAL::Generalized_weights::voronoi_area_3(p3, q3, r3) << std::endl;
+    std::cout << CGAL::Generalized_weights::voronoi_area(p2, q2, r2) << "/";
+    std::cout << CGAL::Generalized_weights::voronoi_area(p3, q3, r3) << std::endl;
   #elif defined(MV_WEIGHT)
-    std::cout << CGAL::Generalized_weights::mixed_voronoi_area_2(p2, q2, r2) << "/";
-    std::cout << CGAL::Generalized_weights::mixed_voronoi_area_3(p3, q3, r3) << std::endl;
+    std::cout << CGAL::Generalized_weights::mixed_voronoi_area(p2, q2, r2) << "/";
+    std::cout << CGAL::Generalized_weights::mixed_voronoi_area(p3, q3, r3) << std::endl;
   #endif
 
   return EXIT_SUCCESS;

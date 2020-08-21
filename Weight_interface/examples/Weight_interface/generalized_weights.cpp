@@ -11,8 +11,11 @@ using Point_3 = typename Kernel::Point_3;
 // #define SP_WEIGHT
 // #define TP_WEIGHT
 // #define WP_WEIGHT
+// #define AA_WEIGHT
 #define MV_WEIGHT
+// #define TN_WEIGHT
 // #define DH_WEIGHT
+// #define CT_WEIGHT
 
 int main() {
 
@@ -31,26 +34,35 @@ int main() {
   // Compute weights.
   std::cout << "2D/3D weight: ";
   #if defined(UF_WEIGHT)
-    std::cout << CGAL::Generalized_weights::uniform_weight_2(q2, t2, r2, p2) << "/";
-    std::cout << CGAL::Generalized_weights::uniform_weight_3(q3, t3, r3, p3) << std::endl;
+    std::cout << CGAL::Generalized_weights::uniform_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::uniform_weight(q3, t3, r3, p3) << std::endl;
   #elif defined(ID_WEIGHT)
-    std::cout << CGAL::Generalized_weights::inverse_distance_weight_2(q2, t2, r2, p2) << "/";
-    std::cout << CGAL::Generalized_weights::inverse_distance_weight_3(q3, t3, r3, p3) << std::endl;
+    std::cout << CGAL::Generalized_weights::inverse_distance_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::inverse_distance_weight(q3, t3, r3, p3) << std::endl;
   #elif defined(SP_WEIGHT)
-    std::cout << CGAL::Generalized_weights::shepard_weight_2(q2, t2, r2, p2) << "/";
-    std::cout << CGAL::Generalized_weights::shepard_weight_3(q3, t3, r3, p3) << std::endl;
+    std::cout << CGAL::Generalized_weights::shepard_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::shepard_weight(q3, t3, r3, p3) << std::endl;
   #elif defined(TP_WEIGHT)
-    std::cout << CGAL::Generalized_weights::three_point_family_weight_2(q2, t2, r2, p2) << "/";
-    std::cout << CGAL::Generalized_weights::three_point_family_weight_3(q3, t3, r3, p3) << std::endl;
+    std::cout << CGAL::Generalized_weights::three_point_family_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::three_point_family_weight(q3, t3, r3, p3) << std::endl;
   #elif defined(WP_WEIGHT)
-    std::cout << CGAL::Generalized_weights::wachspress_weight_2(q2, t2, r2, p2) << "/";
-    std::cout << CGAL::Generalized_weights::wachspress_weight_3(q3, t3, r3, p3) << std::endl;
+    std::cout << CGAL::Generalized_weights::wachspress_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::wachspress_weight(q3, t3, r3, p3) << std::endl;
+  #elif defined(AA_WEIGHT)
+    std::cout << CGAL::Generalized_weights::authalic_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::authalic_weight(q3, t3, r3, p3) << std::endl;
   #elif defined(MV_WEIGHT)
-    std::cout << CGAL::Generalized_weights::mean_value_weight_2(q2, t2, r2, p2) << "/";
-    std::cout << CGAL::Generalized_weights::mean_value_weight_3(q3, t3, r3, p3) << std::endl;
+    std::cout << CGAL::Generalized_weights::mean_value_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::mean_value_weight(q3, t3, r3, p3) << std::endl;
+  #elif defined(TN_WEIGHT)
+    std::cout << CGAL::Generalized_weights::tangent_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::tangent_weight(q3, t3, r3, p3) << std::endl;
   #elif defined(DH_WEIGHT)
-    std::cout << CGAL::Generalized_weights::discrete_harmonic_weight_2(q2, t2, r2, p2) << "/";
-    std::cout << CGAL::Generalized_weights::discrete_harmonic_weight_3(q3, t3, r3, p3) << std::endl;
+    std::cout << CGAL::Generalized_weights::discrete_harmonic_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::discrete_harmonic_weight(q3, t3, r3, p3) << std::endl;
+  #elif defined(CT_WEIGHT)
+    std::cout << CGAL::Generalized_weights::cotangent_weight(q2, t2, r2, p2) << "/";
+    std::cout << CGAL::Generalized_weights::cotangent_weight(q3, t3, r3, p3) << std::endl;
   #endif
 
   return EXIT_SUCCESS;

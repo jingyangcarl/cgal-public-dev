@@ -22,16 +22,16 @@ int main() {
 
   // Compute weights.
   std::cout << "2D shepard: " <<
-    CGAL::Generalized_weights::shepard_weight_2(q2, t2, r2, p2) << std::endl;
+    CGAL::Generalized_weights::shepard_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D shepard: " <<
-    CGAL::Generalized_weights::shepard_weight_3(q3, t3, r3, p3, 1) << std::endl;
+    CGAL::Generalized_weights::shepard_weight(q3, t3, r3, p3, 1) << std::endl;
   std::cout << "-------------" << std::endl;
 
   // Overloads.
   std::cout << "2D shepard: " <<
-    CGAL::Generalized_weights::shepard_weight_2(q2, r2) << std::endl;
+    CGAL::Generalized_weights::shepard_weight(q2, r2) << std::endl;
   std::cout << "3D shepard: " <<
-    CGAL::Generalized_weights::shepard_weight_3(q3, r3, 1) << std::endl;
+    CGAL::Generalized_weights::shepard_weight(q3, r3, 1) << std::endl;
 
   return EXIT_SUCCESS;
 }

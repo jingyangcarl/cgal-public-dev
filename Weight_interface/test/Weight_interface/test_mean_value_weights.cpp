@@ -23,9 +23,9 @@ int main() {
 
   // Compute weights.
   std::cout << "2D mean value: " <<
-    CGAL::Generalized_weights::mean_value_weight_2(q2, t2, r2, p2) << std::endl;
+    CGAL::Generalized_weights::mean_value_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D mean value: " <<
-    CGAL::Generalized_weights::mean_value_weight_3(q3, t3, r3, p3) << std::endl;
+    CGAL::Generalized_weights::mean_value_weight(q3, t3, r3, p3) << std::endl;
 
   // Compute weights on a polygon.
 

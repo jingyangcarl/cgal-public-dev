@@ -25,7 +25,7 @@ using VIMap   = boost::associative_property_map<Indices>;
 struct Weight_wrapper {
 
   template<typename PointMap>
-  decltype(auto) w_ij(
+  FT w_ij(
     const Mesh& mesh, const HD he, const PointMap pmap) const {
 
     const auto v0 = target(he, mesh);
@@ -43,10 +43,10 @@ struct Weight_wrapper {
         v2 = source(he_ccw, mesh);
 
         const auto& p2 = get(pmap, v2);
-        return CGAL::Generalized_weights::utils::cotangent_3(p1, p2, p0);
+        return CGAL::Generalized_weights::utils::cotangent(p1, p2, p0);
       } else {
         const auto& p2 = get(pmap, v2);
-        return CGAL::Generalized_weights::utils::cotangent_3(p0, p2, p1);
+        return CGAL::Generalized_weights::utils::cotangent(p0, p2, p1);
       }
     }
 
@@ -58,11 +58,11 @@ struct Weight_wrapper {
     const auto& p2 = get(pmap, v2);
     const auto& p3 = get(pmap, v3);
     return CGAL::Generalized_weights::
-      cotangent_weight_3(p0, p2, p1, p3) / FT(2);
+      cotangent_weight(p0, p2, p1, p3) / FT(2);
   }
 
   template<typename PointMap>
-  decltype(auto) w_i(
+  FT w_i(
     const Mesh& mesh, const VD v_i, const PointMap pmap) const {
 
     FT A_i = FT(0);
@@ -80,7 +80,7 @@ struct Weight_wrapper {
       const auto& p2 = get(pmap, v2);
 
       A_i += CGAL::Generalized_weights::
-        mixed_voronoi_area_3(p1, p0, p2);
+        mixed_voronoi_area(p1, p0, p2);
     }
     assert(A_i != FT(0));
     return FT(1) / (FT(2) * A_i);

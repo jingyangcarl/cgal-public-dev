@@ -20,9 +20,9 @@ int main() {
 
   // Compute weights.
   std::cout << "2D barycentric: " <<
-    CGAL::Generalized_weights::barycentric_area_2(p2, q2, r2) << std::endl;
+    CGAL::Generalized_weights::barycentric_area(p2, q2, r2) << std::endl;
   std::cout << "3D barycentric: " <<
-    CGAL::Generalized_weights::barycentric_area_3(p3, q3, r3) << std::endl;
+    CGAL::Generalized_weights::barycentric_area(p3, q3, r3) << std::endl;
 
   return EXIT_SUCCESS;
 }

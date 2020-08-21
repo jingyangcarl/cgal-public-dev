@@ -20,9 +20,9 @@ int main() {
 
   // Compute weights.
   std::cout << "2D mixed voronoi: " <<
-    CGAL::Generalized_weights::mixed_voronoi_area_2(p2, q2, r2) << std::endl;
+    CGAL::Generalized_weights::mixed_voronoi_area(p2, q2, r2) << std::endl;
   std::cout << "3D mixed voronoi: " <<
-    CGAL::Generalized_weights::mixed_voronoi_area_3(p3, q3, r3) << std::endl;
+    CGAL::Generalized_weights::mixed_voronoi_area(p3, q3, r3) << std::endl;
 
   return EXIT_SUCCESS;
 }

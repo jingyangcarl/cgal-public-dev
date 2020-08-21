@@ -8,7 +8,7 @@ weights from the namespace `CGAL::Generalized_weights`.
 
 \cgalHasModel All models of `Kernel`.
 */
-class AnalyticTraits_3 {
+class AnalyticWeightTraits_3 {
 
 public:
 

@@ -24,9 +24,9 @@ int main() {
 
   // Compute weights.
   std::cout << "2D wachspress: " <<
-    CGAL::Generalized_weights::wachspress_weight_2(q2, t2, r2, p2) << std::endl;
+    CGAL::Generalized_weights::wachspress_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D wachspress: " <<
-    CGAL::Generalized_weights::wachspress_weight_3(q3, t3, r3, p3) << std::endl;
+    CGAL::Generalized_weights::wachspress_weight(q3, t3, r3, p3) << std::endl;
 
   // 2D configuration.
   const std::vector<Point_2> polygon2 = {t2, r2, p2, Point_2(0, 1)};

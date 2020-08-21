@@ -43,7 +43,7 @@ namespace utils {
     2D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -60,7 +60,7 @@ namespace utils {
     \return the computed tangent.
   */
   template<typename GeomTraits>
-  decltype(auto) tangent_2(
+  const typename GeomTraits::FT tangent(
     const typename GeomTraits::Point_2& p,
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& r,
@@ -93,15 +93,14 @@ namespace utils {
 
     \return the computed tangent.
   */
-  template<typename Point_2>
-  decltype(auto) tangent_2(
-    const Point_2& p,
-    const Point_2& q,
-    const Point_2& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT tangent(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    return tangent_2(p, q, r, traits);
+    return tangent(p, q, r, traits);
   }
 
   /*!
@@ -113,7 +112,7 @@ namespace utils {
     3D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -130,7 +129,7 @@ namespace utils {
     \return the computed tangent.
   */
   template<typename GeomTraits>
-  const typename GeomTraits::FT tangent_3(
+  const typename GeomTraits::FT tangent(
     const typename GeomTraits::Point_3& p,
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& r,
@@ -163,15 +162,14 @@ namespace utils {
 
     \return the computed tangent.
   */
-  template<typename Point_3>
-  decltype(auto) tangent_3(
-    const Point_3& p,
-    const Point_3& q,
-    const Point_3& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT tangent(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return tangent_3(p, q, r, traits);
+    return tangent(p, q, r, traits);
   }
 
   /*!
@@ -183,7 +181,7 @@ namespace utils {
     2D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -200,7 +198,7 @@ namespace utils {
     \return the computed cotangent.
   */
   template<typename GeomTraits>
-  decltype(auto) cotangent_2(
+  const typename GeomTraits::FT cotangent(
     const typename GeomTraits::Point_2& p,
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& r,
@@ -233,15 +231,14 @@ namespace utils {
 
     \return the computed cotangent.
   */
-  template<typename Point_2>
-  decltype(auto) cotangent_2(
-    const Point_2& p,
-    const Point_2& q,
-    const Point_2& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT cotangent_2(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    return cotangent_2(p, q, r, traits);
+    return cotangent(p, q, r, traits);
   }
 
   /*!
@@ -253,7 +250,7 @@ namespace utils {
     3D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -270,7 +267,7 @@ namespace utils {
     \return the computed cotangent.
   */
   template<typename GeomTraits>
-  const typename GeomTraits::FT cotangent_3(
+  const typename GeomTraits::FT cotangent(
     const typename GeomTraits::Point_3& p,
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& r,
@@ -303,91 +300,83 @@ namespace utils {
 
     \return the computed cotangent.
   */
-  template<typename Point_3>
-  decltype(auto) cotangent_3(
-    const Point_3& p,
-    const Point_3& q,
-    const Point_3& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT cotangent(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return cotangent_3(p, q, r, traits);
+    return cotangent(p, q, r, traits);
   }
 
   /// \cond SKIP_IN_MANUAL
-  template<typename Point_2>
-  decltype(auto) squared_distance_2(
-    const Point_2& p,
-    const Point_2& q) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT squared_distance(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     const auto squared_distance_2 =
       traits.compute_squared_distance_2_object();
     return squared_distance_2(p, q);
   }
 
-  template<typename Point_3>
-  decltype(auto) squared_distance_3(
-    const Point_3& p,
-    const Point_3& q) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT squared_distance(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
     const auto squared_distance_3 =
       traits.compute_squared_distance_3_object();
     return squared_distance_3(p, q);
   }
 
-  template<typename Point_2>
-  decltype(auto) distance_2(
-    const Point_2& p,
-    const Point_2& q) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT distance(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     return internal::distance_2(traits, p, q);
   }
 
-  template<typename Point_3>
-  decltype(auto) distance_3(
-    const Point_3& p,
-    const Point_3& q) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT distance(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
     return internal::distance_3(traits, p, q);
   }
 
-  template<typename Point_2>
-  decltype(auto) area_2(
-    const Point_2& p,
-    const Point_2& q,
-    const Point_2& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT area(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     return internal::area_2(traits, p, q, r);
   }
 
-  template<typename Point_3>
-  decltype(auto) area_3(
-    const Point_3& p,
-    const Point_3& q,
-    const Point_3& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT area(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
     return internal::positive_area_3(traits, p, q, r);
   }
 
-  template<typename Point_2>
-  decltype(auto) scalar_product_2(
-    const Point_2& p,
-    const Point_2& q,
-    const Point_2& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT scalar_product(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
     const auto scalar_product_2 =
       traits.compute_scalar_product_2_object();
@@ -399,13 +388,12 @@ namespace utils {
     return scalar_product_2(v1, v2);
   }
 
-  template<typename Point_3>
-  decltype(auto) scalar_product_3(
-    const Point_3& p,
-    const Point_3& q,
-    const Point_3& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT scalar_product(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
     const auto scalar_product_3 =
       traits.compute_scalar_product_3_object();
@@ -416,11 +404,19 @@ namespace utils {
     const auto v2 = construct_vector_3(q, p);
     return scalar_product_3(v1, v2);
   }
+  /// \endcond
 
+  /*!
+    \ingroup PkgWeightInterfaceRefUtils
+
+    \brief the projection traits class.
+
+    This class contains geometric objects, predicates, and constructions in order
+    to be able to compute 2D generalized weights in 3D.
+  */
   template<typename Kernel>
   using Projection_traits_3 =
     CGAL::Generalized_weights::internal::Projection_traits_3<Kernel>;
-  /// \endcond
 
 } // namespace utils
 } // namespace Generalized_weights

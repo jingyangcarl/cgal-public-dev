@@ -22,16 +22,16 @@ int main() {
 
   // Compute weights.
   std::cout << "2D inverse distance: " <<
-    CGAL::Generalized_weights::inverse_distance_weight_2(q2, t2, r2, p2) << std::endl;
+    CGAL::Generalized_weights::inverse_distance_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D inverse distance: " <<
-    CGAL::Generalized_weights::inverse_distance_weight_3(q3, t3, r3, p3) << std::endl;
+    CGAL::Generalized_weights::inverse_distance_weight(q3, t3, r3, p3) << std::endl;
   std::cout << "----------------------" << std::endl;
 
   // Overloads.
   std::cout << "2D inverse distance: " <<
-    CGAL::Generalized_weights::inverse_distance_weight_2(q2, r2) << std::endl;
+    CGAL::Generalized_weights::inverse_distance_weight(q2, r2) << std::endl;
   std::cout << "3D inverse distance: " <<
-    CGAL::Generalized_weights::inverse_distance_weight_3(q3, r3) << std::endl;
+    CGAL::Generalized_weights::inverse_distance_weight(q3, r3) << std::endl;
 
   return EXIT_SUCCESS;
 }

@@ -20,16 +20,16 @@ int main() {
 
   // Compute weights.
   std::cout << "2D uniform: " <<
-    CGAL::Generalized_weights::uniform_area_2(p2, q2, r2) << std::endl;
+    CGAL::Generalized_weights::uniform_area(p2, q2, r2) << std::endl;
   std::cout << "3D uniform: " <<
-    CGAL::Generalized_weights::uniform_area_3(p3, q3, r3) << std::endl;
+    CGAL::Generalized_weights::uniform_area(p3, q3, r3) << std::endl;
   std::cout << "-------------" << std::endl;
 
   // Overloads.
   std::cout << "2D uniform: " <<
-    CGAL::Generalized_weights::uniform_area_2() << std::endl;
+    CGAL::Generalized_weights::uniform_area() << std::endl;
   std::cout << "3D uniform: " <<
-    CGAL::Generalized_weights::uniform_area_3() << std::endl;
+    CGAL::Generalized_weights::uniform_area() << std::endl;
 
   return EXIT_SUCCESS;
 }
