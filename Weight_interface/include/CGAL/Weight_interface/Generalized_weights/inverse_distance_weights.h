@@ -47,7 +47,7 @@ namespace Generalized_weights {
   /// \endcond
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the inverse distance weight for 2D points.
 
@@ -55,14 +55,14 @@ namespace Generalized_weights {
     \f$w = \frac{1}{d}\f$
     with notations shown in the figure below.
 
-    This weight is a special case of the `CGAL::Generalized_weights::shepard_weight_2()`.
+    This weight is a special case of the `CGAL::Generalized_weights::shepard_weight()`.
 
-    \cgalFigureBegin{inverse_distance_weight_2, inverse_distance.svg}
+    \cgalFigureBegin{inverse_distance_weight, inverse_distance.svg}
       Notation used for the inverse distance weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -76,7 +76,7 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename GeomTraits>
-  decltype(auto) inverse_distance_weight_2(
+  const typename GeomTraits::FT inverse_distance_weight(
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2& r,
@@ -90,20 +90,14 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the inverse distance weight for 2D points.
 
-    The weight is computed as
-    \f$w = \frac{1}{d}\f$
-    with notations shown in \cgalFigureRef{inverse_distance_weight_2}.
-
-    This weight is a special case of the `CGAL::Generalized_weights::shepard_weight_2()`.
-
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -118,28 +112,29 @@ namespace Generalized_weights {
     the third neighbor
 
     \return the computed weight.
-  */
-  template<typename Point_2>
-  decltype(auto) inverse_distance_weight_2(
-    const Point_2& q,
-    const Point_2& t,
-    const Point_2& r,
-    const Point_2& p) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    \sa `CGAL::Generalized_weights::inverse_distance_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT inverse_distance_weight(
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& t,
+    const CGAL::Point_2<GeomTraits>& r,
+    const CGAL::Point_2<GeomTraits>& p) {
+
     const GeomTraits traits;
-    return inverse_distance_weight_2(q, t, r, p, traits);
+    return inverse_distance_weight(q, t, r, p, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the inverse distance weight for 2D points.
 
-    This function calls the function `CGAL::Generalized_weights::inverse_distance_weight_2()`.
+    This function calls the function `CGAL::Generalized_weights::inverse_distance_weight()`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -151,28 +146,30 @@ namespace Generalized_weights {
     an instance of `GeomTraits`
 
     \return the computed weight.
+
+    \sa `CGAL::Generalized_weights::inverse_distance_weight()`
   */
   template<typename GeomTraits>
-  decltype(auto) inverse_distance_weight_2(
+  const typename GeomTraits::FT inverse_distance_weight(
     const typename GeomTraits::Point_2& p,
     const typename GeomTraits::Point_2& q,
     const GeomTraits& traits) {
 
     typename GeomTraits::Point_2 stub;
-    return inverse_distance_weight_2(p, stub, q, stub, traits);
+    return inverse_distance_weight(p, stub, q, stub, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the inverse distance weight for 2D points.
 
-    This function calls the function `CGAL::Generalized_weights::inverse_distance_weight_2()`.
+    This function calls the function `CGAL::Generalized_weights::inverse_distance_weight()`.
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -181,33 +178,27 @@ namespace Generalized_weights {
     the second point
 
     \return the computed weight.
-  */
-  template<typename Point_2>
-  decltype(auto) inverse_distance_weight_2(
-    const Point_2& p,
-    const Point_2& q) {
 
-    Point_2 stub;
-    return inverse_distance_weight_2(p, stub, q, stub);
+    \sa `CGAL::Generalized_weights::inverse_distance_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT inverse_distance_weight(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q) {
+
+    CGAL::Point_2<GeomTraits> stub;
+    return inverse_distance_weight(p, stub, q, stub);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the inverse distance weight for 3D points.
 
-    The weight is computed as
-    \f$w = \frac{1}{d}\f$
-    with notations shown in the figure below.
-
-    This weight is a special case of the `CGAL::Generalized_weights::shepard_weight_3()`.
-
-    \cgalFigureBegin{inverse_distance_weight_3, inverse_distance.svg}
-      Notation used for the inverse distance weight.
-    \cgalFigureEnd
+    This is an overload of the 2D weight for 3D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -219,9 +210,11 @@ namespace Generalized_weights {
     an instance of `GeomTraits`
 
     \return the computed weight.
+
+    \sa `CGAL::Generalized_weights::inverse_distance_weight()`
   */
   template<typename GeomTraits>
-  decltype(auto) inverse_distance_weight_3(
+  const typename GeomTraits::FT inverse_distance_weight(
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3& r,
@@ -235,20 +228,16 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the inverse distance weight for 3D points.
 
-    The weight is computed as
-    \f$w = \frac{1}{d}\f$
-    with notations shown in \cgalFigureRef{inverse_distance_weight_3}.
-
-    This weight is a special case of the `CGAL::Generalized_weights::shepard_weight_3()`.
+    This is an overload of the 2D weight for 3D points.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -263,28 +252,31 @@ namespace Generalized_weights {
     the third neighbor
 
     \return the computed weight.
-  */
-  template<typename Point_3>
-  decltype(auto) inverse_distance_weight_3(
-    const Point_3& q,
-    const Point_3& t,
-    const Point_3& r,
-    const Point_3& p) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    \sa `CGAL::Generalized_weights::inverse_distance_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT inverse_distance_weight(
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& t,
+    const CGAL::Point_3<GeomTraits>& r,
+    const CGAL::Point_3<GeomTraits>& p) {
+
     const GeomTraits traits;
-    return inverse_distance_weight_3(q, t, r, p, traits);
+    return inverse_distance_weight(q, t, r, p, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the inverse distance weight for 3D points.
 
-    This function calls the function `CGAL::Generalized_weights::inverse_distance_weight_3()`.
+    This is an overload of the 2D weight for 3D points.
+
+    This function calls the function `CGAL::Generalized_weights::inverse_distance_weight()`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -296,28 +288,32 @@ namespace Generalized_weights {
     an instance of `GeomTraits`
 
     \return the computed weight.
+
+    \sa `CGAL::Generalized_weights::inverse_distance_weight()`
   */
   template<typename GeomTraits>
-  decltype(auto) inverse_distance_weight_3(
+  const typename GeomTraits::FT inverse_distance_weight(
     const typename GeomTraits::Point_3& p,
     const typename GeomTraits::Point_3& q,
     const GeomTraits& traits) {
 
     typename GeomTraits::Point_3 stub;
-    return inverse_distance_weight_3(p, stub, q, stub, traits);
+    return inverse_distance_weight(p, stub, q, stub, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the inverse distance weight for 3D points.
 
-    This function calls the function `CGAL::Generalized_weights::inverse_distance_weight_3()`.
+    This is an overload of the 2D weight for 3D points.
+
+    This function calls the function `CGAL::Generalized_weights::inverse_distance_weight()`.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -326,14 +322,16 @@ namespace Generalized_weights {
     the second point
 
     \return the computed weight.
-  */
-  template<typename Point_3>
-  decltype(auto) inverse_distance_weight_3(
-    const Point_3& p,
-    const Point_3& q) {
 
-    Point_3 stub;
-    return inverse_distance_weight_3(p, stub, q, stub);
+    \sa `CGAL::Generalized_weights::inverse_distance_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT inverse_distance_weight(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q) {
+
+    CGAL::Point_3<GeomTraits> stub;
+    return inverse_distance_weight(p, stub, q, stub);
   }
 
 } // namespace Generalized_weights

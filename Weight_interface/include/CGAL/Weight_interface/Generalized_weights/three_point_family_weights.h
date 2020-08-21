@@ -67,7 +67,7 @@ namespace Generalized_weights {
   /// \endcond
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the three point family weight for 2D points.
 
@@ -77,23 +77,23 @@ namespace Generalized_weights {
     being the power parameter.
 
     For \f$a = 0\f$ this weight is equal to the
-    `CGAL::Generalized_weights::wachspress_weight_2()` and
-    `CGAL::Generalized_weights::authalic_weight_2()`.
+    `CGAL::Generalized_weights::wachspress_weight()` and
+    `CGAL::Generalized_weights::authalic_weight()`.
 
     For \f$a = 1\f$ this weight is equal to the
-    `CGAL::Generalized_weights::mean_value_weight_2()` and
-    `CGAL::Generalized_weights::tangent_weight_2()`.
+    `CGAL::Generalized_weights::mean_value_weight()` and
+    `CGAL::Generalized_weights::tangent_weight()`.
 
     For \f$a = 2\f$ this weight is equal to the
-    `CGAL::Generalized_weights::discrete_harmonic_weight_2()` and
-    `CGAL::Generalized_weights::cotangent_weight_2()`.
+    `CGAL::Generalized_weights::discrete_harmonic_weight()` and
+    `CGAL::Generalized_weights::cotangent_weight()`.
 
-    \cgalFigureBegin{three_point_family_weight_2, three_point_family.svg}
+    \cgalFigureBegin{three_point_family_weight, three_point_family.svg}
       Notation used for the three point family weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -116,7 +116,7 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename GeomTraits>
-  decltype(auto) three_point_family_weight_2(
+  const typename GeomTraits::FT three_point_family_weight(
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& t,
     const typename GeomTraits::Point_2& r,
@@ -138,31 +138,14 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the three point family weight for 2D points.
 
-    The weight is computed as
-    \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
-    with notations shown in \cgalFigureRef{three_point_family_weight_2} below
-    and \f$a\f$ any real number being the power parameter.
-
-    For \f$a = 0\f$ this weight is equal to the
-    `CGAL::Generalized_weights::wachspress_weight_2()` and
-    `CGAL::Generalized_weights::authalic_weight_2()`.
-
-    For \f$a = 1\f$ this weight is equal to the
-    `CGAL::Generalized_weights::mean_value_weight_2()` and
-    `CGAL::Generalized_weights::tangent_weight_2()`.
-
-    For \f$a = 2\f$ this weight is equal to the
-    `CGAL::Generalized_weights::discrete_harmonic_weight_2()` and
-    `CGAL::Generalized_weights::cotangent_weight_2()`.
-
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -177,52 +160,34 @@ namespace Generalized_weights {
     the third neighbor
 
     \param a
-    the power parameter, the default is `mean_value_weight_2()`
+    the power parameter, the default is `mean_value_weight()`
 
     \return the computed weight.
-  */
-  template<typename Point_2>
-  decltype(auto) three_point_family_weight_2(
-    const Point_2& q,
-    const Point_2& t,
-    const Point_2& r,
-    const Point_2& p,
-    const typename Kernel_traits<Point_2>::Kernel::FT a =
-    typename Kernel_traits<Point_2>::Kernel::FT(1)) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    \sa `CGAL::Generalized_weights::three_point_family_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT three_point_family_weight(
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& t,
+    const CGAL::Point_2<GeomTraits>& r,
+    const CGAL::Point_2<GeomTraits>& p,
+    const typename GeomTraits::FT a =
+    typename GeomTraits::FT(1)) {
+
     const GeomTraits traits;
-    return three_point_family_weight_2(q, t, r, p, a, traits);
+    return three_point_family_weight(q, t, r, p, a, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the three point family weight for 3D points.
 
-    The weight is computed as
-    \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
-    with notations shown in the figure below and \f$a\f$ any real number
-    being the power parameter.
-
-    For \f$a = 0\f$ this weight is equal to the
-    `CGAL::Generalized_weights::wachspress_weight_3()` and
-    `CGAL::Generalized_weights::authalic_weight_3()`.
-
-    For \f$a = 1\f$ this weight is equal to the
-    `CGAL::Generalized_weights::mean_value_weight_3()` and
-    `CGAL::Generalized_weights::tangent_weight_3()`.
-
-    For \f$a = 2\f$ this weight is equal to the
-    `CGAL::Generalized_weights::discrete_harmonic_weight_3()` and
-    `CGAL::Generalized_weights::cotangent_weight_3()`.
-
-    \cgalFigureBegin{three_point_family_weight_3, three_point_family.svg}
-      Notation used for the three point family weight.
-    \cgalFigureEnd
+    This is an overload of the 2D weight for 3D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_2` and `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -243,9 +208,11 @@ namespace Generalized_weights {
     an instance of `GeomTraits`
 
     \return the computed weight.
+
+    \sa `CGAL::Generalized_weights::three_point_family_weight()`
   */
   template<typename GeomTraits>
-  decltype(auto) three_point_family_weight_3(
+  const typename GeomTraits::FT three_point_family_weight(
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& t,
     const typename GeomTraits::Point_3& r,
@@ -259,35 +226,20 @@ namespace Generalized_weights {
       traits,
       q,  t,  r,  p,
       qf, tf, rf, pf);
-    return three_point_family_weight_2(qf, tf, rf, pf, a, traits);
+    return three_point_family_weight(qf, tf, rf, pf, a, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the three point family weight for 3D points.
 
-    The weight is computed as
-    \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
-    with notations shown in \cgalFigureRef{three_point_family_weight_3} below
-    and \f$a\f$ any real number being the power parameter.
-
-    For \f$a = 0\f$ this weight is equal to the
-    `CGAL::Generalized_weights::wachspress_weight_3()` and
-    `CGAL::Generalized_weights::authalic_weight_3()`.
-
-    For \f$a = 1\f$ this weight is equal to the
-    `CGAL::Generalized_weights::mean_value_weight_3()` and
-    `CGAL::Generalized_weights::tangent_weight_3()`.
-
-    For \f$a = 2\f$ this weight is equal to the
-    `CGAL::Generalized_weights::discrete_harmonic_weight_3()` and
-    `CGAL::Generalized_weights::cotangent_weight_3()`.
+    This is an overload of the 2D weight for 3D points.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2` and `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -302,22 +254,23 @@ namespace Generalized_weights {
     the third neighbor
 
     \param a
-    the power parameter, the default is `mean_value_weight_3()`
+    the power parameter, the default is `mean_value_weight()`
 
     \return the computed weight.
-  */
-  template<typename Point_3>
-  decltype(auto) three_point_family_weight_3(
-    const Point_3& q,
-    const Point_3& t,
-    const Point_3& r,
-    const Point_3& p,
-    const typename Kernel_traits<Point_3>::Kernel::FT a =
-    typename Kernel_traits<Point_3>::Kernel::FT(1)) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    \sa `CGAL::Generalized_weights::three_point_family_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT three_point_family_weight(
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& t,
+    const CGAL::Point_3<GeomTraits>& r,
+    const CGAL::Point_3<GeomTraits>& p,
+    const typename GeomTraits::FT a =
+    typename GeomTraits::FT(1)) {
+
     const GeomTraits traits;
-    return three_point_family_weight_3(q, t, r, p, a, traits);
+    return three_point_family_weight(q, t, r, p, a, traits);
   }
 
 } // namespace Generalized_weights

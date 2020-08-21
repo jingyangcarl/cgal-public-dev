@@ -32,7 +32,7 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions2DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief computes area of the mixed Voronoi cell in 2D.
 
@@ -40,21 +40,21 @@ namespace Generalized_weights {
     is formed by two midpoints of the edges incident to `q` and the circumcenter of
     the triangle `[p, q, r]`.
 
-    \cgalFigureBegin{mixed_voronoi_area_2, mixed_voronoi_cell.svg}
+    \cgalFigureBegin{mixed_voronoi_area, mixed_voronoi_cell.svg}
       Notation used for the mixed Voronoi cell.
     \cgalFigureEnd
 
-    However, unlike the original `CGAL::Generalized_weights::voronoi_area_2()`,
+    However, unlike the original `CGAL::Generalized_weights::voronoi_area()`,
     if one of the angles in the triangle `[p, q, r]` is obtuse and the circumcenter
     vertex of the region is outside this triangle, this vertex is moved to the mid
     point of the edge `[r, p]` as shown in the figure below.
 
-    \cgalFigureBegin{mixed_voronoi_area_2_obtuse, mixed_voronoi_cell_obtuse.svg}
+    \cgalFigureBegin{mixed_voronoi_area_obtuse, mixed_voronoi_cell_obtuse.svg}
       The case with the obtuse angle.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -70,10 +70,10 @@ namespace Generalized_weights {
 
     \return the computed area.
 
-    \sa `CGAL::Generalized_weights::voronoi_area_2()`
+    \sa `CGAL::Generalized_weights::voronoi_area()`
   */
   template<typename GeomTraits>
-  decltype(auto) mixed_voronoi_area_2(
+  const typename GeomTraits::FT mixed_voronoi_area(
     const typename GeomTraits::Point_2& p,
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& r,
@@ -108,23 +108,14 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions2DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief computes area of the mixed Voronoi cell in 2D.
 
-    This area is the area of the shaded region in \cgalFigureRef{mixed_voronoi_area_2}.
-    The region is formed by two midpoints of the edges incident to `q` and the circumcenter of
-    the triangle `[p, q, r]`.
-
-    However, unlike the original `CGAL::Generalized_weights::voronoi_area_2()`,
-    if one of the angles in the triangle `[p, q, r]` is obtuse and the circumcenter
-    vertex of the region is outside this triangle, this vertex is moved to the mid
-    point of the edge `[r, p]` as shown in \cgalFigureRef{mixed_voronoi_area_2_obtuse}.
-
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -137,43 +128,28 @@ namespace Generalized_weights {
 
     \return the computed area.
 
-    \sa `CGAL::Generalized_weights::voronoi_area_2()`
+    \sa `CGAL::Generalized_weights::mixed_voronoi_area()`
+    \sa `CGAL::Generalized_weights::voronoi_area()`
   */
-  template<typename Point_2>
-  decltype(auto) mixed_voronoi_area_2(
-    const Point_2& p,
-    const Point_2& q,
-    const Point_2& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT mixed_voronoi_area(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;
-    return mixed_voronoi_area_2(p, q, r, traits);
+    return mixed_voronoi_area(p, q, r, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions3DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief computes area of the mixed Voronoi cell in 3D.
 
-    This area is the area of the shaded region in the figure below. The region
-    is formed by two midpoints of the edges incident to `q` and the circumcenter of
-    the triangle `[p, q, r]`.
-
-    \cgalFigureBegin{mixed_voronoi_area_3, mixed_voronoi_cell.svg}
-      Notation used for the mixed Voronoi cell.
-    \cgalFigureEnd
-
-    However, unlike the original `CGAL::Generalized_weights::voronoi_area_3()`,
-    if one of the angles in the triangle `[p, q, r]` is obtuse and the circumcenter
-    vertex of the region is outside this triangle, this vertex is moved to the mid
-    point of the edge `[r, p]` as shown in the figure below.
-
-    \cgalFigureBegin{mixed_voronoi_area_3_obtuse, mixed_voronoi_cell_obtuse.svg}
-      The case with the obtuse angle.
-    \cgalFigureEnd
+    This is an overload of the 2D weight for 3D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -189,10 +165,11 @@ namespace Generalized_weights {
 
     \return the computed area.
 
-    \sa `CGAL::Generalized_weights::voronoi_area_3()`
+    \sa `CGAL::Generalized_weights::mixed_voronoi_area()`
+    \sa `CGAL::Generalized_weights::voronoi_area()`
   */
   template<typename GeomTraits>
-  decltype(auto) mixed_voronoi_area_3(
+  const typename GeomTraits::FT mixed_voronoi_area(
     const typename GeomTraits::Point_3& p,
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& r,
@@ -227,23 +204,16 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions3DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief computes area of the mixed Voronoi cell in 3D.
 
-    This area is the area of the shaded region in \cgalFigureRef{mixed_voronoi_area_3}.
-    The region is formed by two midpoints of the edges incident to `q` and the circumcenter of
-    the triangle `[p, q, r]`.
-
-    However, unlike the original `CGAL::Generalized_weights::voronoi_area_3()`,
-    if one of the angles in the triangle `[p, q, r]` is obtuse and the circumcenter
-    vertex of the region is outside this triangle, this vertex is moved to the mid
-    point of the edge `[r, p]` as shown in \cgalFigureRef{mixed_voronoi_area_3_obtuse}.
+    This is an overload of the 2D weight for 3D points.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -256,17 +226,17 @@ namespace Generalized_weights {
 
     \return the computed area.
 
-    \sa `CGAL::Generalized_weights::voronoi_area_3()`
+    \sa `CGAL::Generalized_weights::mixed_voronoi_area()`
+    \sa `CGAL::Generalized_weights::voronoi_area()`
   */
-  template<typename Point_3>
-  decltype(auto) mixed_voronoi_area_3(
-    const Point_3& p,
-    const Point_3& q,
-    const Point_3& r) {
+  template<typename GeomTraits>
+  const typename GeomTraits::FT mixed_voronoi_area(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
     const GeomTraits traits;
-    return mixed_voronoi_area_3(p, q, r, traits);
+    return mixed_voronoi_area(p, q, r, traits);
   }
 
 } // namespace Generalized_weights

@@ -32,19 +32,19 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions2DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief computes area of the uniform cell in 2D.
 
     This function always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \return the computed area.
   */
   template<typename GeomTraits>
-  decltype(auto) uniform_area_2(
+  const typename GeomTraits::FT uniform_area(
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2&,
@@ -55,7 +55,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions2DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief computes area of the uniform cell in 2D.
 
@@ -63,8 +63,8 @@ namespace Generalized_weights {
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -76,45 +76,35 @@ namespace Generalized_weights {
     the third point
 
     \return the computed area.
-  */
-  template<typename Point_2>
-  decltype(auto) uniform_area_2(
-    const Point_2& p,
-    const Point_2& q,
-    const Point_2& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    \sa `CGAL::Generalized_weights::uniform_area()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT uniform_area(
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& r) {
+
     const GeomTraits traits;
-    return uniform_area_2(p, q, r, traits);
+    return uniform_area(p, q, r, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions2DPoints
-
-    \brief computes area of the uniform cell in 2D.
-
-    This function always returns 1.
-
-    \return the computed area.
-  */
-  double uniform_area_2() {
-    return 1.0;
-  }
-
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions3DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief computes area of the uniform cell in 3D.
 
     This function always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_3`.
 
     \return the computed area.
+
+    \sa `CGAL::Generalized_weights::uniform_area()`
   */
   template<typename GeomTraits>
-  decltype(auto) uniform_area_3(
+  const typename GeomTraits::FT uniform_area(
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3&,
@@ -125,7 +115,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions3DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
     \brief computes area of the uniform cell in 3D.
 
@@ -133,8 +123,8 @@ namespace Generalized_weights {
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -146,28 +136,29 @@ namespace Generalized_weights {
     the third point
 
     \return the computed area.
-  */
-  template<typename Point_3>
-  decltype(auto) uniform_area_3(
-    const Point_3& p,
-    const Point_3& q,
-    const Point_3& r) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    \sa `CGAL::Generalized_weights::uniform_area()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT uniform_area(
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& r) {
+
     const GeomTraits traits;
-    return uniform_area_3(p, q, r, traits);
+    return uniform_area(p, q, r, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefRegions3DPoints
+    \ingroup PkgWeightInterfaceRefRegions
 
-    \brief computes area of the uniform cell in 3D.
+    \brief computes area of the uniform cell.
 
     This function always returns 1.
 
     \return the computed area.
   */
-  double uniform_area_3() {
+  double uniform_area() {
     return 1.0;
   }
 

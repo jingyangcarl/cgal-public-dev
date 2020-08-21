@@ -20,7 +20,7 @@ int main() {
   coordinates.reserve(polygon.size());
 
   // Compute barycentric weights.
-  CGAL::Generalized_weights::discrete_harmonic_weights(
+  CGAL::Generalized_weights::discrete_harmonic_weights_2(
     polygon, query, std::back_inserter(weights));
 
   std::cout << "2D weights: ";

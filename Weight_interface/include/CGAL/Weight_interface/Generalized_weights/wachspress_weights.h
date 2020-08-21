@@ -52,7 +52,7 @@ namespace Generalized_weights {
   /// \endcond
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the Wachspress weight for 2D points.
 
@@ -60,16 +60,16 @@ namespace Generalized_weights {
     \f$w = \frac{C}{A_1 A_2}\f$
     with notations shown in the figure below.
 
-    This weight is equal to the `CGAL::Generalized_weights::authalic_weight_2()`.
+    This weight is equal to the `CGAL::Generalized_weights::authalic_weight()`.
 
-    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
+    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight()`.
 
-    \cgalFigureBegin{wachspress_weight_2, wachspress.svg}
+    \cgalFigureBegin{wachspress_weight, wachspress.svg}
       Notation used for the Wachspress weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -89,7 +89,7 @@ namespace Generalized_weights {
     \return the computed weight.
   */
   template<typename GeomTraits>
-  decltype(auto) wachspress_weight_2(
+  const typename GeomTraits::FT wachspress_weight(
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& t,
     const typename GeomTraits::Point_2& r,
@@ -104,22 +104,14 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the Wachspress weight for 2D points.
 
-    The weight is computed as
-    \f$w = \frac{C}{A_1 A_2}\f$
-    with notations shown in \cgalFigureRef{wachspress_weight_2}.
-
-    This weight is equal to the `CGAL::Generalized_weights::authalic_weight_2()`.
-
-    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_2()`.
-
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -134,38 +126,29 @@ namespace Generalized_weights {
     the third neighbor
 
     \return the computed weight.
-  */
-  template<typename Point_2>
-  decltype(auto) wachspress_weight_2(
-    const Point_2& q,
-    const Point_2& t,
-    const Point_2& r,
-    const Point_2& p) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    \sa `CGAL::Generalized_weights::wachspress_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT wachspress_weight(
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& t,
+    const CGAL::Point_2<GeomTraits>& r,
+    const CGAL::Point_2<GeomTraits>& p) {
+
     const GeomTraits traits;
-    return wachspress_weight_2(q, t, r, p, traits);
+    return wachspress_weight(q, t, r, p, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the Wachspress weight for 3D points.
 
-    The weight is computed as
-    \f$w = \frac{C}{A_1 A_2}\f$
-    with notations shown in the figure below.
-
-    This weight is equal to the `CGAL::Generalized_weights::authalic_weight_3()`.
-
-    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
-
-    \cgalFigureBegin{wachspress_weight_3, wachspress.svg}
-      Notation used for the Wachspress weight.
-    \cgalFigureEnd
+    This is an overload of the 2D weight for 3D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2` and `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_2` and `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -183,9 +166,11 @@ namespace Generalized_weights {
     an instance of `GeomTraits`
 
     \return the computed weight.
+
+    \sa `CGAL::Generalized_weights::wachspress_weight()`
   */
   template<typename GeomTraits>
-  decltype(auto) wachspress_weight_3(
+  const typename GeomTraits::FT wachspress_weight(
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& t,
     const typename GeomTraits::Point_3& r,
@@ -198,26 +183,20 @@ namespace Generalized_weights {
       traits,
       q,  t,  r,  p,
       qf, tf, rf, pf);
-    return wachspress_weight_2(qf, tf, rf, pf, traits);
+    return wachspress_weight(qf, tf, rf, pf, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the Wachspress weight for 3D points.
 
-    The weight is computed as
-    \f$w = \frac{C}{A_1 A_2}\f$
-    with notations shown in \cgalFigureRef{wachspress_weight_3}.
-
-    This weight is equal to the `CGAL::Generalized_weights::authalic_weight_3()`.
-
-    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight_3()`.
+    This is an overload of the 2D weight for 3D points.
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2` and `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -232,21 +211,22 @@ namespace Generalized_weights {
     the third neighbor
 
     \return the computed weight.
-  */
-  template<typename Point_3>
-  decltype(auto) wachspress_weight_3(
-    const Point_3& q,
-    const Point_3& t,
-    const Point_3& r,
-    const Point_3& p) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    \sa `CGAL::Generalized_weights::wachspress_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT wachspress_weight(
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& t,
+    const CGAL::Point_3<GeomTraits>& r,
+    const CGAL::Point_3<GeomTraits>& p) {
+
     const GeomTraits traits;
-    return wachspress_weight_3(q, t, r, p, traits);
+    return wachspress_weight(q, t, r, p, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPolygons
+    \ingroup PkgWeightInterfaceRefBarycentric
 
     \brief 2D Wachspress weights for polygons.
 
@@ -256,13 +236,13 @@ namespace Generalized_weights {
 
     Wachspress weights are well-defined and non-negative inside a strictly convex polygon.
     The weights are computed analytically using the formulation from
-    `CGAL::Generalized_weights::wachspress_weight_2()`.
+    `CGAL::Generalized_weights::wachspress_weight()`.
 
     \tparam Polygon
     must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \tparam VertexMap
     must be a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
@@ -463,7 +443,7 @@ namespace Generalized_weights {
   };
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPolygons
+    \ingroup PkgWeightInterfaceRefBarycentric
 
     \brief computes 2D Wachspress weights for polygons.
 
@@ -485,7 +465,7 @@ namespace Generalized_weights {
     the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a strictly convex polygon.
@@ -522,20 +502,9 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPolygons
+    \ingroup PkgWeightInterfaceRefBarycentric
 
     \brief computes 2D Wachspress weights for polygons.
-
-    This function computes 2D Wachspress weights at a given `query` point
-    with respect to the vertices of a strictly convex `polygon`, that is one
-    weight per vertex. The weights are stored in a destination range
-    beginning at `w_begin`.
-
-    Internally, the class `CGAL::Generalized_weights::Wachspress_weights_2` is used.
-    If one needs a flexible API, please refer to that class. If you want to handle
-    multiple query points, you better use that class, too. When using this function,
-    internal memory is allocated for each query point, while when using the class,
-    it is allocated only once, which is much more efficient.
 
     This function infers a traits class from the `Point_2` class.
 
@@ -560,6 +529,8 @@ namespace Generalized_weights {
     \pre polygon.size() >= 3
     \pre polygon is simple
     \pre polygon is strictly convex
+
+    \sa `CGAL::Generalized_weights::wachspress_weights_2()`
   */
   template<
   typename PointRange,

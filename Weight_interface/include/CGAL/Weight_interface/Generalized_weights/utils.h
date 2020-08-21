@@ -79,8 +79,8 @@ namespace utils {
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -148,8 +148,8 @@ namespace utils {
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -217,8 +217,8 @@ namespace utils {
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param p
     the first point
@@ -232,7 +232,7 @@ namespace utils {
     \return the computed cotangent.
   */
   template<typename GeomTraits>
-  const typename GeomTraits::FT cotangent_2(
+  const typename GeomTraits::FT cotangent(
     const CGAL::Point_2<GeomTraits>& p,
     const CGAL::Point_2<GeomTraits>& q,
     const CGAL::Point_2<GeomTraits>& r) {
@@ -286,8 +286,8 @@ namespace utils {
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param p
     the first point

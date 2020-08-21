@@ -32,19 +32,19 @@ namespace CGAL {
 namespace Generalized_weights {
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the uniform weight for 2D points.
 
     This function always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_2`.
+    must be a model of `AnalyticWeightTraits_2`.
 
     \return the computed weight.
   */
   template<typename GeomTraits>
-  decltype(auto) uniform_weight_2(
+  const typename GeomTraits::FT uniform_weight(
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2&,
     const typename GeomTraits::Point_2&,
@@ -56,7 +56,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the uniform weight for 2D points.
 
@@ -64,8 +64,8 @@ namespace Generalized_weights {
 
     This function infers a traits class `GeomTraits` from the `Point_2` type.
 
-    \tparam Point_2
-    must be `CGAL::Point_2<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -80,46 +80,36 @@ namespace Generalized_weights {
     the third neighbor
 
     \return the computed weight.
-  */
-  template<typename Point_2>
-  decltype(auto) uniform_weight_2(
-    const Point_2& q,
-    const Point_2& t,
-    const Point_2& r,
-    const Point_2& p) {
 
-    using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    \sa `CGAL::Generalized_weights::uniform_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT uniform_weight(
+    const CGAL::Point_2<GeomTraits>& q,
+    const CGAL::Point_2<GeomTraits>& t,
+    const CGAL::Point_2<GeomTraits>& r,
+    const CGAL::Point_2<GeomTraits>& p) {
+
     const GeomTraits traits;
-    return uniform_weight_2(q, t, r, p, traits);
+    return uniform_weight(q, t, r, p, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights2DPoints
-
-    \brief computes the uniform weight.
-
-    This function always returns 1.
-
-    \return the computed weight.
-  */
-  double uniform_weight_2() {
-    return 1.0;
-  }
-
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the uniform weight for 3D points.
 
     This function always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticTraits_3`.
+    must be a model of `AnalyticWeightTraits_3`.
 
     \return the computed weight.
+
+    \sa `CGAL::Generalized_weights::uniform_weight()`
   */
   template<typename GeomTraits>
-  decltype(auto) uniform_weight_3(
+  const typename GeomTraits::FT uniform_weight(
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3&,
     const typename GeomTraits::Point_3&,
@@ -131,7 +121,7 @@ namespace Generalized_weights {
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the uniform weight for 3D points.
 
@@ -139,8 +129,8 @@ namespace Generalized_weights {
 
     This function infers a traits class `GeomTraits` from the `Point_3` type.
 
-    \tparam Point_3
-    must be `CGAL::Point_3<GeomTraits>`.
+    \tparam GeomTraits
+    must be a model of `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -155,29 +145,30 @@ namespace Generalized_weights {
     the third neighbor
 
     \return the computed weight.
-  */
-  template<typename Point_3>
-  decltype(auto) uniform_weight_3(
-    const Point_3& q,
-    const Point_3& t,
-    const Point_3& r,
-    const Point_3& p) {
 
-    using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
+    \sa `CGAL::Generalized_weights::uniform_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT uniform_weight(
+    const CGAL::Point_3<GeomTraits>& q,
+    const CGAL::Point_3<GeomTraits>& t,
+    const CGAL::Point_3<GeomTraits>& r,
+    const CGAL::Point_3<GeomTraits>& p) {
+
     const GeomTraits traits;
-    return uniform_weight_3(q, t, r, p, traits);
+    return uniform_weight(q, t, r, p, traits);
   }
 
   /*!
-    \ingroup PkgWeightInterfaceRefWeights3DPoints
-
-    This function always returns 1.
+    \ingroup PkgWeightInterfaceRefWeights
 
     \brief computes the uniform weight.
 
+    This function always returns 1.
+
     \return the computed weight.
   */
-  double uniform_weight_3() {
+  double uniform_weight() {
     return 1.0;
   }
 
