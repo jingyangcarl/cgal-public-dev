@@ -14,6 +14,15 @@ are often used to setup different optimization problems based on the discretized
 Laplacian or when computing coordinates of a point with respect to polygons. This
 package provides a simple and unified interface to different types of weights.
 
+In particular, the following \cgal packages depend on this package:
+
+- \ref PkgBarycentricCoordinates2 "2D Generalized Barycentric Coordinates";
+- \ref PkgPolygonMeshProcessing "Polygon Mesh Processing";
+- \ref PkgSurfaceMeshParameterization "Triangulated Surface Mesh Parameterization";
+- \ref PkgSurfaceMeshSkeletonization "Triangulated Surface Mesh Skeletonization";
+- \ref PkgSurfaceMeshDeformation "Triangulated Surface Mesh Deformation";
+- \ref PkgHeatMethodSummary "The Heat Method".
+
 
 \section Weight_Interface_Generalized_Weights Generalized Weights
 
