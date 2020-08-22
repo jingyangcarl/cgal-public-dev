@@ -9,7 +9,9 @@ using FT        = typename Kernel::FT;
 using Point_2   = typename Kernel::Point_2;
 using Contour   = std::vector<Point_2>;
 using Point_map = CGAL::Identity_property_map<Point_2>;
-using CD        = CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour, Point_map>;
+
+using Contour_directions =
+  CGAL::Shape_regularization::Contours::Longest_direction_2<Kernel, Contour, Point_map>;
 
 int main(int argc, char *argv[]) {
 
@@ -22,7 +24,7 @@ int main(int argc, char *argv[]) {
   const FT max_offset_2 = FT(2);
 
   // Initialize contour.
-  Contour contour;
+  std::vector<Point_2> contour;
   initialize_contour(path, contour);
 
   // Save input contour.
@@ -33,13 +35,13 @@ int main(int argc, char *argv[]) {
 
   // Regularize.
   const bool is_closed = false;
-  CD directions(
+  Contour_directions directions(
     contour, is_closed, Point_map());
 
-  Contour regularized;
+  std::vector<Point_2> regularized;
   CGAL::Shape_regularization::Contours::regularize_open_contour(
     contour, directions, std::back_inserter(regularized),
-    CGAL::parameters::max_offset(max_offset_2), Point_map(), Kernel());
+    CGAL::parameters::max_offset(max_offset_2));
 
   std::cout << "* number of directions = " <<
     directions.number_of_directions() << std::endl;

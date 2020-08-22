@@ -121,9 +121,8 @@ namespace Contours {
 
     CGAL_precondition(input_range.size() >= 3);
     using Contour_regularizer =
-    CGAL::Shape_regularization::internal::Contour_regularization_2<
-      CGAL::Shape_regularization::internal::CLOSED,
-      ContourDirections, GeomTraits>;
+    internal::Contour_regularization_2<
+      internal::CLOSED, ContourDirections, GeomTraits>;
 
     Contour_regularizer regularizer(
       directions, input_range, point_map, np, traits);
@@ -296,9 +295,8 @@ namespace Contours {
 
     CGAL_precondition(input_range.size() >= 2);
     using Contour_regularizer =
-    CGAL::Shape_regularization::internal::Contour_regularization_2<
-      CGAL::Shape_regularization::internal::OPEN,
-      ContourDirections, GeomTraits>;
+    internal::Contour_regularization_2<
+      internal::OPEN, ContourDirections, GeomTraits>;
 
     Contour_regularizer regularizer(
       directions, input_range, point_map, np, traits);

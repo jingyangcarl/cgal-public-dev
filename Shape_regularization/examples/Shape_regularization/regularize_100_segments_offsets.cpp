@@ -3,8 +3,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization/regularize_segments.h>
 
-#if defined(CGAL_USE_OSQP)
-
 // Typedefs.
 using Kernel    = CGAL::Simple_cartesian<double>;
 using FT        = typename Kernel::FT;
@@ -12,8 +10,10 @@ using Segment_2 = typename Kernel::Segment_2;
 using Segments  = std::vector<Segment_2>;
 using Indices   = std::vector<std::size_t>;
 
-using NQ = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using OR = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
+using Neighbor_query =
+  CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
+using Offset_regularization =
+  CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
 
 int main(int argc, char *argv[]) {
 
@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
   Saver<Kernel> saver;
 
   // Initialize 100 segments in a fuzzy circle.
-  Segments segments;
+  std::vector<Segment_2> segments;
   create_example_offsets(segments);
 
   // Save input segments.
@@ -44,8 +44,8 @@ int main(int argc, char *argv[]) {
   const FT max_offset_2 = FT(1) / FT(4);
 
   // Create neigbor query and offset-based regularization model.
-  NQ neighbor_query(segments);
-  OR offset_regularization(
+  Neighbor_query neighbor_query(segments);
+  Offset_regularization offset_regularization(
     segments, CGAL::parameters::max_offset(max_offset_2));
 
   // Add each group of parallel segments with at least 2 segments.
@@ -67,10 +67,3 @@ int main(int argc, char *argv[]) {
     saver.export_eps_segments(segments, full_path, FT(100));
   }
 }
-
-#else
-int main(void) {
-  std::cout << "This example requires the OSQP library." << std::endl;
-  return EXIT_SUCCESS;
-}
-#endif // defined(CGAL_USE_OSQP)

@@ -1,8 +1,3 @@
-#if defined (_MSC_VER) && !defined (_WIN64)
-#pragma warning(disable:4244) // boost::number_distance::distance()
-                              // converts 64 to 32 bits integers
-#endif
-
 #include "include/utils.h"
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_detection/Efficient_RANSAC.h>

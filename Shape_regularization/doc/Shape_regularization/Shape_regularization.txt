@@ -1,6 +1,7 @@
 namespace CGAL {
-/*!
+namespace Shape_regularization {
 
+/*!
 \mainpage User Manual
 \anchor Chapter_Shape_Regularization
 
@@ -22,7 +23,7 @@ the \ref PkgShapeDetection "Shape Detection" package.
 
 \section QP_Regularization_Segments Segments
 
-Given a set of unordered 2D segments, one can reinforce three types of regularities
+Given a set of unordered 2D segments, users can reinforce three types of regularities
 among these segments:
 - *Parallelism*: segments, which are detected as near parallel, are made exactly parallel.
 - *Orthogonality*: segments, which are detected as near orthogonal, are made exactly orthogonal.
@@ -31,42 +32,46 @@ among these segments:
 A typical use of this algorithm consists of the following steps:
 1. Create an input range with 2D segments;
 2. Define groups of segments, which should be regularized together;
-3. Create instances of the classes `NeighborQuery` and `RegularizationType` with the proper parameters;
-4. Call the function `CGAL::Shape_regularization::Segments::regularize_segments()`.
+3. Instantiate models of the concepts `NeighborQuery` and `RegularizationType` with the proper parameters;
+4. Call the function `regularize_segments()`.
 
-Once the user has defined an input range with 2D segments, one can either provide them all
+Once the user has defined an input range with 2D segments, he can either provide them all
 to the regularization algorithm, which is the default option, or they could be reorganized into
 groups of contextually similar segments. For example, all segments of the same length could
 form a group. When regularizing, only segments within the group are taken into account, that
 is no segment from one group will be oriented and/or aligned towards a segment from another group
 (see more details \ref QP_Regularization_Segments_Delaunay "here").
 
-To apply the algorithm, one has to define two models: one of the concept `NeighborQuery` that provides
+To apply the algorithm, the user has to define two models: one of the concept `NeighborQuery` that provides
 an access to the closest neighbors of a segment; and the other one of the concept `RegularizationType`
 that provides one of the available regularities, which should be adjusted.
 
 This \cgal component provides a model of the `NeighborQuery` concept:
 
-- `CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2` - finds local neighbors
+- `Segments::Delaunay_neighbor_query_2` - finds local neighbors
 of each segment by constructing a Delaunay triangulation. See more details
 \ref QP_Regularization_Segments_Delaunay "here".
 
 And two models of the `RegularizationType` concept:
 
-- `CGAL::Shape_regularization::Segments::Angle_regularization_2` - orients segments
+- `Segments::Angle_regularization_2` - orients segments
 to reinforce parallelism and orthogonality among them. See more details
 \ref QP_Regularization_Segments_Angles "here".
-- `CGAL::Shape_regularization::Segments::Offset_regularization_2` - aligns parallel segments
+- `Segments::Offset_regularization_2` - aligns parallel segments
 to reinforce collinearity among them. See more details
 \ref QP_Regularization_Segments_Offset "here".
 
-\remark The core of this algorithm is the \ref QP_Regularization framework. For more details, please
-address that section.
+The standard way to regularize a set of input segments is to first apply an angle regularization
+and then an offset regularization, however the algorithm is flexible to handle other scenarios
+as you will see later.
+
+\note The core of this algorithm is the \ref QP_Regularization framework. For more details, please
+refer to that section.
 
 The example below shows the most straightforward entry point to the algorithm, where
 we apply two type of regularities: parallelism and orthogonality, within the
 group of all input segments. The algorithm is called via the function
-`CGAL::Shape_regularization::Segments::regularize_segments()`.
+`regularize_segments()`.
 
 \cgalFigureBegin{regularize_simple_example, regularize_simple.svg}
 A set of 2D segments before (red) and after (green) the angle regularization.
@@ -84,7 +89,7 @@ the corresponding one-ring neighborhood in the triangulation. The Delaunay trian
 can be constructed only for a group of minimum two segments.
 
 The Delaunay neighbor query class constructs the Delaunay triangulation from a group of segments,
-which has to be provided by the user through the `CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2::add_group()`
+which has to be provided by the user through the `Segments::Delaunay_neighbor_query_2::add_group()`
 method, and finds local neighbors of each segment only within the group. If this method
 is never called, all input segments are treated as a group.
 
@@ -93,7 +98,7 @@ contains multiple segments, which contextually form three different groups of ob
 boundaries of three different buildings and you do not want to regularize these buildings with respect to each other,
 but rather within each building boundary, in that case you should call the `add_group`
 method three times. An example of such groups can be seen in \ref Regularize_15_Segments_Figure "this figure",
-where one can see three groups of contextually similar segments: outer boundary, interior top rhombus
+where you can see three groups of contextually similar segments: outer boundary, interior top rhombus
 and interior bottom rhombus or in the figure below.
 
 In this figure, there are two squares, one external and one internal. On the left, the red segments show
@@ -114,8 +119,7 @@ This class orients 2D segments in order to reinforce parallelism and orthogonali
 To apply the angle regularization on a set of 2D segments, the user has to:
 - specify the max angle deviation of a segment from its initial orientation that has to be within the
 interval [0, 90] degrees. If no bound is provided, a bound of 25 degrees will be set as the default value;
-- add groups of segments, if any, through the
-`CGAL::Shape_regularization::Segments::Angle_regularization_2::add_group()` method.
+- add groups of segments, if any, through the `Segments::Angle_regularization_2::add_group()` method.
 
 After the optimization, each segment is rotated with respect to its midpoint.
 
@@ -138,10 +142,10 @@ To apply the offset regularization on a set of 2D segments, the user has to:
 - specify the max distance between two parallel segments that has to be within the
 interval [0, +inf). If no bound is provided, a bound of 0.5 unit length will be set as the default value.
 - add groups of parallel segments through the
-`CGAL::Shape_regularization::Segments::Offset_regularization_2::add_group()` method.
+`Segments::Offset_regularization_2::add_group()` method.
 If the user does not have these groups, they can be obtained from \ref QP_Regularization_Segments_Angles
 "Angle Regularization" by orienting original segments or from the utility function
-`CGAL::Shape_regularization::Segments::parallel_groups()`. See more details \ref QP_Regularization_Segments_Groups "here".
+`Segments::parallel_groups()`. See more details \ref QP_Regularization_Segments_Groups "here".
 
 After the optimization, each segment is translated along its orthogonal direction.
 
@@ -151,7 +155,7 @@ onto the supporting line of another segment, is not a good metric to optimize po
 segments that may lead to deviations in the result from what the user would expect in case of
 exactly parallel segments. The offset regularization does not internally orient segments to make
 them exactly parallel. This is what the \ref QP_Regularization_Segments_Angles "Angle Regularization"
-class for. The utility function `CGAL::Shape_regularization::Segments::parallel_groups()` does not orient
+class for. The utility function `Segments::parallel_groups()` does not orient
 segments, too, but only returns groups of near-parallel segments.
 
 \cgalFigureBegin{regularize_100_segments_offsets_example, regularize_100_segments_offsets.svg}
@@ -160,7 +164,7 @@ A generated set of 2D segments before (red) and after (green) the offset regular
 
 The following example demonstrates the usage of the shape regularization algorithm for offsets
 on a set of 100 parallel segments located within a circle. The function
-`CGAL::Shape_regularization::Segments::parallel_groups()` is used to obtain the groups
+`Segments::parallel_groups()` is used to obtain the groups
 of parallel segments. The max offset bound is set to 0.25 unit length and the
 `CGAL::Simple_cartesian<double>` kernel is used.
 
@@ -168,7 +172,7 @@ of parallel segments. The max offset bound is set to 0.25 unit length and the
 \cgalExample{Shape_regularization/regularize_100_segments_offsets.cpp}
 
 
-\subsection QP_Regularization_Segments_Examples Examples
+\subsection QP_Regularization_Segments_Examples Angle + Offset Regularization
 
 The following examples demonstrate the usage of the shape regularization algorithm for
 both angles and offsets sequentially on a set of 2D segments.
@@ -180,7 +184,7 @@ show here how to create and work with contextually similar groups of segments an
 regularize each group on its own. The defined groups are the outer boundary, top and
 bottom rhombus. Since the shape regularization algorithm on segments is based on the
 \ref QP_Regularization framework, this example also shows how to use that framework
-directly instead of calling the function `CGAL::Shape_regularization::Segments::regularize_segments()`.
+directly instead of calling the function `regularize_segments()`.
 
 \anchor Regularize_15_Segments_Figure
 \cgalFigureBegin{regularize_15_segments_example, regularize_15_segments.svg}
@@ -189,10 +193,10 @@ A set of 2D segments before (red), after the angle (yellow), and the offset (gre
 
 \cgalExample{Shape_regularization/regularize_15_segments.cpp}
 
-The second example contains 65 segments, which are constructed from a set of points
-obtained with the use of the \ref PkgShapeDetection package. The points are grouped such
-that each group represents an approximate 2D line. We fit a segment to each group of
-points using the \ref PkgPrincipalComponentAnalysisD "Principal Component Analysis" package.
+The second example contains 65 segments, which are constructed from a set of input points.
+All points are organized into groups such that each group represents an approximate 2D line.
+Organizing points into such groups can be achieved with the \ref PkgShapeDetection package. We fit a
+segment to each group of points using the \ref PkgPrincipalComponentAnalysisD "Principal Component Analysis" package.
 The angle and offset regularizations are performed on these segments sequentially
 using the bounds of 80 degrees and 2 unit lengths respectively.
 The `CGAL::Exact_predicates_inexact_constructions_kernel` kernel is used.
@@ -204,14 +208,20 @@ A set of 2D segments before (red), after the angle (yellow), and the offset (gre
 \cgalExample{Shape_regularization/regularize_real_data_2.cpp}
 
 
-\subsection QP_Regularization_Segments_Groups Groups
+\subsection QP_Regularization_Segments_Utils Utility Functions
+
+In addition to the main algorithm, we also provide several utility functions, which
+are often used in conjuction with the algorithm.
+
+
+\subsubsection QP_Regularization_Segments_Groups Grouping Segments
 
 This \cgal component also provides three ways to group segments:
-- `CGAL::Shape_regularization::Segments::parallel_groups()` - organizes a set
+- `Segments::parallel_groups()` - organizes a set
 of unordered 2D segments into groups of parallel segments.
-- `CGAL::Shape_regularization::Segments::orthogonal_groups()` - organizes a set
+- `Segments::orthogonal_groups()` - organizes a set
 of unordered 2D segments into groups of orthogonal segments.
-- `CGAL::Shape_regularization::Segments::collinear_groups()` - organizes a set
+- `Segments::collinear_groups()` - organizes a set
 of unordered 2D segments into groups of collinear segments.
 
 \cgalFigureBegin{parallel_groups, groups.svg}
@@ -219,18 +229,18 @@ Groups of near parallel (left), near orthogonal (center), and near collinear (ri
 Red, green, blue colors indicate groups within each set of 2D segments.
 \cgalFigureEnd
 
-The function `CGAL::Shape_regularization::Segments::parallel_groups()` enables users
+The function `Segments::parallel_groups()` enables users
 to form groups of parallel segments. For example, if you know that all your segments are already
-near parallel to each other within some error and you do not want to orient them by applying
+near parallel to each other within some tolerance error and you do not want to orient them by applying
 the \ref QP_Regularization_Segments_Angles "Angle Regularization" algorithm, but you still need
 to make them collinear by minimizing the offset among parallel segments using the
 \ref QP_Regularization_Segments_Offset "Offset Regularization" algorithm, you can
 create the groups of parallel segments by using this function and provide them as input
 to the offset regularization algorithm as we do it \ref QP_Parallel_Groups_Example "here".
 
-The other two functions serve a similar goal. The one `CGAL::Shape_regularization::Segments::orthogonal_groups()`
+The other two functions serve a similar goal. The one `Segments::orthogonal_groups()`
 first creates groups of parallel segments and then merges them into groups, where all
-segments are either parallel or orthogonal to each other. The one `CGAL::Shape_regularization::Segments::collinear_groups()`
+segments are either parallel or orthogonal to each other. The one `Segments::collinear_groups()`
 first creates groups of parallel segments and then splits each of these groups
 into groups of collinear segments, if any.
 
@@ -238,69 +248,34 @@ Note that none of these functions applies the regularization of the input segmen
 only return groups of indices of segments with similar orientations and/or positions.
 
 
-\subsection QP_Regularization_Segments_Simplification Simplification
+\subsubsection QP_Regularization_Segments_Simplification Simplifying Segments
 
-After regularizing angles and offsets, the often common task is to simplify segments with similar
-properties. This \cgal component provides an utility function
-- `CGAL::Shape_regularization::unique_segments()` that takes a set of input segments,
-groups them with respect to the collinearity property, and then returns for each group of
-collinear segments a segment that best fits this group (see the figure below).
+After regularizing angles and offsets, simplifying segments with similar properties
+is a common post-processing task. This \cgal component provides an utility function
+`Segments::unique_segments()` that takes a set of input segments, groups them with
+respect to the collinearity property, and then returns for each group of collinear segments
+a segment that best fits this group (see the figure below).
+
+\note Even if the segments are far away from each other but close with respect to the
+orthogonal distance between them that is they are almost collinear, they will be merged
+as the blue segments in the figure.
 
 \cgalFigureBegin{unique_segments, unique_segments.svg}
 Input segments with multiple collinear segments (left) are simplified into unique segments (right).
 \cgalFigureEnd
 
-Later, if needed, these unique segments can be converted into lines, rays, or directions whatever the
-goal of the final application.
-
 
 \subsection QP_Regularization_Segments_Performance Performance
 
-The shape regularization algorithm is quite efficient and its performance mostly depends
-on the used QP solver. When using the `CGAL::OSQP_quadratic_program_traits`,
+The performance of the shape regularization algorithm mostly depends
+on the used QP solver. When using the `CGAL::OSQP_quadratic_program_traits` model,
 we exploit and efficiently use the sparse nature of the related QP problem that leads
-to the quick performance in practice (see tables below).
+to the quick performance in practice.
 
-The first table includes some timings of running several representative examples from this manual.
-
-<table class="markdownTable" align="center">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadCenter">Example</th>
-<th class="markdownTableHeadCenter">Number of segments</th>
-<th class="markdownTableHeadCenter">Angles (in seconds)</th>
-<th class="markdownTableHeadCenter">Offsets (in seconds)</th>
-</tr>
-<tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_15_segments</td>
-<td class="markdownTableBodyCenter">15</td>
-<td class="markdownTableBodyCenter">0.000247</td>
-<td class="markdownTableBodyCenter">0.000140</td>
-</tr>
-<tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_100_segments_angles</td>
-<td class="markdownTableBodyCenter">100</td>
-<td class="markdownTableBodyCenter">0.002310</td>
-<td class="markdownTableBodyCenter">N/A</td>
-</tr>
-<tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_100_segments_offsets</td>
-<td class="markdownTableBodyCenter">100</td>
-<td class="markdownTableBodyCenter">N/A</td>
-<td class="markdownTableBodyCenter">0.001109</td>
-</tr>
-<tr class="markdownTableBody">
-<td class="markdownTableBodyCenter">regularize_real_data_2</td>
-<td class="markdownTableBodyCenter">65</td>
-<td class="markdownTableBodyCenter">0.001873</td>
-<td class="markdownTableBodyCenter">0.000396</td>
-</tr>
-</table>
-
-The second table shows how the computation time depends on the number of input segments.
+The table below shows how the computation time depends on the number of input segments.
 We first observe that the most challenging step is angle regularization while the offset
-regularization is much faster. This happens due to the fact that angle regularization is
-performed for all input segments at once, while the offset regularization is performed for
-each group of parallel segments separately. Since each group of parallel segments is much
+regularization is much faster. This is an effect of complexity reduction by segmenting
+the problem into groups for offset regularization. Since each group of parallel segments is much
 smaller than the original set of input segments, the total computation time is smaller, too.
 The same idea can be applied to accelerate the angle regularization. Splitting input segments
 into groups with contextually similar properties from the very beginning will lead to better
@@ -376,7 +351,7 @@ for angles (dashed red) and offsets (dashed green).
 \section Contour_Regularization Contours
 
 Given a set of counterclockwise ordered 2D points connected by segments, which form a contour, closed
-or open, one can reinforce three types of regularities among consecutive edges of this contour:
+or open, users can reinforce three types of regularities among consecutive edges of this contour:
 - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
 - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
 - *Collinearity*: parallel contour edges, which are detected as near collinear, are made exactly collinear.
@@ -384,8 +359,7 @@ or open, one can reinforce three types of regularities among consecutive edges o
 A typical use of this algorithm consists of the following steps:
 1. Specify a type of the contour, open or closed;
 2. Create an instance of the class `ContourDirections` with the proper parameters;
-3. Call the function `CGAL::Shape_regularization::Segments::regularize_closed_contour()`
-or `CGAL::Shape_regularization::Segments::regularize_open_contour()`.
+3. Call the function `regularize_closed_contour()` or `regularize_open_contour()`.
 
 We assume that each contour has at least one principal direction that is a reference
 direction towards which the contour edges are either rotated or displaced. Given a
@@ -403,11 +377,11 @@ multiple directions estimator below.
 
 To estimate principal directions of the contour, this component provides three
 models of the concept `ContourDirections`:
-- `CGAL::Shape_regularization::Contours::Longest_direction_2` - sets the longest contour edge
+- `Contours::Longest_direction_2` - sets the longest contour edge
 as the only principal direction.
-- `CGAL::Shape_regularization::Contours::Multiple_directions_2` - tries to estimate multiple
+- `Contours::Multiple_directions_2` - tries to estimate multiple
 principal directions in the contour based on the user-defined parameters.
-- `CGAL::Shape_regularization::Contours::User_defined_directions_2` - sets the user-defined
+- `Contours::User_defined_directions_2` - sets the user-defined
 principal directions as contour directions.
 
 After the directions are set, the algorithm is linear in the number of contour edges. It goes
@@ -416,13 +390,13 @@ merge consecutive parallel edges, if they are within the user-defined max distan
 threshold, and inserts orthogonal edges wherever it is necessary. Note that the final result
 of the algorithm may return a different number of edges than were provided as input.
 
-If one wants to rotate each contour edge on its own towards the best-fit direction
-without reconnecting them after into a closed/open contour, one can either use the
-\ref QP_Regularization_Segments "Segment Regularization" algorithm or one can orient
+If the user wants to rotate each contour edge on its own towards the best-fit direction
+without reconnecting them after into a closed/open contour, she can either use the
+\ref QP_Regularization_Segments "Segment Regularization" algorithm or she can orient
 each segment by calling the `ContourDirections::orient()` method.
 
 
-\subsection Contour_Regularization_Closed Closed
+\subsection Contour_Regularization_Closed Closed Contours
 
 In the example below, we regularize a closed contour. We use multiple directions
 estimator, which returns only one direction, because the contour is quite rectilinear.
@@ -436,7 +410,7 @@ A closed contour before (red) and after (green) the contour regularization.
 \cgalExample{Shape_regularization/regularize_closed_contour.cpp}
 
 
-\subsection Contour_Regularization_Open Open
+\subsection Contour_Regularization_Open Open Contours
 
 Open contours are contours where the head and tail of the contour are not connected.
 This case requires a special treatment, but the core of the algorithm is the same.
@@ -515,9 +489,8 @@ Here, we provide all available \cgal algorithms that enable to regularize 3D pla
 
 \subsection Plane_Regularization_Hierarchy Hierarchical Regularization
 
-Given a set of 3D planes with their corresponding inlier sets, one can reinforce four
-types of regularities among these planes using the function
-`CGAL::Shape_regularization::Segments::regularize_planes()`:
+Given a set of 3D planes with their corresponding inlier sets, users can reinforce four
+types of regularities among these planes using the function `regularize_planes()`:
 - *Parallelism*: planes, which are detected as near parallel, are made exactly parallel.
 - *Orthogonality*: planes, which are detected as near orthogonal, are made exactly orthogonal.
 - *Coplanarity*: parallel planes, which are detected as near coplanar, are made exactly coplanar.
@@ -533,7 +506,7 @@ The used kernel is `Exact_predicates_inexact_constructions_kernel`.
 
 \cgalExample{Shape_regularization/regularize_planes.cpp}
 
-\remark Please note that this function was earlier used in the \ref PkgShapeDetection package. You can
+\note Please note that this function was earlier used in the \ref PkgShapeDetection package. You can
 still use the old API of that function, however to avoid parameters ambiguity, we strongly
 suggest to use the new API with the \ref BGLNamedParameters "Named Parameters" mechanism.
 
@@ -547,10 +520,10 @@ on how the shape regularization framework is organized internally or you want to
 that framework by implementing your own regularization types.
 
 Two particular instances of the algorithm are provided:
-- `CGAL::Shape_regularization::Segments::Angle_regularization_2` - orients a set
+- `Segments::Angle_regularization_2` - orients a set
 of unordered 2D segments. See \ref QP_Regularization_Segments_Angles "Angle Regularization" for more details.
 
-- `CGAL::Shape_regularization::Segments::Offset_regularization_2` - aligns a set
+- `Segments::Offset_regularization_2` - aligns a set
 of parallel 2D segments. See \ref QP_Regularization_Segments_Offset "Offset Regularization" for more details.
 
 Other instances can be added by the user, as explained \ref QP_Regularization_Implementation "here".
@@ -599,7 +572,7 @@ where the first \f$n\f$ values are the values that should be added to the origin
 of the input segments in order to update them and the last \f$m\f$ values are minimized to zeros. The
 update is achieved via the method `RegularizationType::update()`.
 
-Overall, the class `CGAL::Shape_regularization::QP_regularization` is parameterized by:
+Overall, the class `QP_regularization` is parameterized by:
 - `NeighborQuery` that provides the means for accessing local neighbors of an item,
 - `RegularizationType` that determines a regularization type to be applied, and
 - `QuadraticProgramTraits` that is used to solve the corresponding QP problem.
@@ -647,7 +620,7 @@ Alternatively, the internal CGAL solver from the package \ref PkgQPSolver "Linea
 can be used, however we do not recomment applying it. The internal quadratic program that has to be solved
 for shape regularization is sparse. The \cgal version will internally convert this problem
 into a dense one that takes considerable effort to solve, while the OSQP version takes a special care
-of the sparse nature of the problem that leads to better performance. Since the class `CGAL::Shape_regularization::QP_regularization`
+of the sparse nature of the problem that leads to better performance. Since the class `QP_regularization`
 is parameterized by the general concept `QuadraticProgramTraits`, the users are also welcome to provide
 their own version of the solver.
 
@@ -658,7 +631,7 @@ If you want to implement your own regularization approach that follows the same
 framework, for example to reinforce a different type of regularity than is already provided,
 you have to implement your own model of the \ref QP_Regularization_Type "RegularizationType"
 concept and possibly a model of the \ref QP_Regularization_Neighborhood "NeighborQuery" concept.
-These concepts are used to parameterize the main `CGAL::Shape_regularization::QP_regularization` algorithm:
+These concepts are used to parameterize the main `QP_regularization` algorithm:
 1. Use `NeighborQuery` to find local neighbors of each input item;
 2. Use `RegularizationType` to estimate current regularities among these neighbors;
 3. Use `RegularizationType` to set max bounds on the allowed regularity changes;
@@ -666,7 +639,7 @@ These concepts are used to parameterize the main `CGAL::Shape_regularization::QP
 5. Use `RegularizationType` to update input items with respect to the modified regularities.
 
 In addition, the user may also want to change a \ref QP_Regularization_Solvers "QP solver"
-if one knows how to optimize it for a specific type of input data. To do that, one
+if he knows how to optimize it for a specific type of input data. To do that, the user
 has to implement a model of the `QuadraticProgramTraits` concept.
 
 An example below shows how to define your own type of the above concepts and how to
@@ -688,6 +661,7 @@ In 2020, the package was cleaned up and documented.
 \section Shape_Regularization_Acknowledgements Acknowledgments
 
 We wish to thank Andreas Fabri and Marc Pouget for useful discussions and reviews.
-
 */
+
+} /* namespace Shape_regularization */
 } /* namespace CGAL */

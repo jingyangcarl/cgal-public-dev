@@ -230,9 +230,9 @@ void boundary_points_on_line_2(
 }
 
 template<typename Point_2>
-void initialize_regions(
+void initialize_groups(
   const std::string path,
-  std::vector< std::vector<Point_2> >& regions) {
+  std::vector< std::vector<Point_2> >& groups) {
 
   std::ifstream file(path.c_str(), std::ios_base::in);
   CGAL::set_ascii_mode(file);
@@ -248,18 +248,18 @@ void initialize_regions(
   }
 
   Point_2 p; double stub;
-  std::size_t region_index;
+  std::size_t group_index;
   std::map<std::size_t, std::vector<Point_2> > data_map;
   while (!file.eof()) {
-    file >> p >> stub >> region_index;
-    data_map[region_index].push_back(p);
+    file >> p >> stub >> group_index;
+    data_map[group_index].push_back(p);
   }
   file.close();
 
-  regions.clear();
-  regions.reserve(data_map.size());
+  groups.clear();
+  groups.reserve(data_map.size());
   for (const auto& pair : data_map)
-    regions.push_back(pair.second);
+    groups.push_back(pair.second);
 }
 
 #endif // CGAL_SHAPE_REGULARIZATION_EXAMPLES_UTILS_H

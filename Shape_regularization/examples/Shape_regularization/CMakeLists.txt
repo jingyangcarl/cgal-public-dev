@@ -13,22 +13,19 @@ if(CGAL_FOUND)
   include(${CGAL_USE_FILE})
   include(CGAL_CreateSingleSourceCGALProgram)
 
-  set(osqp_targets
-  regularize_15_segments
-  regularize_100_segments_angles
-  regularize_100_segments_offsets
-  regularize_simple)
-
-  foreach(osqp_target ${osqp_targets})
-    create_single_source_cgal_program("${osqp_target}.cpp")
-  endforeach()
-
   # Find OSQP library and headers.
   find_package(OSQP REQUIRED)
   if(OSQP_FOUND)
     message(STATUS "Found OSQP")
 
+    set(osqp_targets
+    regularize_15_segments
+    regularize_100_segments_angles
+    regularize_100_segments_offsets
+    regularize_simple)
+
     foreach(osqp_target ${osqp_targets})
+      create_single_source_cgal_program("${osqp_target}.cpp")
       if(TARGET ${osqp_target})
         target_link_libraries(${osqp_target} PUBLIC ${OSQP_LIBRARIES})
         target_compile_definitions(${osqp_target} PUBLIC -DCGAL_USE_OSQP)
@@ -50,7 +47,7 @@ if(CGAL_FOUND)
       message(STATUS "NOTICE: Eigen was not found. Eigen examples won't be available.")
     endif()
   else()
-    message(STATUS "NOTICE: OSQP was not found. Complete OSQP examples won't be available.")
+    message(STATUS "NOTICE: OSQP was not found. OSQP examples won't be available.")
   endif()
 
   create_single_source_cgal_program(

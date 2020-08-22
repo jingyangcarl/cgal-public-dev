@@ -1,3 +1,6 @@
+namespace CGAL {
+namespace Shape_regularization {
+
 /*!
 \ingroup PkgShapeRegularizationRefConcepts
 \cgalConcept
@@ -8,9 +11,9 @@ contour edges towards these directions. All contour regularization functions
 in this package are parameterized by this concept.
 
 \cgalHasModel
-- `CGAL::Shape_regularization::Contours::Longest_direction_2`,
-- `CGAL::Shape_regularization::Contours::Multiple_directions_2`,
-- `CGAL::Shape_regularization::Contours::User_defined_directions_2`.
+- `Contours::Longest_direction_2`,
+- `Contours::Multiple_directions_2`,
+- `Contours::User_defined_directions_2`.
 */
 class ContourDirections {
 
@@ -26,3 +29,6 @@ public:
 
   }
 };
+
+} // namespace Shape_regularization
+} // namespace CGAL

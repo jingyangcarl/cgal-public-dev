@@ -1,3 +1,6 @@
+namespace CGAL {
+namespace Shape_regularization {
+
 /*!
 \defgroup PkgShapeRegularizationRef Shape Regularization Reference
 
@@ -56,30 +59,34 @@ to the user-defined conditions.}
 - `RegularizationType`
 - `ContourDirections`
 
-### Segments ###
-- `CGAL::Shape_regularization::Segments::regularize_segments()`
+### %Segments ###
+- `regularize_segments()`
 #### Neighbor Queries ####
-- `CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<GeomTraits, InputRange, Segment_map>`
+- `Segments::Delaunay_neighbor_query_2<GeomTraits, InputRange, SegmentMap>`
 #### Regularization Types ####
-- `CGAL::Shape_regularization::Segments::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
-- `CGAL::Shape_regularization::Segments::Offset_regularization_2<GeomTraits, InputRange, SegmentMap>`
+- `Segments::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
+- `Segments::Offset_regularization_2<GeomTraits, InputRange, SegmentMap>`
 #### Groups ####
-- `CGAL::Shape_regularization::Segments::parallel_groups()`
-- `CGAL::Shape_regularization::Segments::orthogonal_groups()`
-- `CGAL::Shape_regularization::Segments::collinear_groups()`
+- `Segments::parallel_groups()`
+- `Segments::orthogonal_groups()`
+- `Segments::collinear_groups()`
+#### Simplification ####
+- `Segments::unique_segments()`
 
-### Contours ###
-- `CGAL::Shape_regularization::Contours::regularize_closed_contour()`
-- `CGAL::Shape_regularization::Contours::regularize_open_contour()`
+### %Contours ###
+- `regularize_closed_contour()`
+- `regularize_open_contour()`
 #### Directions ####
-- `CGAL::Shape_regularization::Contours::Longest_direction_2<GeomTraits, InputRange, PointMap>`
-- `CGAL::Shape_regularization::Contours::Multiple_directions_2<GeomTraits, InputRange, PointMap>`
-- `CGAL::Shape_regularization::Contours::User_defined_directions_2<GeomTraits, InputRange, PointMap>`
+- `Contours::Longest_direction_2<GeomTraits, InputRange, PointMap>`
+- `Contours::Multiple_directions_2<GeomTraits, InputRange, PointMap>`
+- `Contours::User_defined_directions_2<GeomTraits, InputRange, PointMap>`
 
-### Planes ###
-- `CGAL::Shape_regularization::Planes::regularize_planes()`
+### %Planes ###
+- `regularize_planes()`
 
 ### QP Regularization ###
-- `CGAL::Shape_regularization::QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QuadraticProgramTraits>`
-
+- `QP_regularization<GeomTraits, InputRange, NeighborQuery, RegularizationType, QuadraticProgramTraits>`
 */
+
+} /* namespace Shape_regularization */
+} /* namespace CGAL */

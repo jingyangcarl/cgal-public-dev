@@ -1,13 +1,9 @@
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 #include "include/utils.h"
 #include "include/Saver.h"
 #include <CGAL/Eigen_diagonalize_traits.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Shape_regularization/regularize_segments.h>
-
-#if defined(CGAL_USE_OSQP)
 
 // Typedefs.
 using Kernel    = CGAL::Exact_predicates_inexact_constructions_kernel;
@@ -19,14 +15,17 @@ using Points_2  = std::vector<Point_2>;
 using Indices   = std::vector<std::size_t>;
 using Segments  = std::vector<Segment_2>;
 
-using NQ = CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
-using AR = CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments>;
-using OR = CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
+using Neighbor_query =
+  CGAL::Shape_regularization::Segments::Delaunay_neighbor_query_2<Kernel, Segments>;
+using Angle_regularization =
+  CGAL::Shape_regularization::Segments::Angle_regularization_2<Kernel, Segments>;
+using Offset_regularization =
+  CGAL::Shape_regularization::Segments::Offset_regularization_2<Kernel, Segments>;
 
 int main(int argc, char *argv[]) {
 
   // If we want to load a different file, we load it from a path.
-  // Each point comes with the index of the corresponding group = region.
+  // Each point comes with the index of the corresponding group.
   // The file format: x y z i, where i is the group index. The points
   // are 2D hence z = 0. Each group contains points, which form
   // an approximate line.
@@ -34,28 +33,28 @@ int main(int argc, char *argv[]) {
   if (argc > 1) path = argv[1];
   Saver<Kernel> saver;
 
-  // Initialize input groups = regions.
-  std::vector<Points_2> regions;
-  initialize_regions(path, regions);
+  // Initialize input groups with points.
+  std::vector<Points_2> groups;
+  initialize_groups(path, groups);
 
-  // Fit a line to each region.
+  // Fit a line to each group of points.
   Line_2 line; Point_2 centroid;
   std::vector<Line_2> lines;
-  lines.reserve(regions.size());
-  for (const auto& region : regions) {
+  lines.reserve(groups.size());
+  for (const auto& group : groups) {
     CGAL::linear_least_squares_fitting_2(
-      region.begin(), region.end(), line, centroid, CGAL::Dimension_tag<0>(),
+      group.begin(), group.end(), line, centroid, CGAL::Dimension_tag<0>(),
       Kernel(), CGAL::Eigen_diagonalize_traits<FT, 2>());
     lines.push_back(line);
   }
 
-  // Cut each line at the ends of the corresponding region.
-  Segments segments;
+  // Cut each line at the ends of the corresponding group.
+  std::vector<Segment_2> segments;
   segments.reserve(lines.size());
   Point_2 source, target;
   for (std::size_t i = 0; i < lines.size(); ++i) {
     boundary_points_on_line_2(
-      regions[i], lines[i], source, target);
+      groups[i], lines[i], source, target);
     segments.push_back(Segment_2(source, target));
   }
 
@@ -69,8 +68,8 @@ int main(int argc, char *argv[]) {
   const FT max_angle_2 = FT(80);
 
   // Create neigbor query and angle-based regularization model.
-  NQ neighbor_query(segments);
-  AR angle_regularization(
+  Neighbor_query neighbor_query(segments);
+  Angle_regularization angle_regularization(
     segments, CGAL::parameters::max_angle(max_angle_2));
 
   // Regularize.
@@ -89,7 +88,7 @@ int main(int argc, char *argv[]) {
     std::back_inserter(pgroups));
 
   // Create offset-based regularization model.
-  OR offset_regularization(
+  Offset_regularization offset_regularization(
     segments, CGAL::parameters::max_offset(max_offset_2));
 
   // Add each group of parallel segments with at least 2 segments.
@@ -112,10 +111,3 @@ int main(int argc, char *argv[]) {
     saver.export_eps_segments(segments, full_path, FT(3) / FT(2));
   }
 }
-
-#else
-int main(void) {
-  std::cout << "This example requires the OSQP library." << std::endl;
-  return EXIT_SUCCESS;
-}
-#endif // defined(CGAL_USE_OSQP)

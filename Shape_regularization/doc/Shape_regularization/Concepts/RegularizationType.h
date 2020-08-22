@@ -1,14 +1,17 @@
+namespace CGAL {
+namespace Shape_regularization {
+
 /*!
 \ingroup PkgShapeRegularizationRefConcepts
 \cgalConcept
 
 A concept that describes the set of methods used by the class
-`CGAL::Shape_regularization::QP_regularization` to access various data
+`QP_regularization` to access various data
 required for setting up the the global regularization problem.
 
 \cgalHasModel
-- `CGAL::Shape_regularization::Segments::Angle_regularization_2`,
-- `CGAL::Shape_regularization::Segments::Offset_regularization_2`.
+- `Segments::Angle_regularization_2`,
+- `Segments::Offset_regularization_2`.
 */
 class RegularizationType {
 
@@ -19,7 +22,7 @@ public:
     distance-offset/etc.) with respect to which a geometric object with the index
     `query_index` is being regularized.
 
-    `CGAL::Shape_regularization::QP_regularization` calls this method
+    `QP_regularization` calls this method
     once for each object from the input range.
   */
   typename GeomTraits::FT bound(
@@ -32,7 +35,7 @@ public:
     direct neighbors, that is they form a neighbor pair `i <-> j`. Neighbors are
     provided by the concept `NeighborQuery`.
 
-    `CGAL::Shape_regularization::QP_regularization` calls this method
+    `QP_regularization` calls this method
     once for each neighbor pair being regularized.
   */
   typename GeomTraits::FT target(
@@ -52,7 +55,7 @@ public:
     regularized + the number m of neighbor pairs between these objects. The first
     n values are the values that should be used.
 
-    `CGAL::Shape_regularization::QP_regularization` calls this method
+    `QP_regularization` calls this method
     once after the global regularization QP problem has been solved.
   */
   void update(
@@ -60,3 +63,6 @@ public:
 
   }
 };
+
+} // namespace Shape_regularization
+} // namespace CGAL

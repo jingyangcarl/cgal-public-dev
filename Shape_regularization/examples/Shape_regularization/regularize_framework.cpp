@@ -5,7 +5,6 @@ using Kernel    = CGAL::Simple_cartesian<double>;
 using FT        = typename Kernel::FT;
 using Point_2   = typename Kernel::Point_2;
 using Segment_2 = typename Kernel::Segment_2;
-using Segments  = std::vector<Segment_2>;
 
 namespace CGAL {
 
@@ -76,19 +75,20 @@ using Quadratic_program =
   CGAL::USER_quadratic_program_traits<FT>; // USER custom solver
 #endif
 
-using NQ = CGAL::Custom_neighbor_query_2;
-using RT = CGAL::Custom_regularization_2;
-using QP = Quadratic_program;
+using Segments = std::vector<Segment_2>;
+using Neighbor_query = CGAL::Custom_neighbor_query_2;
+using Regularization_type = CGAL::Custom_regularization_2;
 using Regularizer =
-  CGAL::Shape_regularization::QP_regularization<Kernel, Segments, NQ, RT, QP>;
+  CGAL::Shape_regularization::QP_regularization<
+    Kernel, Segments, Neighbor_query, Regularization_type, Quadratic_program>;
 
 int main(int argc, char *argv[]) {
 
-  NQ neighbor_query;
-  RT regularization_type;
-  QP quadratic_program;
+  Neighbor_query neighbor_query;
+  Regularization_type regularization_type;
+  Quadratic_program quadratic_program;
 
-  Segments segments = {
+  std::vector<Segment_2> segments = {
     Segment_2(Point_2(-1,  0), Point_2(1, 0)),
     Segment_2(Point_2( 0, -1), Point_2(0, 1))
   };

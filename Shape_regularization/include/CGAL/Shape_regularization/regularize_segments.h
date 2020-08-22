@@ -60,7 +60,7 @@ namespace Segments {
 
     The user has to provide a `NeighborQuery` model to access local neighbors
     of a segment and a `RegularizationType` model to define the type of regularities
-    that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
+    that should be addressed. The function is based on the class `QP_regularization`.
     Please address that class and these concepts for more information.
 
     \tparam InputRange
@@ -111,8 +111,7 @@ namespace Segments {
     GeomTraits traits) {
 
     CGAL_precondition(input_range.size() >= 2);
-    using Regularizer =
-      CGAL::Shape_regularization::QP_regularization<
+    using Regularizer = QP_regularization<
       GeomTraits, InputRange, NeighborQuery, RegularizationType, QuadraticProgramTraits>;
 
     Regularizer regularizer(
@@ -135,7 +134,7 @@ namespace Segments {
 
     The user has to provide a `NeighborQuery` model to access local neighbors
     of a segment and a `RegularizationType` model to define the type of regularities
-    that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
+    that should be addressed. The function is based on the class `QP_regularization`.
     Please address that class and these concepts for more information.
 
     This function provides the default solver `CGAL::OSQP_quadratic_program_traits`
@@ -204,7 +203,7 @@ namespace Segments {
 
     The user has to provide a `NeighborQuery` model to access local neighbors
     of a segment and a `RegularizationType` model to define the type of regularities
-    that should be addressed. The function is based on the class `CGAL::Shape_regularization::QP_regularization`.
+    that should be addressed. The function is based on the class `QP_regularization`.
     Please address that class and these concepts for more information.
 
     This function provides the default solver `CGAL::OSQP_quadratic_program_traits`
@@ -439,7 +438,7 @@ namespace Segments {
     This function enables to find groups of near collinear segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     This algorithm first finds the groups of
-    `CGAL::Shape_regularization::Segments::parallel_segments()` and then splits
+    `Segments::parallel_segments()` and then splits
     these groups into groups of collinear segments.
 
     This function does not regularize input segments, but only groups them.
@@ -526,7 +525,7 @@ namespace Segments {
     This function enables to find groups of near collinear segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     This algorithm first finds the groups of
-    `CGAL::Shape_regularization::Segments::parallel_segments()` and then splits
+    `Segments::parallel_segments()` and then splits
     these groups into groups of collinear segments.
 
     This function does not regularize input segments, but only groups them.
@@ -610,7 +609,7 @@ namespace Segments {
     This function enables to find groups of near orthogonal segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     This algorithm first finds the groups of
-    `CGAL::Shape_regularization::Segments::parallel_segments()` and then merges
+    `Segments::parallel_segments()` and then merges
     these groups into groups of orthogonal segments.
 
     This function does not regularize input segments, but only groups them.
@@ -697,7 +696,7 @@ namespace Segments {
     This function enables to find groups of near orthogonal segments
     in a set of 2D segments. The groups are returned as vectors of indices.
     This algorithm first finds the groups of
-    `CGAL::Shape_regularization::Segments::parallel_segments()` and then merges
+    `Segments::parallel_segments()` and then merges
     these groups into groups of orthogonal segments.
 
     This function does not regularize input segments, but only groups them.
@@ -778,7 +777,7 @@ namespace Segments {
 
     \brief substitutes groups of 2D collinear segments by average segments.
 
-    This function first calls `CGAL::Shape_regularization::Segments::collinear_groups()`
+    This function first calls `Segments::collinear_groups()`
     and then substitutes each group of collinear segments by an average segment.
     The number of returned segments is the number of detected collinear groups.
 
@@ -863,7 +862,7 @@ namespace Segments {
 
     \brief substitutes groups of 2D collinear segments by average segments.
 
-    This function first calls `CGAL::Shape_regularization::Segments::collinear_groups()`
+    This function first calls `Segments::collinear_groups()`
     and then substitutes each group of collinear segments by an average segment.
     The number of returned segments is the number of detected collinear groups.
 

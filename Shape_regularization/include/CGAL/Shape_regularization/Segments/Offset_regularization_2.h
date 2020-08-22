@@ -44,8 +44,8 @@ namespace Segments {
     collinearity relationships.
 
     All input segments should be either orthogonal or parallel to each other.
-    In order to achieve that, one may use the class `CGAL::Shape_regularization::Segments::Angle_regularization_2`
-    or the function `CGAL::Shape_regularization::Segments::parallel_groups()`.
+    In order to achieve that, one may use the class `Segments::Angle_regularization_2`
+    or the function `Segments::parallel_groups()`.
     Each group of parallel segments may be inserted using the method `add_group()`.
 
     \tparam GeomTraits
@@ -286,7 +286,7 @@ namespace Segments {
     /*!
       \brief returns indices of collinear segments organized into groups.
 
-      This method calls `CGAL::Shape_regularization::Segments::collinear_groups()`.
+      This method calls `Segments::collinear_groups()`.
 
       \tparam OutputIterator
       must be a model of `OutputIterator`
@@ -320,7 +320,7 @@ namespace Segments {
     /*!
       \brief returns segments, which best-fit collinear groups.
 
-      This method first calls `CGAL::Shape_regularization::Segments::collinear_groups()`
+      This method first calls `Segments::collinear_groups()`
       and then substitutes each group of collinear segments by an average segment.
       The number of returned segments is the number of detected collinear groups.
 
