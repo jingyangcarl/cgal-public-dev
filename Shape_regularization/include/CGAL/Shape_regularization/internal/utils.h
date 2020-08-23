@@ -60,7 +60,7 @@ namespace internal {
     return FT(1) / FT(100000);
   }
 
-  // Max value for the type FT. It cannot be removed since we cannot use std
+  // Maximum value for the type FT. It cannot be removed since we cannot use std
   // numeric limits for exact number types.
   template<typename FT>
   static FT max_value() {

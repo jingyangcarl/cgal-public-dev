@@ -18,7 +18,7 @@ class RegularizationType {
 public:
 
   /*!
-    returns the max bound on a regularization characteristic (angle-orientation/
+    returns the maximum bound on a regularization characteristic (angle-orientation/
     distance-offset/etc.) with respect to which a geometric object with the index
     `query_index` is being regularized.
 

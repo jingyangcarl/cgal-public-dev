@@ -275,7 +275,7 @@ namespace Planes {
     - *Parallelism*: planes, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: planes, which are detected as near orthogonal, are made exactly orthogonal.
     - *Coplanarity*: parallel planes, which are detected as near coplanar, are made exactly coplanar.
-    - *Axis-Symmetry*: planes, which are detected as near symmetrical with respect to a user-defined axis,
+    - *Axis-Symmetry*: planes, which are detected as near symmetrical with respect to a user-specified axis,
     are made exactly symmetrical.
 
     %Planes are directly modified. Points are left unaltered, as well as their
@@ -327,13 +327,13 @@ namespace Planes {
         \cgalParamDefault{no default value}
       \cgalParamNEnd
       \cgalParamNBegin{max_angle}
-        \cgalParamDescription{max allowed angle in degrees between plane normals used
+        \cgalParamDescription{maximum allowed angle in degrees between plane normals used
           for parallelism, orthogonality, and axis symmetry}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{25 degrees}
       \cgalParamNEnd
       \cgalParamNBegin{max_offset}
-        \cgalParamDescription{max allowed orthogonal distance between two parallel planes
+        \cgalParamDescription{maximum allowed orthogonal distance between two parallel planes
           such that they are considered to be coplanar}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{0.01 unit length}

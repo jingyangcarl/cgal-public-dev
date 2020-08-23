@@ -40,16 +40,16 @@ namespace Shape_regularization {
     global optimization.
 
     Given a quadratic programming solver via the class `QuadraticProgramTraits`, this version of the
-    shape regularization algorithm enables to regularize a set of user-defined
+    shape regularization algorithm enables to regularize a set of user-specified
     geometric objects provided a way
     - to access neighbors of each object via the `NeighborQuery` class;
-    - to obtain a max bound on a regularization characteristic (angle-orientation/
+    - to obtain a maximum bound on a regularization characteristic (angle-orientation/
     distance-offset/etc.) with respect to which an object is being regularized
     via the `RegularizationType` class;
     - to obtain a target value for each pair of neighbor objects via
     the `RegularizationType` class.
 
-    This class is generic and forms a framework for different types of user-defined
+    This class is generic and forms a framework for different types of user-specified
     regularizations. Please address the user manual in order to learn how to use it.
     In particular, section \ref QP_Regularization_Segments "Regularizing 2D Segments"
     shows an example.

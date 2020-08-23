@@ -115,7 +115,7 @@ namespace Segments {
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{max_offset}
-          \cgalParamDescription{max allowed orthogonal distance between two parallel segments
+          \cgalParamDescription{maximum allowed orthogonal distance between two parallel segments
             such that they are considered to be collinear}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{0.5 unit length}
@@ -142,7 +142,7 @@ namespace Segments {
 
       m_max_offset = max_offset;
       if (m_max_offset < FT(0)) {
-        std::cerr << "WARNING: The max offset bound has to be within [0, +inf)! ";
+        std::cerr << "WARNING: The maximum offset bound has to be within [0, +inf)! ";
         std::cerr << " Setting to the default value: 0.5." << std::endl;
         m_max_offset = FT(1) / FT(2);
       }

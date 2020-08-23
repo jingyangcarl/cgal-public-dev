@@ -34,10 +34,10 @@ namespace Contours {
   /*!
     \ingroup PkgShapeRegularizationRefContours
 
-    \brief Sets multiple user-defined principal directions of the contour.
+    \brief Sets multiple user-specified principal directions of the contour.
 
     This algorithm finds the best-fit edges of the contour with respect to the
-    user-defined principal directions and sets all other necessary data.
+    user-specified principal directions and sets all other necessary data.
 
     \tparam GeomTraits
     must be a model of `Kernel`.
@@ -83,7 +83,7 @@ namespace Contours {
       must be a model of `ConstRange` whose value type is `GeomTraits::Direction_2`.
 
       \param direction_range
-      a const range with user-defined principal directions
+      a const range with user-specified principal directions
 
       \param input_range
       a const range of counterclockwise ordered 2D points, which form a contour
@@ -137,7 +137,7 @@ namespace Contours {
 
     /*!
       \brief orients a given `segment` with the index `query_index` towards the
-      best-fit user-defined principal direction.
+      best-fit user-specified principal direction.
 
       \param query_index an index of the contour vertex that emits the contour
       edge being `segment`.
@@ -164,7 +164,7 @@ namespace Contours {
     /*!
       \brief returns the number of principal directions of the contour.
 
-      The returned number equals to the number of the user-defined directions.
+      The returned number equals to the number of the user-specified directions.
     */
     const std::size_t number_of_directions() const {
       return m_directions.size();

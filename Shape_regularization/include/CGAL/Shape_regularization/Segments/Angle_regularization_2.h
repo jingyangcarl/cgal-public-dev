@@ -111,7 +111,7 @@ namespace Segments {
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{max_angle}
-          \cgalParamDescription{max allowed angle deviation in degrees of a segment
+          \cgalParamDescription{maximum allowed angle deviation in degrees of a segment
             from its initial orientation}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{25 degrees}
@@ -137,7 +137,7 @@ namespace Segments {
 
       m_max_angle = max_angle;
       if (m_max_angle < FT(0) || m_max_angle > FT(90)) {
-        std::cerr << "WARNING: The max angle bound has to be within [0, 90]! ";
+        std::cerr << "WARNING: The maximum angle bound has to be within [0, 90]! ";
         std::cerr << " Setting to the default value: 25 degrees." << std::endl;
         m_max_angle = FT(25);
       }

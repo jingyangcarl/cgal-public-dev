@@ -17,7 +17,7 @@ A closed contour before (red) and after (green) regularization.
 
 This \cgal package enables to regularize a set of segments and open or closed contours in 2D
 and a set of planes in 3D such that all input objects are rotated and aligned with respect
-to the user-defined conditions. This package can also be used in conjunction with
+to the user-specified conditions. This package can also be used in conjunction with
 the \ref PkgShapeDetection "Shape Detection" package.
 
 
@@ -117,7 +117,7 @@ the internal segments (right).
 
 This class orients 2D segments in order to reinforce parallelism and orthogonality among them.
 To apply the angle regularization on a set of 2D segments, the user has to:
-- specify the max angle deviation of a segment from its initial orientation that has to be within the
+- specify the maximum angle deviation of a segment from its initial orientation that has to be within the
 interval [0, 90] degrees. If no bound is provided, a bound of 25 degrees will be set as the default value;
 - add groups of segments, if any, through the `Segments::Angle_regularization_2::add_group()` method.
 
@@ -130,7 +130,7 @@ A generated set of 2D segments before (red) and after (green) the angle regulari
 The following example demonstrates the usage of the shape regularization algorithm for angles
 on a set of 100 near orthogonal segments generated with the help of \ref PkgGenerators "CGAL Geometric Object Generators".
 The entire `InputRange` is provided to the angle regularization class as a group.
-The max angle bound is set to 40 degrees and the `CGAL::Simple_cartesian<double>` kernel is used.
+The maximum angle bound is set to 40 degrees.
 
 \cgalExample{Shape_regularization/regularize_100_segments_angles.cpp}
 
@@ -139,7 +139,7 @@ The max angle bound is set to 40 degrees and the `CGAL::Simple_cartesian<double>
 
 This class aligns 2D parallel segments in order to reinforce collinearity among them.
 To apply the offset regularization on a set of 2D segments, the user has to:
-- specify the max distance between two parallel segments that has to be within the
+- specify the maximum distance between two parallel segments that has to be within the
 interval [0, +inf). If no bound is provided, a bound of 0.5 unit length will be set as the default value.
 - add groups of parallel segments through the
 `Segments::Offset_regularization_2::add_group()` method.
@@ -165,8 +165,7 @@ A generated set of 2D segments before (red) and after (green) the offset regular
 The following example demonstrates the usage of the shape regularization algorithm for offsets
 on a set of 100 parallel segments located within a circle. The function
 `Segments::parallel_groups()` is used to obtain the groups
-of parallel segments. The max offset bound is set to 0.25 unit length and the
-`CGAL::Simple_cartesian<double>` kernel is used.
+of parallel segments. The maximum offset bound is set to 0.25 unit length.
 
 \anchor QP_Parallel_Groups_Example
 \cgalExample{Shape_regularization/regularize_100_segments_offsets.cpp}
@@ -178,9 +177,8 @@ The following examples demonstrate the usage of the shape regularization algorit
 both angles and offsets sequentially on a set of 2D segments.
 
 The first example contains 15 segments. The angle and offset regularizations
-are performed on these segments sequentially using the max bounds of 10 degrees and 0.1 unit length
-respectively. The `CGAL::Exact_predicates_inexact_constructions_kernel` kernel is used. We also
-show here how to create and work with contextually similar groups of segments and
+are performed on these segments sequentially using the maximum bounds of 10 degrees and 0.1 unit length
+respectively. We also show here how to create and work with contextually similar groups of segments and
 regularize each group on its own. The defined groups are the outer boundary, top and
 bottom rhombus. Since the shape regularization algorithm on segments is based on the
 \ref QP_Regularization framework, this example also shows how to use that framework
@@ -199,7 +197,6 @@ Organizing points into such groups can be achieved with the \ref PkgShapeDetecti
 segment to each group of points using the \ref PkgPrincipalComponentAnalysisD "Principal Component Analysis" package.
 The angle and offset regularizations are performed on these segments sequentially
 using the bounds of 80 degrees and 2 unit lengths respectively.
-The `CGAL::Exact_predicates_inexact_constructions_kernel` kernel is used.
 
 \cgalFigureBegin{regularize_real_data_2_example, regularize_real_data_2.svg}
 A set of 2D segments before (red), after the angle (yellow), and the offset (green) regularization.
@@ -244,7 +241,7 @@ segments are either parallel or orthogonal to each other. The one `Segments::col
 first creates groups of parallel segments and then splits each of these groups
 into groups of collinear segments, if any.
 
-Note that none of these functions applies the regularization of the input segments. They
+\note Note that none of these functions applies the regularization of the input segments. They
 only return groups of indices of segments with similar orientations and/or positions.
 
 
@@ -350,7 +347,7 @@ for angles (dashed red) and offsets (dashed green).
 
 \section Contour_Regularization Contours
 
-Given a set of counterclockwise ordered 2D points connected by segments, which form a contour, closed
+Given a set of ordered 2D points connected by segments, which form a contour, closed
 or open, users can reinforce three types of regularities among consecutive edges of this contour:
 - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
 - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -362,33 +359,30 @@ A typical use of this algorithm consists of the following steps:
 3. Call the function `regularize_closed_contour()` or `regularize_open_contour()`.
 
 We assume that each contour has at least one principal direction that is a reference
-direction towards which the contour edges are either rotated or displaced. Given a
-user defined max angle deviation between an edge and a principal direction and a max distance
-between two consecutive parallel edges, each edge within these thresholds is made either parallel,
-collinear or orthogonal to the reference direction(s). The distance here is defined as
-the distance between the midpoint of the first edge and the projection of this point
-onto the supporting line of the next edge.
-
-\cgalFigureBegin{multiple_directions, multiple_directions.svg}
-A closed contour before (red) and after (green) the contour regularization.
-The found principal directions are marked yellow and they are found using the
-multiple directions estimator below.
-\cgalFigureEnd
+direction towards which the contour edges are rotated. Given a set of such directions
+either estimated or user-specified, each edge is made either parallel or orthogonal
+to these direction(s).
 
 To estimate principal directions of the contour, this component provides three
 models of the concept `ContourDirections`:
-- `Contours::Longest_direction_2` - sets the longest contour edge
-as the only principal direction.
-- `Contours::Multiple_directions_2` - tries to estimate multiple
-principal directions in the contour based on the user-defined parameters.
-- `Contours::User_defined_directions_2` - sets the user-defined
+- `Contours::Longest_direction_2` - sets the longest contour edge as the only principal direction.
+- `Contours::Multiple_directions_2` - tries to estimate multiple principal directions
+in the contour based on the user-specified parameters (see the figure below).
+- `Contours::User_defined_directions_2` - sets the user-specified
 principal directions as contour directions.
 
-After the directions are set, the algorithm is linear in the number of contour edges. It goes
-through each contour edge and orients it towards the best-fit direction, then it tries to
-merge consecutive parallel edges, if they are within the user-defined max distance
-threshold, and inserts orthogonal edges wherever it is necessary. Note that the final result
-of the algorithm may return a different number of edges than were provided as input.
+\cgalFigureBegin{multiple_directions, multiple_directions.svg}
+A closed contour before (red) and after (green) the contour regularization.
+The found principal directions are marked yellow.
+\cgalFigureEnd
+
+After the directions are set, the algorithm is linear in the number of contour edges. It first goes
+through each contour edge and orients it towards the best-fit direction. In the second step,
+all parallel consecutive edges are merged if they are within a user-specified maximum tolerance distance.
+The distance here is defined as the distance between the midpoint of the first edge and the
+projection of this point onto the supporting line of the next edge. Whenever it is necessary,
+the algorithm inserts additional orthogonal edges as shown in the figure below. The latter means that
+the final result of the algorithm may return a different number of edges than were provided as input.
 
 If the user wants to rotate each contour edge on its own towards the best-fit direction
 without reconnecting them after into a closed/open contour, she can either use the
@@ -401,7 +395,6 @@ each segment by calling the `ContourDirections::orient()` method.
 In the example below, we regularize a closed contour. We use multiple directions
 estimator, which returns only one direction, because the contour is quite rectilinear.
 In fact, the returned direction in this case coincides with the longest edge direction.
-The used kernel is `Exact_predicates_inexact_constructions_kernel`.
 
 \cgalFigureBegin{regularize_closed_contour_example, regularize_closed_contour.svg}
 A closed contour before (red) and after (green) the contour regularization.
@@ -415,9 +408,8 @@ A closed contour before (red) and after (green) the contour regularization.
 Open contours are contours where the head and tail of the contour are not connected.
 This case requires a special treatment, but the core of the algorithm is the same.
 In the example below, we regularize an open contour with respect to
-its longest edge. This example also shows how to provide a property map in the algorithm
+its longest edge. This example also shows how to provide a property map to the algorithm
 in order to give the algorithm access to the coordinates of the contour vertices.
-The used kernel is `Exact_predicates_inexact_constructions_kernel`.
 
 \cgalFigureBegin{regularize_open_contour_example, regularize_open_contour.svg}
 An open contour before (red) and after (green) the contour regularization.
@@ -428,9 +420,13 @@ An open contour before (red) and after (green) the contour regularization.
 
 \subsection Contour_Regularization_Performance Performance
 
-The contour regularization algorithms, both closed and open, are quite fast in practice
-and show approximately linear time behavior with respect to the number of input contour vertices
-that is supported by the table below.
+The contour regularization algorithms, both closed and open, show linear in practice
+time behavior with respect to the number of input contour vertices. In fact, the time
+is not linear, as you can see in the table and figure below, due to the second step
+of merging consecutive collinear edges. For some polygons, the number of such edges
+is quite high and before merging them into one segment, we collect all of them into a group
+in order to find the best optimal position to place the final segment that may lead to a slower
+performance in some cases.
 
 <table class="markdownTable" align="center">
 <tr class="markdownTableHead">
@@ -484,17 +480,12 @@ Time in seconds to regularize closed (red) and open (green) contours.
 
 \section Plane_Regularization Planes
 
-Here, we provide all available \cgal algorithms that enable to regularize 3D planes.
-
-
-\subsection Plane_Regularization_Hierarchy Hierarchical Regularization
-
 Given a set of 3D planes with their corresponding inlier sets, users can reinforce four
 types of regularities among these planes using the function `regularize_planes()`:
 - *Parallelism*: planes, which are detected as near parallel, are made exactly parallel.
 - *Orthogonality*: planes, which are detected as near orthogonal, are made exactly orthogonal.
 - *Coplanarity*: parallel planes, which are detected as near coplanar, are made exactly coplanar.
-- *Axis-Symmetry*: planes, which are detected as near symmetrical with respect to a user-defined axis,
+- *Axis-Symmetry*: planes, which are detected as near symmetrical with respect to a user-specified axis,
 are made exactly symmetrical.
 
 The user can choose to regularize only one or several of these four properties.
@@ -502,31 +493,26 @@ The process is greedy and based on a hierarchical decomposition (coplanar cluste
 which are subgroups of axis-symmetric and orthogonal clusters) as described by Verdie et al. in \cgalCite{cgal:vla-lod-15}.
 
 The following example illustrates how to use the plane regularization function.
-The used kernel is `Exact_predicates_inexact_constructions_kernel`.
 
 \cgalExample{Shape_regularization/regularize_planes.cpp}
 
-\note Please note that this function was earlier used in the \ref PkgShapeDetection package. You can
+\note Please note that this function used to be a part of the \ref PkgShapeDetection package. You can
 still use the old API of that function, however to avoid parameters ambiguity, we strongly
 suggest to use the new API with the \ref BGLNamedParameters "Named Parameters" mechanism.
 
 
-\section QP_Regularization QP Regularization
+\section QP_Regularization Advance QP Regularization
 
 The shape regularization component is a generic framework that is based on the
 Quadratic Programming (QP) global regularization algorithm \cgalCite{cgal:bl-kippi-18}
-by Bauchet et Lafarge. You should address this section only if you want to know details
+by Bauchet et Lafarge. You should refer to this section only if you want to know details
 on how the shape regularization framework is organized internally or you want to extend
 that framework by implementing your own regularization types.
 
-Two particular instances of the algorithm are provided:
-- `Segments::Angle_regularization_2` - orients a set
-of unordered 2D segments. See \ref QP_Regularization_Segments_Angles "Angle Regularization" for more details.
-
-- `Segments::Offset_regularization_2` - aligns a set
-of parallel 2D segments. See \ref QP_Regularization_Segments_Offset "Offset Regularization" for more details.
-
-Other instances can be added by the user, as explained \ref QP_Regularization_Implementation "here".
+\ref QP_Regularization_Segments_Angles "Angle Regularization" and
+\ref QP_Regularization_Segments_Offset "Offset Regularization" that we presented before
+are two particular instances of this algorithm. Other instances can be added by the user,
+as explained \ref QP_Regularization_Implementation "here".
 
 
 \subsection QP_Regularization_Framework Framework
@@ -555,9 +541,9 @@ This way each pair is inserted only once. The neighbors are found via the \ref Q
 "Delaunay Neighbor Query".
 
 When we have the graph, we fill in the terms \f$D(\boldsymbol{x})\f$ and \f$V(\boldsymbol{x})\f$
-via the concept `RegularizationType`. First, we obtain a max perturbation bound for each segment
+via the concept `RegularizationType`. First, we obtain a maximum perturbation bound for each segment
 via the method `RegularizationType::bound()`. Since we want to rotate segments, we return here
-the max allowed angle deviation for each segment with respect to its original orientation, lets
+the maximum allowed angle deviation for each segment with respect to its original orientation, lets
 say 25 degrees.
 
 Next, for every edge \f$\{i, j\}\f$ in the graph, we compute the perturbation difference between
@@ -600,12 +586,12 @@ The concept `RegularizationType` determines a type of regularization to be appli
 To create a model that respects this concept, three functions have to be defined:
 
 - `RegularizationType::target()` a function that estimates a type of regularity between two neighbors,
-- `RegularizationType::bound()` a function that returns a max bound on the allowed regularity change, and
+- `RegularizationType::bound()` a function that returns a maximum bound on the allowed regularity change, and
 - `RegularizationType::update()` a function that updates input items with respect to the modified regularities.
 
 For example, if we want to regularize segment orientations, that is to make segments parallel and orthogonal
 to each other, the first function should return an angle perturbation between a query segment and each of its neighbors;
-the second function should return a max angle within which a rotation of the query segment is accepted;
+the second function should return a maximum angle within which a rotation of the query segment is accepted;
 and the third function should update original orientations of the input segments.
 See above and \ref QP_Regularization_Segments_Angles "this section" for more details.
 
@@ -634,7 +620,7 @@ concept and possibly a model of the \ref QP_Regularization_Neighborhood "Neighbo
 These concepts are used to parameterize the main `QP_regularization` algorithm:
 1. Use `NeighborQuery` to find local neighbors of each input item;
 2. Use `RegularizationType` to estimate current regularities among these neighbors;
-3. Use `RegularizationType` to set max bounds on the allowed regularity changes;
+3. Use `RegularizationType` to set maximum bounds on the allowed regularity changes;
 4. Use `QuadraticProgramTraits` to solve the quadratic programming problem;
 5. Use `RegularizationType` to update input items with respect to the modified regularities.
 
@@ -655,7 +641,6 @@ under the supervision of Florent Lafarge and then generalized by Gennadii Sytov 
 of Code 2019 under the supervision of Dmitry Anisimov. The contour regularization algorithm was
 developed and implemented by Dmitry Anisimov and Simon Giraudot. Plane regularization
 was added by Simon Giraudot based on the prototype version developed by Florent Lafarge.
-In 2020, the package was cleaned up and documented.
 
 
 \section Shape_Regularization_Acknowledgements Acknowledgments

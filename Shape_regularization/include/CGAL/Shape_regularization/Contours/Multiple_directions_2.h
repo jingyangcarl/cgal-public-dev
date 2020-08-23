@@ -39,10 +39,10 @@ namespace Contours {
     \ingroup PkgShapeRegularizationRefContours
 
     \brief Estimates possibly multiple principal directions of the contour
-    based on the user-defined min length and max angle bounds.
+    based on the user-specified minimum length and maximum angle bounds.
 
     This algorithm finds the best-fit edges of the contour with respect to the
-    user-defined parameters and sets their directions as the principal directions
+    user-specified parameters and sets their directions as the principal directions
     of the contour.
 
     \tparam GeomTraits
@@ -104,13 +104,13 @@ namespace Contours {
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{max_angle}
-          \cgalParamDescription{max allowed angle deviation in degrees between a contour edge
+          \cgalParamDescription{maximum allowed angle deviation in degrees between a contour edge
             and a principal direction such that they are considered to be parallel or orthogonal}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{10 degrees}
         \cgalParamNEnd
         \cgalParamNBegin{min_length}
-          \cgalParamDescription{min acceptable length of a contour edge whose direction can be taken
+          \cgalParamDescription{minimum acceptable length of a contour edge whose direction can be taken
             as a principal direction}
           \cgalParamType{`GeomTraits::FT`}
           \cgalParamDefault{3 unit lengths}

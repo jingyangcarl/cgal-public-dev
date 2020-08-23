@@ -38,7 +38,7 @@ Models and functions that can be used when regularizing planes.
 \cgalPkgAuthors{Dmitry Anisimov, Gennadii Sytov, Simon Giraudot, Jean-Philippe Bauchet, and Florent Lafarge}
 \cgalPkgDesc{This \cgal package enables to regularize a set of segments and open or closed contours in 2D
 and a set of planes in 3D such that all input objects are rotated and aligned with respect
-to the user-defined conditions.}
+to the user-specified conditions.}
 \cgalPkgManuals{Chapter_Shape_Regularization, PkgShapeRegularizationRef}
 \cgalPkgSummaryEnd
 
@@ -66,17 +66,17 @@ to the user-defined conditions.}
 #### Regularization Types ####
 - `Segments::Angle_regularization_2<GeomTraits, InputRange, SegmentMap>`
 - `Segments::Offset_regularization_2<GeomTraits, InputRange, SegmentMap>`
-#### Groups ####
+#### Grouping Segments ####
 - `Segments::parallel_groups()`
 - `Segments::orthogonal_groups()`
 - `Segments::collinear_groups()`
-#### Simplification ####
+#### Simplifying Segments ####
 - `Segments::unique_segments()`
 
 ### %Contours ###
 - `regularize_closed_contour()`
 - `regularize_open_contour()`
-#### Directions ####
+#### Estimating Directions ####
 - `Contours::Longest_direction_2<GeomTraits, InputRange, PointMap>`
 - `Contours::Multiple_directions_2<GeomTraits, InputRange, PointMap>`
 - `Contours::User_defined_directions_2<GeomTraits, InputRange, PointMap>`

@@ -93,7 +93,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
-        \cgalParamDescription{max allowed orthogonal distance between two parallel
+        \cgalParamDescription{maximum allowed orthogonal distance between two parallel
           and consecutive contour edges such that they are considered to be collinear}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{0.5 unit length}
@@ -179,7 +179,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
-        \cgalParamDescription{max allowed orthogonal distance between two parallel
+        \cgalParamDescription{maximum allowed orthogonal distance between two parallel
           and consecutive contour edges such that they are considered to be collinear}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{0.5 unit length}
@@ -267,7 +267,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
-        \cgalParamDescription{max allowed orthogonal distance between two parallel
+        \cgalParamDescription{maximum allowed orthogonal distance between two parallel
           and consecutive contour edges such that they are considered to be collinear}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{0.5 unit length}
@@ -353,7 +353,7 @@ namespace Contours {
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
-        \cgalParamDescription{max allowed orthogonal distance between two parallel
+        \cgalParamDescription{maximum allowed orthogonal distance between two parallel
           and consecutive contour edges such that they are considered to be collinear}
         \cgalParamType{`GeomTraits::FT`}
         \cgalParamDefault{0.5 unit length}
