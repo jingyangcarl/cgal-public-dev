@@ -286,19 +286,19 @@ namespace Planes {
     The implementation follows \cgalCite{cgal:vla-lod-15}.
 
     \tparam PlaneRange
-    must be a model of `Range` whose iterator type is `RandomAccessIterator`.
+    a model of `Range` whose iterator type is `RandomAccessIterator`.
 
     \tparam PlaneMap
-    must be a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<GeomTraits>`.
+    a model of `WritablePropertyMap` with the value type `CGAL::Plane_3<GeomTraits>`.
 
     \tparam PointRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<GeomTraits>`.
+    a model of `ReadablePropertyMap` with the value type `CGAL::Point_3<GeomTraits>`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \param planes
     a range of planes to be regularized

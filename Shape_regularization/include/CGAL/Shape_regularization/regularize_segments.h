@@ -61,22 +61,22 @@ namespace Segments {
     The user has to provide a `NeighborQuery` model to access local neighbors
     of a segment and a `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `QP_regularization`.
-    Please address that class and these concepts for more information.
+    Please refer to that class and these concepts for more information.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`.
 
     \tparam RegularizationType
-    must be a model of `RegularizationType`.
+    a model of `RegularizationType`.
 
     \tparam QuadraticProgramTraits
-    must be a model of `QuadraticProgramTraits`.
+    a model of `QuadraticProgramTraits`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \param input_range
     a const range of input segments for shape regularization
@@ -135,7 +135,7 @@ namespace Segments {
     The user has to provide a `NeighborQuery` model to access local neighbors
     of a segment and a `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `QP_regularization`.
-    Please address that class and these concepts for more information.
+    Please refer to that class and these concepts for more information.
 
     This function provides the default solver `CGAL::OSQP_quadratic_program_traits`
     for the quadratic program that is solved during regularization.
@@ -143,16 +143,16 @@ namespace Segments {
     This function is available only when the \ref thirdpartyOSQP "OSQP" solver is available on the system.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`.
 
     \tparam RegularizationType
-    must be a model of `RegularizationType`.
+    a model of `RegularizationType`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \param input_range
     a const range of input segments for shape regularization
@@ -204,7 +204,7 @@ namespace Segments {
     The user has to provide a `NeighborQuery` model to access local neighbors
     of a segment and a `RegularizationType` model to define the type of regularities
     that should be addressed. The function is based on the class `QP_regularization`.
-    Please address that class and these concepts for more information.
+    Please refer to that class and these concepts for more information.
 
     This function provides the default solver `CGAL::OSQP_quadratic_program_traits`
     for the quadratic program that is solved during regularization. In addition, this
@@ -213,13 +213,13 @@ namespace Segments {
     This function is available only when the \ref thirdpartyOSQP "OSQP" solver is available on the system.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`.
 
     \tparam RegularizationType
-    must be a model of `RegularizationType`.
+    a model of `RegularizationType`.
 
     \param input_range
     a const range of input segments for shape regularization
@@ -273,20 +273,20 @@ namespace Segments {
     This function does not regularize input segments, but only groups them.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `std::vector<std::size_t>`.
+    an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \param input_range
     a const range of input segments
@@ -362,16 +362,16 @@ namespace Segments {
     This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `std::vector<std::size_t>`.
+    an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map`.
 
@@ -437,27 +437,26 @@ namespace Segments {
 
     This function enables to find groups of near collinear segments
     in a set of 2D segments. The groups are returned as vectors of indices.
-    This algorithm first finds the groups of
-    `Segments::parallel_segments()` and then splits
-    these groups into groups of collinear segments.
+    This algorithm first finds the groups of parallel segments using the function
+    `Segments::parallel_groups()` and then splits these groups into groups of collinear segments.
 
     This function does not regularize input segments, but only groups them.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `std::vector<std::size_t>`.
+    an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \param input_range
     a const range of input segments
@@ -524,25 +523,24 @@ namespace Segments {
 
     This function enables to find groups of near collinear segments
     in a set of 2D segments. The groups are returned as vectors of indices.
-    This algorithm first finds the groups of
-    `Segments::parallel_segments()` and then splits
-    these groups into groups of collinear segments.
+    This algorithm first finds the groups of parallel segments using the function
+    `Segments::parallel_groups()` and then splits these groups into groups of collinear segments.
 
     This function does not regularize input segments, but only groups them.
 
     This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `std::vector<std::size_t>`.
+    an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map`.
 
@@ -608,27 +606,26 @@ namespace Segments {
 
     This function enables to find groups of near orthogonal segments
     in a set of 2D segments. The groups are returned as vectors of indices.
-    This algorithm first finds the groups of
-    `Segments::parallel_segments()` and then merges
-    these groups into groups of orthogonal segments.
+    This algorithm first finds the groups of parallel segments using the function
+    `Segments::parallel_groups()` and then merges these groups into groups of orthogonal segments.
 
     This function does not regularize input segments, but only groups them.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `std::vector<std::size_t>`.
+    an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \param input_range
     a const range of input segments
@@ -695,25 +692,24 @@ namespace Segments {
 
     This function enables to find groups of near orthogonal segments
     in a set of 2D segments. The groups are returned as vectors of indices.
-    This algorithm first finds the groups of
-    `Segments::parallel_segments()` and then merges
-    these groups into groups of orthogonal segments.
+    This algorithm first finds the groups of parallel segments using the function
+    `Segments::parallel_groups()` and then merges these groups into groups of orthogonal segments.
 
     This function does not regularize input segments, but only groups them.
 
     This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `std::vector<std::size_t>`.
+    an output iterator whose value type is `std::vector<std::size_t>`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map`.
 
@@ -784,20 +780,20 @@ namespace Segments {
     This function does not regularize input segments, but only groups and then simplifies them.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::Segment_2`.
+    an output iterator whose value type is `GeomTraits::Segment_2`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \param input_range
     a const range of input segments
@@ -871,16 +867,16 @@ namespace Segments {
     This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::Segment_2`.
+    an output iterator whose value type is `GeomTraits::Segment_2`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map`.
 

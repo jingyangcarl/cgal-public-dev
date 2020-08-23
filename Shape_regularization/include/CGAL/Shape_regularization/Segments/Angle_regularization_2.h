@@ -44,13 +44,13 @@ namespace Segments {
     parallelism and orthogonality relationships.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \tparam InputRange
-    must be a model of `Range` whose iterator type is `RandomAccessIterator`.
+    a model of `Range` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap
-    must be a model of `LvaluePropertyMap` whose key type is the value type of the input
+    a model of `ReadWritePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
@@ -96,7 +96,7 @@ namespace Segments {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      must be a sequence of \ref bgl_namedparameters "Named Parameters".
+      a sequence of \ref bgl_namedparameters "Named Parameters".
 
       \param input_range
       a range of 2D segments to be regularized
@@ -148,16 +148,15 @@ namespace Segments {
     /*!
       \brief inserts a group of segments from `input_range`.
 
-      Each group of segments is provided as a vector of their indices and only
+      Each group of segments is provided as a collection of their indices and only
       segments within the group are being regularized that is no relationships
       between segments from different groups are taken into account.
 
-      The user does not have to use this method until one has well-defined
-      groups of segments. By default, all segments are inserted as a group.
+      The user must not use this method until he has meaningful groups of segments.
+      By default, all segments are inserted as a group.
 
       \tparam IndexRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`
-      and value type is `std::size_t`.
+      a model of `ConstRange` whose value type is `std::size_t`.
 
       \param index_range
       a const range of segment indices
@@ -281,12 +280,12 @@ namespace Segments {
     /// @{
 
     /*!
-      \brief returns indices of parallel segments organized into groups.
+      \brief creates groups of indices, where each group represents parallel segments.
 
       This method calls `Segments::parallel_groups()`.
 
       \tparam OutputIterator
-      must be a model of `OutputIterator`
+      a model of `OutputIterator` whose value type is `std::vector<std::size_t>`.
 
       \param groups
       an instance of `OutputIterator`,
@@ -303,12 +302,12 @@ namespace Segments {
     }
 
     /*!
-      \brief returns indices of orthogonal segments organized into groups.
+      \brief creates groups of indices, where each group represents orthogonal segments.
 
       This method calls `Segments::orthogonal_groups()`.
 
       \tparam OutputIterator
-      must be a model of `OutputIterator`
+      a model of `OutputIterator` whose value type is `std::vector<std::size_t>`.
 
       \param groups
       an instance of `OutputIterator`,
@@ -409,7 +408,6 @@ namespace Segments {
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
-
         wrap.is_used = true;
       }
     }

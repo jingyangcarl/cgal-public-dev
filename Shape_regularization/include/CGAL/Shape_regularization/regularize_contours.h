@@ -45,7 +45,7 @@ namespace Contours {
 
     \brief regularizes closed contours.
 
-    Given a set of counterclockwise ordered 2D points connected by segments, which form a closed contour,
+    Given a set of ordered 2D points connected by segments, which form a closed contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
     - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -54,23 +54,23 @@ namespace Contours {
     The principal directions of the contour are provided via the concept `ContourDirections`.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam ContourDirections
-    must be a model of `ContourDirections`.
+    a model of `ContourDirections`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::Point_2`.
+    an output iterator whose value type is `GeomTraits::Point_2`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Point_2`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \param input_range
     a const range of ordered points, which form a contour
@@ -134,7 +134,7 @@ namespace Contours {
 
     \brief regularizes closed contours.
 
-    Given a set of counterclockwise ordered 2D points connected by segments, which form a closed contour,
+    Given a set of ordered 2D points connected by segments, which form a closed contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
     - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -145,19 +145,19 @@ namespace Contours {
     This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam ContourDirections
-    must be a model of `ContourDirections`.
+    a model of `ContourDirections`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::Point_2`.
+    an output iterator whose value type is `GeomTraits::Point_2`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Point_2`. %Default is the
     `CGAL::Identity_property_map`.
 
@@ -219,7 +219,7 @@ namespace Contours {
 
     \brief regularizes open contours.
 
-    Given a set of counterclockwise ordered 2D points connected by segments, which form an open contour,
+    Given a set of ordered 2D points connected by segments, which form an open contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
     - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -228,23 +228,23 @@ namespace Contours {
     The principal directions of the contour are provided via the concept `ContourDirections`.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam ContourDirections
-    must be a model of `ContourDirections`.
+    a model of `ContourDirections`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::Point_2`.
+    an output iterator whose value type is `GeomTraits::Point_2`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Point_2`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \param input_range
     a const range of ordered points, which form a contour
@@ -308,7 +308,7 @@ namespace Contours {
 
     \brief regularizes open contours.
 
-    Given a set of counterclockwise ordered 2D points connected by segments, which form an open contour,
+    Given a set of ordered 2D points connected by segments, which form an open contour,
     this function enables to reinforce three types of regularities among consecutive edges of this contour:
     - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
     - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
@@ -319,19 +319,19 @@ namespace Contours {
     This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam ContourDirections
-    must be a model of `ContourDirections`.
+    a model of `ContourDirections`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `GeomTraits::Point_2`.
+    an output iterator whose value type is `GeomTraits::Point_2`.
 
     \tparam NamedParameters
-    must be a sequence of \ref bgl_namedparameters "Named Parameters".
+    a sequence of \ref bgl_namedparameters "Named Parameters".
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Point_2`. %Default is the
     `CGAL::Identity_property_map`.
 

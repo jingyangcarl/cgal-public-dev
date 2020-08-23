@@ -127,7 +127,7 @@ public:
     Number of values in `solution` equals to the number `n` of values in the vector `x`.
 
     \tparam OutputIterator
-    must be an output iterator whose value type is `FT`.
+    an output iterator whose value type is `FT`.
 
     \param solution
     an output iterator with the solution

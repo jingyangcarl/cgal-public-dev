@@ -49,13 +49,13 @@ namespace Segments {
     Each group of parallel segments may be inserted using the method `add_group()`.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \tparam InputRange
-    must be a model of `Range` whose iterator type is `RandomAccessIterator`.
+    a model of `Range` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap
-    must be a model of `LvaluePropertyMap` whose key type is the value type of the `InputRange`
+    a model of `ReadWritePropertyMap` whose key type is the value type of the `InputRange`
     and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
@@ -100,7 +100,7 @@ namespace Segments {
       \brief initializes all internal data structures.
 
       \tparam NamedParameters
-      must be a sequence of \ref bgl_namedparameters "Named Parameters".
+      a sequence of \ref bgl_namedparameters "Named Parameters".
 
       \param input_range
       a range of 2D segments to be regularized
@@ -153,16 +153,15 @@ namespace Segments {
     /*!
       \brief inserts a group of segments from `input_range`.
 
-      Each group of segments is provided as a vector of their indices and only
+      Each group of segments is provided as a collection of their indices and only
       segments within the group are being regularized that is no relationships
       between segments from different groups are taken into account.
 
-      The user does not have to use this method until one has well-defined
-      groups of segments. By default, all segments are inserted as a group.
+      The user must not use this method until he has meaningful groups of segments.
+      By default, all segments are inserted as a group.
 
       \tparam IndexRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`
-      and value type is `std::size_t`.
+      a model of `ConstRange` whose value type is `std::size_t`.
 
       \param index_range
       a const range of segment indices
@@ -284,12 +283,12 @@ namespace Segments {
     /// @{
 
     /*!
-      \brief returns indices of collinear segments organized into groups.
+      \brief creates groups of indices, where each group represents collinear segments.
 
       This method calls `Segments::collinear_groups()`.
 
       \tparam OutputIterator
-      must be a model of `OutputIterator`
+      a model of `OutputIterator` whose value type is `std::vector<std::size_t>`.
 
       \param groups
       an instance of `OutputIterator`,
@@ -325,7 +324,7 @@ namespace Segments {
       The number of returned segments is the number of detected collinear groups.
 
       \tparam OutputIterator
-      must be a model of `OutputIterator`
+      a model of `OutputIterator` whose value type is `GeomTraits::Segment_2`.
 
       \param segments
       an instance of `OutputIterator`,
@@ -395,9 +394,8 @@ namespace Segments {
     void update_segment_data(
       const IndexRange& index_range) {
 
-      Point_2 frame_origin;
-      for (std::size_t i = 0; i < index_range.size(); ++i) {
-        const auto seg_index = *(index_range.begin() + i);
+      Point_2 frame_origin; std::size_t count = 0;
+      for (const auto seg_index : index_range) {
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
@@ -406,8 +404,9 @@ namespace Segments {
           get(m_segment_map, *(m_input_range.begin() + seg_index));
         wrap.set_qp(seg_index, segment);
 
-        if (i == 0) frame_origin = wrap.barycenter;
+        if (count == 0) frame_origin = wrap.barycenter;
         wrap.set_ref_coords(frame_origin);
+        ++count;
       }
     }
 
@@ -415,17 +414,16 @@ namespace Segments {
     void update_wrappers(
       const IndexRange& index_range) {
 
-      Point_2 frame_origin;
-      for (std::size_t i = 0; i < index_range.size(); ++i) {
-        const auto seg_index = *(index_range.begin() + i);
+      Point_2 frame_origin; std::size_t count = 0;
+      for (const auto seg_index : index_range) {
         CGAL_assertion(
           seg_index >= 0 && seg_index < m_wraps.size());
         auto& wrap = m_wraps[seg_index];
-
         wrap.is_used = true;
 
-        if (i == 0) frame_origin = wrap.barycenter;
+        if (count == 0) frame_origin = wrap.barycenter;
         wrap.set_ref_coords(frame_origin);
+        ++count;
       }
     }
 

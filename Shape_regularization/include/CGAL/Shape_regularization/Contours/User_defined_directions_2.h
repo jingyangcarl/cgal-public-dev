@@ -40,13 +40,13 @@ namespace Contours {
     user-specified principal directions and sets all other necessary data.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam PointMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the input
+    a model of `ReadablePropertyMap` whose key type is the value type of the input
     range and value type is `GeomTraits::Point_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
@@ -80,13 +80,13 @@ namespace Contours {
       \brief initializes all internal data structures.
 
       \tparam DirectionRange
-      must be a model of `ConstRange` whose value type is `GeomTraits::Direction_2`.
+      a model of `ConstRange` whose value type is `GeomTraits::Direction_2`.
 
       \param direction_range
       a const range with user-specified principal directions
 
       \param input_range
-      a const range of counterclockwise ordered 2D points, which form a contour
+      a const range of ordered 2D points, which form a contour
 
       \param is_closed
       indicates whether the contour is closed or open

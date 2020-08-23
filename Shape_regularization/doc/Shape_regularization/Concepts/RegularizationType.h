@@ -25,7 +25,7 @@ public:
     `QP_regularization` calls this method
     once for each object from the input range.
   */
-  typename GeomTraits::FT bound(
+  FieldNumberType bound(
     const std::size_t query_index) const {
 
   }
@@ -38,7 +38,7 @@ public:
     `QP_regularization` calls this method
     once for each neighbor pair being regularized.
   */
-  typename GeomTraits::FT target(
+  FieldNumberType target(
     const std::size_t i,
     const std::size_t j) {
 
@@ -59,7 +59,7 @@ public:
     once after the global regularization QP problem has been solved.
   */
   void update(
-    const std::vector<GeomTraits::FT>& solution) {
+    const std::vector<FieldNumberType>& solution) {
 
   }
 };

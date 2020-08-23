@@ -50,13 +50,13 @@ namespace Segments {
     the corresponding query vertex in the triangulation.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \tparam InputRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam SegmentMap
-    must be a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
+    a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
     and value type is `GeomTraits::Segment_2`. %Default is the
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
@@ -117,16 +117,15 @@ namespace Segments {
       \brief inserts a group of segments from `input_range` and finds their
       neighbors within the group.
 
-      Each group of segments is provided as a vector of their indices and only
+      Each group of segments is provided as a collection of their indices and only
       neighbors of segments within the group are computed that is no relationships
       between segments from different groups are taken into account.
 
-      The user does not have to use this method until one has well-defined
-      groups of segments. By default, all segments are inserted as a group.
+      The user must not use this method until he has meaningful groups of segments.
+      By default, all segments are inserted as a group.
 
       \tparam IndexRange
-      must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`
-      and value type is `std::size_t`.
+      a model of `ConstRange` whose value type is `std::size_t`.
 
       \param index_range
       a const range of segment indices
@@ -154,7 +153,7 @@ namespace Segments {
     /// @{
 
     /*!
-      \brief returns indices of segments, which are direct neighbors of
+      \brief fills in a vector with indices of segments, which are direct neighbors of
       the query segment.
 
       \param query_index

@@ -50,24 +50,24 @@ namespace Shape_regularization {
     the `RegularizationType` class.
 
     This class is generic and forms a framework for different types of user-specified
-    regularizations. Please address the user manual in order to learn how to use it.
+    regularizations. Please refer to the user manual in order to learn how to use it.
     In particular, section \ref QP_Regularization_Segments "Regularizing 2D Segments"
     shows an example.
 
     \tparam GeomTraits
-    must be a model of `Kernel`.
+    a model of `Kernel`.
 
     \tparam InputRange
-    must be a model of `ConstRange`.
+    a model of `ConstRange`.
 
     \tparam NeighborQuery
-    must be a model of `NeighborQuery`.
+    a model of `NeighborQuery`.
 
     \tparam RegularizationType
-    must be a model of `RegularizationType`.
+    a model of `RegularizationType`.
 
     \tparam QuadraticProgramTraits
-    must be a model of `QuadraticProgramTraits`.
+    a model of `QuadraticProgramTraits`.
   */
   template<
   typename GeomTraits,
