@@ -59,8 +59,7 @@ void test_segments() {
   //   "/Users/monet/Documents/gsoc/ggr/logs/sg_input", 100);
 
   NQ neighbor_query(segments);
-  AR angle_regularization(
-    segments, CGAL::parameters::all_default());
+  AR angle_regularization(segments);
   SR::Segments::regularize_segments(
     segments, neighbor_query, angle_regularization);
 
@@ -96,9 +95,7 @@ void test_segments() {
   assert(orthogonal_groups[0][2] == 2);
   assert(orthogonal_groups[0][3] == 3);
 
-  OR offset_regularization(
-    segments, CGAL::parameters::all_default());
-
+  OR offset_regularization(segments);
   neighbor_query.clear();
   for (const auto& parallel_group : parallel_groups) {
     neighbor_query.add_group(parallel_group);

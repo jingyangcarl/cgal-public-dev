@@ -83,13 +83,16 @@ namespace Contours {
 
     \param np
     an optional sequence of \ref bgl_namedparameters "Named Parameters"
-    among the ones listed below
+    among the ones listed below; this parameter can be omitted,
+    the default values are then used
 
     \param point_map
-    an instance of `PointMap`
+    an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
+    this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
 
     \param traits
-    an instance of `GeomTraits`
+    an instance of `GeomTraits`; this parameter can be omitted if the traits class
+    can be deduced from the input value type
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
@@ -115,9 +118,9 @@ namespace Contours {
     const InputRange& input_range,
     const ContourDirections& directions,
     OutputIterator contour,
-    const NamedParameters np,
+    const NamedParameters& np,
     const PointMap point_map,
-    const GeomTraits traits) {
+    const GeomTraits& traits) {
 
     CGAL_precondition(input_range.size() >= 3);
     using Contour_regularizer =
@@ -129,67 +132,7 @@ namespace Contours {
     return regularizer.regularize(contour);
   }
 
-  /*!
-    \ingroup PkgShapeRegularizationRefContours
-
-    \brief regularizes closed contours.
-
-    Given a set of ordered 2D points connected by segments, which form a closed contour,
-    this function enables to reinforce three types of regularities among consecutive edges of this contour:
-    - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
-    - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
-    - *Collinearity*: parallel contour edges, which are detected as near collinear, are made exactly collinear.
-
-    The principal directions of the contour are provided via the concept `ContourDirections`.
-
-    This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
-
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-
-    \tparam ContourDirections
-    a model of `ContourDirections`.
-
-    \tparam OutputIterator
-    an output iterator whose value type is `GeomTraits::Point_2`.
-
-    \tparam NamedParameters
-    a sequence of \ref bgl_namedparameters "Named Parameters".
-
-    \tparam PointMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Point_2`. %Default is the
-    `CGAL::Identity_property_map`.
-
-    \param input_range
-    a const range of ordered points, which form a contour
-
-    \param directions
-    estimated contour directions towards which the contour edges are oriented
-
-    \param contour
-    an output iterator with points of the regularized contour
-
-    \param np
-    an optional sequence of \ref bgl_namedparameters "Named Parameters"
-    among the ones listed below
-
-    \param point_map
-    an instance of `PointMap`, if not provided, the default is used
-
-    \cgalNamedParamsBegin
-      \cgalParamNBegin{max_offset}
-        \cgalParamDescription{maximum allowed orthogonal distance between two parallel
-          and consecutive contour edges such that they are considered to be collinear}
-        \cgalParamType{`GeomTraits::FT`}
-        \cgalParamDefault{0.5 unit length}
-      \cgalParamNEnd
-    \cgalNamedParamsEnd
-
-    \return an output iterator.
-
-    \pre input_range.size() >= 3
-  */
+  /// \cond SKIP_IN_MANUAL
   template<
   typename InputRange,
   typename ContourDirections,
@@ -201,7 +144,7 @@ namespace Contours {
     const InputRange& input_range,
     const ContourDirections& directions,
     OutputIterator contour,
-    const NamedParameters np,
+    const NamedParameters& np,
     const PointMap point_map = PointMap()) {
 
     CGAL_precondition(input_range.size() >= 3);
@@ -213,6 +156,21 @@ namespace Contours {
     return regularize_closed_contour(
       input_range, directions, contour, np, point_map, traits);
   }
+
+  template<
+  typename InputRange,
+  typename ContourDirections,
+  typename OutputIterator>
+  OutputIterator regularize_closed_contour(
+    const InputRange& input_range,
+    const ContourDirections& directions,
+    OutputIterator contour) {
+
+    CGAL_precondition(input_range.size() >= 3);
+    return regularize_closed_contour(
+      input_range, directions, contour, CGAL::parameters::all_default());
+  }
+  /// \endcond
 
   /*!
     \ingroup PkgShapeRegularizationRefContours
@@ -257,13 +215,16 @@ namespace Contours {
 
     \param np
     an optional sequence of \ref bgl_namedparameters "Named Parameters"
-    among the ones listed below
+    among the ones listed below; this parameter can be omitted,
+    the default values are then used
 
     \param point_map
-    an instance of `PointMap`
+    an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
+    this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
 
     \param traits
-    an instance of `GeomTraits`
+    an instance of `GeomTraits`; this parameter can be omitted if the traits class
+    can be deduced from the input value type
 
     \cgalNamedParamsBegin
       \cgalParamNBegin{max_offset}
@@ -289,9 +250,9 @@ namespace Contours {
     const InputRange& input_range,
     const ContourDirections& directions,
     OutputIterator contour,
-    const NamedParameters np,
+    const NamedParameters& np,
     const PointMap point_map,
-    const GeomTraits traits) {
+    const GeomTraits& traits) {
 
     CGAL_precondition(input_range.size() >= 2);
     using Contour_regularizer =
@@ -303,67 +264,7 @@ namespace Contours {
     return regularizer.regularize(contour);
   }
 
-  /*!
-    \ingroup PkgShapeRegularizationRefContours
-
-    \brief regularizes open contours.
-
-    Given a set of ordered 2D points connected by segments, which form an open contour,
-    this function enables to reinforce three types of regularities among consecutive edges of this contour:
-    - *Parallelism*: contour edges, which are detected as near parallel, are made exactly parallel.
-    - *Orthogonality*: contour edges, which are detected as near orthogonal, are made exactly orthogonal.
-    - *Collinearity*: parallel contour edges, which are detected as near collinear, are made exactly collinear.
-
-    The principal directions of the contour are provided via the concept `ContourDirections`.
-
-    This function infers a traits class `GeomTraits` from the `InputRange` iterator's value type.
-
-    \tparam InputRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-
-    \tparam ContourDirections
-    a model of `ContourDirections`.
-
-    \tparam OutputIterator
-    an output iterator whose value type is `GeomTraits::Point_2`.
-
-    \tparam NamedParameters
-    a sequence of \ref bgl_namedparameters "Named Parameters".
-
-    \tparam PointMap
-    a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Point_2`. %Default is the
-    `CGAL::Identity_property_map`.
-
-    \param input_range
-    a const range of ordered points, which form a contour
-
-    \param directions
-    estimated contour directions towards which the contour edges are oriented
-
-    \param contour
-    an output iterator with points of the regularized contour
-
-    \param np
-    an optional sequence of \ref bgl_namedparameters "Named Parameters"
-    among the ones listed below
-
-    \param point_map
-    an instance of `PointMap`, if not provided, the default is used
-
-    \cgalNamedParamsBegin
-      \cgalParamNBegin{max_offset}
-        \cgalParamDescription{maximum allowed orthogonal distance between two parallel
-          and consecutive contour edges such that they are considered to be collinear}
-        \cgalParamType{`GeomTraits::FT`}
-        \cgalParamDefault{0.5 unit length}
-      \cgalParamNEnd
-    \cgalNamedParamsEnd
-
-    \return an output iterator.
-
-    \pre input_range.size() >= 2
-  */
+  /// \cond SKIP_IN_MANUAL
   template<
   typename InputRange,
   typename ContourDirections,
@@ -375,7 +276,7 @@ namespace Contours {
     const InputRange& input_range,
     const ContourDirections& directions,
     OutputIterator contour,
-    const NamedParameters np,
+    const NamedParameters& np,
     const PointMap point_map = PointMap()) {
 
     CGAL_precondition(input_range.size() >= 2);
@@ -387,6 +288,21 @@ namespace Contours {
     return regularize_open_contour(
       input_range, directions, contour, np, point_map, traits);
   }
+
+  template<
+  typename InputRange,
+  typename ContourDirections,
+  typename OutputIterator>
+  OutputIterator regularize_open_contour(
+    const InputRange& input_range,
+    const ContourDirections& directions,
+    OutputIterator contour) {
+
+    CGAL_precondition(input_range.size() >= 2);
+    return regularize_open_contour(
+      input_range, directions, contour, CGAL::parameters::all_default());
+  }
+  /// \endcond
 
 } // namespace Contours
 } // namespace Shape_regularization

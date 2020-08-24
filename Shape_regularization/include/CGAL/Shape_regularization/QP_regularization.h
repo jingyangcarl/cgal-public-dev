@@ -130,7 +130,8 @@ namespace Shape_regularization {
       an instance of `QuadraticProgramTraits` to solve the quadratic programming problem
 
       \param traits
-      an instance of `GeomTraits`, if not provided, the default is used
+      an instance of `GeomTraits`; this parameter can be omitted if the traits class
+      can be deduced from the input value type
 
       \pre input_range.size() >= 2
     */

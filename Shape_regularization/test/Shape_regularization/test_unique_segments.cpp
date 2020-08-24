@@ -52,7 +52,7 @@ void test_unique_segments() {
 
   std::vector<Segment_2> unique;
   SR::Segments::unique_segments(
-    segments, std::back_inserter(unique), CGAL::parameters::all_default());
+    segments, std::back_inserter(unique));
   assert(unique.size() == 4);
   // saver.export_eps_segments(unique, "/Users/monet/Documents/gsoc/ggr/logs/us_output_df", 100);
   assert(unique[0] == ref_segments[0]);

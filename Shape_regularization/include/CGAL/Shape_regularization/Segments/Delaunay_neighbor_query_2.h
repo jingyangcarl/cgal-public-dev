@@ -57,7 +57,7 @@ namespace Segments {
 
     \tparam SegmentMap
     a model of `ReadablePropertyMap` whose key type is the value type of the `InputRange`
-    and value type is `GeomTraits::Segment_2`. %Default is the
+    and value type is `GeomTraits::Segment_2`. The default is
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
     \cgalModels `NeighborQuery`
@@ -96,8 +96,8 @@ namespace Segments {
       a const range of 2D segments
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`,
-      if not provided, the default is used
+      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`;
+      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
 
       \pre input_range.size() >= 2
     */

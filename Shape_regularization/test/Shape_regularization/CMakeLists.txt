@@ -20,6 +20,7 @@ if(CGAL_FOUND)
 
     set(osqp_targets
     test_segments
+    test_overloads
     test_0_segments
     test_1_segment
     test_2_segments

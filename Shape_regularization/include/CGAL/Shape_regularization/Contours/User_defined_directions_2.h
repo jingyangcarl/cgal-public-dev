@@ -47,7 +47,7 @@ namespace Contours {
 
     \tparam PointMap
     a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Point_2`. %Default is the
+    range and value type is `GeomTraits::Point_2`. The default is
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
     \cgalModels `ContourDirections`
@@ -82,18 +82,18 @@ namespace Contours {
       \tparam DirectionRange
       a model of `ConstRange` whose value type is `GeomTraits::Direction_2`.
 
-      \param direction_range
-      a const range with user-specified principal directions
-
       \param input_range
       a const range of ordered 2D points, which form a contour
 
       \param is_closed
       indicates whether the contour is closed or open
 
+      \param direction_range
+      a const range with user-specified principal directions
+
       \param point_map
-      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`,
-      if not provided, the default is used
+      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
+      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
 
       \pre direction_range.size() >= 1
       \pre direction_range.size() == input_range.size() for closed contours

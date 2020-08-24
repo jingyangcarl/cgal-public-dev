@@ -1,20 +1,23 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Shape_regularization.h>
 
-using Kernel    = CGAL::Simple_cartesian<double>;
-using FT        = typename Kernel::FT;
-using Point_2   = typename Kernel::Point_2;
-using Segment_2 = typename Kernel::Segment_2;
+using Kernel = CGAL::Simple_cartesian<double>;
+using FT     = typename Kernel::FT;
 
-namespace CGAL {
+struct Custom_object {
+  const std::string name;
+  Custom_object(const std::string name_) :
+  name(name_) { }
+  // define your object here
+};
 
 struct Custom_neighbor_query_2 {
   void operator()(
     const std::size_t query_index,
     std::vector<std::size_t>& neighbors) {
     neighbors.clear();
-    if (query_index == 0) { neighbors.push_back(1); } // first  segment
-    if (query_index == 1) { neighbors.push_back(0); } // second segment
+    if (query_index == 0) { neighbors.push_back(1); } // first  object
+    if (query_index == 1) { neighbors.push_back(0); } // second object
   }
 };
 
@@ -35,7 +38,7 @@ struct Custom_regularization_2 {
 };
 
 template<typename NT>
-class USER_quadratic_program_traits  {
+class Custom_quadratic_program_traits  {
 public:
   void reserve_P(const std::size_t) { }
   void reserve_q(const std::size_t) { }
@@ -53,22 +56,20 @@ public:
   template<typename OutputIterator>
   bool solve(OutputIterator solution) {
 
-    // 3 = 2 segments + 1 edge between them
+    // 3 = 2 objects + 1 edge between them
     for (std::size_t i = 0; i < 3; ++i)
       *(++solution) = NT(0);
     return true;
   }
 };
 
-} // namespace CGAL
-
-using Segments = std::vector<Segment_2>;
-using Neighbor_query = CGAL::Custom_neighbor_query_2;
-using Regularization_type = CGAL::Custom_regularization_2;
-using Quadratic_program = CGAL::USER_quadratic_program_traits<FT>;
+using Objects = std::vector<Custom_object>;
+using Neighbor_query = Custom_neighbor_query_2;
+using Regularization_type = Custom_regularization_2;
+using Quadratic_program = Custom_quadratic_program_traits<FT>;
 using Regularizer =
   CGAL::Shape_regularization::QP_regularization<
-    Kernel, Segments, Neighbor_query, Regularization_type, Quadratic_program>;
+    Kernel, Objects, Neighbor_query, Regularization_type, Quadratic_program>;
 
 int main(int argc, char *argv[]) {
 
@@ -76,14 +77,13 @@ int main(int argc, char *argv[]) {
   Regularization_type regularization_type;
   Quadratic_program quadratic_program;
 
-  std::vector<Segment_2> segments = {
-    Segment_2(Point_2(-1,  0), Point_2(1, 0)),
-    Segment_2(Point_2( 0, -1), Point_2(0, 1))
+  std::vector<Custom_object> objects = {
+    Custom_object("first"), Custom_object("second")
   };
 
   Regularizer regularizer(
-    segments, neighbor_query, regularization_type, quadratic_program, Kernel());
+    objects, neighbor_query, regularization_type, quadratic_program, Kernel());
   regularizer.regularize();
 
-  std::cout << "* regularized 2 segments" << std::endl;
+  std::cout << "* regularized 2 objects" << std::endl;
 }

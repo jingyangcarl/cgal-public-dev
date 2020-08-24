@@ -17,11 +17,9 @@ void test_directions_multiple_1() {
   using Contour     = std::vector<Point_2>;
   using Saver       = SR::Tests::Saver<Traits>;
 
-  using Point_map = CGAL::Identity_property_map<Point_2>;
-  using MD = SR::Contours::Multiple_directions_2<Traits, Contour, Point_map>;
+  using MD = SR::Contours::Multiple_directions_2<Traits, Contour>;
 
   Saver saver;
-  Point_map pmap;
   const Contour contour = {
     Point_2(0, 0), Point_2(1, 0), Point_2(0, 1)
   };
@@ -30,12 +28,8 @@ void test_directions_multiple_1() {
   //   "/Users/monet/Documents/gsoc/ggr/logs/dm1_input", 100);
 
   const bool is_closed = true;
-  MD closed_directions(
-    contour,  is_closed,
-    CGAL::parameters::all_default(), pmap);
-  MD open_directions(
-    contour, !is_closed,
-    CGAL::parameters::all_default(), pmap);
+  MD closed_directions(contour,  is_closed);
+  MD   open_directions(contour, !is_closed);
 
   const std::size_t num_closed_directions =
     closed_directions.number_of_directions();

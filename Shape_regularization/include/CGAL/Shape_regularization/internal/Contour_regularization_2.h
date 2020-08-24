@@ -64,7 +64,7 @@ namespace internal {
       const ContourDirections& directions,
       const InputRange& input_range,
       const PointMap point_map,
-      const NamedParameters np,
+      const NamedParameters& np,
       const GeomTraits&) {
 
       CGAL_precondition(input_range.size() >= 2);

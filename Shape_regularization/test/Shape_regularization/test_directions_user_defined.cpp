@@ -16,11 +16,9 @@ void test_directions_user_defined() {
   using Contour     = std::vector<Point_2>;
   using Saver       = SR::Tests::Saver<Traits>;
 
-  using Point_map = CGAL::Identity_property_map<Point_2>;
-  using UD = SR::Contours::User_defined_directions_2<Traits, Contour, Point_map>;
+  using UD = SR::Contours::User_defined_directions_2<Traits, Contour>;
 
   Saver saver;
-  Point_map pmap;
   const Contour contour = {
     Point_2( 1, 1), Point_2(4, 1),
     Point_2( 4, 4), Point_2(7, 1),
@@ -37,10 +35,8 @@ void test_directions_user_defined() {
   };
 
   const bool is_closed = true;
-  UD closed_directions(
-    contour,  is_closed, dirs, pmap);
-  UD open_directions(
-    contour, !is_closed, dirs, pmap);
+  UD closed_directions(contour,  is_closed, dirs);
+  UD   open_directions(contour, !is_closed, dirs);
 
   const std::size_t num_closed_directions =
     closed_directions.number_of_directions();

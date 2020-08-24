@@ -34,7 +34,7 @@ void test_groups_parallel() {
 
   std::vector<Indices> groups;
   SR::Segments::parallel_groups(
-    segments, std::back_inserter(groups), CGAL::parameters::all_default());
+    segments, std::back_inserter(groups));
   assert(groups.size() == 3);
 
   // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/gp_group0", 100);

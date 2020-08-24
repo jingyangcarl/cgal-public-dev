@@ -60,7 +60,7 @@ namespace internal {
     template<typename NamedParameters>
     Unique_segments_2(
       const InputRange& input_range,
-      const NamedParameters np,
+      const NamedParameters& np,
       const SegmentMap segment_map,
       const GeomTraits&) :
     m_input_range(input_range),

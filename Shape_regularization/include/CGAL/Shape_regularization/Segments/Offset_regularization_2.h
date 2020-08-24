@@ -56,7 +56,7 @@ namespace Segments {
 
     \tparam SegmentMap
     a model of `ReadWritePropertyMap` whose key type is the value type of the `InputRange`
-    and value type is `GeomTraits::Segment_2`. %Default is the
+    and value type is `GeomTraits::Segment_2`. The default is
     `CGAL::Identity_property_map<typename GeomTraits::Segment_2>`.
 
     \cgalModels `RegularizationType`
@@ -107,11 +107,12 @@ namespace Segments {
 
       \param np
       an optional sequence of \ref bgl_namedparameters "Named Parameters"
-      among the ones listed below
+      among the ones listed below; this parameter can be omitted,
+      the default values are then used
 
       \param segment_map
-      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`,
-      if not provided, the default is used
+      an instance of `SegmentMap` that maps an item from input range to `GeomTraits::Segment_2`;
+      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{max_offset}
@@ -128,7 +129,7 @@ namespace Segments {
     template<typename NamedParameters>
     Offset_regularization_2(
       InputRange& input_range,
-      const NamedParameters np,
+      const NamedParameters& np,
       const SegmentMap segment_map = SegmentMap()) :
     m_input_range(input_range),
     m_segment_map(segment_map),
@@ -149,6 +150,14 @@ namespace Segments {
       clear();
       create_unique_group();
     }
+
+    /// \cond SKIP_IN_MANUAL
+    Offset_regularization_2(
+      InputRange& input_range) :
+    Offset_regularization_2(
+      input_range, CGAL::parameters::all_default())
+    { }
+    /// \endcond
 
     /*!
       \brief inserts a group of segments from `input_range`.

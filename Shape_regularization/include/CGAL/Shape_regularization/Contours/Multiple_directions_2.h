@@ -53,7 +53,7 @@ namespace Contours {
 
     \tparam PointMap
     a model of `ReadablePropertyMap` whose key type is the value type of the input
-    range and value type is `GeomTraits::Point_2`. %Default is the
+    range and value type is `GeomTraits::Point_2`. The default is
     `CGAL::Identity_property_map<typename GeomTraits::Point_2>`.
 
     \cgalModels `ContourDirections`
@@ -91,16 +91,17 @@ namespace Contours {
       \param input_range
       a const range of ordered 2D points, which form a contour
 
-      \param np
-      an optional sequence of \ref bgl_namedparameters "Named Parameters"
-      among the ones listed below
-
       \param is_closed
       indicates whether the contour is closed or open
 
+      \param np
+      an optional sequence of \ref bgl_namedparameters "Named Parameters"
+      among the ones listed below; this parameter can be omitted,
+      the default values are then used
+
       \param point_map
-      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`,
-      if not provided, the default is used
+      an instance of `PointMap` that maps an item from input range to `GeomTraits::Point_2`;
+      this parameter can be omitted, the identity map `CGAL::Identity_property_map` is then used
 
       \cgalNamedParamsBegin
         \cgalParamNBegin{max_angle}
@@ -130,7 +131,7 @@ namespace Contours {
     Multiple_directions_2(
       const InputRange& input_range,
       const bool is_closed,
-      const NamedParameters np,
+      const NamedParameters& np,
       const PointMap point_map = PointMap()) :
     m_input_range(input_range),
     m_point_map(point_map) {
@@ -161,6 +162,15 @@ namespace Contours {
         std::cout << std::endl;
       }
     }
+
+    /// \cond SKIP_IN_MANUAL
+    Multiple_directions_2(
+      const InputRange& input_range,
+      const bool is_closed) :
+    Multiple_directions_2(
+      input_range, is_closed, CGAL::parameters::all_default())
+    { }
+    /// \endcond
 
     /// @}
 

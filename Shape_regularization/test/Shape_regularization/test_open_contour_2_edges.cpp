@@ -31,8 +31,7 @@ void test_open_contour_2_edges() {
 
   std::vector<Point_2> regularized;
   SR::Contours::regularize_open_contour(
-    contour, directions, std::back_inserter(regularized),
-    CGAL::parameters::all_default());
+    contour, directions, std::back_inserter(regularized));
 
   const std::size_t num_directions =
     directions.number_of_directions();

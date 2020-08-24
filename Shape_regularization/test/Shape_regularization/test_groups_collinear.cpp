@@ -36,7 +36,7 @@ void test_groups_collinear() {
 
   std::vector<Indices> groups;
   SR::Segments::collinear_groups(
-    segments, std::back_inserter(groups), CGAL::parameters::all_default());
+    segments, std::back_inserter(groups));
   assert(groups.size() == 4);
 
   // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/gc_group0", 100);

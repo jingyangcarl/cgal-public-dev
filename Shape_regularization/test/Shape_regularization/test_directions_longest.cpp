@@ -16,11 +16,9 @@ void test_directions_longest() {
   using Contour     = std::vector<Point_2>;
   using Saver       = SR::Tests::Saver<Traits>;
 
-  using Point_map = CGAL::Identity_property_map<Point_2>;
-  using LD = SR::Contours::Longest_direction_2<Traits, Contour, Point_map>;
+  using LD = SR::Contours::Longest_direction_2<Traits, Contour>;
 
-  Saver saver;
-  Point_map pmap;
+  Saver saver;;
   const Contour contour = {
     Point_2(0, 0), Point_2(2, 0),
     Point_2(2, 1), Point_2(1, 1)
@@ -30,10 +28,8 @@ void test_directions_longest() {
   //   "/Users/monet/Documents/gsoc/ggr/logs/dl_input", 100);
 
   const bool is_closed = true;
-  LD closed_directions(
-    contour,  is_closed, pmap);
-  LD open_directions(
-    contour, !is_closed, pmap);
+  LD closed_directions(contour,  is_closed);
+  LD   open_directions(contour, !is_closed);
 
   const std::size_t num_closed_directions =
     closed_directions.number_of_directions();

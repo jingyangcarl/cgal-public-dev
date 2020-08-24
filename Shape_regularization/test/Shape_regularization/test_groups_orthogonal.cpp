@@ -35,7 +35,7 @@ void test_groups_orthogonal() {
 
   std::vector<Indices> groups;
   SR::Segments::orthogonal_groups(
-    segments, std::back_inserter(groups), CGAL::parameters::all_default());
+    segments, std::back_inserter(groups));
   assert(groups.size() == 3);
 
   // saver.export_eps_group(segments, groups[0], "/Users/monet/Documents/gsoc/ggr/logs/go_group0", 100);
