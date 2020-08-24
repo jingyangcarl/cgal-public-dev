@@ -380,9 +380,17 @@ After the directions are set, the algorithm is linear in the number of contour e
 through each contour edge and orients it towards the best-fit direction. In the second step,
 all parallel consecutive edges are merged if they are within a user-specified maximum tolerance distance.
 The distance here is defined as the distance between the midpoint of the first edge and the
-projection of this point onto the supporting line of the next edge. Whenever it is necessary,
-the algorithm inserts additional orthogonal edges as shown in the figure below. The latter means that
-the final result of the algorithm may return a different number of edges than were provided as input.
+projection of this point onto the supporting line of the next edge. The position of the
+merged segment is optimized with respect to its neighbors. In the last steps, all segments
+are reconnected into a contour as shown in the figure below. Due to the merging step,
+the number of output edges in the contour is not necessarily the same as the number of input edges.
+
+\cgalFigureBegin{contours_pipeline, contours_pipeline.svg}
+Steps of the contour regularization algorithm (from left to right):
+the closed contour before regularization; the disconnected contour with edges rotated
+towards the found principal directions, here we have only one direction; the optimized
+edges, blue edges were merged and their positions were optimized; and the final reconnected contur.
+\cgalFigureEnd
 
 If the user wants to rotate each contour edge on its own towards the best-fit direction
 without reconnecting them after into a closed/open contour, she can either use the
