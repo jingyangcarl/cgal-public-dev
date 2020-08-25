@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/three_point_family_weights.h>
+#include <CGAL/Weight_interface/three_point_family_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -22,9 +22,9 @@ int main() {
 
   // Compute weights.
   std::cout << "2D family: " <<
-    CGAL::Generalized_weights::three_point_family_weight(q2, t2, r2, p2) << std::endl;
+    CGAL::Weights::three_point_family_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D family: " <<
-    CGAL::Generalized_weights::three_point_family_weight(q3, t3, r3, p3, 1) << std::endl;
+    CGAL::Weights::three_point_family_weight(q3, t3, r3, p3, 1) << std::endl;
 
   return EXIT_SUCCESS;
 }

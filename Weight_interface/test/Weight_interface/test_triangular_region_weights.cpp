@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Weighting_regions/triangular_region_weights.h>
+#include <CGAL/Weight_interface/triangular_region_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -20,9 +20,9 @@ int main() {
 
   // Compute weights.
   std::cout << "2D triangle: " <<
-    CGAL::Generalized_weights::triangular_area(p2, q2, r2) << std::endl;
+    CGAL::Weights::triangular_area(p2, q2, r2) << std::endl;
   std::cout << "3D triangle: " <<
-    CGAL::Generalized_weights::triangular_area(p3, q3, r3) << std::endl;
+    CGAL::Weights::triangular_area(p3, q3, r3) << std::endl;
 
   return EXIT_SUCCESS;
 }

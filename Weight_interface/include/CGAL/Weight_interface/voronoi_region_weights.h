@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHTS_H
-#define CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHTS_H
+#ifndef CGAL_WEIGHT_INTERFACE_VORONOI_REGION_WEIGHTS_H
+#define CGAL_WEIGHT_INTERFACE_VORONOI_REGION_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -29,23 +29,28 @@
 #include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
+
+  #if defined(DOXYGEN_RUNNING)
 
   /*!
     \ingroup PkgWeightInterfaceRefRegions
 
-    \brief computes area of the barycentric cell in 2D.
+    \brief computes area of the Voronoi cell in 2D or 3D.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     This area is the area of the shaded region in the figure below. The region
-    is formed by two midpoints of the edges incident to `q` and the barycenter of
+    is formed by two midpoints of the edges incident to `q` and the circumcenter of
     the triangle `[p, q, r]`.
 
-    \cgalFigureBegin{barycentric_area, barycentric_cell.svg}
-      Notation used for the barycentric cell.
+    \cgalFigureBegin{voronoi_area, voronoi_cell.svg}
+      Notation used for the Voronoi cell.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -59,10 +64,20 @@ namespace Generalized_weights {
     \param traits
     an instance of `GeomTraits`
 
-    \return the computed area.
+    \sa `CGAL::Weights::mixed_voronoi_area()`
   */
   template<typename GeomTraits>
-  const typename GeomTraits::FT barycentric_area(
+  const typename GeomTraits::FT voronoi_area(
+    const typename GeomTraits::Point& p,
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::Point& r,
+    const GeomTraits& traits) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
+  template<typename GeomTraits>
+  const typename GeomTraits::FT voronoi_area(
     const typename GeomTraits::Point_2& p,
     const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& r,
@@ -71,8 +86,10 @@ namespace Generalized_weights {
     using FT = typename GeomTraits::FT;
     using Point_2 = typename GeomTraits::Point_2;
 
+    const auto circumcenter_2 =
+      traits.construct_circumcenter_2_object();
     const Point_2 center =
-      internal::barycenter_2(traits, p, q, r);
+      circumcenter_2(p, q, r);
     const Point_2 m1 =
       internal::barycenter_2(traits, q, r);
     const Point_2 m2 =
@@ -83,67 +100,18 @@ namespace Generalized_weights {
     return A1 + A2;
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the barycentric cell in 2D.
-
-    This function infers a traits class `GeomTraits` from the `Point_2` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::barycentric_area()`
-  */
   template<typename GeomTraits>
-  const typename GeomTraits::FT barycentric_area(
+  const typename GeomTraits::FT voronoi_area(
     const CGAL::Point_2<GeomTraits>& p,
     const CGAL::Point_2<GeomTraits>& q,
     const CGAL::Point_2<GeomTraits>& r) {
 
     const GeomTraits traits;
-    return barycentric_area(p, q, r, traits);
+    return voronoi_area(p, q, r, traits);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the barycentric cell in 3D.
-
-    This is an overload of the 2D weight for 3D points.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::barycentric_area()`
-  */
   template<typename GeomTraits>
-  const typename GeomTraits::FT barycentric_area(
+  const typename GeomTraits::FT voronoi_area(
     const typename GeomTraits::Point_3& p,
     const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& r,
@@ -152,8 +120,10 @@ namespace Generalized_weights {
     using FT = typename GeomTraits::FT;
     using Point_3 = typename GeomTraits::Point_3;
 
+    const auto circumcenter_3 =
+      traits.construct_circumcenter_3_object();
     const Point_3 center =
-      internal::barycenter_3(traits, p, q, r);
+      circumcenter_3(p, q, r);
     const Point_3 m1 =
       internal::barycenter_3(traits, q, r);
     const Point_3 m2 =
@@ -164,42 +134,18 @@ namespace Generalized_weights {
     return A1 + A2;
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the barycentric cell in 3D.
-
-    This is an overload of the 2D weight for 3D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_3` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::barycentric_area()`
-  */
   template<typename GeomTraits>
-  const typename GeomTraits::FT barycentric_area(
+  const typename GeomTraits::FT voronoi_area(
     const CGAL::Point_3<GeomTraits>& p,
     const CGAL::Point_3<GeomTraits>& q,
     const CGAL::Point_3<GeomTraits>& r) {
 
     const GeomTraits traits;
-    return barycentric_area(p, q, r, traits);
+    return voronoi_area(p, q, r, traits);
   }
+  /// \endcond
 
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_BARYCENTRIC_REGION_WEIGHTS_H
+#endif // CGAL_WEIGHT_INTERFACE_VORONOI_REGION_WEIGHTS_H

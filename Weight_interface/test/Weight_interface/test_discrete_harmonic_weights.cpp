@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/discrete_harmonic_weights.h>
+#include <CGAL/Weight_interface/discrete_harmonic_weights.h>
 #include <CGAL/Weight_interface/internal/Projection_traits_3.h>
 
 // Typedefs.
@@ -23,9 +23,9 @@ int main() {
 
   // Compute weights.
   std::cout << "2D discrete harmonic: " <<
-    CGAL::Generalized_weights::discrete_harmonic_weight(q2, t2, r2, p2) << std::endl;
+    CGAL::Weights::discrete_harmonic_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D discrete harmonic: " <<
-    CGAL::Generalized_weights::discrete_harmonic_weight(q3, t3, r3, p3) << std::endl;
+    CGAL::Weights::discrete_harmonic_weight(q3, t3, r3, p3) << std::endl;
 
   // Compute weights on a polygon.
 
@@ -34,7 +34,7 @@ int main() {
 
   std::vector<double> weights2;
   weights2.reserve(polygon2.size());
-  CGAL::Generalized_weights::discrete_harmonic_weights_2(
+  CGAL::Weights::discrete_harmonic_weights_2(
     polygon2, q2, std::back_inserter(weights2));
 
   std::cout << "2D discrete harmonic (polygon): ";
@@ -43,14 +43,14 @@ int main() {
   std::cout << std::endl;
 
   // 3D configuration.
-  CGAL::Generalized_weights::internal::Projection_traits_3<Kernel> ptraits(
+  CGAL::Weights::internal::Projection_traits_3<Kernel> ptraits(
     typename Kernel::Vector_3(0, 0, 1));
 
   const std::vector<Point_3> polygon3 = {t3, r3, p3, Point_3(0, 1, 1)};
 
   std::vector<double> weights3;
   weights3.reserve(polygon3.size());
-  CGAL::Generalized_weights::discrete_harmonic_weights_2(
+  CGAL::Weights::discrete_harmonic_weights_2(
     polygon3, q3, std::back_inserter(weights3), ptraits);
 
   std::cout << "3D discrete harmonic (polygon): ";

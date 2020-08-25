@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>
-#include <CGAL/Weight_interface/Generalized_weights/wachspress_weights.h>
+#include <CGAL/Weight_interface/wachspress_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -10,7 +10,7 @@ using Point_2 = typename Kernel::Point_2;
 using Polygon    = std::vector<Point_2>;
 using Creator    = CGAL::Creator_uniform_2<FT, Point_2>;
 using Generator  = CGAL::Random_points_in_square_2<Point_2, Creator>;
-using Wachspress = CGAL::Generalized_weights::Wachspress_weights_2<Polygon, Kernel>;
+using Wachspress = CGAL::Weights::Wachspress_weights_2<Polygon, Kernel>;
 
 int main() {
 

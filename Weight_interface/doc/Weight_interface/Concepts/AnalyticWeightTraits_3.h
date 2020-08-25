@@ -4,7 +4,7 @@
 
 A concept that describes the set of requirements of the template parameter
 `GeomTraits` used to parameterize several classes and functions with 3D generalized
-weights from the namespace `CGAL::Generalized_weights`.
+weights from the namespace `CGAL::Weights`.
 
 \cgalHasModel All models of `Kernel`.
 */

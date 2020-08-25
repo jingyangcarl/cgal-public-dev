@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_POLYGON_UTILS_H
-#define CGAL_GENERALIZED_WEIGHTS_INTERNAL_POLYGON_UTILS_H
+#ifndef CGAL_WEIGHT_INTERFACE_INTERNAL_POLYGON_UTILS_H
+#define CGAL_WEIGHT_INTERFACE_INTERNAL_POLYGON_UTILS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -42,7 +42,7 @@
 #include <CGAL/Polygon_2_algorithms.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 namespace internal {
 
   // Normalize values.
@@ -225,7 +225,7 @@ namespace internal {
   }
 
 } // namespace internal
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_INTERNAL_POLYGON_UTILS_H
+#endif // CGAL_WEIGHT_INTERFACE_INTERNAL_POLYGON_UTILS_H

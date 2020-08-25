@@ -20,8 +20,8 @@
 // Author(s)     : Yin Xu, Andreas Fabri, Ilker O. Yaz
 //
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_PMP_DEPRECATED_H
-#define CGAL_GENERALIZED_WEIGHTS_INTERNAL_PMP_DEPRECATED_H
+#ifndef CGAL_WEIGHT_INTERFACE_INTERNAL_PMP_DEPRECATED_H
+#define CGAL_WEIGHT_INTERFACE_INTERNAL_PMP_DEPRECATED_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -31,7 +31,7 @@
 #include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 namespace internal {
 
 // Returns the cotangent value of the half angle [v0, v1, v2]
@@ -959,7 +959,7 @@ public:
 };
 
 } // namespace internal
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_INTERNAL_PMP_DEPRECATED_H
+#endif // CGAL_WEIGHT_INTERFACE_INTERNAL_PMP_DEPRECATED_H

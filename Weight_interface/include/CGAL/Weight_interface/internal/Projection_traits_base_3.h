@@ -19,11 +19,11 @@
 //
 // Author(s)     : Dmitry Anisimov
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_PROJECTION_TRAITS_BASE_3_H
-#define CGAL_GENERALIZED_WEIGHTS_INTERNAL_PROJECTION_TRAITS_BASE_3_H
+#ifndef CGAL_WEIGHT_INTERFACE_INTERNAL_PROJECTION_TRAITS_BASE_3_H
+#define CGAL_WEIGHT_INTERFACE_INTERNAL_PROJECTION_TRAITS_BASE_3_H
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 namespace internal {
 namespace ProjectionTraitsCartesianFunctors {
 
@@ -308,7 +308,7 @@ public:
 };
 
 } // namespace internal
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_INTERNAL_PROJECTION_TRAITS_BASE_3_H
+#endif // CGAL_WEIGHT_INTERFACE_INTERNAL_PROJECTION_TRAITS_BASE_3_H

@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/authalic_weights.h>
-#include <CGAL/Weight_interface/Generalized_weights/three_point_family_weights.h>
+#include <CGAL/Weight_interface/authalic_weights.h>
+#include <CGAL/Weight_interface/three_point_family_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -23,10 +23,10 @@ int main() {
 
   // Compute WP and MV weights.
   std::cout << "3D wachspress (WP, q3): ";
-  std::cout << CGAL::Generalized_weights::
+  std::cout << CGAL::Weights::
     three_point_family_weight(q3, t3, r3, p3, wp) << std::endl;
   std::cout << "3D mean value (MV, q3): ";
-  std::cout << CGAL::Generalized_weights::
+  std::cout << CGAL::Weights::
     three_point_family_weight(q3, t3, r3, p3, mv) << std::endl;
 
   // Converge WP towards MV.
@@ -34,14 +34,14 @@ int main() {
   const FT step = FT(1) / FT(10);
   for (FT x = FT(0); x <= FT(1); x += step) {
     std::cout << "3D x: ";
-    std::cout << CGAL::Generalized_weights::
+    std::cout << CGAL::Weights::
       three_point_family_weight(q3, t3, r3, p3, x) << std::endl;
   }
 
   // Compute WP weights for query3, which is not on the plane [t3, r3, p3].
   Point_3 query3 = Point_3(3, 1, 2);
     std::cout << "3D wachspress (WP, query3): ";
-  std::cout << CGAL::Generalized_weights::
+  std::cout << CGAL::Weights::
     three_point_family_weight(query3, t3, r3, p3, wp) << std::endl;
 
   // Converge query3 towards q3 that is we flatten the configuration.
@@ -50,9 +50,9 @@ int main() {
   for (FT x = FT(0); x <= FT(1); x += step) {
     std::cout << "3D wachspress/authalic: ";
     query3 = Point_3(3, 1, FT(2) - x);
-    std::cout << CGAL::Generalized_weights::
+    std::cout << CGAL::Weights::
       three_point_family_weight(query3, t3, r3, p3, wp) << "/";
-    std::cout << CGAL::Generalized_weights::
+    std::cout << CGAL::Weights::
       authalic_weight(query3, t3, r3, p3) << std::endl;
   }
 

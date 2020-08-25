@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_AUTHALIC_WEIGHTS_H
-#define CGAL_GENERALIZED_AUTHALIC_WEIGHTS_H
+#ifndef CGAL_WEIGHT_INTERFACE_AUTHALIC_WEIGHTS_H
+#define CGAL_WEIGHT_INTERFACE_AUTHALIC_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -29,7 +29,7 @@
 #include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 
   /// \cond SKIP_IN_MANUAL
   namespace authalic_ns {
@@ -74,7 +74,7 @@ namespace Generalized_weights {
     \f$\frac{2\textbf{cot}}{\textbf{d2}}\f$.
 
     \tparam FT
-    must be `FieldNumberType`.
+    a model of `FieldNumberType`.
 
     \param cot
     the cotangent value
@@ -84,7 +84,7 @@ namespace Generalized_weights {
 
     \return the computed half weight.
 
-    \sa `CGAL::Generalized_weights::authalic_weight()`
+    \sa `CGAL::Weights::authalic_weight()`
   */
   template<typename FT>
   const FT half_authalic_weight(
@@ -93,43 +93,57 @@ namespace Generalized_weights {
     return authalic_ns::half_weight(cot, d2);
   }
 
+  #if defined(DOXYGEN_RUNNING)
+
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the authalic weight for 2D points.
+    \brief computes the authalic weight for 2D or 3D points.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     The weight is computed as
     \f$w = 2 \frac{\cot\beta + \cot\gamma}{d^2}\f$
     with notations shown in the figure below.
 
-    This weight is equal to the `CGAL::Generalized_weights::wachspress_weight()`.
+    This weight is equal to the `CGAL::Weights::wachspress_weight()`.
 
-    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight()`.
+    This weight is a special case of the `CGAL::Weights::three_point_family_weight()`.
 
     \cgalFigureBegin{authalic_weight, authalic.svg}
       Notation used for the authalic weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
     \param q
     a query point
 
-    \param t
+    \param p0
     the first neighbor
 
-    \param r
+    \param p1
     the second neighbor
 
-    \param p
+    \param p2
     the third neighbor
 
     \param traits
     an instance of `GeomTraits`
-
-    \return the computed weight.
   */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT authalic_weight(
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::Point& p0,
+    const typename GeomTraits::Point& p1,
+    const typename GeomTraits::Point& p2,
+    const GeomTraits& traits) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT authalic_weight(
     const typename GeomTraits::Point_2& q,
@@ -150,32 +164,6 @@ namespace Generalized_weights {
       cot_gamma, cot_beta, d2);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the authalic weight for 2D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_2` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::authalic_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT authalic_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -187,35 +175,6 @@ namespace Generalized_weights {
     return authalic_weight(q, t, r, p, traits);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the authalic weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::authalic_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT authalic_weight(
     const typename GeomTraits::Point_3& q,
@@ -236,34 +195,6 @@ namespace Generalized_weights {
       cot_gamma, cot_beta, d2);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the authalic weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_3` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::authalic_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT authalic_weight(
     const CGAL::Point_3<GeomTraits>& q,
@@ -274,8 +205,9 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return authalic_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_AUTHALIC_WEIGHTS_H
+#endif // CGAL_WEIGHT_INTERFACE_AUTHALIC_WEIGHTS_H

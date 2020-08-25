@@ -1,6 +1,5 @@
 /*!
-\example Weight_interface/generalized_weights.cpp
-\example Weight_interface/weighting_regions.cpp
+\example Weight_interface/weight_interface.cpp
 \example Weight_interface/coordinates_one_query.cpp
 \example Weight_interface/coordinates_multiple_queries.cpp
 \example Weight_interface/weighted_laplacian.cpp

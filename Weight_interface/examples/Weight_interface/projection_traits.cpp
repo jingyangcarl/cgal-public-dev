@@ -1,13 +1,13 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/utils.h>
-#include <CGAL/Weight_interface/Generalized_weights/mean_value_weights.h>
+#include <CGAL/Weight_interface/utils.h>
+#include <CGAL/Weight_interface/mean_value_weights.h>
 
 // Typedefs.
 using Kernel   = CGAL::Simple_cartesian<double>;
 using FT       = typename Kernel::FT;
 using Point_3  = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
-using PTraits  = CGAL::Generalized_weights::utils::Projection_traits_3<Kernel>;
+using PTraits  = CGAL::Weights::utils::Projection_traits_3<Kernel>;
 
 int main() {
 
@@ -26,7 +26,7 @@ int main() {
   const PTraits ptraits(normal);
 
   // Compute weights.
-  CGAL::Generalized_weights::mean_value_weights_2(
+  CGAL::Weights::mean_value_weights_2(
     polygon, query, std::back_inserter(weights), ptraits);
 
   std::cout << "2D weights: ";

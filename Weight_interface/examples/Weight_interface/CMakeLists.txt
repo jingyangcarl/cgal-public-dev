@@ -13,9 +13,7 @@ if(CGAL_FOUND)
   include(CGAL_CreateSingleSourceCGALProgram)
 
   create_single_source_cgal_program(
-    "generalized_weights.cpp")
-  create_single_source_cgal_program(
-    "weighting_regions.cpp")
+    "weight_interface.cpp")
   create_single_source_cgal_program(
     "coordinates_one_query.cpp")
   create_single_source_cgal_program(

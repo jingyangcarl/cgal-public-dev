@@ -19,14 +19,14 @@
 //
 // Author(s)     : Dmitry Anisimov
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_PROJECTION_TRAITS_3_H
-#define CGAL_GENERALIZED_WEIGHTS_INTERNAL_PROJECTION_TRAITS_3_H
+#ifndef CGAL_WEIGHT_INTERFACE_INTERNAL_PROJECTION_TRAITS_3_H
+#define CGAL_WEIGHT_INTERFACE_INTERNAL_PROJECTION_TRAITS_3_H
 
 #include <CGAL/Filtered_predicate_with_state.h>
 #include <CGAL/Weight_interface/internal/Projection_traits_base_3.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 namespace internal {
 
 template<class Filtered_kernel >
@@ -101,7 +101,7 @@ public:
 };
 
 } // namespace internal
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_INTERNAL_PROJECTION_TRAITS_3_H
+#endif // CGAL_WEIGHT_INTERFACE_INTERNAL_PROJECTION_TRAITS_3_H

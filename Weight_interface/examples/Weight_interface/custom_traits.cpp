@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/utils.h>
-#include <CGAL/Weight_interface/Generalized_weights/inverse_distance_weights.h>
+#include <CGAL/Weight_interface/utils.h>
+#include <CGAL/Weight_interface/inverse_distance_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -36,9 +36,9 @@ int main() {
 
   // Compute weights.
   std::cout << "2D/3D weight: ";
-  std::cout << CGAL::Generalized_weights::
+  std::cout << CGAL::Weights::
     inverse_distance_weight(p2, q2, ctraits) << "/";
-  std::cout << CGAL::Generalized_weights::
+  std::cout << CGAL::Weights::
     inverse_distance_weight(p3, q3, ctraits) << std::endl;
 
   return EXIT_SUCCESS;

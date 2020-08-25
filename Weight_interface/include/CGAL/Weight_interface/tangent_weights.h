@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_TANGENT_WEIGHTS_H
-#define CGAL_GENERALIZED_TANGENT_WEIGHTS_H
+#ifndef CGAL_WEIGHT_INTERFACE_TANGENT_WEIGHTS_H
+#define CGAL_WEIGHT_INTERFACE_TANGENT_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -29,7 +29,7 @@
 #include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 
   /// \cond SKIP_IN_MANUAL
   namespace tangent_ns {
@@ -101,7 +101,7 @@ namespace Generalized_weights {
     \f$\frac{2\textbf{A}}{\textbf{d}\textbf{l} + \textbf{D}}\f$.
 
     \tparam FT
-    must be `FieldNumberType`.
+    a model of `FieldNumberType`.
 
     \param d
     the distance value
@@ -117,7 +117,7 @@ namespace Generalized_weights {
 
     \return the computed tangent.
 
-    \sa `CGAL::Generalized_weights::half_tangent_weight()`
+    \sa `CGAL::Weights::half_tangent_weight()`
   */
   template<typename FT>
   const FT tangent_half_angle(
@@ -138,7 +138,7 @@ namespace Generalized_weights {
     \f$\frac{2\textbf{tan05}}{\textbf{d}}\f$.
 
     \tparam FT
-    must be `FieldNumberType`.
+    a model of `FieldNumberType`.
 
     \param tan05
     the half angle tangent value
@@ -148,8 +148,8 @@ namespace Generalized_weights {
 
     \return the computed half weight.
 
-    \sa `CGAL::Generalized_weights::tangent_half_angle()`
-    \sa `CGAL::Generalized_weights::tangent_weight()`
+    \sa `CGAL::Weights::tangent_half_angle()`
+    \sa `CGAL::Weights::tangent_weight()`
   */
   template<typename FT>
   const FT half_tangent_weight(
@@ -171,7 +171,7 @@ namespace Generalized_weights {
     \f$\textbf{t} = \frac{2\textbf{A}}{\textbf{d}\textbf{l} + \textbf{D}}\f$.
 
     \tparam FT
-    must be `FieldNumberType`.
+    a model of `FieldNumberType`.
 
     \param d
     the distance value
@@ -187,7 +187,7 @@ namespace Generalized_weights {
 
     \return the computed half weight.
 
-    \sa `CGAL::Generalized_weights::tangent_weight()`
+    \sa `CGAL::Weights::tangent_weight()`
   */
   template<typename FT>
   const FT half_tangent_weight(
@@ -210,16 +210,16 @@ namespace Generalized_weights {
     \f$D_1 = (t - q) \cdot (r - q)\f$ and
     \f$D_2 = (r - q) \cdot (p - q)\f$.
 
-    This weight is equal to the `CGAL::Generalized_weights::mean_value_weight()`.
+    This weight is equal to the `CGAL::Weights::mean_value_weight()`.
 
-    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight()`.
+    This weight is a special case of the `CGAL::Weights::three_point_family_weight()`.
 
     \cgalFigureBegin{tangent_weight, tangent.svg}
       Notation used for the tangent weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -270,32 +270,7 @@ namespace Generalized_weights {
       l1, l2, l3, A1, A2, D1, D2);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the tangent weight for 2D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_2` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::tangent_weight()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -306,6 +281,7 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return tangent_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
   /*!
     \ingroup PkgWeightInterfaceRefWeights
@@ -315,7 +291,7 @@ namespace Generalized_weights {
     This is an overload of the 2D weight for 3D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -334,7 +310,7 @@ namespace Generalized_weights {
 
     \return the computed weight.
 
-    \sa `CGAL::Generalized_weights::tangent_weight()`
+    \sa `CGAL::Weights::tangent_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent_weight(
@@ -368,34 +344,7 @@ namespace Generalized_weights {
       l1, l2, l3, A1, A2, D1, D2);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the tangent weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_3` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::tangent_weight()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent_weight(
     const CGAL::Point_3<GeomTraits>& q,
@@ -406,8 +355,9 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return tangent_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_TANGENT_WEIGHTS_H
+#endif // CGAL_WEIGHT_INTERFACE_TANGENT_WEIGHTS_H

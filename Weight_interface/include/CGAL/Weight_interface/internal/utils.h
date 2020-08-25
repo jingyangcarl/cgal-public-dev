@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_WEIGHTS_INTERNAL_UTILS_H
-#define CGAL_GENERALIZED_WEIGHTS_INTERNAL_UTILS_H
+#ifndef CGAL_WEIGHT_INTERFACE_INTERNAL_UTILS_H
+#define CGAL_WEIGHT_INTERFACE_INTERNAL_UTILS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -46,7 +46,7 @@
 #include <CGAL/Point_3.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 namespace internal {
 
   // Sqrt helpers.
@@ -710,7 +710,7 @@ namespace internal {
   }
 
 } // namespace internal
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_WEIGHTS_INTERNAL_UTILS_H
+#endif // CGAL_WEIGHT_INTERFACE_INTERNAL_UTILS_H

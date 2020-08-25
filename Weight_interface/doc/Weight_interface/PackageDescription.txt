@@ -5,7 +5,7 @@
 \ingroup PkgWeightInterfaceRef
 
 Concepts, which are used to parameterize the functions and classes
-from `CGAL::Generalized_weights`.
+from `CGAL::Weights`.
 
 \defgroup PkgWeightInterfaceRefWeights Generalized Weights
 \ingroup PkgWeightInterfaceRef
@@ -57,29 +57,29 @@ respect to polygons, and weighting regions.}
 - `AnalyticWeightTraits_3`
 
 ### Generalized Weights ###
-- `CGAL::Generalized_weights::uniform_weight()`
-- `CGAL::Generalized_weights::inverse_distance_weight()`
-- `CGAL::Generalized_weights::shepard_weight()`
-- `CGAL::Generalized_weights::three_point_family_weight()`
-- `CGAL::Generalized_weights::wachspress_weight()`
-- `CGAL::Generalized_weights::authalic_weight()`
-- `CGAL::Generalized_weights::mean_value_weight()`
-- `CGAL::Generalized_weights::tangent_weight()`
-- `CGAL::Generalized_weights::discrete_harmonic_weight()`
-- `CGAL::Generalized_weights::cotangent_weight()`
+- `CGAL::Weights::uniform_weight()`
+- `CGAL::Weights::shepard_weight()`
+- `CGAL::Weights::inverse_distance_weight()`
+- `CGAL::Weights::three_point_family_weight()`
+- `CGAL::Weights::wachspress_weight()`
+- `CGAL::Weights::authalic_weight()`
+- `CGAL::Weights::mean_value_weight()`
+- `CGAL::Weights::tangent_weight()`
+- `CGAL::Weights::discrete_harmonic_weight()`
+- `CGAL::Weights::cotangent_weight()`
 
 ### Barycentric Weights ###
-- `CGAL::Generalized_weights::Wachspress_weights_2<Polygon, GeomTraits, VertexMap>`
-- `CGAL::Generalized_weights::wachspress_weights_2()`
-- `CGAL::Generalized_weights::Mean_value_weights_2<Polygon, GeomTraits, VertexMap>`
-- `CGAL::Generalized_weights::mean_value_weights_2()`
-- `CGAL::Generalized_weights::Discrete_harmonic_weights_2<Polygon, GeomTraits, VertexMap>`
-- `CGAL::Generalized_weights::discrete_harmonic_weights_2()`
+- `CGAL::Weights::Wachspress_weights_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Weights::wachspress_weights_2()`
+- `CGAL::Weights::Mean_value_weights_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Weights::mean_value_weights_2()`
+- `CGAL::Weights::Discrete_harmonic_weights_2<Polygon, GeomTraits, VertexMap>`
+- `CGAL::Weights::discrete_harmonic_weights_2()`
 
 ### Weighting Regions ###
-- `CGAL::Generalized_weights::uniform_area()`
-- `CGAL::Generalized_weights::triangular_area()`
-- `CGAL::Generalized_weights::barycentric_area()`
-- `CGAL::Generalized_weights::voronoi_area()`
-- `CGAL::Generalized_weights::mixed_voronoi_area()`
+- `CGAL::Weights::uniform_area()`
+- `CGAL::Weights::triangular_area()`
+- `CGAL::Weights::barycentric_area()`
+- `CGAL::Weights::voronoi_area()`
+- `CGAL::Weights::mixed_voronoi_area()`
 */

@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/wachspress_weights.h>
+#include <CGAL/Weight_interface/wachspress_weights.h>
 #include <CGAL/Weight_interface/internal/Projection_traits_3.h>
 
 // Typedefs.
@@ -24,16 +24,16 @@ int main() {
 
   // Compute weights.
   std::cout << "2D wachspress: " <<
-    CGAL::Generalized_weights::wachspress_weight(q2, t2, r2, p2) << std::endl;
+    CGAL::Weights::wachspress_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D wachspress: " <<
-    CGAL::Generalized_weights::wachspress_weight(q3, t3, r3, p3) << std::endl;
+    CGAL::Weights::wachspress_weight(q3, t3, r3, p3) << std::endl;
 
   // 2D configuration.
   const std::vector<Point_2> polygon2 = {t2, r2, p2, Point_2(0, 1)};
 
   std::vector<double> weights2;
   weights2.reserve(polygon2.size());
-  CGAL::Generalized_weights::wachspress_weights_2(
+  CGAL::Weights::wachspress_weights_2(
     polygon2, q2, std::back_inserter(weights2));
 
   std::cout << "2D wachspress (polygon): ";
@@ -42,14 +42,14 @@ int main() {
   std::cout << std::endl;
 
   // 3D configuration.
-  CGAL::Generalized_weights::internal::Projection_traits_3<Kernel> ptraits(
+  CGAL::Weights::internal::Projection_traits_3<Kernel> ptraits(
     typename Kernel::Vector_3(0, 0, 1));
 
   const std::vector<Point_3> polygon3 = {t3, r3, p3, Point_3(0, 1, 1)};
 
   std::vector<double> weights3;
   weights3.reserve(polygon3.size());
-  CGAL::Generalized_weights::wachspress_weights_2(
+  CGAL::Weights::wachspress_weights_2(
     polygon3, q3, std::back_inserter(weights3), ptraits);
 
   std::cout << "3D wachspress (polygon): ";

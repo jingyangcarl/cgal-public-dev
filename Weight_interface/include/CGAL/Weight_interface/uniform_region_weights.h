@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_UNIFORM_REGION_WEIGHTS_H
-#define CGAL_GENERALIZED_UNIFORM_REGION_WEIGHTS_H
+#ifndef CGAL_WEIGHT_INTERFACE_UNIFORM_REGION_WEIGHTS_H
+#define CGAL_WEIGHT_INTERFACE_UNIFORM_REGION_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -29,20 +29,33 @@
 #include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
+
+  #if defined(DOXYGEN_RUNNING)
 
   /*!
     \ingroup PkgWeightInterfaceRefRegions
 
-    \brief computes area of the uniform cell in 2D.
+    \brief computes area of the uniform cell in 2D or 3D.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     This function always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \return the computed area.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
   */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT uniform_area(
+    const typename GeomTraits::Point&,
+    const typename GeomTraits::Point&,
+    const typename GeomTraits::Point&,
+    const GeomTraits&) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_area(
     const typename GeomTraits::Point_2&,
@@ -54,31 +67,6 @@ namespace Generalized_weights {
     return FT(1);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the uniform cell in 2D.
-
-    This function always returns 1.
-
-    This function infers a traits class `GeomTraits` from the `Point_2` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::uniform_area()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_area(
     const CGAL::Point_2<GeomTraits>& p,
@@ -89,20 +77,6 @@ namespace Generalized_weights {
     return uniform_area(p, q, r, traits);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the uniform cell in 3D.
-
-    This function always returns 1.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::uniform_area()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_area(
     const typename GeomTraits::Point_3&,
@@ -114,31 +88,6 @@ namespace Generalized_weights {
     return FT(1);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the uniform cell in 3D.
-
-    This function always returns 1.
-
-    This function infers a traits class `GeomTraits` from the `Point_3` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::uniform_area()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_area(
     const CGAL::Point_3<GeomTraits>& p,
@@ -148,6 +97,7 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return uniform_area(p, q, r, traits);
   }
+  /// \endcond
 
   /*!
     \ingroup PkgWeightInterfaceRefRegions
@@ -155,14 +105,12 @@ namespace Generalized_weights {
     \brief computes area of the uniform cell.
 
     This function always returns 1.
-
-    \return the computed area.
   */
   double uniform_area() {
     return 1.0;
   }
 
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_UNIFORM_REGION_WEIGHTS_H
+#endif // CGAL_WEIGHT_INTERFACE_UNIFORM_REGION_WEIGHTS_H

@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_UNIFORM_WEIGHTS_H
-#define CGAL_GENERALIZED_UNIFORM_WEIGHTS_H
+#ifndef CGAL_WEIGHT_INTERFACE_UNIFORM_WEIGHTS_H
+#define CGAL_WEIGHT_INTERFACE_UNIFORM_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -29,7 +29,7 @@
 #include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 
   /*!
     \ingroup PkgWeightInterfaceRefWeights
@@ -39,7 +39,7 @@ namespace Generalized_weights {
     This function always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2`.
 
     \return the computed weight.
   */
@@ -55,34 +55,7 @@ namespace Generalized_weights {
     return FT(1);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the uniform weight for 2D points.
-
-    This function always returns 1.
-
-    This function infers a traits class `GeomTraits` from the `Point_2` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::uniform_weight()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -93,6 +66,7 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return uniform_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
   /*!
     \ingroup PkgWeightInterfaceRefWeights
@@ -102,11 +76,11 @@ namespace Generalized_weights {
     This function always returns 1.
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_3`.
 
     \return the computed weight.
 
-    \sa `CGAL::Generalized_weights::uniform_weight()`
+    \sa `CGAL::Weights::uniform_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_weight(
@@ -120,34 +94,7 @@ namespace Generalized_weights {
     return FT(1);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the uniform weight for 3D points.
-
-    This function always returns 1.
-
-    This function infers a traits class `GeomTraits` from the `Point_3` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::uniform_weight()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_weight(
     const CGAL::Point_3<GeomTraits>& q,
@@ -158,6 +105,7 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return uniform_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
   /*!
     \ingroup PkgWeightInterfaceRefWeights
@@ -172,7 +120,7 @@ namespace Generalized_weights {
     return 1.0;
   }
 
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_UNIFORM_WEIGHTS_H
+#endif // CGAL_WEIGHT_INTERFACE_UNIFORM_WEIGHTS_H

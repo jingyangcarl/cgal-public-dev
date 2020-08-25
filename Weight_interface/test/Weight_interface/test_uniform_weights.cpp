@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/uniform_weights.h>
+#include <CGAL/Weight_interface/uniform_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -22,16 +22,16 @@ int main() {
 
   // Compute weights.
   std::cout << "2D uniform: " <<
-    CGAL::Generalized_weights::uniform_weight(q2, t2, r2, p2) << std::endl;
+    CGAL::Weights::uniform_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D uniform: " <<
-    CGAL::Generalized_weights::uniform_weight(q3, t3, r3, p3) << std::endl;
+    CGAL::Weights::uniform_weight(q3, t3, r3, p3) << std::endl;
   std::cout << "-------------" << std::endl;
 
   // Overloads.
   std::cout << "2D uniform: " <<
-    CGAL::Generalized_weights::uniform_weight() << std::endl;
+    CGAL::Weights::uniform_weight() << std::endl;
   std::cout << "3D uniform: " <<
-    CGAL::Generalized_weights::uniform_weight() << std::endl;
+    CGAL::Weights::uniform_weight() << std::endl;
 
   return EXIT_SUCCESS;
 }

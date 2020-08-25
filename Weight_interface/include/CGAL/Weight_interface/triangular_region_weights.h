@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHTS_H
-#define CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHTS_H
+#ifndef CGAL_WEIGHT_INTERFACE_TRIANGULAR_REGION_WEIGHTS_H
+#define CGAL_WEIGHT_INTERFACE_TRIANGULAR_REGION_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -29,12 +29,17 @@
 #include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
+
+  #if defined(DOXYGEN_RUNNING)
 
   /*!
     \ingroup PkgWeightInterfaceRefRegions
 
-    \brief computes area of the triangular cell in 2D.
+    \brief computes area of the triangular cell in 2D or 3D.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     This area is the area of the shaded triangle `[p, q, r]` in the figure below.
 
@@ -43,7 +48,7 @@ namespace Generalized_weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -56,9 +61,17 @@ namespace Generalized_weights {
 
     \param traits
     an instance of `GeomTraits`
-
-    \return the computed area.
   */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT triangular_area(
+    const typename GeomTraits::Point& p,
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::Point& r,
+    const GeomTraits& traits) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT triangular_area(
     const typename GeomTraits::Point_2& p,
@@ -69,29 +82,6 @@ namespace Generalized_weights {
     return internal::positive_area_2(traits, p, q, r);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the triangular cell in 2D.
-
-    This function infers a traits class `GeomTraits` from the `Point_2` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::triangular_area()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT triangular_area(
     const CGAL::Point_2<GeomTraits>& p,
@@ -102,32 +92,6 @@ namespace Generalized_weights {
     return triangular_area(p, q, r, traits);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the triangular cell in 3D.
-
-    This is an overload of the 2D weight for 3D points.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::triangular_area()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT triangular_area(
     const typename GeomTraits::Point_3& p,
@@ -138,31 +102,6 @@ namespace Generalized_weights {
     return internal::positive_area_3(traits, p, q, r);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefRegions
-
-    \brief computes area of the triangular cell in 3D.
-
-    This is an overload of the 2D weight for 3D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_3` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \return the computed area.
-
-    \sa `CGAL::Generalized_weights::triangular_area()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT triangular_area(
     const CGAL::Point_3<GeomTraits>& p,
@@ -172,8 +111,9 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return triangular_area(p, q, r, traits);
   }
+  /// \endcond
 
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_TRIANGULAR_REGION_WEIGHTS_H
+#endif // CGAL_WEIGHT_INTERFACE_TRIANGULAR_REGION_WEIGHTS_H

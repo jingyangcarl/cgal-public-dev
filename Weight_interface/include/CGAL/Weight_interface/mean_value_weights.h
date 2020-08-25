@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_MEAN_VALUE_WEIGHTS_H
-#define CGAL_GENERALIZED_MEAN_VALUE_WEIGHTS_H
+#ifndef CGAL_WEIGHT_INTERFACE_MEAN_VALUE_WEIGHTS_H
+#define CGAL_WEIGHT_INTERFACE_MEAN_VALUE_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -30,7 +30,7 @@
 #include <CGAL/Weight_interface/internal/polygon_utils.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 
   /// \cond SKIP_IN_MANUAL
   namespace mean_value_ns {
@@ -92,16 +92,16 @@ namespace Generalized_weights {
     \f$D   = (t - q) \cdot (p - q)\f$.
     The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
 
-    This weight is equal to the `CGAL::Generalized_weights::tangent_weight()`.
+    This weight is equal to the `CGAL::Weights::tangent_weight()`.
 
-    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight()`.
+    This weight is a special case of the `CGAL::Weights::three_point_family_weight()`.
 
     \cgalFigureBegin{mean_value_weight, mean_value.svg}
       Notation used for the mean value weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -155,32 +155,7 @@ namespace Generalized_weights {
       traits, l1, l2, l3, D1, D2, D, sign);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the mean value weight for 2D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_2` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::mean_value_weight()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -191,6 +166,7 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return mean_value_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
   /*!
     \ingroup PkgWeightInterfaceRefWeights
@@ -200,7 +176,7 @@ namespace Generalized_weights {
     This is an overload of the 2D weight for 3D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2` and `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` and `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -219,7 +195,7 @@ namespace Generalized_weights {
 
     \return the computed weight.
 
-    \sa `CGAL::Generalized_weights::mean_value_weight()`
+    \sa `CGAL::Weights::mean_value_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
@@ -238,34 +214,7 @@ namespace Generalized_weights {
     return mean_value_weight(qf, tf, rf, pf, traits);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the mean value weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_3` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2` and `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::mean_value_weight()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
     const CGAL::Point_3<GeomTraits>& q,
@@ -276,6 +225,7 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return mean_value_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
   /*!
     \ingroup PkgWeightInterfaceRefBarycentric
@@ -288,16 +238,16 @@ namespace Generalized_weights {
 
     Mean value weights are well-defined inside and outside a simple polygon and are
     non-negative in the kernel of a star-shaped polygon. The weights are computed
-    analytically using the formulation from `CGAL::Generalized_weights::tangent_weight()`.
+    analytically using the formulation from `CGAL::Weights::tangent_weight()`.
 
     \tparam Polygon
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2`.
 
     \tparam VertexMap
-    must be a `ReadablePropertyMap` whose key type is `Polygon::value_type` and
+    a model of `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
   */
   template<
@@ -391,7 +341,7 @@ namespace Generalized_weights {
       The number of returned weights equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      the dereferenced output iterator type must be convertible to `FT`.
+      the dereferenced output iterator type convertible to `FT`.
 
       \param query
       A query point.
@@ -534,20 +484,20 @@ namespace Generalized_weights {
     weight per vertex. The weights are stored in a destination range
     beginning at `w_begin`.
 
-    Internally, the class `CGAL::Generalized_weights::Mean_value_weights_2` is used.
+    Internally, the class `CGAL::Weights::Mean_value_weights_2` is used.
     If one needs a flexible API, please refer to that class. If you want to handle
     multiple query points, you better use that class, too. When using this function,
     internal memory is allocated for each query point, while when using the class,
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    the dereferenced output iterator type must be convertible to `GeomTraits::FT`.
+    the dereferenced output iterator type convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2`.
 
     \param polygon
     An instance of `PointRange` with 2D points, which form a simple polygon.
@@ -582,36 +532,7 @@ namespace Generalized_weights {
     return mean_value(query, w_begin);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefBarycentric
-
-    \brief computes 2D mean value weights for polygons.
-
-    This function infers a traits class from the `Point_2` class.
-
-    \tparam PointRange
-    must be a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
-
-    \tparam OutputIterator
-    the dereferenced output iterator type must be convertible to `Kernel_traits<Point_2>::Kernel::FT`.
-
-    \param polygon
-    An instance of `PointRange` with 2D points, which form a simple polygon.
-
-    \param query
-    A query point.
-
-    \param w_begin
-    The beginning of the destination range with the computed weights.
-
-    \return an output iterator to the element in the destination range,
-    one past the last weight stored.
-
-    \pre polygon.size() >= 3
-    \pre polygon is simple
-
-    \sa `CGAL::Generalized_weights::mean_value_weights_2()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<
   typename PointRange,
   typename Point_2,
@@ -625,8 +546,9 @@ namespace Generalized_weights {
     return mean_value_weights_2(
       polygon, query, w_begin, GeomTraits());
   }
+  /// \endcond
 
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_MEAN_VALUE_WEIGHTS_H
+#endif // CGAL_WEIGHT_INTERFACE_MEAN_VALUE_WEIGHTS_H

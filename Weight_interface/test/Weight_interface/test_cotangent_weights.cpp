@@ -1,6 +1,6 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/utils.h>
-#include <CGAL/Weight_interface/Generalized_weights/cotangent_weights.h>
+#include <CGAL/Weight_interface/utils.h>
+#include <CGAL/Weight_interface/cotangent_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -23,25 +23,25 @@ int main() {
 
   // Compute weights.
   std::cout << "2D cotangent: " <<
-    CGAL::Generalized_weights::cotangent_weight(q2, t2, r2, p2) << std::endl;
+    CGAL::Weights::cotangent_weight(q2, t2, r2, p2) << std::endl;
   std::cout << "3D cotangent: " <<
-    CGAL::Generalized_weights::cotangent_weight(q3, t3, r3, p3) << std::endl;
+    CGAL::Weights::cotangent_weight(q3, t3, r3, p3) << std::endl;
   std::cout << "---------------" << std::endl;
 
   // Construct a 2D weight.
   const auto w2 =
-    CGAL::Generalized_weights::half_cotangent_weight(
-      CGAL::Generalized_weights::utils::cotangent(q2, t2, r2)) +
-    CGAL::Generalized_weights::half_cotangent_weight(
-      CGAL::Generalized_weights::utils::cotangent(r2, p2, q2));
+    CGAL::Weights::half_cotangent_weight(
+      CGAL::Weights::utils::cotangent(q2, t2, r2)) +
+    CGAL::Weights::half_cotangent_weight(
+      CGAL::Weights::utils::cotangent(r2, p2, q2));
   std::cout << "2D cotangent: " << w2 << std::endl;
 
   // Construct a 3D weight.
   const auto w3 =
-    CGAL::Generalized_weights::half_cotangent_weight(
-      CGAL::Generalized_weights::utils::cotangent(q3, t3, r3)) +
-    CGAL::Generalized_weights::half_cotangent_weight(
-      CGAL::Generalized_weights::utils::cotangent(r3, p3, q3));
+    CGAL::Weights::half_cotangent_weight(
+      CGAL::Weights::utils::cotangent(q3, t3, r3)) +
+    CGAL::Weights::half_cotangent_weight(
+      CGAL::Weights::utils::cotangent(r3, p3, q3));
   std::cout << "3D cotangent: " << w3 << std::endl;
 
   return EXIT_SUCCESS;

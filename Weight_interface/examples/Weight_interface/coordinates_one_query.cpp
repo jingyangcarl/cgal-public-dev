@@ -1,5 +1,5 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/discrete_harmonic_weights.h>
+#include <CGAL/Weight_interface/discrete_harmonic_weights.h>
 
 // Typedefs.
 using Kernel  = CGAL::Simple_cartesian<double>;
@@ -20,7 +20,7 @@ int main() {
   coordinates.reserve(polygon.size());
 
   // Compute barycentric weights.
-  CGAL::Generalized_weights::discrete_harmonic_weights_2(
+  CGAL::Weights::discrete_harmonic_weights_2(
     polygon, query, std::back_inserter(weights));
 
   std::cout << "2D weights: ";

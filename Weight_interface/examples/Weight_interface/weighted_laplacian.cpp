@@ -1,7 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/Generalized_weights/utils.h>
-#include <CGAL/Weight_interface/Generalized_weights/cotangent_weights.h>
-#include <CGAL/Weight_interface/Weighting_regions/mixed_voronoi_region_weights.h>
+#include <CGAL/Weight_interface/utils.h>
+#include <CGAL/Weight_interface/cotangent_weights.h>
+#include <CGAL/Weight_interface/mixed_voronoi_region_weights.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Surface_mesh.h>
@@ -43,10 +43,10 @@ struct Weight_wrapper {
         v2 = source(he_ccw, mesh);
 
         const auto& p2 = get(pmap, v2);
-        return CGAL::Generalized_weights::utils::cotangent(p1, p2, p0);
+        return CGAL::Weights::utils::cotangent(p1, p2, p0);
       } else {
         const auto& p2 = get(pmap, v2);
-        return CGAL::Generalized_weights::utils::cotangent(p0, p2, p1);
+        return CGAL::Weights::utils::cotangent(p0, p2, p1);
       }
     }
 
@@ -57,7 +57,7 @@ struct Weight_wrapper {
 
     const auto& p2 = get(pmap, v2);
     const auto& p3 = get(pmap, v3);
-    return CGAL::Generalized_weights::
+    return CGAL::Weights::
       cotangent_weight(p0, p2, p1, p3) / FT(2);
   }
 
@@ -79,7 +79,7 @@ struct Weight_wrapper {
       const auto& p1 = get(pmap, v1);
       const auto& p2 = get(pmap, v2);
 
-      A_i += CGAL::Generalized_weights::
+      A_i += CGAL::Weights::
         mixed_voronoi_area(p1, p0, p2);
     }
     assert(A_i != FT(0));

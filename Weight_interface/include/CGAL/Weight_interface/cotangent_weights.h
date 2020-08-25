@@ -20,8 +20,8 @@
 // Author(s)     : Dmitry Anisimov
 //
 
-#ifndef CGAL_GENERALIZED_COTANGENT_WEIGHTS_H
-#define CGAL_GENERALIZED_COTANGENT_WEIGHTS_H
+#ifndef CGAL_WEIGHT_INTERFACE_COTANGENT_WEIGHTS_H
+#define CGAL_WEIGHT_INTERFACE_COTANGENT_WEIGHTS_H
 
 // #include <CGAL/license/Weight_interface.h>
 
@@ -29,7 +29,7 @@
 #include <CGAL/Weight_interface/internal/utils.h>
 
 namespace CGAL {
-namespace Generalized_weights {
+namespace Weights {
 
   /// \cond SKIP_IN_MANUAL
   namespace cotangent_ns {
@@ -62,14 +62,14 @@ namespace Generalized_weights {
     \f$2\textbf{cot}\f$.
 
     \tparam FT
-    must be `FieldNumberType`.
+    a model of `FieldNumberType`.
 
     \param cot
     the cotangent value
 
     \return the computed half weight.
 
-    \sa `CGAL::Generalized_weights::cotangent_weight()`
+    \sa `CGAL::Weights::cotangent_weight()`
   */
   template<typename FT>
   const FT half_cotangent_weight(
@@ -87,16 +87,16 @@ namespace Generalized_weights {
     \f$w = 2 (\cot\beta + \cot\gamma)\f$
     with notations shown in the figure below.
 
-    This weight is equal to the `CGAL::Generalized_weights::discrete_harmonic_weight()`.
+    This weight is equal to the `CGAL::Weights::discrete_harmonic_weight()`.
 
-    This weight is a special case of the `CGAL::Generalized_weights::three_point_family_weight()`.
+    This weight is a special case of the `CGAL::Weights::three_point_family_weight()`.
 
     \cgalFigureBegin{cotangent_weight, cotangent.svg}
       Notation used for the cotangent weight.
     \cgalFigureEnd
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2`.
 
     \param q
     a query point
@@ -129,32 +129,7 @@ namespace Generalized_weights {
     return cotangent_ns::weight(cot_beta, cot_gamma);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the cotangent weight for 2D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_2` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_2`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::cotangent_weight()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -165,6 +140,7 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return cotangent_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
   /*!
     \ingroup PkgWeightInterfaceRefWeights
@@ -174,7 +150,7 @@ namespace Generalized_weights {
     This is an overload of the 2D weight for 3D points.
 
     \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -193,7 +169,7 @@ namespace Generalized_weights {
 
     \return the computed weight.
 
-    \sa `CGAL::Generalized_weights::cotangent_weight()`
+    \sa `CGAL::Weights::cotangent_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(
@@ -209,34 +185,7 @@ namespace Generalized_weights {
     return cotangent_ns::weight(cot_beta, cot_gamma);
   }
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the cotangent weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    This function infers a traits class `GeomTraits` from the `Point_3` type.
-
-    \tparam GeomTraits
-    must be a model of `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \return the computed weight.
-
-    \sa `CGAL::Generalized_weights::cotangent_weight()`
-  */
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(
     const CGAL::Point_3<GeomTraits>& q,
@@ -247,8 +196,9 @@ namespace Generalized_weights {
     const GeomTraits traits;
     return cotangent_weight(q, t, r, p, traits);
   }
+  /// \endcond
 
-} // namespace Generalized_weights
+} // namespace Weights
 } // namespace CGAL
 
-#endif // CGAL_GENERALIZED_COTANGENT_WEIGHTS_H
+#endif // CGAL_WEIGHT_INTERFACE_COTANGENT_WEIGHTS_H

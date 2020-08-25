@@ -60,16 +60,11 @@ This trivial example shows how to compute both 2D and 3D generalized weights.
 The weight is computed at the query point `q` with respect to its neighbors `t`, `r`,
 and `p` either in 2D or 3D.
 
-\cgalExample{Weight_interface/generalized_weights.cpp}
-
-
-\subsection Weight_Interface_Examples_WeightingRegions List of Weighting Regions
-
 This trivial example shows how to compute both 2D and 3D weighting regions.
 The computed weights are all areas of the corresponding regions being a part of a
 triangle `[p, q, r]` either in 2D or 3D.
 
-\cgalExample{Weight_interface/weighting_regions.cpp}
+\cgalExample{Weight_interface/weight_interface.cpp}
 
 
 \subsection Weight_Interface_Examples_CoordinatesOneQuery Computing 2D Coordinates for One Query
@@ -79,7 +74,7 @@ which are normalized barycentric weights, for a query point with respect to a po
 in 2D. Since we have only one query point, we use a free function to show the simplified
 interface. For multiple query points though, calling a free function is not efficient
 (see the following example for more details). The used type of barycentric weights is
-`CGAL::Generalized_weights::Discrete_harmonic_weights_2`.
+`CGAL::Weights::Discrete_harmonic_weights_2`.
 
 \cgalExample{Weight_interface/coordinates_one_query.cpp}
 
@@ -92,7 +87,7 @@ a polygon in 2D. Since we have multiple query points, we first create a class an
 use it to compute the weights. Using a class for multiple query points is preferred, because
 in that case, the memory required to compute weights is allocated only once, while
 when using a free function as in the previous example, it is allocated for each query point.
-The used type of barycentric weights is `CGAL::Generalized_weights::Wachspress_weights_2`.
+The used type of barycentric weights is `CGAL::Weights::Wachspress_weights_2`.
 
 \cgalExample{Weight_interface/coordinates_multiple_queries.cpp}
 
@@ -101,7 +96,7 @@ The used type of barycentric weights is `CGAL::Generalized_weights::Wachspress_w
 
 If you have a 2D polygon in 3D plane that is not an XY plane, you can still compute
 the 2D weights, however you need to provide a special projection traits class. This example
-shows how to achieve that when using the `CGAL::Generalized_weights::Mean_value_weights_2`
+shows how to achieve that when using the `CGAL::Weights::Mean_value_weights_2`
 type of barycentric weights.
 
 You can also use such traits when computing
