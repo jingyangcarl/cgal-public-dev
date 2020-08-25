@@ -121,8 +121,8 @@ namespace Segments {
       neighbors of segments within the group are computed that is no relationships
       between segments from different groups are taken into account.
 
-      The user must not use this method until he has meaningful groups of segments.
-      By default, all segments are inserted as a group.
+      The user must not use this method until he has meaningful groups of segments
+      (see more in the user manual). By default, all segments are inserted as a group.
 
       \tparam IndexRange
       a model of `ConstRange` whose value type is `std::size_t`.

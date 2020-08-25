@@ -17,8 +17,9 @@ A closed contour before (red) and after (green) regularization.
 
 This \cgal package enables to regularize a set of segments and open or closed contours in 2D
 and a set of planes in 3D such that all input objects are rotated and aligned with respect
-to the user-specified conditions. This package can also be used in conjunction with
-the \ref PkgShapeDetection "Shape Detection" package.
+to the user-specified conditions. We also provide an advance regularization algorithm that can
+be adjusted for the user needs and any type of geometric objects. This package can also be used
+in conjunction with the \ref PkgShapeDetection "Shape Detection" package.
 
 
 \section QP_Regularization_Segments Segments
@@ -208,7 +209,7 @@ A set of 2D segments before (red), after the angle (yellow), and the offset (gre
 \subsection QP_Regularization_Segments_Utils Utility Functions
 
 In addition to the main algorithm, we also provide several utility functions, which
-are often used in conjuction with the algorithm.
+are often used in conjunction with the algorithm.
 
 
 \subsubsection QP_Regularization_Segments_Groups Grouping Segments
@@ -389,7 +390,7 @@ the number of output edges in the contour is not necessarily the same as the num
 Steps of the contour regularization algorithm (from left to right):
 the closed contour before regularization; the disconnected contour with edges rotated
 towards the found principal directions, here we have only one direction; the optimized
-edges, blue edges were merged and their positions were optimized; and the final reconnected contur.
+edges, blue edges were merged and their positions were optimized; and the final reconnected contour.
 \cgalFigureEnd
 
 If the user wants to rotate each contour edge on its own towards the best-fit direction
@@ -611,7 +612,7 @@ a wrapper `CGAL::OSQP_quadratic_program_traits` of the external \ref thirdpartyO
 that is a model of the concept `QuadraticProgramTraits`.
 
 Alternatively, the internal CGAL solver from the package \ref PkgQPSolver "Linear and Quadratic Programming Solver"
-can be used, however we do not recomment applying it. The internal quadratic program that has to be solved
+can be used, however we do not recommend applying it. The internal quadratic program that has to be solved
 for shape regularization is sparse. The \cgal version will internally convert this problem
 into a dense one that takes considerable effort to solve, while the OSQP version takes a special care
 of the sparse nature of the problem that leads to better performance. Since the class `QP_regularization`
