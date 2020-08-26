@@ -2,7 +2,7 @@ namespace CGAL {
 namespace Weights {
 
 /*!
-\defgroup PkgWeightInterfaceRef Generalized Weights Reference
+\defgroup PkgWeightInterfaceRef Weight Interface Reference
 
 \defgroup PkgWeightInterfaceRefConcepts Concepts
 \ingroup PkgWeightInterfaceRef
@@ -10,7 +10,7 @@ namespace Weights {
 Concepts, which are used to parameterize the functions and classes
 from `CGAL::Weights`.
 
-\defgroup PkgWeightInterfaceRefWeights Generalized Weights
+\defgroup PkgWeightInterfaceRefWeights Analytic Weights
 \ingroup PkgWeightInterfaceRef
 
 Models and functions that can be used to compute generalized weights.
@@ -34,7 +34,7 @@ Different related utility functions.
 
 \addtogroup PkgWeightInterfaceRef
 
-\cgalPkgDescriptionBegin{Generalized Weights, PkgWeightInterfaceRef}
+\cgalPkgDescriptionBegin{Weight Interface, PkgWeightInterfaceRef}
 \cgalPkgPicture{logo_120x120.png}
 
 \cgalPkgSummaryBegin
@@ -53,13 +53,13 @@ respect to polygons, and weighting regions.}
 
 \cgalPkgDescriptionEnd
 
-## Generalized Weights ##
+## Weight Interface ##
 
 ### Concepts ###
 - `AnalyticWeightTraits_2`
 - `AnalyticWeightTraits_3`
 
-### Generalized Weights ###
+### Analytic %Weights ###
 - `uniform_weight()`
 - `shepard_weight()`
 - `inverse_distance_weight()`
@@ -71,7 +71,7 @@ respect to polygons, and weighting regions.}
 - `discrete_harmonic_weight()`
 - `cotangent_weight()`
 
-### Barycentric Weights ###
+### Barycentric %Weights ###
 - `Wachspress_weights_2<Polygon, GeomTraits, VertexMap>`
 - `wachspress_weights_2()`
 - `Mean_value_weights_2<Polygon, GeomTraits, VertexMap>`

@@ -25,7 +25,7 @@ In particular, the following \cgal packages depend on this package:
 - \ref PkgHeatMethodSummary "The Heat Method".
 
 
-\section Weight_Interface_Generalized_Weights Generalized Weights
+\section Weight_Interface_Weights Analytic Weights
 
 We call *generalized weights* all weights, which can be computed analytically.
 In particular, we have two subgroups of such weights:
@@ -55,7 +55,7 @@ In this section, you can find a few examples of how and when the provided
 weights can be used.
 
 
-\subsection Weight_Interface_Examples_GeneralizedWeights List of Generalized Weights
+\subsection Weight_Interface_Examples_Weights First Example
 
 This trivial example shows how to compute both 2D and 3D generalized weights.
 The weight is computed at the query point `q` with respect to its neighbors `t`, `r`,
