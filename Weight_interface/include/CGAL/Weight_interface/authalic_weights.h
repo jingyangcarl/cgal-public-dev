@@ -65,7 +65,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the half value of the authalic weight.
+    \brief computes the half value of the `authalic_weight()`.
 
     This function constructs the half of the authalic weight using the precomputed
     cotangent and squared distance values.
@@ -129,6 +129,10 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \note the points `p0`, `p1`, `p2` are ordered
+
+    \cgalModels `analytic_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT authalic_weight(

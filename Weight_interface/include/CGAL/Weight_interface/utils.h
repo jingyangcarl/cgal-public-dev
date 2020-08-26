@@ -38,10 +38,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the tangent in 2D or 3D.
-
-    This function computes the tangent of the angle between
-    2D or 3D vectors `[q, r]` and `[q, p]`.
+    \brief computes the tangent of the angle between 2D or 3D vectors `[q, r]` and `[q, p]`.
 
     The type `GeomTraits::Point` must be either
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
@@ -60,6 +57,8 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \cgalModels `three_point_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent(
@@ -71,10 +70,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the cotangent in 2D or 3D.
-
-    This function computes the cotangent of the angle between
-    2D or 3D vectors `[q, r]` and `[q, p]`.
+    \brief computes the cotangent of the angle between 2D or 3D vectors `[q, r]` and `[q, p]`.
 
     The type `GeomTraits::Point` must be either
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
@@ -93,6 +89,8 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \cgalModels `three_point_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent(
@@ -285,7 +283,7 @@ namespace Weights {
     \brief the projection traits class.
 
     This class contains geometric objects, predicates, and constructions in order
-    to be able to compute 2D generalized weights in 3D.
+    to be able to compute 2D weights in 3D.
   */
   template<typename Kernel>
   using Projection_traits_3 =

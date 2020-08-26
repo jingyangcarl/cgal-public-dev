@@ -16,18 +16,17 @@ Laplacian or when computing coordinates of a point with respect to polygons. Thi
 package provides a simple and unified interface to different types of weights.
 
 In particular, the following \cgal packages depend on this package:
-
-- \ref PkgBarycentricCoordinates2 "2D Generalized Barycentric Coordinates";
-- \ref PkgPolygonMeshProcessing "Polygon Mesh Processing";
-- \ref PkgSurfaceMeshParameterization "Triangulated Surface Mesh Parameterization";
-- \ref PkgSurfaceMeshSkeletonization "Triangulated Surface Mesh Skeletonization";
-- \ref PkgSurfaceMeshDeformation "Triangulated Surface Mesh Deformation";
-- \ref PkgHeatMethodSummary "The Heat Method".
+\ref PkgBarycentricCoordinates2 "2D Generalized Barycentric Coordinates",
+\ref PkgPolygonMeshProcessing "Polygon Mesh Processing",
+\ref PkgSurfaceMeshParameterization "Triangulated Surface Mesh Parameterization",
+\ref PkgSurfaceMeshSkeletonization "Triangulated Surface Mesh Skeletonization",
+\ref PkgSurfaceMeshDeformation "Triangulated Surface Mesh Deformation",
+\ref PkgHeatMethodSummary "The Heat Method".
 
 
 \section Weight_Interface_Weights Analytic Weights
 
-We call *generalized weights* all weights, which can be computed analytically.
+We call *analytic weights* all weights, which can be computed analytically.
 In particular, we have two subgroups of such weights:
 
 - \ref PkgWeightInterfaceRefWeights "weights",
@@ -57,7 +56,7 @@ weights can be used.
 
 \subsection Weight_Interface_Examples_Weights First Example
 
-This trivial example shows how to compute both 2D and 3D generalized weights.
+This trivial example shows how to compute both 2D and 3D analytic weights.
 The weight is computed at the query point `q` with respect to its neighbors `t`, `r`,
 and `p` either in 2D or 3D.
 
@@ -101,7 +100,7 @@ shows how to achieve that when using the `Mean_value_weights_2`
 type of barycentric weights.
 
 You can also use such traits when computing
-\ref PkgWeightInterfaceRefWeights "local generalized weights" or
+\ref PkgWeightInterfaceRefWeights "local analytic weights" or
 \ref PkgWeightInterfaceRefRegions "local weighting regions".
 
 \cgalExample{Weight_interface/projection_traits.cpp}
@@ -121,7 +120,7 @@ in the custom traits class.
 
 \subsection Weight_Interface_Examples_WeightedLaplacian Constructing Weighted Laplacian
 
-A typical example of using generalized weights is discretizing Poisson and Laplace
+A typical example of using weights is discretizing Poisson and Laplace
 equations, which play an important role in various geometry processing applications
 such as, for example, \ref PkgSurfaceMeshDeformation "surface mesh deformation" and
 \ref PkgSurfaceMeshParameterization "surface mesh parameterization". This example shows
@@ -134,7 +133,7 @@ the mixed Voronoi cells around each mesh vertex.
 
 \subsection Weight_Interface_Examples_Flattening Flattening and Convergence
 
-When computing generalized weights for a query point `q` with respect to its neighbors
+When computing weights for a query point `q` with respect to its neighbors
 `t`, `r`, and `p` as shown in the first example, the local configuration is a quadrilateral
 `[q, t, r, p]` or two connected triangles `[r, q, t]` and `[p, q, r]`.
 
@@ -146,7 +145,7 @@ shows this distortion and how it decreases when the point `q` moves back to the 
 non-flat configuration.
 
 Moreover, this example shows how to use the family of weights, which includes
-multiple types of generalized weights in one function. In particular, we show how by
+multiple types of weights in one function. In particular, we show how by
 changing an input parameter, we converge from the Wachspress weights to the mean value
 weights.
 

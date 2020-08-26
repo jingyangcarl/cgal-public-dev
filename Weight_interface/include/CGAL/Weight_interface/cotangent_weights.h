@@ -53,7 +53,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the half value of the cotangent weight.
+    \brief computes the half value of the `cotangent_weight()`.
 
     This function constructs the half of the cotangent weight using the precomputed
     cotangent value.
@@ -114,6 +114,10 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \note the points `p0`, `p1`, `p2` are ordered
+
+    \cgalModels `analytic_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(

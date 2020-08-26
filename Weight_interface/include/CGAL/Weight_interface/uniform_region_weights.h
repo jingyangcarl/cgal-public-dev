@@ -36,15 +36,15 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions
 
-    \brief computes area of the uniform cell in 2D or 3D.
-
-    This function always returns 1.
+    \brief this function always returns 1.
 
     The type `GeomTraits::Point` must be either
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
+
+    \cgalModels `three_point_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_area(
@@ -102,9 +102,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions
 
-    \brief computes area of the uniform cell.
-
-    This function always returns 1.
+    \brief this function always returns 1.
   */
   double uniform_area() {
     return 1.0;

@@ -89,9 +89,11 @@ namespace Weights {
     The weight is computed as
     \f$w = \pm 2 \sqrt{\frac{2 (d_1 d_2 - D)}{(d d_1 + D_1)(d d_2 + D_2)}}\f$,
     with notations shown in the figure below and dot products
-    \f$D_1 = (t - q) \cdot (r - q)\f$,
-    \f$D_2 = (r - q) \cdot (p - q)\f$, and
-    \f$D   = (t - q) \cdot (p - q)\f$.
+
+    \f$D_1 = (p_0 - q) \cdot (p_1 - q)\f$,
+    \f$D_2 = (p_1 - q) \cdot (p_2 - q)\f$, and
+    \f$D   = (p_0 - q) \cdot (p_2 - q)\f$.
+
     The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
 
     - This weight is equal to the `tangent_weight()`.
@@ -121,6 +123,10 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \note the points `p0`, `p1`, `p2` are ordered
+
+    \cgalModels `analytic_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
@@ -230,6 +236,8 @@ namespace Weights {
     \tparam VertexMap
     a model of `ReadablePropertyMap` whose key type is `Polygon::value_type` and
     value type is `Point_2`. The default is `CGAL::Identity_property_map`.
+
+    \cgalModels `BarycentricWeights_2`
   */
   template<
   typename Polygon,
@@ -317,8 +325,8 @@ namespace Weights {
 
       The number of computed weights equals to the number of polygon vertices.
 
-      \tparam OutputIterator
-      an output iterator type convertible to `FT`
+      \tparam OutIterator
+      a model of `OutputIterator` whose value type is `FT`
 
       \param query
       a query point
@@ -329,10 +337,10 @@ namespace Weights {
       \return an output iterator to the element in the destination range,
       one past the last weight stored
     */
-    template<typename OutputIterator>
-    OutputIterator operator()(
+    template<typename OutIterator>
+    OutIterator operator()(
       const Point_2& query,
-      OutputIterator w_begin) {
+      OutIterator w_begin) {
 
       const bool normalize = false;
       return operator()(query, w_begin, normalize);
@@ -341,10 +349,10 @@ namespace Weights {
     /// @}
 
     /// \cond SKIP_IN_MANUAL
-    template<typename OutputIterator>
-    OutputIterator operator()(
+    template<typename OutIterator>
+    OutIterator operator()(
       const Point_2& query,
-      OutputIterator weights,
+      OutIterator weights,
       const bool normalize) {
 
       return optimal_weights(
@@ -461,16 +469,18 @@ namespace Weights {
     weight per vertex. The weights are stored in a destination range
     beginning at `w_begin`.
 
-    Internally, the class `Mean_value_weights_2` is used. If you want to handle
-    multiple query points, you better use that class. When using this function,
+    Internally, the class `Mean_value_weights_2` is used. If one wants to process
+    multiple query points, it is better to use that class. When using the free function,
     internal memory is allocated for each query point, while when using the class,
-    it is allocated only once, which is much more efficient.
+    it is allocated only once, which is much more efficient. However, for a few query
+    points, it is easier to use this function. It can also be used when the processing
+    time is not a concern.
 
     \tparam PointRange
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
-    \tparam OutputIterator
-    an output iterator type convertible to `GeomTraits::FT`
+    \tparam OutIterator
+    a model of `OutputIterator` whose value type is `GeomTraits::FT`
 
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2`
@@ -495,12 +505,12 @@ namespace Weights {
   */
   template<
   typename PointRange,
-  typename OutputIterator,
+  typename OutIterator,
   typename GeomTraits>
-  OutputIterator mean_value_weights_2(
+  OutIterator mean_value_weights_2(
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
-    OutputIterator w_begin,
+    OutIterator w_begin,
     const GeomTraits& traits) {
 
     Mean_value_weights_2<PointRange, GeomTraits> mean_value(
@@ -512,11 +522,11 @@ namespace Weights {
   template<
   typename PointRange,
   typename Point_2,
-  typename OutputIterator>
-  OutputIterator mean_value_weights_2(
+  typename OutIterator>
+  OutIterator mean_value_weights_2(
     const PointRange& polygon,
     const Point_2& query,
-    OutputIterator w_begin) {
+    OutIterator w_begin) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
     const GeomTraits traits;

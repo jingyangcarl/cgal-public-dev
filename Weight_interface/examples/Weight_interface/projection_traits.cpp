@@ -14,7 +14,7 @@ int main() {
   // Create a polygon and a query point.
   const std::vector<Point_3> polygon =
     { Point_3(0, 0, 1), Point_3(1, 0, 1), Point_3(1, 1, 0), Point_3(0, 1, 0) };
-  const Point_3 query = Point_3(FT(1) / FT(2), FT(1) / FT(2), FT(1) / FT(2));
+  const Point_3 query(FT(1) / FT(2), FT(1) / FT(2), FT(1) / FT(2));
 
   // Allocate memory for weights.
   std::vector<FT> weights;
@@ -22,7 +22,7 @@ int main() {
 
   // Create projection traits with the right normal.
   const FT quater = FT(1) / FT(4);
-  const Vector_3 normal = Vector_3(0, quater, quater);
+  const Vector_3 normal(0, quater, quater);
   const PTraits ptraits(normal);
 
   // Compute weights.

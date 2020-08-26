@@ -7,7 +7,7 @@ namespace Weights {
 \defgroup PkgWeightInterfaceRefConcepts Concepts
 \ingroup PkgWeightInterfaceRef
 
-Concepts, which are used to parameterize the functions and classes
+Concepts, which are used to parameterize/define the functions and classes
 from `CGAL::Weights`.
 
 \defgroup PkgWeightInterfaceRefWeights Analytic Weights
@@ -58,6 +58,9 @@ weights, and weighting regions. All weights are available both in 2D and 3D.}
 ## Weight Interface ##
 
 ### Concepts ###
+- `analytic_weight()`
+- `three_point_weight()`
+- `BarycentricWeights_2`
 - `AnalyticWeightTraits_2`
 - `AnalyticWeightTraits_3`
 

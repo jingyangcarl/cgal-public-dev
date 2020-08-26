@@ -127,7 +127,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the half value of the tangent weight.
+    \brief computes the half value of the `tangent_weight()`.
 
     This function constructs the half of the tangent weight using the precomputed
     half angle tangent and distance values.
@@ -157,7 +157,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the half value of the tangent weight.
+    \brief computes the half value of the `tangent_weight()`.
 
     This function constructs the half of the tangent weight using the precomputed
     distance, area, and dot product values.
@@ -203,8 +203,9 @@ namespace Weights {
     \f$t_1 = \frac{2 A_1}{d d_1 + D_1}\f$ and
     \f$t_2 = \frac{2 A_2}{d d_2 + D_2}\f$
     with notations shown in the figure below and dot products
-    \f$D_1 = (t - q) \cdot (r - q)\f$ and
-    \f$D_2 = (r - q) \cdot (p - q)\f$.
+
+    \f$D_1 = (p_0 - q) \cdot (p_1 - q)\f$ and
+    \f$D_2 = (p_1 - q) \cdot (p_2 - q)\f$.
 
     - This weight is equal to the `mean_value_weight()`.
     - This weight is a special case of the `three_point_family_weight()`.
@@ -233,6 +234,10 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \note the points `p0`, `p1`, `p2` are ordered
+
+    \cgalModels `analytic_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent_weight(

@@ -23,12 +23,12 @@ struct Custom_traits {
 int main() {
 
   // 2D configuration.
-  const Point_2 p2 = Point_2(0, 0);
-  const Point_2 q2 = Point_2(0, 1);
+  const Point_2 p2(0, 0);
+  const Point_2 q2(0, 1);
 
   // 3D configuration.
-  const Point_3 p3 = Point_3(0, 0, 1);
-  const Point_3 q3 = Point_3(0, 1, 1);
+  const Point_3 p3(0, 0, 1);
+  const Point_3 q3(0, 1, 1);
 
   // Create custom traits.
   const Custom_traits ctraits;

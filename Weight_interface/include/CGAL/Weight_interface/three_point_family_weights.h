@@ -114,6 +114,10 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \note the points `p0`, `p1`, `p2` are ordered
+
+    \cgalModels `analytic_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(

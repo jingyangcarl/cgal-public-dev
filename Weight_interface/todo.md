@@ -18,3 +18,5 @@ To do now:
 * What happens with WP/MV/DH weights on the polygon boundary?
 * There are never any preconditions (will everything be fine with degenerate positions) in your functions? If there are, what happens if it is violated?
 * Use centroid functions from PCA_LGPL and other utility functions wherever it is necessary.
+* Document the Projection_traits class.
+* Fix and improve the user manual.

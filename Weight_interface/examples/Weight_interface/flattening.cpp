@@ -11,10 +11,10 @@ int main() {
   std::cout << std::fixed;
 
   // 3D configuration.
-  const Point_3 p0 = Point_3(0, 1, 1);
-  const Point_3 p1 = Point_3(2, 0, 1);
-  const Point_3 p2 = Point_3(7, 1, 1);
-  const Point_3 q0 = Point_3(3, 1, 1);
+  const Point_3 p0(0, 1, 1);
+  const Point_3 p1(2, 0, 1);
+  const Point_3 p2(7, 1, 1);
+  const Point_3 q0(3, 1, 1);
 
   // Choose a type of the weight:
   // e.g. 0 - Wachspress (WP) weight; 1 - mean value (MV);
@@ -39,7 +39,7 @@ int main() {
   }
 
   // Compute WP weights for q1, which is not on the plane [p0, p1, p2].
-  Point_3 q1 = Point_3(3, 1, 2);
+  Point_3 q1(3, 1, 2);
     std::cout << "3D wachspress (WP, q1): ";
   std::cout << CGAL::Weights::
     three_point_family_weight(p0, p1, p2, q1, wp) << std::endl;

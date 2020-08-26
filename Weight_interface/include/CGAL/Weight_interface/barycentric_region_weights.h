@@ -36,10 +36,10 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions
 
-    \brief computes area of the barycentric cell in 2D or 3D.
+    \brief computes the area of the barycentric cell in 2D or 3D.
 
     This area is the area of the shaded region in the figure below. The region
-    is formed by two midpoints of the edges incident to `q` and the barycenter of
+    is formed by the two midpoints of the edges incident to `q` and the barycenter of
     the triangle `[p, q, r]`.
 
     The type `GeomTraits::Point` must be either
@@ -63,6 +63,8 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \cgalModels `three_point_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT barycentric_area(

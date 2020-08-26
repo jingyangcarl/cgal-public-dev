@@ -36,7 +36,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefRegions
 
-    \brief computes area of the triangular cell in 2D or 3D.
+    \brief computes the area of the triangular cell in 2D or 3D.
 
     This area is the area of the shaded triangle `[p, q, r]` in the figure below.
 
@@ -61,6 +61,8 @@ namespace Weights {
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
+
+    \cgalModels `three_point_weight()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT triangular_area(
