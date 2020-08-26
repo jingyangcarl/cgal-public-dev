@@ -54,10 +54,15 @@ namespace Weights {
   }
   /// \endcond
 
+  #if defined(DOXYGEN_RUNNING)
+
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the Shepard weight for 2D points.
+    \brief computes the Shepard weight for 2D or 3D points.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     The weight is computed as
     \f$w = \frac{1}{d^a}\f$
@@ -72,7 +77,7 @@ namespace Weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -85,9 +90,50 @@ namespace Weights {
 
     \param traits
     an instance of `GeomTraits`
-
-    \return the computed weight.
   */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT shepard_weight(
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::Point&,
+    const typename GeomTraits::Point& r,
+    const typename GeomTraits::Point&,
+    const typename GeomTraits::FT a,
+    const GeomTraits& traits) { }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefWeights
+
+    \brief computes the Shepard weight for 2D or 3D points.
+
+    This function calls the function `CGAL::Weights::shepard_weight()`.
+
+    \tparam GeomTraits
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param a
+    the power parameter
+
+    \param traits
+    an instance of `GeomTraits`
+
+    \sa `CGAL::Weights::shepard_weight()`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT shepard_weight(
+    const typename GeomTraits::Point& p,
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::FT a,
+    const GeomTraits& traits) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT shepard_weight(
     const typename GeomTraits::Point_2& q,
@@ -103,7 +149,6 @@ namespace Weights {
     return shepard_ns::weight(traits, d, a);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT shepard_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -116,34 +161,7 @@ namespace Weights {
     const GeomTraits traits;
     return shepard_weight(q, t, r, p, a, traits);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the Shepard weight for 2D points.
-
-    This function calls the function `CGAL::Weights::shepard_weight()`.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param a
-    the power parameter
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed weight.
-
-    \sa `CGAL::Weights::shepard_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT shepard_weight(
     const typename GeomTraits::Point_2& p,
@@ -155,7 +173,6 @@ namespace Weights {
     return shepard_weight(p, stub, q, stub, a, traits);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT shepard_weight(
     const CGAL::Point_2<GeomTraits>& p,
@@ -166,34 +183,7 @@ namespace Weights {
     CGAL::Point_2<GeomTraits> stub;
     return shepard_weight(p, stub, q, stub, a);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the Shepard weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param r
-    the second neighbor
-
-    \param a
-    the power parameter
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed weight.
-
-    \sa `CGAL::Weights::shepard_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT shepard_weight(
     const typename GeomTraits::Point_3& q,
@@ -209,7 +199,6 @@ namespace Weights {
     return shepard_ns::weight(traits, d, a);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT shepard_weight(
     const CGAL::Point_3<GeomTraits>& q,
@@ -222,36 +211,7 @@ namespace Weights {
     const GeomTraits traits;
     return shepard_weight(q, t, r, p, a, traits);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the Shepard weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    This function calls the function `CGAL::Weights::shepard_weight()`.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_3`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param a
-    the power parameter
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed weight.
-
-    \sa `CGAL::Weights::shepard_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT shepard_weight(
     const typename GeomTraits::Point_3& p,
@@ -263,7 +223,6 @@ namespace Weights {
     return shepard_weight(p, stub, q, stub, a, traits);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT shepard_weight(
     const CGAL::Point_3<GeomTraits>& p,

@@ -197,10 +197,15 @@ namespace Weights {
     return half_tangent_weight(tan05, d);
   }
 
+  #if defined(DOXYGEN_RUNNING)
+
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the tangent weight for 2D points.
+    \brief computes the tangent weight for 2D or 3D points.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     The weight is computed as
     \f$w = 2 \frac{t_1 + t_2}{r}\f$, where
@@ -219,7 +224,7 @@ namespace Weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -235,9 +240,18 @@ namespace Weights {
 
     \param traits
     an instance of `GeomTraits`
-
-    \return the computed weight.
   */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT tangent_weight(
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::Point& t,
+    const typename GeomTraits::Point& r,
+    const typename GeomTraits::Point& p,
+    const GeomTraits& traits) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent_weight(
     const typename GeomTraits::Point_2& q,
@@ -270,7 +284,6 @@ namespace Weights {
       l1, l2, l3, A1, A2, D1, D2);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -281,37 +294,7 @@ namespace Weights {
     const GeomTraits traits;
     return tangent_weight(q, t, r, p, traits);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the tangent weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed weight.
-
-    \sa `CGAL::Weights::tangent_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent_weight(
     const typename GeomTraits::Point_3& q,
@@ -344,7 +327,6 @@ namespace Weights {
       l1, l2, l3, A1, A2, D1, D2);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent_weight(
     const CGAL::Point_3<GeomTraits>& q,

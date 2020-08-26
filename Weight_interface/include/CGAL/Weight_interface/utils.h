@@ -34,16 +34,21 @@ namespace CGAL {
 namespace Weights {
 namespace utils {
 
+  #if defined(DOXYGEN_RUNNING)
+
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
     \brief computes the tangent.
 
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
+
     This function computes the tangent of the angle between
-    2D vectors `[q, r]` and `[q, p]`.
+    2D or 3D vectors `[q, r]` and `[q, p]`.
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
     \param p
     the first point
@@ -56,9 +61,50 @@ namespace utils {
 
     \param traits
     an instance of `GeomTraits`
-
-    \return the computed tangent.
   */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT tangent(
+    const typename GeomTraits::Point& p,
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::Point& r,
+    const GeomTraits& traits) { }
+
+  /*!
+    \ingroup PkgWeightInterfaceRefUtils
+
+    \brief computes the cotangent.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
+
+    This function computes the cotangent of the angle between
+    2D or 3D vectors `[q, r]` and `[q, p]`.
+
+    \tparam GeomTraits
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+
+    \param p
+    the first point
+
+    \param q
+    the second point
+
+    \param r
+    the third point
+
+    \param traits
+    an instance of `GeomTraits`
+  */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT cotangent(
+    const typename GeomTraits::Point& p,
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::Point& r,
+    const GeomTraits& traits) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent(
     const typename GeomTraits::Point_2& p,
@@ -69,7 +115,6 @@ namespace utils {
     return internal::tangent_2(traits, p, q, r);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent(
     const CGAL::Point_2<GeomTraits>& p,
@@ -79,33 +124,7 @@ namespace utils {
     const GeomTraits traits;
     return tangent(p, q, r, traits);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefUtils
-
-    \brief computes the tangent.
-
-    This function computes the tangent of the angle between
-    3D vectors `[q, r]` and `[q, p]`.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_3`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed tangent.
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent(
     const typename GeomTraits::Point_3& p,
@@ -116,7 +135,6 @@ namespace utils {
     return internal::tangent_3(traits, p, q, r);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent(
     const CGAL::Point_3<GeomTraits>& p,
@@ -126,33 +144,7 @@ namespace utils {
     const GeomTraits traits;
     return tangent(p, q, r, traits);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefUtils
-
-    \brief computes the cotangent.
-
-    This function computes the cotangent of the angle between
-    2D vectors `[q, r]` and `[q, p]`.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed cotangent.
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent(
     const typename GeomTraits::Point_2& p,
@@ -163,7 +155,6 @@ namespace utils {
     return internal::cotangent_2(traits, p, q, r);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent(
     const CGAL::Point_2<GeomTraits>& p,
@@ -173,33 +164,7 @@ namespace utils {
     const GeomTraits traits;
     return cotangent(p, q, r, traits);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefUtils
-
-    \brief computes the cotangent.
-
-    This function computes the cotangent of the angle between
-    3D vectors `[q, r]` and `[q, p]`.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_3`.
-
-    \param p
-    the first point
-
-    \param q
-    the second point
-
-    \param r
-    the third point
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed cotangent.
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent(
     const typename GeomTraits::Point_3& p,
@@ -210,7 +175,6 @@ namespace utils {
     return internal::cotangent_3(traits, p, q, r);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent(
     const CGAL::Point_3<GeomTraits>& p,
@@ -220,9 +184,7 @@ namespace utils {
     const GeomTraits traits;
     return cotangent(p, q, r, traits);
   }
-  /// \endcond
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT squared_distance(
     const CGAL::Point_2<GeomTraits>& p,

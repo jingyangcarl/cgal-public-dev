@@ -31,18 +31,32 @@
 namespace CGAL {
 namespace Weights {
 
+  #if defined(DOXYGEN_RUNNING)
+
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the uniform weight for 2D points.
+    \brief computes the uniform weight for 2D or 3D points.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     This function always returns 1.
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
-
-    \return the computed weight.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
   */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT uniform_weight(
+    const typename GeomTraits::Point&,
+    const typename GeomTraits::Point&,
+    const typename GeomTraits::Point&,
+    const typename GeomTraits::Point&,
+    const GeomTraits&) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_weight(
     const typename GeomTraits::Point_2&,
@@ -55,7 +69,6 @@ namespace Weights {
     return FT(1);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -66,22 +79,7 @@ namespace Weights {
     const GeomTraits traits;
     return uniform_weight(q, t, r, p, traits);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the uniform weight for 3D points.
-
-    This function always returns 1.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_3`.
-
-    \return the computed weight.
-
-    \sa `CGAL::Weights::uniform_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_weight(
     const typename GeomTraits::Point_3&,
@@ -94,7 +92,6 @@ namespace Weights {
     return FT(1);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_weight(
     const CGAL::Point_3<GeomTraits>& q,
@@ -124,3 +121,4 @@ namespace Weights {
 } // namespace CGAL
 
 #endif // CGAL_WEIGHT_INTERFACE_UNIFORM_WEIGHTS_H
+å

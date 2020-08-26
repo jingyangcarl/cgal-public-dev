@@ -66,10 +66,15 @@ namespace Weights {
   }
   /// \endcond
 
+  #if defined(DOXYGEN_RUNNING)
+
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the three point family weight for 2D points.
+    \brief computes the three point family weight for 2D or 3D points.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     The weight is computed as
     \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
@@ -93,7 +98,7 @@ namespace Weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
     \param q
     a query point
@@ -112,9 +117,19 @@ namespace Weights {
 
     \param traits
     an instance of `GeomTraits`
-
-    \return the computed weight.
   */
+  template<typename GeomTraits>
+  const typename GeomTraits::FT three_point_family_weight(
+    const typename GeomTraits::Point& q,
+    const typename GeomTraits::Point& t,
+    const typename GeomTraits::Point& r,
+    const typename GeomTraits::Point& p,
+    const typename GeomTraits::FT a,
+    const GeomTraits& traits) { }
+
+  #endif // DOXYGEN_RUNNING
+
+  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
     const typename GeomTraits::Point_2& q,
@@ -137,7 +152,6 @@ namespace Weights {
       traits, d1, d2, d3, A1, A2, B, a);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
     const CGAL::Point_2<GeomTraits>& q,
@@ -150,40 +164,7 @@ namespace Weights {
     const GeomTraits traits;
     return three_point_family_weight(q, t, r, p, a, traits);
   }
-  /// \endcond
 
-  /*!
-    \ingroup PkgWeightInterfaceRefWeights
-
-    \brief computes the three point family weight for 3D points.
-
-    This is an overload of the 2D weight for 3D points.
-
-    \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` and `AnalyticWeightTraits_3`.
-
-    \param q
-    a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
-    \param a
-    the power parameter
-
-    \param traits
-    an instance of `GeomTraits`
-
-    \return the computed weight.
-
-    \sa `CGAL::Weights::three_point_family_weight()`
-  */
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
     const typename GeomTraits::Point_3& q,
@@ -202,7 +183,6 @@ namespace Weights {
     return three_point_family_weight(qf, tf, rf, pf, a, traits);
   }
 
-  /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
     const CGAL::Point_3<GeomTraits>& q,
