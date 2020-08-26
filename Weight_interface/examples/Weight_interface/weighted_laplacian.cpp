@@ -31,8 +31,8 @@ struct Weight_wrapper {
     const auto v0 = target(he, mesh);
     const auto v1 = source(he, mesh);
 
-    const auto& p0 = get(pmap, v0);
-    const auto& p1 = get(pmap, v1);
+    const auto& q  = get(pmap, v0); // query
+    const auto& p1 = get(pmap, v1); // neighbor j
 
     if (is_border_edge(he, mesh)) {
       const auto he_cw = opposite(next(he, mesh), mesh);
@@ -42,11 +42,11 @@ struct Weight_wrapper {
         const auto he_ccw = prev(opposite(he, mesh), mesh);
         v2 = source(he_ccw, mesh);
 
-        const auto& p2 = get(pmap, v2);
-        return CGAL::Weights::utils::cotangent(p1, p2, p0);
+        const auto& p2 = get(pmap, v2); // neighbor jp
+        return CGAL::Weights::cotangent(p1, p2, q);
       } else {
-        const auto& p2 = get(pmap, v2);
-        return CGAL::Weights::utils::cotangent(p0, p2, p1);
+        const auto& p0 = get(pmap, v2); // neighbor jm
+        return CGAL::Weights::cotangent(q, p0, p1);
       }
     }
 
@@ -55,10 +55,10 @@ struct Weight_wrapper {
     const auto he_ccw = prev(opposite(he, mesh), mesh);
     const auto v3 = source(he_ccw, mesh);
 
-    const auto& p2 = get(pmap, v2);
-    const auto& p3 = get(pmap, v3);
+    const auto& p0 = get(pmap, v2); // neighbor jm
+    const auto& p2 = get(pmap, v3); // neighbor jp
     return CGAL::Weights::
-      cotangent_weight(p0, p2, p1, p3) / FT(2);
+      cotangent_weight(p0, p1, p2, q) / FT(2);
   }
 
   template<typename PointMap>
@@ -75,12 +75,10 @@ struct Weight_wrapper {
       const auto v1 = source(he, mesh);
       const auto v2 = target(next(he, mesh), mesh);
 
-      const auto& p0 = get(pmap, v0);
-      const auto& p1 = get(pmap, v1);
-      const auto& p2 = get(pmap, v2);
-
-      A_i += CGAL::Weights::
-        mixed_voronoi_area(p1, p0, p2);
+      const auto& p = get(pmap, v0);
+      const auto& q = get(pmap, v1);
+      const auto& r = get(pmap, v2);
+      A_i += CGAL::Weights::mixed_voronoi_area(p, q, r);
     }
     assert(A_i != FT(0));
     return FT(1) / (FT(2) * A_i);

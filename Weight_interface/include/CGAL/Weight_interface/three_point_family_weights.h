@@ -71,10 +71,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the three point family weight for 2D or 3D points.
-
-    The type `GeomTraits::Point` must be either
-    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
+    \brief computes the three point family weight in 2D or 3D.
 
     The weight is computed as
     \f$w = \frac{d_2^a A_1 - d^a B + d_1^a A_2}{A_1 A_2}\f$
@@ -82,16 +79,16 @@ namespace Weights {
     being the power parameter.
 
     For \f$a = 0\f$ this weight is equal to the
-    `CGAL::Weights::wachspress_weight()` and
-    `CGAL::Weights::authalic_weight()`.
+    `wachspress_weight()` and `authalic_weight()`.
 
     For \f$a = 1\f$ this weight is equal to the
-    `CGAL::Weights::mean_value_weight()` and
-    `CGAL::Weights::tangent_weight()`.
+    `mean_value_weight()` and `tangent_weight()`.
 
     For \f$a = 2\f$ this weight is equal to the
-    `CGAL::Weights::discrete_harmonic_weight()` and
-    `CGAL::Weights::cotangent_weight()`.
+    `discrete_harmonic_weight()` and `cotangent_weight()`.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \cgalFigureBegin{three_point_family_weight, three_point_family.svg}
       Notation used for the three point family weight.
@@ -100,30 +97,30 @@ namespace Weights {
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
+    \param p0
+    the first point
+
+    \param p1
+    the second point
+
+    \param p2
+    the third point
+
     \param q
     a query point
-
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
 
     \param a
     the power parameter
 
     \param traits
-    an instance of `GeomTraits`
+    this parameter can be omitted if the traits class can be deduced from the point type
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
+    const typename GeomTraits::Point& p0,
+    const typename GeomTraits::Point& p1,
+    const typename GeomTraits::Point& p2,
     const typename GeomTraits::Point& q,
-    const typename GeomTraits::Point& t,
-    const typename GeomTraits::Point& r,
-    const typename GeomTraits::Point& p,
     const typename GeomTraits::FT a,
     const GeomTraits& traits) { }
 
@@ -132,10 +129,10 @@ namespace Weights {
   /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
-    const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& t,
     const typename GeomTraits::Point_2& r,
     const typename GeomTraits::Point_2& p,
+    const typename GeomTraits::Point_2& q,
     const typename GeomTraits::FT a,
     const GeomTraits& traits) {
 
@@ -154,46 +151,46 @@ namespace Weights {
 
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
-    const CGAL::Point_2<GeomTraits>& q,
     const CGAL::Point_2<GeomTraits>& t,
     const CGAL::Point_2<GeomTraits>& r,
     const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q,
     const typename GeomTraits::FT a =
     typename GeomTraits::FT(1)) {
 
     const GeomTraits traits;
-    return three_point_family_weight(q, t, r, p, a, traits);
+    return three_point_family_weight(t, r, p, q, a, traits);
   }
 
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
-    const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& t,
     const typename GeomTraits::Point_3& r,
     const typename GeomTraits::Point_3& p,
+    const typename GeomTraits::Point_3& q,
     const typename GeomTraits::FT a,
     const GeomTraits& traits) {
 
     using Point_2 = typename GeomTraits::Point_2;
-    Point_2 qf, tf, rf, pf;
+    Point_2 tf, rf, pf, qf;
     internal::flatten(
       traits,
-      q,  t,  r,  p,
-      qf, tf, rf, pf);
-    return three_point_family_weight(qf, tf, rf, pf, a, traits);
+      t,  r,  p,  q,
+      tf, rf, pf, qf);
+    return three_point_family_weight(tf, rf, pf, qf, a, traits);
   }
 
   template<typename GeomTraits>
   const typename GeomTraits::FT three_point_family_weight(
-    const CGAL::Point_3<GeomTraits>& q,
     const CGAL::Point_3<GeomTraits>& t,
     const CGAL::Point_3<GeomTraits>& r,
     const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q,
     const typename GeomTraits::FT a =
     typename GeomTraits::FT(1)) {
 
     const GeomTraits traits;
-    return three_point_family_weight(q, t, r, p, a, traits);
+    return three_point_family_weight(t, r, p, q, a, traits);
   }
   /// \endcond
 

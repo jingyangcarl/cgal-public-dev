@@ -32,20 +32,19 @@
 
 namespace CGAL {
 namespace Weights {
-namespace utils {
 
   #if defined(DOXYGEN_RUNNING)
 
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the tangent.
-
-    The type `GeomTraits::Point` must be either
-    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
+    \brief computes the tangent in 2D or 3D.
 
     This function computes the tangent of the angle between
     2D or 3D vectors `[q, r]` and `[q, p]`.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
@@ -60,7 +59,7 @@ namespace utils {
     the third point
 
     \param traits
-    an instance of `GeomTraits`
+    this parameter can be omitted if the traits class can be deduced from the point type
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT tangent(
@@ -72,13 +71,13 @@ namespace utils {
   /*!
     \ingroup PkgWeightInterfaceRefUtils
 
-    \brief computes the cotangent.
-
-    The type `GeomTraits::Point` must be either
-    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
+    \brief computes the cotangent in 2D or 3D.
 
     This function computes the cotangent of the angle between
     2D or 3D vectors `[q, r]` and `[q, p]`.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
@@ -93,7 +92,7 @@ namespace utils {
     the third point
 
     \param traits
-    an instance of `GeomTraits`
+    this parameter can be omitted if the traits class can be deduced from the point type
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent(
@@ -290,9 +289,8 @@ namespace utils {
   */
   template<typename Kernel>
   using Projection_traits_3 =
-    CGAL::Weights::internal::Projection_traits_3<Kernel>;
+    internal::Projection_traits_3<Kernel>;
 
-} // namespace utils
 } // namespace Weights
 } // namespace CGAL
 

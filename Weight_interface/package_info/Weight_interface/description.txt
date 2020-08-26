@@ -1,1 +1,1 @@
-This CGAL package enables to compute various generalized weights.
+This CGAL package enables to compute various weights.

@@ -44,7 +44,7 @@ decltype(auto) cotangent_3_secure(
 
   using GeomTraits = typename Kernel_traits<Point_3>::Kernel;
   using FT = typename GeomTraits::FT;
-  using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+  using Get_sqrt = Get_sqrt<GeomTraits>;
   const GeomTraits traits;
   const auto sqrt = Get_sqrt::sqrt_object(traits);
 
@@ -85,26 +85,23 @@ public:
     const Point& q,
     const Point& r) {
 
-    m_d_r = CGAL::Weights::utils::distance(q, r);
+    m_d_r = distance(q, r);
     CGAL_assertion(m_d_r != FT(0)); // two points are identical!
-    m_d_p = CGAL::Weights::utils::distance(q, p);
+    m_d_p = distance(q, p);
     CGAL_assertion(m_d_p != FT(0)); // two points are identical!
-    const auto area = CGAL::Weights::utils::area(p, q, r);
+    const auto area = area(p, q, r);
     CGAL_assertion(area != FT(0));  // three points are identical!
-    const auto scalar = CGAL::Weights::utils::scalar_product(p, q, r);
+    const auto scalar = scalar_product(p, q, r);
 
-    m_w_base = -CGAL::Weights::
-      tangent_half_angle(m_d_r, m_d_p, area, scalar);
+    m_w_base = -tangent_half_angle(m_d_r, m_d_p, area, scalar);
   }
 
   const FT get_w_r() const {
-    return CGAL::Weights::
-      half_tangent_weight(m_w_base, m_d_r) / FT(2);
+    return half_tangent_weight(m_w_base, m_d_r) / FT(2);
   }
 
   const FT get_w_p() const {
-    return CGAL::Weights::
-      half_tangent_weight(m_w_base, m_d_p) / FT(2);
+    return half_tangent_weight(m_w_base, m_d_p) / FT(2);
   }
 };
 
@@ -148,17 +145,17 @@ public:
 
         const auto& p2 = get(pmap, v2);
         if (m_use_secure_version)
-          weight = internal::cotangent_3_secure(p1, p2, p0);
+          weight = cotangent_3_secure(p1, p2, p0);
         else
-          weight = CGAL::Weights::utils::cotangent(p1, p2, p0);
+          weight = cotangent(p1, p2, p0);
         weight = (CGAL::max)(FT(0), weight);
         weight /= FT(2);
       } else {
         const auto& p2 = get(pmap, v2);
         if (m_use_secure_version)
-          weight = internal::cotangent_3_secure(p0, p2, p1);
+          weight = cotangent_3_secure(p0, p2, p1);
         else
-          weight = CGAL::Weights::utils::cotangent(p0, p2, p1);
+          weight = cotangent(p0, p2, p1);
         weight = (CGAL::max)(FT(0), weight);
         weight /= FT(2);
       }
@@ -174,14 +171,14 @@ public:
       FT cot_beta = FT(0), cot_gamma = FT(0);
 
       if (m_use_secure_version)
-        cot_beta = internal::cotangent_3_secure(p0, p2, p1);
+        cot_beta = cotangent_3_secure(p0, p2, p1);
       else
-        cot_beta = CGAL::Weights::utils::cotangent(p0, p2, p1);
+        cot_beta = cotangent(p0, p2, p1);
 
       if (m_use_secure_version)
-        cot_gamma = internal::cotangent_3_secure(p1, p3, p0);
+        cot_gamma = cotangent_3_secure(p1, p3, p0);
       else
-        cot_gamma = CGAL::Weights::utils::cotangent(p1, p3, p0);
+        cot_gamma = cotangent(p1, p3, p0);
 
       cot_beta  = (CGAL::max)(FT(0), cot_beta);  cot_beta  /= FT(2);
       cot_gamma = (CGAL::max)(FT(0), cot_gamma); cot_gamma /= FT(2);
@@ -245,10 +242,10 @@ private:
         v2 = source(he_ccw, m_pmesh);
 
         const auto& p2 = get(m_pmap, v2);
-        weight = internal::cotangent_3_secure(p1, p2, p0);
+        weight = cotangent_3_secure(p1, p2, p0);
       } else {
         const auto& p2 = get(m_pmap, v2);
-        weight = internal::cotangent_3_secure(p0, p2, p1);
+        weight = cotangent_3_secure(p0, p2, p1);
       }
 
     } else {
@@ -260,8 +257,8 @@ private:
       const auto& p2 = get(m_pmap, v2);
       const auto& p3 = get(m_pmap, v3);
 
-      const FT cot_beta  = internal::cotangent_3_secure(p0, p2, p1);
-      const FT cot_gamma = internal::cotangent_3_secure(p1, p3, p0);
+      const FT cot_beta  = cotangent_3_secure(p0, p2, p1);
+      const FT cot_gamma = cotangent_3_secure(p1, p3, p0);
       weight = cot_beta + cot_gamma;
     }
     return weight;
@@ -283,8 +280,7 @@ private:
       const auto& p1 = get(m_pmap, v1);
       const auto& p2 = get(m_pmap, v2);
 
-      voronoi_area += CGAL::Weights::
-        mixed_voronoi_area(p1, p0, p2);
+      voronoi_area += mixed_voronoi_area(p1, p0, p2);
     }
     CGAL_assertion(voronoi_area != FT(0));
     return voronoi_area;
@@ -332,8 +328,7 @@ public:
       const auto& p1 = get(m_pmap, v1);
       const auto& p2 = get(m_pmap, v2);
 
-      weight = CGAL::Weights::utils::
-        cotangent(p0, p2, p1);
+      weight = cotangent(p0, p2, p1);
 
     } else {
       const auto h1 = next(he, m_pmesh);
@@ -349,8 +344,7 @@ public:
       const auto& p2 = get(m_pmap, v2);
       const auto& p3 = get(m_pmap, v3);
 
-      weight = CGAL::Weights::
-        cotangent_weight(p0, p2, p1, p3) / FT(2);
+      weight = cotangent_weight(p2, p1, p3, p0) / FT(2);
     }
     return weight;
   }
@@ -383,7 +377,7 @@ public:
     const auto& p1 = get(pmap, v1);
     const auto& p2 = get(pmap, v2);
 
-    return CGAL::Weights::utils::cotangent(p0, p2, p1);
+    return cotangent(p0, p2, p1);
   }
 };
 

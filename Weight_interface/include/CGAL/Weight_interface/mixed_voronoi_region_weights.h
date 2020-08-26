@@ -38,21 +38,20 @@ namespace Weights {
 
     \brief computes area of the mixed Voronoi cell in 2D or 3D.
 
-    The type `GeomTraits::Point` must be either
-    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
-
     This area is the area of the shaded region in the figure below. The region
     is formed by two midpoints of the edges incident to `q` and the circumcenter of
     the triangle `[p, q, r]`.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \cgalFigureBegin{mixed_voronoi_area, mixed_voronoi_cell.svg}
       Notation used for the mixed Voronoi cell.
     \cgalFigureEnd
 
-    However, unlike the original `CGAL::Weights::voronoi_area()`,
-    if one of the angles in the triangle `[p, q, r]` is obtuse and the circumcenter
-    vertex of the region is outside this triangle, this vertex is moved to the mid
-    point of the edge `[r, p]` as shown in the figure below.
+    However, unlike the original `voronoi_area()`, if one of the angles in the triangle
+    `[p, q, r]` is obtuse and the circumcenter vertex of the region is outside this triangle,
+    this vertex is moved to the mid point of the edge `[r, p]` as shown in the figure below.
 
     \cgalFigureBegin{mixed_voronoi_area_obtuse, mixed_voronoi_cell_obtuse.svg}
       The case with the obtuse angle.
@@ -71,9 +70,9 @@ namespace Weights {
     the third point
 
     \param traits
-    an instance of `GeomTraits`
+    this parameter can be omitted if the traits class can be deduced from the point type
 
-    \sa `CGAL::Weights::voronoi_area()`
+    \sa `voronoi_area()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT mixed_voronoi_area(

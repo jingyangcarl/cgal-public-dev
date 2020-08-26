@@ -1,6 +1,7 @@
 namespace CGAL {
-/*!
+namespace Weights {
 
+/*!
 \mainpage User Manual
 \anchor Chapter_Weight_Interface
 
@@ -74,7 +75,7 @@ which are normalized barycentric weights, for a query point with respect to a po
 in 2D. Since we have only one query point, we use a free function to show the simplified
 interface. For multiple query points though, calling a free function is not efficient
 (see the following example for more details). The used type of barycentric weights is
-`CGAL::Weights::Discrete_harmonic_weights_2`.
+`Discrete_harmonic_weights_2`.
 
 \cgalExample{Weight_interface/coordinates_one_query.cpp}
 
@@ -87,7 +88,7 @@ a polygon in 2D. Since we have multiple query points, we first create a class an
 use it to compute the weights. Using a class for multiple query points is preferred, because
 in that case, the memory required to compute weights is allocated only once, while
 when using a free function as in the previous example, it is allocated for each query point.
-The used type of barycentric weights is `CGAL::Weights::Wachspress_weights_2`.
+The used type of barycentric weights is `Wachspress_weights_2`.
 
 \cgalExample{Weight_interface/coordinates_multiple_queries.cpp}
 
@@ -96,7 +97,7 @@ The used type of barycentric weights is `CGAL::Weights::Wachspress_weights_2`.
 
 If you have a 2D polygon in 3D plane that is not an XY plane, you can still compute
 the 2D weights, however you need to provide a special projection traits class. This example
-shows how to achieve that when using the `CGAL::Weights::Mean_value_weights_2`
+shows how to achieve that when using the `Mean_value_weights_2`
 type of barycentric weights.
 
 You can also use such traits when computing
@@ -156,6 +157,7 @@ weights.
 
 This component is a part of the weights unification effort inside \cgal that has been
 carried out by Dmitry Anisimov in 2020.
-
 */
+
+} /* namespace Weights */
 } /* namespace CGAL */

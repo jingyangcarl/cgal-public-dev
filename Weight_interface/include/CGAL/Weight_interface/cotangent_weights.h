@@ -67,9 +67,7 @@ namespace Weights {
     \param cot
     the cotangent value
 
-    \return the computed half weight.
-
-    \sa `CGAL::Weights::cotangent_weight()`
+    \sa `cotangent_weight()`
   */
   template<typename FT>
   const FT half_cotangent_weight(
@@ -83,18 +81,17 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the cotangent weight for 2D or 3D points.
-
-    The type `GeomTraits::Point` must be either
-    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
+    \brief computes the cotangent weight in 2D or 3D.
 
     The weight is computed as
     \f$w = 2 (\cot\beta + \cot\gamma)\f$
     with notations shown in the figure below.
 
-    This weight is equal to the `CGAL::Weights::discrete_harmonic_weight()`.
+    - This weight is equal to the `discrete_harmonic_weight()`.
+    - This weight is a special case of the `three_point_family_weight()`.
 
-    This weight is a special case of the `CGAL::Weights::three_point_family_weight()`.
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \cgalFigureBegin{cotangent_weight, cotangent.svg}
       Notation used for the cotangent weight.
@@ -103,27 +100,27 @@ namespace Weights {
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
+    \param p0
+    the first point
+
+    \param p1
+    the second point
+
+    \param p2
+    the third point
+
     \param q
     a query point
 
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
     \param traits
-    an instance of `GeomTraits`
+    this parameter can be omitted if the traits class can be deduced from the point type
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(
+    const typename GeomTraits::Point& p0,
+    const typename GeomTraits::Point& p1,
+    const typename GeomTraits::Point& p2,
     const typename GeomTraits::Point& q,
-    const typename GeomTraits::Point& t,
-    const typename GeomTraits::Point& r,
-    const typename GeomTraits::Point& p,
     const GeomTraits& traits) { }
 
   #endif // DOXYGEN_RUNNING
@@ -131,10 +128,10 @@ namespace Weights {
   /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(
-    const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& t,
     const typename GeomTraits::Point_2& r,
     const typename GeomTraits::Point_2& p,
+    const typename GeomTraits::Point_2& q,
     const GeomTraits& traits) {
 
     using FT = typename GeomTraits::FT;
@@ -145,21 +142,21 @@ namespace Weights {
 
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(
-    const CGAL::Point_2<GeomTraits>& q,
     const CGAL::Point_2<GeomTraits>& t,
     const CGAL::Point_2<GeomTraits>& r,
-    const CGAL::Point_2<GeomTraits>& p) {
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q) {
 
     const GeomTraits traits;
-    return cotangent_weight(q, t, r, p, traits);
+    return cotangent_weight(t, r, p, q, traits);
   }
 
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(
-    const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& t,
     const typename GeomTraits::Point_3& r,
     const typename GeomTraits::Point_3& p,
+    const typename GeomTraits::Point_3& q,
     const GeomTraits& traits) {
 
     using FT = typename GeomTraits::FT;
@@ -170,13 +167,13 @@ namespace Weights {
 
   template<typename GeomTraits>
   const typename GeomTraits::FT cotangent_weight(
-    const CGAL::Point_3<GeomTraits>& q,
     const CGAL::Point_3<GeomTraits>& t,
     const CGAL::Point_3<GeomTraits>& r,
-    const CGAL::Point_3<GeomTraits>& p) {
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q) {
 
     const GeomTraits traits;
-    return cotangent_weight(q, t, r, p, traits);
+    return cotangent_weight(t, r, p, q, traits);
   }
   /// \endcond
 

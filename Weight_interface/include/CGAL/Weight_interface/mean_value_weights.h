@@ -84,10 +84,7 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the mean value weight for 2D or 3D points.
-
-    The type `GeomTraits::Point` must be either
-    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
+    \brief computes the mean value weight in 2D or 3D.
 
     The weight is computed as
     \f$w = \pm 2 \sqrt{\frac{2 (d_1 d_2 - D)}{(d d_1 + D_1)(d d_2 + D_2)}}\f$,
@@ -97,9 +94,11 @@ namespace Weights {
     \f$D   = (t - q) \cdot (p - q)\f$.
     The \f$\pm\f$ sign is a sign of the weight that depends on the configuration.
 
-    This weight is equal to the `CGAL::Weights::tangent_weight()`.
+    - This weight is equal to the `tangent_weight()`.
+    - This weight is a special case of the `three_point_family_weight()`.
 
-    This weight is a special case of the `CGAL::Weights::three_point_family_weight()`.
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \cgalFigureBegin{mean_value_weight, mean_value.svg}
       Notation used for the mean value weight.
@@ -108,27 +107,27 @@ namespace Weights {
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
 
+    \param p0
+    the first point
+
+    \param p1
+    the second point
+
+    \param p2
+    the third point
+
     \param q
     a query point
 
-    \param t
-    the first neighbor
-
-    \param r
-    the second neighbor
-
-    \param p
-    the third neighbor
-
     \param traits
-    an instance of `GeomTraits`
+    this parameter can be omitted if the traits class can be deduced from the point type
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
+    const typename GeomTraits::Point& p0,
+    const typename GeomTraits::Point& p1,
+    const typename GeomTraits::Point& p2,
     const typename GeomTraits::Point& q,
-    const typename GeomTraits::Point& t,
-    const typename GeomTraits::Point& r,
-    const typename GeomTraits::Point& p,
     const GeomTraits& traits) { }
 
   #endif // DOXYGEN_RUNNING
@@ -136,10 +135,10 @@ namespace Weights {
   /// \cond SKIP_IN_MANUAL
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
-    const typename GeomTraits::Point_2& q,
     const typename GeomTraits::Point_2& t,
     const typename GeomTraits::Point_2& r,
     const typename GeomTraits::Point_2& p,
+    const typename GeomTraits::Point_2& q,
     const GeomTraits& traits) {
 
     using FT = typename GeomTraits::FT;
@@ -171,41 +170,41 @@ namespace Weights {
 
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
-    const CGAL::Point_2<GeomTraits>& q,
     const CGAL::Point_2<GeomTraits>& t,
     const CGAL::Point_2<GeomTraits>& r,
-    const CGAL::Point_2<GeomTraits>& p) {
+    const CGAL::Point_2<GeomTraits>& p,
+    const CGAL::Point_2<GeomTraits>& q) {
 
     const GeomTraits traits;
-    return mean_value_weight(q, t, r, p, traits);
+    return mean_value_weight(t, r, p, q, traits);
   }
 
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
-    const typename GeomTraits::Point_3& q,
     const typename GeomTraits::Point_3& t,
     const typename GeomTraits::Point_3& r,
     const typename GeomTraits::Point_3& p,
+    const typename GeomTraits::Point_3& q,
     const GeomTraits& traits) {
 
     using Point_2 = typename GeomTraits::Point_2;
-    Point_2 qf, tf, rf, pf;
+    Point_2 tf, rf, pf, qf;
     internal::flatten(
       traits,
-      q,  t,  r,  p,
-      qf, tf, rf, pf);
-    return mean_value_weight(qf, tf, rf, pf, traits);
+      t,  r,  p,  q,
+      tf, rf, pf, qf);
+    return mean_value_weight(tf, rf, pf, qf, traits);
   }
 
   template<typename GeomTraits>
   const typename GeomTraits::FT mean_value_weight(
-    const CGAL::Point_3<GeomTraits>& q,
     const CGAL::Point_3<GeomTraits>& t,
     const CGAL::Point_3<GeomTraits>& r,
-    const CGAL::Point_3<GeomTraits>& p) {
+    const CGAL::Point_3<GeomTraits>& p,
+    const CGAL::Point_3<GeomTraits>& q) {
 
     const GeomTraits traits;
-    return mean_value_weight(q, t, r, p, traits);
+    return mean_value_weight(t, r, p, q, traits);
   }
   /// \endcond
 
@@ -219,8 +218,8 @@ namespace Weights {
     at any point inside and outside a simple polygon.
 
     Mean value weights are well-defined inside and outside a simple polygon and are
-    non-negative in the kernel of a star-shaped polygon. The weights are computed
-    analytically using the formulation from `CGAL::Weights::tangent_weight()`.
+    non-negative in the kernel of a star-shaped polygon. These weights are computed
+    analytically using the formulation from the `tangent_weight()`.
 
     \tparam Polygon
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
@@ -274,14 +273,14 @@ namespace Weights {
       for 2D query points inside simple polygons.
 
       \param polygon
-      An instance of `Polygon` with the vertices of a simple polygon.
+      an instance of `Polygon` with the vertices of a simple polygon.
 
       \param traits
-      An instance of `GeomTraits`. The default initialization is provided.
+      an instance of `GeomTraits` with geometric traits. The default initialization is provided.
 
       \param vertex_map
-      An instance of `VertexMap` that maps a vertex from `polygon`
-      to `Point_2`. The default is the identity property map.
+      an instance of `VertexMap` that maps a vertex from `polygon`
+      to `Point_2`. The default initialization is provided.
 
       \pre polygon.size() >= 3
       \pre polygon is simple
@@ -313,23 +312,19 @@ namespace Weights {
     /*!
       \brief computes 2D mean value weights.
 
-      This function fills `weights` with 2D mean value weights computed at the `query`
-      point with respect to the vertices of the input polygon. If `query` belongs to
-      the polygon boundary, the weights are not well-defined.
+      This function fills a destination range with 2D mean value weights computed at
+      the `query` point with respect to the vertices of the input polygon.
 
-      The method `CGAL::Barycentric_coordinates::Mean_value_coordinates_2::weights()`
-      provides a more precise version that also handles query points on the polygon boundary.
-
-      The number of returned weights equals to the number of polygon vertices.
+      The number of computed weights equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      the dereferenced output iterator type convertible to `FT`.
+      an output iterator type convertible to `FT`.
 
       \param query
-      A query point.
+      a query point.
 
       \param w_begin
-      The beginning of the destination range with the computed weights.
+      the beginning of the destination range with the computed weights.
 
       \return an output iterator to the element in the destination range,
       one past the last weight stored.
@@ -466,9 +461,8 @@ namespace Weights {
     weight per vertex. The weights are stored in a destination range
     beginning at `w_begin`.
 
-    Internally, the class `CGAL::Weights::Mean_value_weights_2` is used.
-    If one needs a flexible API, please refer to that class. If you want to handle
-    multiple query points, you better use that class, too. When using this function,
+    Internally, the class `Mean_value_weights_2` is used. If you want to handle
+    multiple query points, you better use that class. When using this function,
     internal memory is allocated for each query point, while when using the class,
     it is allocated only once, which is much more efficient.
 
@@ -476,22 +470,22 @@ namespace Weights {
     a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
 
     \tparam OutputIterator
-    the dereferenced output iterator type convertible to `GeomTraits::FT`.
+    an output iterator type convertible to `GeomTraits::FT`.
 
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2`.
 
     \param polygon
-    An instance of `PointRange` with 2D points, which form a simple polygon.
+    an instance of `PointRange` with 2D points, which form a simple polygon.
 
     \param query
-    A query point.
+    a query point.
 
     \param w_begin
-    The beginning of the destination range with the computed weights.
+    the beginning of the destination range with the computed weights.
 
     \param traits
-    An instance of `GeomTraits`.
+    this parameter can be omitted if the traits class can be deduced from the point type
 
     \return an output iterator to the element in the destination range,
     one past the last weight stored.
@@ -507,7 +501,7 @@ namespace Weights {
     const PointRange& polygon,
     const typename GeomTraits::Point_2& query,
     OutputIterator w_begin,
-    const GeomTraits traits) {
+    const GeomTraits& traits) {
 
     Mean_value_weights_2<PointRange, GeomTraits> mean_value(
       polygon, traits);
@@ -525,8 +519,9 @@ namespace Weights {
     OutputIterator w_begin) {
 
     using GeomTraits = typename Kernel_traits<Point_2>::Kernel;
+    const GeomTraits traits;
     return mean_value_weights_2(
-      polygon, query, w_begin, GeomTraits());
+      polygon, query, w_begin, traits);
   }
   /// \endcond
 

@@ -38,12 +38,12 @@ namespace Weights {
 
     \brief computes area of the Voronoi cell in 2D or 3D.
 
-    The type `GeomTraits::Point` must be either
-    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
-
     This area is the area of the shaded region in the figure below. The region
     is formed by two midpoints of the edges incident to `q` and the circumcenter of
     the triangle `[p, q, r]`.
+
+    The type `GeomTraits::Point` must be either
+    `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \cgalFigureBegin{voronoi_area, voronoi_cell.svg}
       Notation used for the Voronoi cell.
@@ -62,9 +62,9 @@ namespace Weights {
     the third point
 
     \param traits
-    an instance of `GeomTraits`
+    this parameter can be omitted if the traits class can be deduced from the point type
 
-    \sa `CGAL::Weights::mixed_voronoi_area()`
+    \sa `mixed_voronoi_area()`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT voronoi_area(

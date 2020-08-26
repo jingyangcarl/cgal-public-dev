@@ -38,10 +38,10 @@ namespace Weights {
 
     \brief computes area of the triangular cell in 2D or 3D.
 
+    This area is the area of the shaded triangle `[p, q, r]` in the figure below.
+
     The type `GeomTraits::Point` must be either
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
-
-    This area is the area of the shaded triangle `[p, q, r]` in the figure below.
 
     \cgalFigureBegin{triangular_area, triangular_cell.svg}
       Notation used for the triangular cell.
@@ -60,7 +60,7 @@ namespace Weights {
     the third point
 
     \param traits
-    an instance of `GeomTraits`
+    this parameter can be omitted if the traits class can be deduced from the point type
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT triangular_area(

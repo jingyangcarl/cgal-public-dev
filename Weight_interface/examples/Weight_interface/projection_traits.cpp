@@ -7,7 +7,7 @@ using Kernel   = CGAL::Simple_cartesian<double>;
 using FT       = typename Kernel::FT;
 using Point_3  = typename Kernel::Point_3;
 using Vector_3 = typename Kernel::Vector_3;
-using PTraits  = CGAL::Weights::utils::Projection_traits_3<Kernel>;
+using PTraits  = CGAL::Weights::Projection_traits_3<Kernel>;
 
 int main() {
 

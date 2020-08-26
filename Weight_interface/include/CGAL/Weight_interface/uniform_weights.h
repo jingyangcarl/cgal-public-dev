@@ -36,12 +36,12 @@ namespace Weights {
   /*!
     \ingroup PkgWeightInterfaceRefWeights
 
-    \brief computes the uniform weight for 2D or 3D points.
+    \brief computes the uniform weight in 2D or 3D.
+
+    This function always returns 1.
 
     The type `GeomTraits::Point` must be either
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
-
-    This function always returns 1.
 
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
@@ -121,4 +121,3 @@ namespace Weights {
 } // namespace CGAL
 
 #endif // CGAL_WEIGHT_INTERFACE_UNIFORM_WEIGHTS_H
-å

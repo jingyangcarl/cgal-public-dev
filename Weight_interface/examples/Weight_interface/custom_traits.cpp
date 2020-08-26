@@ -1,5 +1,4 @@
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Weight_interface/utils.h>
 #include <CGAL/Weight_interface/inverse_distance_weights.h>
 
 // Typedefs.

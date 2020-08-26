@@ -114,7 +114,7 @@ namespace internal {
     const typename GeomTraits::Point_2& q) {
 
     using FT = typename GeomTraits::FT;
-    using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+    using Get_sqrt = Get_sqrt<GeomTraits>;
     const auto sqrt = Get_sqrt::sqrt_object(traits);
 
     const auto squared_distance_2 =
@@ -129,7 +129,7 @@ namespace internal {
     const typename GeomTraits::Vector_2& v) {
 
     using FT = typename GeomTraits::FT;
-    using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+    using Get_sqrt = Get_sqrt<GeomTraits>;
     const auto sqrt = Get_sqrt::sqrt_object(traits);
 
     const auto squared_length_2 =
@@ -214,7 +214,7 @@ namespace internal {
     const typename GeomTraits::Point_3& q) {
 
     using FT = typename GeomTraits::FT;
-    using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+    using Get_sqrt = Get_sqrt<GeomTraits>;
     const auto sqrt = Get_sqrt::sqrt_object(traits);
 
     const auto squared_distance_3 =
@@ -229,7 +229,7 @@ namespace internal {
     const typename GeomTraits::Vector_3& v) {
 
     using FT = typename GeomTraits::FT;
-    using Get_sqrt = internal::Get_sqrt<GeomTraits>;
+    using Get_sqrt = Get_sqrt<GeomTraits>;
     const auto sqrt = Get_sqrt::sqrt_object(traits);
 
     const auto squared_length_3 =
@@ -512,14 +512,14 @@ namespace internal {
   template<typename GeomTraits>
   void flatten(
     const GeomTraits& traits,
+    const typename GeomTraits::Point_3& t, // prev neighbor/vertex/point
+    const typename GeomTraits::Point_3& r, // curr neighbor/vertex/point
+    const typename GeomTraits::Point_3& p, // next neighbor/vertex/point
     const typename GeomTraits::Point_3& q, // query point
-    const typename GeomTraits::Point_3& t, // prev neighbor/vertex
-    const typename GeomTraits::Point_3& r, // curr neighbor/vertex
-    const typename GeomTraits::Point_3& p, // next neighbor/vertex
-    typename GeomTraits::Point_2& qf,
     typename GeomTraits::Point_2& tf,
     typename GeomTraits::Point_2& rf,
-    typename GeomTraits::Point_2& pf) {
+    typename GeomTraits::Point_2& pf,
+    typename GeomTraits::Point_2& qf) {
 
     // std::cout << std::endl;
     using Point_3 = typename GeomTraits::Point_3;

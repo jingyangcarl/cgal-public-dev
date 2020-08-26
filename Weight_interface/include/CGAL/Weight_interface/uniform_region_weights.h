@@ -38,10 +38,10 @@ namespace Weights {
 
     \brief computes area of the uniform cell in 2D or 3D.
 
+    This function always returns 1.
+
     The type `GeomTraits::Point` must be either
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
-
-    This function always returns 1.
 
     \tparam GeomTraits
     a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
