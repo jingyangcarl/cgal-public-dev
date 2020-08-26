@@ -105,7 +105,7 @@ namespace Weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
 
     \param p0
     the first point
@@ -222,10 +222,10 @@ namespace Weights {
     analytically using the formulation from the `tangent_weight()`.
 
     \tparam Polygon
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2`
 
     \tparam VertexMap
     a model of `ReadablePropertyMap` whose key type is `Polygon::value_type` and
@@ -273,7 +273,7 @@ namespace Weights {
       for 2D query points inside simple polygons.
 
       \param polygon
-      an instance of `Polygon` with the vertices of a simple polygon.
+      an instance of `Polygon` with the vertices of a simple polygon
 
       \param traits
       an instance of `GeomTraits` with geometric traits. The default initialization is provided.
@@ -318,16 +318,16 @@ namespace Weights {
       The number of computed weights equals to the number of polygon vertices.
 
       \tparam OutputIterator
-      an output iterator type convertible to `FT`.
+      an output iterator type convertible to `FT`
 
       \param query
-      a query point.
+      a query point
 
       \param w_begin
-      the beginning of the destination range with the computed weights.
+      the beginning of the destination range with the computed weights
 
       \return an output iterator to the element in the destination range,
-      one past the last weight stored.
+      one past the last weight stored
     */
     template<typename OutputIterator>
     OutputIterator operator()(
@@ -467,28 +467,28 @@ namespace Weights {
     it is allocated only once, which is much more efficient.
 
     \tparam PointRange
-    a model of `ConstRange` whose iterator type is `RandomAccessIterator`.
+    a model of `ConstRange` whose iterator type is `RandomAccessIterator`
 
     \tparam OutputIterator
-    an output iterator type convertible to `GeomTraits::FT`.
+    an output iterator type convertible to `GeomTraits::FT`
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2`.
+    a model of `AnalyticWeightTraits_2`
 
     \param polygon
-    an instance of `PointRange` with 2D points, which form a simple polygon.
+    an instance of `PointRange` with 2D points, which form a simple polygon
 
     \param query
-    a query point.
+    a query point
 
     \param w_begin
-    the beginning of the destination range with the computed weights.
+    the beginning of the destination range with the computed weights
 
     \param traits
     this parameter can be omitted if the traits class can be deduced from the point type
 
     \return an output iterator to the element in the destination range,
-    one past the last weight stored.
+    one past the last weight stored
 
     \pre polygon.size() >= 3
     \pre polygon is simple

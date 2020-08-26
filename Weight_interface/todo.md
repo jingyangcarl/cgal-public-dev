@@ -5,14 +5,16 @@ To discuss:
 * Skeletonization uses the weird secure version for the cotangent weights.
 * In skeletonization, the final example results are not determenistic.
 * Should I remove the positive area from the Tangent_weight and substitute it by computing tan(alpha/2)? In this case, I will keep the correct sign in any configuration.
-* Should I use reference in the traits?
 
 Later:
 * Cleanup tests.
 * Comment the code.
 * Add a concept test as in the heat_method.
 * Try to combine cotangent wrappers from the tools.h. Not sure if this is necessary.
-* Use centroid functions from PCA_LGPL and other utility functions wherever it is necessary.
 * Try to combine mvc and dhc in the orbifold parameterization. Not sure if this is necessary.
 * Mention that tangent_weight_3 uses positive areas (no distortions) and can be used only for PMP, while mean_value_weight_2/3 e.g. can have different signs/distortions for 2D and 3D versions due to the flattening of the 3D region.
+
+To do now:
 * What happens with WP/MV/DH weights on the polygon boundary?
+* There are never any preconditions (will everything be fine with degenerate positions) in your functions? If there are, what happens if it is violated?
+* Use centroid functions from PCA_LGPL and other utility functions wherever it is necessary.

@@ -101,7 +101,7 @@ namespace Weights {
     \f$\frac{2\textbf{A}}{\textbf{d}\textbf{l} + \textbf{D}}\f$.
 
     \tparam FT
-    a model of `FieldNumberType`.
+    a model of `FieldNumberType`
 
     \param d
     the distance value
@@ -136,7 +136,7 @@ namespace Weights {
     \f$\frac{2\textbf{tan05}}{\textbf{d}}\f$.
 
     \tparam FT
-    a model of `FieldNumberType`.
+    a model of `FieldNumberType`
 
     \param tan05
     the half angle tangent value
@@ -167,7 +167,7 @@ namespace Weights {
     \f$\textbf{t} = \frac{2\textbf{A}}{\textbf{d}\textbf{l} + \textbf{D}}\f$.
 
     \tparam FT
-    a model of `FieldNumberType`.
+    a model of `FieldNumberType`
 
     \param d
     the distance value
@@ -217,7 +217,7 @@ namespace Weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
 
     \param p0
     the first point

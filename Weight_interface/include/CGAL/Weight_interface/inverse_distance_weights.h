@@ -67,7 +67,7 @@ namespace Weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
 
     \param p
     the first point
@@ -94,7 +94,7 @@ namespace Weights {
     This function calls the function `inverse_distance_weight()`.
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
 
     \param p
     the first point

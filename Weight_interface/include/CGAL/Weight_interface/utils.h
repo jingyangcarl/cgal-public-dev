@@ -47,7 +47,7 @@ namespace Weights {
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
 
     \param p
     the first point
@@ -80,7 +80,7 @@ namespace Weights {
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
 
     \param p
     the first point

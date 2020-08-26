@@ -44,7 +44,7 @@ namespace Weights {
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_area(

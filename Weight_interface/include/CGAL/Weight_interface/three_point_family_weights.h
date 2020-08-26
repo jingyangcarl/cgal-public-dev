@@ -95,7 +95,7 @@ namespace Weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
 
     \param p0
     the first point

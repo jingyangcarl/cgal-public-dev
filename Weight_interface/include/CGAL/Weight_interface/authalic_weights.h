@@ -74,7 +74,7 @@ namespace Weights {
     \f$\frac{2\textbf{cot}}{\textbf{d2}}\f$.
 
     \tparam FT
-    a model of `FieldNumberType`.
+    a model of `FieldNumberType`
 
     \param cot
     the cotangent value
@@ -113,7 +113,7 @@ namespace Weights {
     \cgalFigureEnd
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
 
     \param p0
     the first point

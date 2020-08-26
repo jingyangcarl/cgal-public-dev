@@ -44,7 +44,7 @@ namespace Weights {
     `GeomTraits::Point_2` or `GeomTraits::Point_3`.
 
     \tparam GeomTraits
-    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`.
+    a model of `AnalyticWeightTraits_2` or `AnalyticWeightTraits_3`
   */
   template<typename GeomTraits>
   const typename GeomTraits::FT uniform_weight(
@@ -110,8 +110,6 @@ namespace Weights {
     \brief computes the uniform weight.
 
     This function always returns 1.
-
-    \return the computed weight.
   */
   double uniform_weight() {
     return 1.0;

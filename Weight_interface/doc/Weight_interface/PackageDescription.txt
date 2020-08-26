@@ -13,7 +13,7 @@ from `CGAL::Weights`.
 \defgroup PkgWeightInterfaceRefWeights Analytic Weights
 \ingroup PkgWeightInterfaceRef
 
-Models and functions that can be used to compute generalized weights.
+Models and functions that can be used to compute weights, which have a simple analytic expression.
 
 \defgroup PkgWeightInterfaceRefBarycentric Barycentric Weights
 \ingroup PkgWeightInterfaceRef
@@ -39,8 +39,10 @@ Different related utility functions.
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Dmitry Anisimov}
-\cgalPkgDesc{Various generalized weights such as analytic weights, weights with
-respect to polygons, and weighting regions.}
+\cgalPkgDesc{Many geometric algorithms rely on weighted constructions. This package
+provides a simple and unified interface to different types of weights. In particular,
+it includes numerous weights with a simple analytic expression, generalized barycentric
+weights, and weighting regions. All weights are available both in 2D and 3D.}
 \cgalPkgManuals{Chapter_Weight_Interface, PkgWeightInterfaceRef}
 \cgalPkgSummaryEnd
 
