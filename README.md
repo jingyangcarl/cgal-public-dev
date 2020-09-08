@@ -27,8 +27,8 @@ The submission includes two features: clipping plane feature and web-viewer feat
 
 ## Commit log
 ### Clipping Plane
-cgal/cgal-public-dev@4e642f1ad4 disable clipping plane in opengl 3.0
-cgal/cgal-public-dev@59911d1676 add compatibility shader
+jingyangcarl/cgal-public-dev@4e642f1ad4 disable clipping plane in opengl 3.0
+jingyangcarl/cgal-public-dev@59911d1676 add compatibility shader
 cgal/cgal-public-dev@d672031c36 adjust logic for color output
 cgal/cgal-public-dev@d5c6c8971b re-declare attribute variables as uniform
 cgal/cgal-public-dev@17e14bb40b update
